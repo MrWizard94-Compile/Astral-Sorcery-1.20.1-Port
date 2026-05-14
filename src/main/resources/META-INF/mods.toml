@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+    modId="astralsorcery"
+    version="${file.jarVersion}"
+    displayName="Astral Sorcery"
+    description='''
+        A magic mod focused around harnessing the powers of starlight and the constellations.
+        Ported to 1.20.1 Forge.
+    '''
+    logoFile="astralsorcery.png"
+    authors="HellFirePvP"
+    displayURL="https://github.com/HellFirePvP/AstralSorcery"
+
+[[dependencies.astralsorcery]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47.3.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.astralsorcery]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
