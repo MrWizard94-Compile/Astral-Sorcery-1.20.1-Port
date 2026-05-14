@@ -19,6 +19,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is part of the Astral Sorcery Mod
  * The complete source code for this mod can be found on github.
@@ -51,11 +53,15 @@ public class AstralSorcery {
         this.proxy.attachEventHandlers(MinecraftForge.EVENT_BUS);
     }
 
+    @Nonnull
     public static AstralSorcery getInstance()    { return instance; }
+    @Nonnull
     public static ModContainer getModContainer() { return modContainer; }
+    @Nonnull
     public static CommonProxy  getProxy()        { return instance.proxy; }
 
-    public static ResourceLocation key(String path) {
+    @Nonnull
+    public static ResourceLocation key(@Nonnull String path) {
         return new ResourceLocation(MODID, path);
     }
 }
