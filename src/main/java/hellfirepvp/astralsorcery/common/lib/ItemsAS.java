@@ -1,17 +1,28 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
+import hellfirepvp.astralsorcery.common.item.ItemFormationStone;
+import hellfirepvp.astralsorcery.common.item.ItemHandTelescope;
 import hellfirepvp.astralsorcery.common.item.ItemIlluminationPowder;
+import hellfirepvp.astralsorcery.common.item.ItemInfusedGlass;
+import hellfirepvp.astralsorcery.common.item.ItemKnowledgeFragment;
+import hellfirepvp.astralsorcery.common.item.ItemLinkingTool;
+import hellfirepvp.astralsorcery.common.item.ItemResonatingGem;
 import hellfirepvp.astralsorcery.common.item.ItemStardust;
+import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemRockCrystalSimple;
 import hellfirepvp.astralsorcery.common.item.gem.ItemAquamarine;
 import hellfirepvp.astralsorcery.common.item.gem.ItemPerkGem;
+import hellfirepvp.astralsorcery.common.item.lens.ItemColoredLens;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalAxe;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalPickaxe;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalShovel;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalSword;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStone;
 import hellfirepvp.astralsorcery.common.item.wand.ItemWand;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -44,6 +55,12 @@ public class ItemsAS {
             ITEMS.register("stardust", ItemStardust::new);
     public static final RegistryObject<ItemIlluminationPowder> ILLUMINATION_POWDER =
             ITEMS.register("illumination_powder", ItemIlluminationPowder::new);
+    public static final RegistryObject<ItemInfusedGlass> INFUSED_GLASS =
+            ITEMS.register("infused_glass", ItemInfusedGlass::new);
+    public static final RegistryObject<ItemResonatingGem> RESONATING_GEM =
+            ITEMS.register("resonating_gem", ItemResonatingGem::new);
+    public static final RegistryObject<ItemFormationStone> FORMATION_STONE =
+            ITEMS.register("formation_stone", ItemFormationStone::new);
 
     // ---- Perk Gems ----
     public static final RegistryObject<ItemPerkGem> PERK_GEM_DAY =
@@ -63,9 +80,112 @@ public class ItemsAS {
     public static final RegistryObject<ItemCrystalSword> CRYSTAL_SWORD =
             ITEMS.register("crystal_sword", ItemCrystalSword::new);
 
-    // TODO: Add remaining items as they are implemented:
-    // Constellation papers, attuned crystals
-    // Parchment, infused glass, resonating gem
-    // Mantles (constellation cloaks)
-    // Seals, knowledge fragments
+    // ---- Constellation Items ----
+    public static final RegistryObject<ItemConstellationPaper> CONSTELLATION_PAPER =
+            ITEMS.register("constellation_paper", ItemConstellationPaper::new);
+    public static final RegistryObject<ItemKnowledgeFragment> KNOWLEDGE_FRAGMENT =
+            ITEMS.register("knowledge_fragment", ItemKnowledgeFragment::new);
+
+    // ---- Specialized Tools ----
+    public static final RegistryObject<ItemLinkingTool> LINKING_TOOL =
+            ITEMS.register("linking_tool", ItemLinkingTool::new);
+    public static final RegistryObject<ItemHandTelescope> HAND_TELESCOPE =
+            ITEMS.register("hand_telescope", ItemHandTelescope::new);
+    public static final RegistryObject<ItemShiftingStone> SHIFTING_STONE =
+            ITEMS.register("shifting_stone", ItemShiftingStone::new);
+
+    // ---- Colored Lenses ----
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_FIRE =
+            ITEMS.register("colored_lens_fire", () -> new ItemColoredLens(ItemColoredLens.LensColor.FIRE));
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_BREAK =
+            ITEMS.register("colored_lens_break", () -> new ItemColoredLens(ItemColoredLens.LensColor.BREAK));
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_GROWTH =
+            ITEMS.register("colored_lens_growth", () -> new ItemColoredLens(ItemColoredLens.LensColor.GROWTH));
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_DAMAGE =
+            ITEMS.register("colored_lens_damage", () -> new ItemColoredLens(ItemColoredLens.LensColor.DAMAGE));
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_REGENERATION =
+            ITEMS.register("colored_lens_regeneration", () -> new ItemColoredLens(ItemColoredLens.LensColor.REGENERATION));
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_PUSH =
+            ITEMS.register("colored_lens_push", () -> new ItemColoredLens(ItemColoredLens.LensColor.PUSH));
+    public static final RegistryObject<ItemColoredLens> COLORED_LENS_SPECTRAL =
+            ITEMS.register("colored_lens_spectral", () -> new ItemColoredLens(ItemColoredLens.LensColor.SPECTRAL));
+
+    // ---- Block Items ----
+    // Marble family
+    public static final RegistryObject<BlockItem> MARBLE_RAW_ITEM =
+            ITEMS.register("marble_raw", () -> new ItemBlockAS(BlocksAS.MARBLE_RAW.get()));
+    public static final RegistryObject<BlockItem> MARBLE_ARCH_ITEM =
+            ITEMS.register("marble_arch", () -> new ItemBlockAS(BlocksAS.MARBLE_ARCH.get()));
+    public static final RegistryObject<BlockItem> MARBLE_BRICKS_ITEM =
+            ITEMS.register("marble_bricks", () -> new ItemBlockAS(BlocksAS.MARBLE_BRICKS.get()));
+    public static final RegistryObject<BlockItem> MARBLE_CHISELED_ITEM =
+            ITEMS.register("marble_chiseled", () -> new ItemBlockAS(BlocksAS.MARBLE_CHISELED.get()));
+    public static final RegistryObject<BlockItem> MARBLE_ENGRAVED_ITEM =
+            ITEMS.register("marble_engraved", () -> new ItemBlockAS(BlocksAS.MARBLE_ENGRAVED.get()));
+    public static final RegistryObject<BlockItem> MARBLE_RUNED_ITEM =
+            ITEMS.register("marble_runed", () -> new ItemBlockAS(BlocksAS.MARBLE_RUNED.get()));
+    public static final RegistryObject<BlockItem> MARBLE_PILLAR_ITEM =
+            ITEMS.register("marble_pillar", () -> new ItemBlockAS(BlocksAS.MARBLE_PILLAR.get()));
+    public static final RegistryObject<BlockItem> MARBLE_SLAB_ITEM =
+            ITEMS.register("marble_slab", () -> new ItemBlockAS(BlocksAS.MARBLE_SLAB.get()));
+    public static final RegistryObject<BlockItem> MARBLE_STAIRS_ITEM =
+            ITEMS.register("marble_stairs", () -> new ItemBlockAS(BlocksAS.MARBLE_STAIRS.get()));
+
+    // Black marble
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_RAW_ITEM =
+            ITEMS.register("black_marble_raw", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_RAW.get()));
+
+    // Infused wood family
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_ITEM =
+            ITEMS.register("infused_wood", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_ARCH_ITEM =
+            ITEMS.register("infused_wood_arch", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_ARCH.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_COLUMN_ITEM =
+            ITEMS.register("infused_wood_column", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_COLUMN.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_ENGRAVED_ITEM =
+            ITEMS.register("infused_wood_engraved", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_ENGRAVED.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_ENRICHED_ITEM =
+            ITEMS.register("infused_wood_enriched", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_ENRICHED.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_PLANKS_ITEM =
+            ITEMS.register("infused_wood_planks", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_PLANKS.get()));
+
+    // Ores
+    public static final RegistryObject<BlockItem> ROCK_CRYSTAL_ORE_ITEM =
+            ITEMS.register("rock_crystal_ore", () -> new ItemBlockAS(BlocksAS.ROCK_CRYSTAL_ORE.get()));
+    public static final RegistryObject<BlockItem> AQUAMARINE_ORE_ITEM =
+            ITEMS.register("aquamarine_sand_ore", () -> new ItemBlockAS(BlocksAS.AQUAMARINE_ORE.get()));
+
+    // Special
+    public static final RegistryObject<BlockItem> ILLUMINATOR_ITEM =
+            ITEMS.register("illuminator", () -> new ItemBlockAS(BlocksAS.ILLUMINATOR.get()));
+
+    // Tile entity blocks
+    public static final RegistryObject<BlockItem> ALTAR_ITEM =
+            ITEMS.register("altar", () -> new ItemBlockAS(BlocksAS.ALTAR.get()));
+    public static final RegistryObject<BlockItem> ATTUNEMENT_ALTAR_ITEM =
+            ITEMS.register("attunement_altar", () -> new ItemBlockAS(BlocksAS.ATTUNEMENT_ALTAR.get()));
+    public static final RegistryObject<BlockItem> COLLECTOR_CRYSTAL_ITEM =
+            ITEMS.register("collector_crystal", () -> new ItemBlockAS(BlocksAS.COLLECTOR_CRYSTAL.get()));
+    public static final RegistryObject<BlockItem> CELESTIAL_COLLECTOR_CRYSTAL_ITEM =
+            ITEMS.register("celestial_collector_crystal", () -> new ItemBlockAS(BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get()));
+    public static final RegistryObject<BlockItem> LENS_ITEM =
+            ITEMS.register("lens", () -> new ItemBlockAS(BlocksAS.LENS.get()));
+    public static final RegistryObject<BlockItem> PRISM_ITEM =
+            ITEMS.register("prism", () -> new ItemBlockAS(BlocksAS.PRISM.get()));
+    public static final RegistryObject<BlockItem> RELAY_ITEM =
+            ITEMS.register("relay", () -> new ItemBlockAS(BlocksAS.RELAY.get()));
+    public static final RegistryObject<BlockItem> WELL_ITEM =
+            ITEMS.register("well", () -> new ItemBlockAS(BlocksAS.WELL.get()));
+    public static final RegistryObject<BlockItem> INFUSER_ITEM =
+            ITEMS.register("infuser", () -> new ItemBlockAS(BlocksAS.INFUSER.get()));
+    public static final RegistryObject<BlockItem> RITUAL_PEDESTAL_ITEM =
+            ITEMS.register("ritual_pedestal", () -> new ItemBlockAS(BlocksAS.RITUAL_PEDESTAL.get()));
+    public static final RegistryObject<BlockItem> CHALICE_ITEM =
+            ITEMS.register("chalice", () -> new ItemBlockAS(BlocksAS.CHALICE.get()));
+    public static final RegistryObject<BlockItem> TELESCOPE_ITEM =
+            ITEMS.register("telescope", () -> new ItemBlockAS(BlocksAS.TELESCOPE.get()));
+    public static final RegistryObject<BlockItem> GATEWAY_ITEM =
+            ITEMS.register("gateway", () -> new ItemBlockAS(BlocksAS.GATEWAY.get()));
+    public static final RegistryObject<BlockItem> FOUNTAIN_ITEM =
+            ITEMS.register("fountain", () -> new ItemBlockAS(BlocksAS.FOUNTAIN.get()));
 }
