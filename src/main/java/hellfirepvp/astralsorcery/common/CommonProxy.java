@@ -12,6 +12,8 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkEffectHelper;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkRegistry;
+import hellfirepvp.astralsorcery.common.world.WorldGenerationAS;
+import hellfirepvp.astralsorcery.common.world.structure.StructureTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.CreativeTabsAS;
@@ -67,6 +69,10 @@ public class CommonProxy {
         RecipeTypesAS.RECIPE_TYPES.register(modBus);
         RecipeSerializersAS.RECIPE_SERIALIZERS.register(modBus);
         CreativeTabsAS.CREATIVE_TABS.register(modBus);
+
+        // World generation
+        WorldGenerationAS.FEATURES.register(modBus);
+        StructureTypesAS.STRUCTURE_TYPES.register(modBus);
 
         // Mod lifecycle events
         modBus.addListener(this::onCommonSetup);

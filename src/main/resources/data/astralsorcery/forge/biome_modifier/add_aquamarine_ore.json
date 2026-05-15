@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#astralsorcery:has_aquamarine",
+  "features": "astralsorcery:aquamarine_ore",
+  "step": "underground_ores"
+}

@@ -1,0 +1,14 @@
+{
+  "type": "astralsorcery:ancient_shrine",
+  "biomes": "#minecraft:is_overworld",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "beard_thin",
+  "start_pool": "astralsorcery:ancient_shrine",
+  "max_depth": 1,
+  "start_height": {
+    "type": "minecraft:constant",
+    "value": 0
+  },
+  "project_start_to_heightmap": "WORLD_SURFACE_WG"
+}
