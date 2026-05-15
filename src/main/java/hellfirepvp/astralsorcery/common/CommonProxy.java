@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.CreativeTabsAS;
@@ -82,5 +83,6 @@ public class CommonProxy {
     private void onCommonSetup(@Nonnull FMLCommonSetupEvent event) {
         // Runs after all registries are frozen.
         // Use event.enqueueWork(() -> { ... }) for thread-unsafe operations.
+        event.enqueueWork(PacketChannel::init);
     }
 }
