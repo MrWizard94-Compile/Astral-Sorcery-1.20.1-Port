@@ -38,6 +38,7 @@ public class PlayerProgress {
     private static final String TAG_DISCOVERED = "discoveredConstellations";
     private static final String TAG_PERK_POINTS = "perkPoints";
     private static final String TAG_PERK_EXP = "perkExp";
+    private static final String TAG_ALLOCATED_PERKS = "allocatedPerks";
 
     @Nonnull
     private ProgressionTier tierReached = ProgressionTier.DISCOVERY;
@@ -47,9 +48,11 @@ public class PlayerProgress {
     @Nonnull
     private final Set<ResourceLocation> discoveredConstellations = new HashSet<>();
 
-    // Perk system fields — populated in Phase 9
+    // Perk system fields
     private int perkPoints = 0;
     private long perkExp = 0;
+    @Nonnull
+    private final Set<ResourceLocation> allocatedPerks = new HashSet<>();
 
     // ---- Progression tier ----
 
@@ -107,7 +110,7 @@ public class PlayerProgress {
         discoveredConstellations.clear();
     }
 
-    // ---- Perk system (Phase 9) ----
+    // ---- Perk system ----
 
     public int getPerkPoints() {
         return perkPoints;
@@ -123,6 +126,42 @@ public class PlayerProgress {
 
     public void setPerkExp(long exp) {
         this.perkExp = Math.max(0, exp);
+    }
+
+    /**
+     * Returns the set of allocated perk keys (unmodifiable view).
+     */
+    @Nonnull
+    public Set<ResourceLocation> getAllocatedPerks() {
+        return Collections.unmodifiableSet(allocatedPerks);
+    }
+
+    /**
+     * Checks whether a specific perk is allocated.
+     */
+    public boolean hasPerkAllocated(@Nonnull ResourceLocation perkKey) {
+        return allocatedPerks.contains(perkKey);
+    }
+
+    /**
+     * Allocates a perk. Does not perform validation — use PerkTree.allocate() for validated allocation.
+     */
+    public void allocatePerk(@Nonnull ResourceLocation perkKey) {
+        allocatedPerks.add(perkKey);
+    }
+
+    /**
+     * Deallocates a perk. Does not perform validation — use PerkTree.deallocate() for validated deallocation.
+     */
+    public void deallocatePerk(@Nonnull ResourceLocation perkKey) {
+        allocatedPerks.remove(perkKey);
+    }
+
+    /**
+     * Clears all allocated perks (for full respec).
+     */
+    public void clearAllocatedPerks() {
+        allocatedPerks.clear();
     }
 
     // ---- NBT serialization ----
@@ -142,6 +181,11 @@ public class PlayerProgress {
         tag.put(TAG_DISCOVERED, discovered);
         tag.putInt(TAG_PERK_POINTS, perkPoints);
         tag.putLong(TAG_PERK_EXP, perkExp);
+        ListTag perkList = new ListTag();
+        for (ResourceLocation rl : allocatedPerks) {
+            perkList.add(StringTag.valueOf(rl.toString()));
+        }
+        tag.put(TAG_ALLOCATED_PERKS, perkList);
         return tag;
     }
 
@@ -163,6 +207,13 @@ public class PlayerProgress {
         }
         this.perkPoints = tag.getInt(TAG_PERK_POINTS);
         this.perkExp = tag.getLong(TAG_PERK_EXP);
+        this.allocatedPerks.clear();
+        if (tag.contains(TAG_ALLOCATED_PERKS)) {
+            ListTag perkList = tag.getList(TAG_ALLOCATED_PERKS, Tag.TAG_STRING);
+            for (int i = 0; i < perkList.size(); i++) {
+                allocatedPerks.add(new ResourceLocation(perkList.getString(i)));
+            }
+        }
     }
 
     /**
@@ -177,5 +228,7 @@ public class PlayerProgress {
         this.discoveredConstellations.addAll(other.discoveredConstellations);
         this.perkPoints = other.perkPoints;
         this.perkExp = other.perkExp;
+        this.allocatedPerks.clear();
+        this.allocatedPerks.addAll(other.allocatedPerks);
     }
 }

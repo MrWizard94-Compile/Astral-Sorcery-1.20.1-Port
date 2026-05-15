@@ -8,7 +8,9 @@
 package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.perk.effect.PerkEffectHelper;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkRegistry;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
@@ -82,11 +84,17 @@ public class CommonProxy {
 
         // Starlight network tick + player sync events
         forgeBus.register(new StarlightNetworkRegistry());
+
+        // Perk effect tick + attribute modifier events
+        forgeBus.register(new PerkEffectHelper());
     }
 
     private void onCommonSetup(@Nonnull FMLCommonSetupEvent event) {
         // Runs after all registries are frozen.
         // Use event.enqueueWork(() -> { ... }) for thread-unsafe operations.
-        event.enqueueWork(PacketChannel::init);
+        event.enqueueWork(() -> {
+            PacketChannel.init();
+            PerkAttributeTypesAS.init();
+        });
     }
 }
