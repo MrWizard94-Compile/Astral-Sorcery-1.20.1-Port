@@ -2,6 +2,8 @@ package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.block.base.LiquidStarlightOwned;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityChalice;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -74,8 +76,7 @@ public class BlockChalice extends BlockEntityBlock implements LiquidStarlightOwn
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        // TODO: Return BlockEntityChalice
-        return null;
+        return new BlockEntityChalice(pos, state);
     }
 
     @Nullable
@@ -83,6 +84,6 @@ public class BlockChalice extends BlockEntityBlock implements LiquidStarlightOwn
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
-        return null;
+        return createTicker(type, BlockEntityTypesAS.CHALICE.get());
     }
 }

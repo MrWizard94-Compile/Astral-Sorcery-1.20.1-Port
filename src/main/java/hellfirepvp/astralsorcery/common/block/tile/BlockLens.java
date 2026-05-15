@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityLens;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -68,8 +70,7 @@ public class BlockLens extends BlockEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        // TODO: Return BlockEntityLens
-        return null;
+        return new BlockEntityLens(pos, state);
     }
 
     @Nullable
@@ -77,7 +78,6 @@ public class BlockLens extends BlockEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
-        // TODO: Wire ticker
-        return null;
+        return createTicker(type, BlockEntityTypesAS.LENS.get());
     }
 }

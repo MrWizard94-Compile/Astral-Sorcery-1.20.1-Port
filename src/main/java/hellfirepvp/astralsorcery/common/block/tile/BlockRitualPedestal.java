@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRitualPedestal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -69,8 +71,7 @@ public class BlockRitualPedestal extends BlockEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        // TODO: Return BlockEntityRitualPedestal
-        return null;
+        return new BlockEntityRitualPedestal(pos, state);
     }
 
     @Nullable
@@ -78,6 +79,6 @@ public class BlockRitualPedestal extends BlockEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
-        return null;
+        return createTicker(type, BlockEntityTypesAS.RITUAL_PEDESTAL.get());
     }
 }

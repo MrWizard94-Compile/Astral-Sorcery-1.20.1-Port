@@ -2,7 +2,16 @@ package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityChalice;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityFountain;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityInfuser;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityLens;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityPrism;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRelay;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRitualPedestal;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityTelescope;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityWell;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -47,7 +56,51 @@ public class BlockEntityTypesAS {
                     BlockEntityType.Builder.of(BlockEntityTelescope::new,
                             BlocksAS.TELESCOPE.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<BlockEntityInfuser>> INFUSER =
+            BLOCK_ENTITY_TYPES.register("infuser", () ->
+                    BlockEntityType.Builder.of(BlockEntityInfuser::new,
+                            BlocksAS.INFUSER.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityAttunementAltar>> ATTUNEMENT_ALTAR =
+            BLOCK_ENTITY_TYPES.register("attunement_altar", () ->
+                    BlockEntityType.Builder.of(BlockEntityAttunementAltar::new,
+                            BlocksAS.ATTUNEMENT_ALTAR.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityRitualPedestal>> RITUAL_PEDESTAL =
+            BLOCK_ENTITY_TYPES.register("ritual_pedestal", () ->
+                    BlockEntityType.Builder.of(BlockEntityRitualPedestal::new,
+                            BlocksAS.RITUAL_PEDESTAL.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityChalice>> CHALICE =
+            BLOCK_ENTITY_TYPES.register("chalice", () ->
+                    BlockEntityType.Builder.of(BlockEntityChalice::new,
+                            BlocksAS.CHALICE.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityGateway>> GATEWAY =
+            BLOCK_ENTITY_TYPES.register("gateway", () ->
+                    BlockEntityType.Builder.of(BlockEntityGateway::new,
+                            BlocksAS.GATEWAY.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityLens>> LENS =
+            BLOCK_ENTITY_TYPES.register("lens", () ->
+                    BlockEntityType.Builder.of(BlockEntityLens::new,
+                            BlocksAS.LENS.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityPrism>> PRISM =
+            BLOCK_ENTITY_TYPES.register("prism", () ->
+                    BlockEntityType.Builder.of(BlockEntityPrism::new,
+                            BlocksAS.PRISM.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityRelay>> RELAY =
+            BLOCK_ENTITY_TYPES.register("relay", () ->
+                    BlockEntityType.Builder.of(BlockEntityRelay::new,
+                            BlocksAS.RELAY.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityFountain>> FOUNTAIN =
+            BLOCK_ENTITY_TYPES.register("fountain", () ->
+                    BlockEntityType.Builder.of(BlockEntityFountain::new,
+                            BlocksAS.FOUNTAIN.get()).build(null));
+
     // TODO: Add remaining block entity types as they are implemented:
-    // INFUSER, ATTUNEMENT_ALTAR, RITUAL_PEDESTAL, CHALICE, GATEWAY,
-    // LENS, PRISM, RELAY, FOUNTAIN, OBSERVATORY, TREE_BEACON, etc.
+    // OBSERVATORY, TREE_BEACON, etc.
 }

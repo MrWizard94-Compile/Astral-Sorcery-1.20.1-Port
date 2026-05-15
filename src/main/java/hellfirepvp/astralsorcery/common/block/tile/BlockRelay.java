@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRelay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -51,8 +53,7 @@ public class BlockRelay extends BlockEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        // TODO: Return BlockEntityRelay
-        return null;
+        return new BlockEntityRelay(pos, state);
     }
 
     @Nullable
@@ -60,6 +61,6 @@ public class BlockRelay extends BlockEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
-        return null;
+        return createTicker(type, BlockEntityTypesAS.RELAY.get());
     }
 }

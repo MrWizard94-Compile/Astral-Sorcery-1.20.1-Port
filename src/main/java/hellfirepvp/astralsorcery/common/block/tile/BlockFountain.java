@@ -2,6 +2,8 @@ package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.block.base.LiquidStarlightOwned;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityFountain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -54,8 +56,7 @@ public class BlockFountain extends BlockEntityBlock implements LiquidStarlightOw
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        // TODO: Return BlockEntityFountain
-        return null;
+        return new BlockEntityFountain(pos, state);
     }
 
     @Nullable
@@ -63,6 +64,6 @@ public class BlockFountain extends BlockEntityBlock implements LiquidStarlightOw
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
-        return null;
+        return createTicker(type, BlockEntityTypesAS.FOUNTAIN.get());
     }
 }
