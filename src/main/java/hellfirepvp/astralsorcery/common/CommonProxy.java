@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common;
 
+import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.CreativeTabsAS;
@@ -65,13 +66,18 @@ public class CommonProxy {
 
         // Mod lifecycle events
         modBus.addListener(this::onCommonSetup);
+        modBus.addListener(CapabilitySetup::registerCapabilities);
     }
 
     /**
      * Attaches listeners to the Forge game event bus.
      * Use for: player events, world events, entity events, etc.
      */
-    public void attachEventHandlers(@Nonnull IEventBus forgeBus) {}
+    public void attachEventHandlers(@Nonnull IEventBus forgeBus) {
+        forgeBus.addGenericListener(net.minecraft.world.entity.Entity.class, CapabilitySetup::attachPlayerCaps);
+        forgeBus.addGenericListener(net.minecraft.world.level.chunk.LevelChunk.class, CapabilitySetup::attachChunkCaps);
+        forgeBus.addListener(CapabilitySetup::onPlayerClone);
+    }
 
     private void onCommonSetup(@Nonnull FMLCommonSetupEvent event) {
         // Runs after all registries are frozen.
