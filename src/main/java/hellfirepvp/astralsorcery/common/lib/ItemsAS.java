@@ -7,6 +7,10 @@ import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemRockCrystalSimple;
 import hellfirepvp.astralsorcery.common.item.gem.ItemAquamarine;
 import hellfirepvp.astralsorcery.common.item.gem.ItemPerkGem;
+import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalAxe;
+import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalPickaxe;
+import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalShovel;
+import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalSword;
 import hellfirepvp.astralsorcery.common.item.wand.ItemWand;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -49,8 +53,17 @@ public class ItemsAS {
     public static final RegistryObject<ItemPerkGem> PERK_GEM_SKY =
             ITEMS.register("perk_gem_sky", () -> new ItemPerkGem(ItemPerkGem.GemType.SKY));
 
+    // ---- Crystal Tools ----
+    public static final RegistryObject<ItemCrystalPickaxe> CRYSTAL_PICKAXE =
+            ITEMS.register("crystal_pickaxe", ItemCrystalPickaxe::new);
+    public static final RegistryObject<ItemCrystalAxe> CRYSTAL_AXE =
+            ITEMS.register("crystal_axe", ItemCrystalAxe::new);
+    public static final RegistryObject<ItemCrystalShovel> CRYSTAL_SHOVEL =
+            ITEMS.register("crystal_shovel", ItemCrystalShovel::new);
+    public static final RegistryObject<ItemCrystalSword> CRYSTAL_SWORD =
+            ITEMS.register("crystal_sword", ItemCrystalSword::new);
+
     // TODO: Add remaining items as they are implemented:
-    // Crystal tools (pickaxe, axe, shovel, sword)
     // Constellation papers, attuned crystals
     // Parchment, infused glass, resonating gem
     // Mantles (constellation cloaks)
