@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.common.network.play.server;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.starlight.ClientStarlightNetworkCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -95,10 +96,8 @@ public class PktSyncStarlightNetwork {
     }
 
     private static void handleClient(@Nonnull PktSyncStarlightNetwork msg) {
-        // TODO: Update client-side starlight network cache for beam rendering.
-        // The client renderer will read from this cache to draw starlight beams
-        // between source and target positions.
-        AstralSorcery.log.trace("Received starlight network sync: source={}, targets={}, starlight={}",
-                msg.source, msg.connectedTargets.size(), msg.starlight);
+        ClientStarlightNetworkCache.updateSource(msg.source, msg.connectedTargets, msg.starlight);
+        AstralSorcery.log.debug("Synced starlight network: source={}, targets={}, starlight={}",
+                msg.source.toShortString(), msg.connectedTargets.size(), msg.starlight);
     }
 }

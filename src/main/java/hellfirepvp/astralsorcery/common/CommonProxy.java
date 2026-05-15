@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkRegistry;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.CreativeTabsAS;
@@ -78,6 +79,9 @@ public class CommonProxy {
         forgeBus.addGenericListener(net.minecraft.world.entity.Entity.class, CapabilitySetup::attachPlayerCaps);
         forgeBus.addGenericListener(net.minecraft.world.level.chunk.LevelChunk.class, CapabilitySetup::attachChunkCaps);
         forgeBus.addListener(CapabilitySetup::onPlayerClone);
+
+        // Starlight network tick + player sync events
+        forgeBus.register(new StarlightNetworkRegistry());
     }
 
     private void onCommonSetup(@Nonnull FMLCommonSetupEvent event) {
