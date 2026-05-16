@@ -41,6 +41,8 @@ public class BlockEntityChalice extends BlockEntityTick {
     private final PrecisionSingleFluidTank tank;
     private final LazyOptional<IFluidHandler> fluidCap;
 
+    private int ticksExisted = 0;
+
     @Nonnull
     private final List<BlockPos> linkedChalices = new ArrayList<>();
 
@@ -53,6 +55,7 @@ public class BlockEntityChalice extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side fluid level visual effects
             return;
@@ -69,6 +72,22 @@ public class BlockEntityChalice extends BlockEntityTick {
     @Nonnull
     public PrecisionSingleFluidTank getTank() {
         return tank;
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
+    }
+
+    /**
+     * Get the amount of fluid stored in the chalice in millibuckets.
+     * Used by the renderer to determine fluid level.
+     */
+    public int getFluidAmount() {
+        return tank.getFluidAmount();
     }
 
     @Nonnull

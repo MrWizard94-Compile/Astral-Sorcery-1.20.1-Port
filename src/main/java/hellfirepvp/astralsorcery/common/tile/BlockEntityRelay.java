@@ -41,6 +41,7 @@ public class BlockEntityRelay extends BlockEntityTick {
 
     @Nullable
     private BlockPos linkedAltar = null;
+    private int ticksExisted = 0;
 
     public BlockEntityRelay(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.RELAY.get(), pos, state);
@@ -51,6 +52,7 @@ public class BlockEntityRelay extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side relay glow/particle effects
             return;
@@ -60,6 +62,10 @@ public class BlockEntityRelay extends BlockEntityTick {
         // 1. Check if linkedAltar position contains a valid BlockEntityAltar
         // 2. Collect starlight based on heldItem properties
         // 3. Forward collected starlight to the linked altar
+    }
+
+    public int getTicksExisted() {
+        return ticksExisted;
     }
 
     @Nonnull

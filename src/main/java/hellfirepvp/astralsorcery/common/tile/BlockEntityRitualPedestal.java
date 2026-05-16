@@ -36,6 +36,7 @@ public class BlockEntityRitualPedestal extends BlockEntityTick {
     @Nullable
     private ResourceLocation attunedConstellation = null;
 
+    private int ticksExisted = 0;
     private boolean ritualActive = false;
     private int effectRange = DEFAULT_EFFECT_RANGE;
     private boolean hasMultiblock = false;
@@ -47,6 +48,7 @@ public class BlockEntityRitualPedestal extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side ritual effect particles (constellation-dependent)
             return;
@@ -79,6 +81,14 @@ public class BlockEntityRitualPedestal extends BlockEntityTick {
     public void setAttunedConstellation(@Nullable ResourceLocation constellation) {
         this.attunedConstellation = constellation;
         markForUpdate();
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
     }
 
     public boolean isRitualActive() {

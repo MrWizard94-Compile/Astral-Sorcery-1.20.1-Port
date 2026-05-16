@@ -29,6 +29,7 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     private ItemStack heldCrystal = ItemStack.EMPTY;
 
     private int attunementTick = 0;
+    private int ticksExisted = 0;
     private boolean structureValid = false;
     private boolean isAttuning = false;
 
@@ -42,6 +43,7 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side attunement visual effects (constellation lines, particles)
             return;
@@ -70,6 +72,14 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
 
     public int getAttunementTick() {
         return attunementTick;
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
     }
 
     public boolean isStructureValid() {

@@ -26,6 +26,7 @@ public class BlockEntityGateway extends BlockEntityTick {
     private String displayName = null;
 
     private boolean structureValid = false;
+    private int ticksExisted = 0;
 
     public BlockEntityGateway(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.GATEWAY.get(), pos, state);
@@ -43,6 +44,7 @@ public class BlockEntityGateway extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side gateway portal particles
             return;
@@ -60,6 +62,10 @@ public class BlockEntityGateway extends BlockEntityTick {
     public void setDisplayName(@Nullable String name) {
         this.displayName = name;
         markForUpdate();
+    }
+
+    public int getTicksExisted() {
+        return ticksExisted;
     }
 
     public boolean isStructureValid() {

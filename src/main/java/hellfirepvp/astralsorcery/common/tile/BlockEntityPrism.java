@@ -35,6 +35,7 @@ public class BlockEntityPrism extends BlockEntityTick {
     @Nullable
     private ItemStack insertedLens = null;
 
+    private int ticksExisted = 0;
     private double transmissionEfficiency = 0.85;
 
     public BlockEntityPrism(@Nonnull BlockPos pos, @Nonnull BlockState state) {
@@ -44,6 +45,7 @@ public class BlockEntityPrism extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side beam split rendering particles
             return;
@@ -55,6 +57,14 @@ public class BlockEntityPrism extends BlockEntityTick {
         // 3. Apply color filter from insertedLens if present
         // 4. Split and forward to all linkedTargets (up to 4)
         //    - Each target receives starlight / linkedTargets.size()
+    }
+
+    public int getTicksExisted() {
+        return ticksExisted;
+    }
+
+    public boolean isTransmitting() {
+        return !linkedTargets.isEmpty();
     }
 
     @Nonnull

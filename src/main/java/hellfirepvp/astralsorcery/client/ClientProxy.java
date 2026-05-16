@@ -9,9 +9,17 @@ package hellfirepvp.astralsorcery.client;
 
 import hellfirepvp.astralsorcery.client.event.ClientRenderEventHandler;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAltar;
+import hellfirepvp.astralsorcery.client.render.tile.RenderAttunementAltar;
+import hellfirepvp.astralsorcery.client.render.tile.RenderChalice;
 import hellfirepvp.astralsorcery.client.render.tile.RenderCollectorCrystal;
+import hellfirepvp.astralsorcery.client.render.tile.RenderFountain;
+import hellfirepvp.astralsorcery.client.render.tile.RenderGateway;
 import hellfirepvp.astralsorcery.client.render.tile.RenderInfuser;
 import hellfirepvp.astralsorcery.client.render.tile.RenderLens;
+import hellfirepvp.astralsorcery.client.render.tile.RenderPrism;
+import hellfirepvp.astralsorcery.client.render.tile.RenderRelay;
+import hellfirepvp.astralsorcery.client.render.tile.RenderRitualPedestal;
+import hellfirepvp.astralsorcery.client.render.tile.RenderTelescope;
 import hellfirepvp.astralsorcery.client.render.tile.RenderWell;
 import hellfirepvp.astralsorcery.client.sky.AstralSkyRenderer;
 import hellfirepvp.astralsorcery.common.CommonProxy;
@@ -76,17 +84,18 @@ public class ClientProxy extends CommonProxy {
      */
     private void onRegisterRenderers(@Nonnull EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityTypesAS.ALTAR.get(), RenderAltar::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.ATTUNEMENT_ALTAR.get(), RenderAttunementAltar::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.COLLECTOR_CRYSTAL.get(), RenderCollectorCrystal::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.WELL.get(), RenderWell::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.INFUSER.get(), RenderInfuser::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.LENS.get(), RenderLens::new);
-
-        // TODO: Register remaining BERs as they are implemented:
-        // event.registerBlockEntityRenderer(BlockEntityTypesAS.ATTUNEMENT_ALTAR.get(), RenderAttunementAltar::new);
-        // event.registerBlockEntityRenderer(BlockEntityTypesAS.RITUAL_PEDESTAL.get(), RenderRitualPedestal::new);
-        // event.registerBlockEntityRenderer(BlockEntityTypesAS.CHALICE.get(), RenderChalice::new);
-        // event.registerBlockEntityRenderer(BlockEntityTypesAS.TELESCOPE.get(), RenderTelescope::new);
-        // event.registerBlockEntityRenderer(BlockEntityTypesAS.FOUNTAIN.get(), RenderFountain::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.PRISM.get(), RenderPrism::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.RELAY.get(), RenderRelay::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.RITUAL_PEDESTAL.get(), RenderRitualPedestal::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.CHALICE.get(), RenderChalice::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.TELESCOPE.get(), RenderTelescope::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.GATEWAY.get(), RenderGateway::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.FOUNTAIN.get(), RenderFountain::new);
     }
 
     /**

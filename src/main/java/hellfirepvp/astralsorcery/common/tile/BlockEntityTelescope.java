@@ -25,6 +25,14 @@ public class BlockEntityTelescope extends BlockEntitySynchronized {
         super(BlockEntityTypesAS.TELESCOPE.get(), pos, state);
     }
 
+    /**
+     * Get a tick count for renderer animations.
+     * Since the telescope does not tick, uses the level game time.
+     */
+    public long getTicksExisted() {
+        return getLevel() != null ? getLevel().getGameTime() : 0L;
+    }
+
     public boolean hasBeenUsed() {
         return hasBeenUsed;
     }

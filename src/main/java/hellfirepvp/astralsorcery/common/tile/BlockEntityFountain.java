@@ -40,6 +40,7 @@ public class BlockEntityFountain extends BlockEntityTick {
 
     private boolean structureValid = false;
     private int effectTick = 0;
+    private int ticksExisted = 0;
 
     public BlockEntityFountain(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.FOUNTAIN.get(), pos, state);
@@ -50,6 +51,7 @@ public class BlockEntityFountain extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side fountain visual effects (liquid starlight stream)
             return;
@@ -62,6 +64,10 @@ public class BlockEntityFountain extends BlockEntityTick {
         //    - Apply effect based on fountainPrime type
         //    - Consume liquid starlight from tank
         // 3. If not valid, reset effectTick
+    }
+
+    public int getTicksExisted() {
+        return ticksExisted;
     }
 
     @Nonnull
