@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:wand"
+    },
+    "title": {
+      "translate": "adv.astralsorcery.root.title"
+    },
+    "description": {
+      "translate": "adv.astralsorcery.root.desc"
+    },
+    "background": "astralsorcery:textures/gui/advancements/background.png",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "has_wand": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:wand"]
+          }
+        ]
+      }
+    }
+  }
+}

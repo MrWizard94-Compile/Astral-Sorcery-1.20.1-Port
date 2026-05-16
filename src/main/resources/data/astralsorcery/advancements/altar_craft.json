@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:altar"
+    },
+    "title": {
+      "translate": "adv.astralsorcery.altar_craft.title"
+    },
+    "description": {
+      "translate": "adv.astralsorcery.altar_craft.desc"
+    },
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "astralsorcery:root",
+  "criteria": {
+    "craft": {
+      "trigger": "astralsorcery:altar_craft"
+    }
+  }
+}

@@ -10,9 +10,12 @@ package hellfirepvp.astralsorcery.common.loot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
@@ -74,17 +77,31 @@ public final class GlobalLootModifierAS {
         @Nonnull
         protected ObjectArrayList<ItemStack> doApply(@Nonnull ObjectArrayList<ItemStack> generatedLoot,
                                                      @Nonnull LootContext context) {
-            if (context.getRandom().nextFloat() >= dropChance) {
+            RandomSource random = context.getRandom();
+            if (random.nextFloat() >= dropChance) {
                 return generatedLoot;
             }
 
-            // TODO: Select an appropriate AS item based on context:
-            // - Stardust for mob kills
-            // - Constellation papers for dungeon chests
-            // - Aquamarine shards for underground chests
-            // For now, this is a structural placeholder. Item selection
-            // will be wired once ItemsAS has the full set of drops.
+            // Select an appropriate AS item based on loot context.
+            // Entity kills get stardust; chest loot gets constellation papers
+            // or aquamarine depending on a weighted roll.
+            ItemStack bonus;
+            if (context.hasParam(LootContextParams.THIS_ENTITY)) {
+                // Mob kill — drop stardust
+                bonus = new ItemStack(ItemsAS.STARDUST.get(), 1 + random.nextInt(2));
+            } else {
+                // Chest/block loot — weighted pick
+                float roll = random.nextFloat();
+                if (roll < 0.3f) {
+                    bonus = new ItemStack(ItemsAS.CONSTELLATION_PAPER.get());
+                } else if (roll < 0.6f) {
+                    bonus = new ItemStack(ItemsAS.AQUAMARINE.get(), 1 + random.nextInt(3));
+                } else {
+                    bonus = new ItemStack(ItemsAS.STARDUST.get(), 1 + random.nextInt(2));
+                }
+            }
 
+            generatedLoot.add(bonus);
             return generatedLoot;
         }
 

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:altar"
+    },
+    "title": {
+      "translate": "adv.astralsorcery.reach_radiance.title"
+    },
+    "description": {
+      "translate": "adv.astralsorcery.reach_radiance.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:altar_craft",
+  "criteria": {
+    "radiance": {
+      "trigger": "astralsorcery:reach_tier",
+      "conditions": {}
+    }
+  }
+}

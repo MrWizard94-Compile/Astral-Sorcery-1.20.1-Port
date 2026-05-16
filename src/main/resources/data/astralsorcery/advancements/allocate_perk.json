@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:perk_gem_day"
+    },
+    "title": {
+      "translate": "adv.astralsorcery.allocate_perk.title"
+    },
+    "description": {
+      "translate": "adv.astralsorcery.allocate_perk.desc"
+    },
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "astralsorcery:attune_self",
+  "criteria": {
+    "perk": {
+      "trigger": "astralsorcery:allocate_perk"
+    }
+  }
+}

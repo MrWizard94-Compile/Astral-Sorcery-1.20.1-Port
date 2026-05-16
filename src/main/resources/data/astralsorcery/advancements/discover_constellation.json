@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:constellation_paper"
+    },
+    "title": {
+      "translate": "adv.astralsorcery.discover_constellation.title"
+    },
+    "description": {
+      "translate": "adv.astralsorcery.discover_constellation.desc"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:root",
+  "criteria": {
+    "discover": {
+      "trigger": "astralsorcery:discover_constellation"
+    }
+  }
+}

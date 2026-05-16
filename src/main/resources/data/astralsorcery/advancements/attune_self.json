@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:attunement_altar"
+    },
+    "title": {
+      "translate": "adv.astralsorcery.attune_self.title"
+    },
+    "description": {
+      "translate": "adv.astralsorcery.attune_self.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:discover_constellation",
+  "criteria": {
+    "attune": {
+      "trigger": "astralsorcery:attune_player"
+    }
+  }
+}

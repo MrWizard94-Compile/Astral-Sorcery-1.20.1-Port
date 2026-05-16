@@ -120,5 +120,18 @@
   "command.astralsorcery.constellation.add": "Discovered constellation %s for %s",
 
   "jei.astralsorcery.transmutation": "Starlight Transmutation",
-  "jei.astralsorcery.liquid_interaction": "Liquid Interaction"
+  "jei.astralsorcery.liquid_interaction": "Liquid Interaction",
+
+  "adv.astralsorcery.root.title": "Astral Sorcery",
+  "adv.astralsorcery.root.desc": "Obtain a Resonating Wand and gaze upon the stars",
+  "adv.astralsorcery.discover_constellation.title": "Stargazer",
+  "adv.astralsorcery.discover_constellation.desc": "Discover your first constellation",
+  "adv.astralsorcery.attune_self.title": "Attuned",
+  "adv.astralsorcery.attune_self.desc": "Attune yourself to a constellation at the Attunement Altar",
+  "adv.astralsorcery.altar_craft.title": "Starlight Crafting",
+  "adv.astralsorcery.altar_craft.desc": "Craft your first item at a Luminous Crafting Table",
+  "adv.astralsorcery.allocate_perk.title": "Star Child",
+  "adv.astralsorcery.allocate_perk.desc": "Allocate your first perk point in the constellation tree",
+  "adv.astralsorcery.reach_radiance.title": "Radiance",
+  "adv.astralsorcery.reach_radiance.desc": "Upgrade your altar to the Radiance tier"
 }
