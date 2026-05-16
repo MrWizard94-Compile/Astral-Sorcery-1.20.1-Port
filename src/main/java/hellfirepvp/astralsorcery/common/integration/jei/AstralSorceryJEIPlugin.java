@@ -4,11 +4,15 @@
 package hellfirepvp.astralsorcery.common.integration.jei;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.crafting.recipe.BlockTransmutation;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
+import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInteraction;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
 import hellfirepvp.astralsorcery.common.integration.jei.category.AltarRecipeCategory;
 import hellfirepvp.astralsorcery.common.integration.jei.category.InfuserRecipeCategory;
+import hellfirepvp.astralsorcery.common.integration.jei.category.LiquidInteractionRecipeCategory;
+import hellfirepvp.astralsorcery.common.integration.jei.category.TransmutationRecipeCategory;
 import hellfirepvp.astralsorcery.common.integration.jei.category.WellRecipeCategory;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import mezz.jei.api.IModPlugin;
@@ -29,8 +33,8 @@ import java.util.List;
  *   <li>Altar crafting (all 4 tiers)</li>
  *   <li>Starlight infusion</li>
  *   <li>Lightwell liquefaction</li>
- *   <li>Block transmutation (TODO)</li>
- *   <li>Liquid interaction (TODO)</li>
+ *   <li>Block transmutation</li>
+ *   <li>Liquid interaction</li>
  * </ul>
  *
  * <p>1.16 → 1.20: JEI API moved to builder pattern for categories.
@@ -51,10 +55,13 @@ public class AstralSorceryJEIPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
+        var guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(
-                new AltarRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
-                new InfuserRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
-                new WellRecipeCategory(registration.getJeiHelpers().getGuiHelper())
+                new AltarRecipeCategory(guiHelper),
+                new InfuserRecipeCategory(guiHelper),
+                new WellRecipeCategory(guiHelper),
+                new TransmutationRecipeCategory(guiHelper),
+                new LiquidInteractionRecipeCategory(guiHelper)
         );
     }
 
@@ -63,6 +70,8 @@ public class AstralSorceryJEIPlugin implements IModPlugin {
         AltarRecipeCategory.registerCatalysts(registration);
         InfuserRecipeCategory.registerCatalysts(registration);
         WellRecipeCategory.registerCatalysts(registration);
+        TransmutationRecipeCategory.registerCatalysts(registration);
+        LiquidInteractionRecipeCategory.registerCatalysts(registration);
     }
 
     @Override
@@ -80,5 +89,13 @@ public class AstralSorceryJEIPlugin implements IModPlugin {
         List<WellLiquefaction> wellRecipes =
                 recipeManager.getAllRecipesFor(RecipeTypesAS.WELL_LIQUEFACTION.get());
         registration.addRecipes(WellRecipeCategory.RECIPE_TYPE, wellRecipes);
+
+        List<BlockTransmutation> transmutationRecipes =
+                recipeManager.getAllRecipesFor(RecipeTypesAS.BLOCK_TRANSMUTATION.get());
+        registration.addRecipes(TransmutationRecipeCategory.RECIPE_TYPE, transmutationRecipes);
+
+        List<LiquidInteraction> liquidInteractionRecipes =
+                recipeManager.getAllRecipesFor(RecipeTypesAS.LIQUID_INTERACTION.get());
+        registration.addRecipes(LiquidInteractionRecipeCategory.RECIPE_TYPE, liquidInteractionRecipes);
     }
 }

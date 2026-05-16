@@ -117,5 +117,8 @@
 
   "command.astralsorcery.reset": "Reset Astral Sorcery progress for %s",
   "command.astralsorcery.maximize": "Maximized starlight for %s",
-  "command.astralsorcery.constellation.add": "Discovered constellation %s for %s"
+  "command.astralsorcery.constellation.add": "Discovered constellation %s for %s",
+
+  "jei.astralsorcery.transmutation": "Starlight Transmutation",
+  "jei.astralsorcery.liquid_interaction": "Liquid Interaction"
 }
