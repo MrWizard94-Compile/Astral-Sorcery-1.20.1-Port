@@ -82,6 +82,22 @@ public class ContainerAltarBase extends AbstractContainerMenu {
         return altar;
     }
 
+    /**
+     * Get the current starlight stored in the altar.
+     * Used by the screen to render the starlight meter.
+     */
+    public float getStarlightStored() {
+        return altar.getStarlightStored();
+    }
+
+    /**
+     * Get the altar's maximum starlight capacity.
+     * Used by the screen to render the starlight meter.
+     */
+    public float getStarlightCapacity() {
+        return altar.getStarlightCapacity();
+    }
+
     @Override
     @Nonnull
     public ItemStack quickMoveStack(@Nonnull Player player, int index) {

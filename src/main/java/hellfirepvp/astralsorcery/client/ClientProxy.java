@@ -21,9 +21,12 @@ import hellfirepvp.astralsorcery.client.render.tile.RenderRelay;
 import hellfirepvp.astralsorcery.client.render.tile.RenderRitualPedestal;
 import hellfirepvp.astralsorcery.client.render.tile.RenderTelescope;
 import hellfirepvp.astralsorcery.client.render.tile.RenderWell;
+import hellfirepvp.astralsorcery.client.screen.ScreenAltarDiscovery;
 import hellfirepvp.astralsorcery.client.sky.AstralSkyRenderer;
 import hellfirepvp.astralsorcery.common.CommonProxy;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.MenuTypesAS;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -105,8 +108,11 @@ public class ClientProxy extends CommonProxy {
     private void onClientSetup(@Nonnull FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // Register menu screens
-            // MenuScreens.register(MenuTypesAS.ALTAR.get(), ScreenAltar::new);
-            // MenuScreens.register(MenuTypesAS.ATTUNEMENT_ALTAR.get(), ScreenAttunementAltar::new);
+            MenuScreens.register(MenuTypesAS.ALTAR_DISCOVERY.get(), ScreenAltarDiscovery::new);
+            // TODO: Register screens for higher altar tiers once implemented
+            // MenuScreens.register(MenuTypesAS.ALTAR_ATTUNEMENT.get(), ScreenAltarAttunement::new);
+            // MenuScreens.register(MenuTypesAS.ALTAR_CONSTELLATION.get(), ScreenAltarConstellation::new);
+            // MenuScreens.register(MenuTypesAS.ALTAR_RADIANCE.get(), ScreenAltarRadiance::new);
 
             // TODO: Register keybinds
             // TODO: Register overlay renderers
