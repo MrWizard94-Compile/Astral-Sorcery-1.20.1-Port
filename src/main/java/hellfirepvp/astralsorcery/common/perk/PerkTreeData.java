@@ -170,6 +170,84 @@ public final class PerkTreeData {
         connect(rootEvorsio, rootDiscidia);
 
         // ======================================================================
+        // Inter-branch connector perks (bridging adjacent branches)
+        // ======================================================================
+
+        // Discidia → Armara bridge (attack speed + armor hybrid)
+        SmallPerk bridgeDA = smallPerk("bridge_da", 16, -22, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.03f);
+        PerkTree.register(bridgeDA);
+        connect(rootDiscidia, bridgeDA);
+        connect(rootArmara, bridgeDA);
+
+        // Armara → Vicio bridge (knockback resist + speed hybrid)
+        SmallPerk bridgeAV = smallPerk("bridge_av", 26, 10, PerkAttributeTypesAS.ATTR_TYPE_KNOCKBACK_RESIST, 0.05f);
+        PerkTree.register(bridgeAV);
+        connect(rootArmara, bridgeAV);
+        connect(rootVicio, bridgeAV);
+
+        // Vicio → Aevitas bridge (reach + regen hybrid)
+        SmallPerk bridgeVA = smallPerk("bridge_va", 0, 30, PerkAttributeTypesAS.ATTR_TYPE_REACH, 0.3f);
+        PerkTree.register(bridgeVA);
+        connect(rootVicio, bridgeVA);
+        connect(rootAevitas, bridgeVA);
+
+        // Aevitas → Evorsio bridge (health + mining hybrid)
+        SmallPerk bridgeAE = smallPerk("bridge_ae", -26, 10, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 1.0f);
+        PerkTree.register(bridgeAE);
+        connect(rootAevitas, bridgeAE);
+        connect(rootEvorsio, bridgeAE);
+
+        // Evorsio → Discidia bridge (experience + damage hybrid)
+        SmallPerk bridgeED = smallPerk("bridge_ed", -16, -22, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.03f);
+        PerkTree.register(bridgeED);
+        connect(rootEvorsio, bridgeED);
+        connect(rootDiscidia, bridgeED);
+
+        // ======================================================================
+        // Secondary small perk paths (alternate branching from each root)
+        // ======================================================================
+
+        // Discidia alt path: crit-focused
+        SmallPerk discAlt1 = smallPerk("disc_a1", -4, -36, PerkAttributeTypesAS.ATTR_TYPE_CRIT_CHANCE, 0.04f);
+        SmallPerk discAlt2 = smallPerk("disc_a2", -8, -42, PerkAttributeTypesAS.ATTR_TYPE_CRIT_MULTIPLIER, 0.1f);
+        PerkTree.register(discAlt1);
+        PerkTree.register(discAlt2);
+        connect(rootDiscidia, discAlt1);
+        connect(discAlt1, discAlt2);
+
+        // Armara alt path: toughness-focused
+        SmallPerk armaAlt1 = smallPerk("arma_a1", 32, -4, PerkAttributeTypesAS.ATTR_TYPE_ARMOR_TOUGHNESS, 1.0f);
+        SmallPerk armaAlt2 = smallPerk("arma_a2", 38, 0, PerkAttributeTypesAS.ATTR_TYPE_KNOCKBACK_RESIST, 0.1f);
+        PerkTree.register(armaAlt1);
+        PerkTree.register(armaAlt2);
+        connect(rootArmara, armaAlt1);
+        connect(armaAlt1, armaAlt2);
+
+        // Vicio alt path: swim/step-height related
+        SmallPerk viciAlt1 = smallPerk("vici_a1", 12, 28, PerkAttributeTypesAS.ATTR_TYPE_MOVEMENT_SPEED, 0.02f);
+        SmallPerk viciAlt2 = smallPerk("vici_a2", 8, 34, PerkAttributeTypesAS.ATTR_TYPE_REACH, 0.4f);
+        PerkTree.register(viciAlt1);
+        PerkTree.register(viciAlt2);
+        connect(rootVicio, viciAlt1);
+        connect(viciAlt1, viciAlt2);
+
+        // Aevitas alt path: life steal focused
+        SmallPerk aevAlt1 = smallPerk("aev_a1", -12, 28, PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL, 0.03f);
+        SmallPerk aevAlt2 = smallPerk("aev_a2", -8, 34, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 1.0f);
+        PerkTree.register(aevAlt1);
+        PerkTree.register(aevAlt2);
+        connect(rootAevitas, aevAlt1);
+        connect(aevAlt1, aevAlt2);
+
+        // Evorsio alt path: experience focused
+        SmallPerk evorAlt1 = smallPerk("evor_a1", -32, -4, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.08f);
+        SmallPerk evorAlt2 = smallPerk("evor_a2", -38, 0, PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.05f);
+        PerkTree.register(evorAlt1);
+        PerkTree.register(evorAlt2);
+        connect(rootEvorsio, evorAlt1);
+        connect(evorAlt1, evorAlt2);
+
+        // ======================================================================
         // Focus perks at the center (accessible from any root)
         // ======================================================================
         FocusPerk focusStarlight = new FocusPerk(AstralSorcery.key("focus_starlight"), 0, 0, AstralSorcery.key("astralis"));
@@ -181,12 +259,24 @@ public final class PerkTreeData {
                 ModifierType.ADDED_MULTIPLY, 0.10f));
         PerkTree.register(focusStarlight);
 
-        // Connect focus to all roots
+        // Second focus — combat efficiency
+        FocusPerk focusCombat = new FocusPerk(AstralSorcery.key("focus_combat"), 0, -8, AstralSorcery.key("discidia"));
+        focusCombat.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED.getKey(),
+                ModifierType.ADDED_MULTIPLY, 0.15f));
+        focusCombat.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_CRIT_MULTIPLIER.getKey(),
+                ModifierType.ADDITION, 0.20f));
+        PerkTree.register(focusCombat);
+
+        // Connect focuses to all roots
         connect(focusStarlight, rootDiscidia);
         connect(focusStarlight, rootArmara);
         connect(focusStarlight, rootVicio);
         connect(focusStarlight, rootAevitas);
         connect(focusStarlight, rootEvorsio);
+
+        connect(focusCombat, focusStarlight);
     }
 
     // =========================================================================
