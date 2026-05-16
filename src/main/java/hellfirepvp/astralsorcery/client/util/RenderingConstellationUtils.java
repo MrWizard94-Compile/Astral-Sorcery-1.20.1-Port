@@ -13,6 +13,8 @@ import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.star.StarConnection;
 import hellfirepvp.astralsorcery.common.constellation.star.StarLocation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -189,6 +191,65 @@ public final class RenderingConstellationUtils {
         RenderingUtils.vertex(buffer, matrix, x2 - nx, y2 - ny, 0, r, g, b, a, 1, 0);
         RenderingUtils.vertex(buffer, matrix, x2 + nx, y2 + ny, 0, r, g, b, a, 1, 1);
         RenderingUtils.vertex(buffer, matrix, x1 + nx, y1 + ny, 0, r, g, b, a, 0, 1);
+    }
+
+    // =========================================================================
+    // GUI convenience methods (used by Journal screen)
+    // =========================================================================
+
+    /**
+     * Render a small constellation icon in a GUI context.
+     * Used for constellation list grids.
+     *
+     * @param graphics      the GUI graphics context
+     * @param constellation the constellation to render
+     * @param x             left edge of render area
+     * @param y             top edge of render area
+     * @param width         width of render area
+     * @param height        height of render area
+     * @param brightness    brightness multiplier [0, 1]
+     */
+    public static void renderConstellationSmall(@Nonnull GuiGraphics graphics,
+                                                 @Nonnull IConstellation constellation,
+                                                 int x, int y, int width, int height,
+                                                 float brightness) {
+        PoseStack poseStack = graphics.pose();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance()
+                .renderBuffers().bufferSource();
+
+        float scale = Math.min(width, height) / 31.0f;
+        renderConstellation(bufferSource, poseStack, constellation,
+                x, y, scale, brightness);
+
+        bufferSource.endBatch();
+    }
+
+    /**
+     * Render a large constellation display in a GUI context.
+     * Used for detailed constellation view.
+     *
+     * @param graphics      the GUI graphics context
+     * @param constellation the constellation to render
+     * @param x             left edge of render area
+     * @param y             top edge of render area
+     * @param width         width of render area
+     * @param height        height of render area
+     * @param brightness    brightness multiplier [0, 1]
+     */
+    public static void renderConstellationLarge(@Nonnull GuiGraphics graphics,
+                                                 @Nonnull IConstellation constellation,
+                                                 int x, int y, int width, int height,
+                                                 float brightness) {
+        PoseStack poseStack = graphics.pose();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance()
+                .renderBuffers().bufferSource();
+
+        float scale = Math.min(width, height) / 31.0f;
+        renderConstellationTwinkling(bufferSource, poseStack, constellation,
+                x, y, scale, brightness, Color.WHITE,
+                (int) (System.currentTimeMillis() / 50), 0.0f);
+
+        bufferSource.endBatch();
     }
 
     // =========================================================================

@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectManager;
+import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
 import hellfirepvp.astralsorcery.common.starlight.ClientStarlightNetworkCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -39,6 +40,7 @@ public class ClientRenderEventHandler {
         if (Minecraft.getInstance().isPaused()) return;
 
         EffectManager.getInstance().tick();
+        KeyBindingsAS.handleInput();
     }
 
     @SubscribeEvent

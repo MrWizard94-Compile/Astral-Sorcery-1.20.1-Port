@@ -11,6 +11,7 @@ import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -79,6 +80,40 @@ public abstract class AbstractPerk {
     @Nonnull
     public PerkCategory getCategory() {
         return category;
+    }
+
+    /**
+     * Convenience: tree X position from tree point.
+     */
+    public int getX() {
+        return treePoint.getOffsetX();
+    }
+
+    /**
+     * Convenience: tree Y position from tree point.
+     */
+    public int getY() {
+        return treePoint.getOffsetY();
+    }
+
+    /**
+     * Get the display name of this perk (translated).
+     */
+    @Nonnull
+    public Component getName() {
+        return Component.translatable("perk.astralsorcery.name." + key.getPath());
+    }
+
+    /**
+     * Get tooltip description lines for this perk (modifier descriptions).
+     */
+    @Nonnull
+    public List<Component> getTooltipDescription() {
+        List<Component> lines = new ArrayList<>();
+        for (PerkAttributeModifier mod : modifiers) {
+            lines.add(mod.getDescription());
+        }
+        return lines;
     }
 
     public boolean isEnabled() {

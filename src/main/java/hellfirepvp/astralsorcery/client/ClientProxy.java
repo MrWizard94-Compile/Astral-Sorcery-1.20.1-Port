@@ -8,6 +8,9 @@
 package hellfirepvp.astralsorcery.client;
 
 import hellfirepvp.astralsorcery.client.event.ClientRenderEventHandler;
+import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntitySpectralTool;
+import hellfirepvp.astralsorcery.client.render.layer.LayerStarryGlow;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAltar;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAttunementAltar;
 import hellfirepvp.astralsorcery.client.render.tile.RenderChalice;
@@ -28,11 +31,17 @@ import hellfirepvp.astralsorcery.client.screen.ScreenAltarRadiance;
 import hellfirepvp.astralsorcery.client.sky.AstralSkyRenderer;
 import hellfirepvp.astralsorcery.common.CommonProxy;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.MenuTypesAS;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -64,6 +73,12 @@ public class ClientProxy extends CommonProxy {
 
         // Block entity renderer registration (mod bus event)
         modBus.addListener(this::onRegisterRenderers);
+
+        // Player layer registration
+        modBus.addListener(this::onAddLayers);
+
+        // Keybind registration
+        modBus.addListener(KeyBindingsAS::register);
 
         // Client setup (menu screens, etc.)
         modBus.addListener(this::onClientSetup);
@@ -102,6 +117,24 @@ public class ClientProxy extends CommonProxy {
         event.registerBlockEntityRenderer(BlockEntityTypesAS.TELESCOPE.get(), RenderTelescope::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.GATEWAY.get(), RenderGateway::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.FOUNTAIN.get(), RenderFountain::new);
+
+        // Entity renderers
+        event.registerEntityRenderer(EntityTypesAS.SPECTRAL_TOOL.get(), RenderEntitySpectralTool::new);
+    }
+
+    /**
+     * Register player render layers (starry glow effect for attuned players).
+     */
+    @SuppressWarnings("unchecked")
+    private void onAddLayers(@Nonnull EntityRenderersEvent.AddLayers event) {
+        for (String skin : event.getSkins()) {
+            LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer =
+                    (LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>)
+                            (LivingEntityRenderer<?, ?>) event.getSkin(skin);
+            if (renderer != null) {
+                renderer.addLayer(new LayerStarryGlow(renderer));
+            }
+        }
     }
 
     /**
@@ -116,8 +149,8 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypesAS.ALTAR_CONSTELLATION.get(), ScreenAltarConstellation::new);
             MenuScreens.register(MenuTypesAS.ALTAR_RADIANCE.get(), ScreenAltarRadiance::new);
 
-            // TODO: Register keybinds
-            // TODO: Register overlay renderers
+            // Keybinds registered via RegisterKeyMappingsEvent (mod bus)
+            // TODO: Register overlay renderers (HUD effects, starlight gauge)
         });
     }
 }

@@ -52,6 +52,16 @@ public class PerkTreePoint {
     }
 
     /**
+     * Resolves the perk associated with this tree point.
+     *
+     * @return the perk, or null if the tree hasn't registered it yet
+     */
+    @javax.annotation.Nullable
+    public AbstractPerk getPerk() {
+        return PerkTree.getPerk(perkKey);
+    }
+
+    /**
      * Gets the squared distance from this point to another in tree space.
      */
     public double distanceSqTo(@Nonnull PerkTreePoint other) {

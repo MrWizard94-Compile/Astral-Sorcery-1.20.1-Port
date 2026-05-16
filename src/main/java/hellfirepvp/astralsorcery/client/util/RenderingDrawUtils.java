@@ -274,6 +274,71 @@ public final class RenderingDrawUtils {
     }
 
     // =========================================================================
+    // Line and colored textured quad drawing
+    // =========================================================================
+
+    /**
+     * Draw a line between two points using a thin quad.
+     *
+     * @param graphics  the GUI graphics context
+     * @param poseStack the current pose stack (for transforms)
+     * @param x1        start X
+     * @param y1        start Y
+     * @param x2        end X
+     * @param y2        end Y
+     * @param width     line width in pixels
+     * @param color     line color
+     */
+    public static void drawLine(@Nonnull GuiGraphics graphics,
+                                 @Nonnull PoseStack poseStack,
+                                 float x1, float y1, float x2, float y2,
+                                 float width, @Nonnull Color color) {
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float len = (float) Math.sqrt(dx * dx + dy * dy);
+        if (len < 0.001f) return;
+        float nx = -dy / len * width * 0.5f;
+        float ny = dx / len * width * 0.5f;
+
+        int argb = color.getRGB();
+        int minX = (int) Math.min(x1 - nx, Math.min(x1 + nx, Math.min(x2 - nx, x2 + nx)));
+        int minY = (int) Math.min(y1 - ny, Math.min(y1 + ny, Math.min(y2 - ny, y2 + ny)));
+        int maxX = (int) Math.max(x1 - nx, Math.max(x1 + nx, Math.max(x2 - nx, x2 + nx))) + 1;
+        int maxY = (int) Math.max(y1 - ny, Math.max(y1 + ny, Math.max(y2 - ny, y2 + ny))) + 1;
+        // Simplified: draw a thin filled rect along the line direction
+        graphics.fill(minX, minY, maxX, maxY, argb);
+    }
+
+    /**
+     * Draw a textured quad with a color tint.
+     *
+     * @param graphics the GUI graphics context
+     * @param texture  the texture to render
+     * @param x        left edge (float for sub-pixel positioning)
+     * @param y        top edge
+     * @param width    quad width
+     * @param height   quad height
+     * @param color    tint color (blended multiplicatively)
+     */
+    public static void drawTexturedRectColored(@Nonnull GuiGraphics graphics,
+                                                @Nonnull ResourceLocation texture,
+                                                float x, float y, float width, float height,
+                                                @Nonnull Color color) {
+        int ix = (int) x;
+        int iy = (int) y;
+        int iw = (int) width;
+        int ih = (int) height;
+        // Set color tint via setColor before blit
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(
+                color.getRed() / 255.0f,
+                color.getGreen() / 255.0f,
+                color.getBlue() / 255.0f,
+                color.getAlpha() / 255.0f);
+        graphics.blit(texture, ix, iy, 0, 0, iw, ih, iw, ih);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    // =========================================================================
     // Progress bar / gauge drawing
     // =========================================================================
 

@@ -109,9 +109,47 @@ public final class PerkTree {
     }
 
     @Nonnull
-    public static Set<ResourceLocation> getConnections(@Nonnull ResourceLocation perkKey) {
+    public static Set<ResourceLocation> getAdjacentKeys(@Nonnull ResourceLocation perkKey) {
         return Collections.unmodifiableSet(
                 CONNECTIONS.getOrDefault(perkKey, Collections.emptySet()));
+    }
+
+    /**
+     * Returns all edges (connections) in the tree as Connection records.
+     * Each edge appears once (not duplicated for bidirectionality).
+     */
+    @Nonnull
+    public static List<Connection> getConnections() {
+        Set<String> seen = new HashSet<>();
+        List<Connection> result = new ArrayList<>();
+        for (Map.Entry<ResourceLocation, Set<ResourceLocation>> entry : CONNECTIONS.entrySet()) {
+            ResourceLocation from = entry.getKey();
+            for (ResourceLocation to : entry.getValue()) {
+                // Deduplicate bidirectional edges
+                String edgeKey = from.compareTo(to) < 0
+                        ? from + "|" + to : to + "|" + from;
+                if (seen.add(edgeKey)) {
+                    AbstractPerk fromPerk = PERKS.get(from);
+                    AbstractPerk toPerk = PERKS.get(to);
+                    if (fromPerk != null && toPerk != null) {
+                        result.add(new Connection(fromPerk, toPerk));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns all perk tree points (for rendering the tree).
+     */
+    @Nonnull
+    public static List<PerkTreePoint> getPoints() {
+        List<PerkTreePoint> points = new ArrayList<>();
+        for (AbstractPerk perk : PERKS.values()) {
+            points.add(perk.getTreePoint());
+        }
+        return points;
     }
 
     public static boolean isRegistered(@Nonnull ResourceLocation key) {
@@ -121,6 +159,15 @@ public final class PerkTree {
     public static int size() {
         return PERKS.size();
     }
+
+    // ========================================================================
+    // Connection record (edge between two perks)
+    // ========================================================================
+
+    /**
+     * Represents an edge between two perk nodes in the tree.
+     */
+    public record Connection(@Nonnull AbstractPerk from, @Nonnull AbstractPerk to) {}
 
     // ========================================================================
     // Allocation

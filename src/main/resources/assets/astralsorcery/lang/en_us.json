@@ -142,5 +142,32 @@
   "death.attack.astralsorcery.holy_starlight": "%1$s was purified by holy starlight",
   "death.attack.astralsorcery.holy_starlight.player": "%1$s was purified by %2$s's holy starlight",
   "death.attack.astralsorcery.bleed": "%1$s bled out from stellar wounds",
-  "death.attack.astralsorcery.bleed.player": "%1$s bled out from %2$s's stellar wounds"
+  "death.attack.astralsorcery.bleed.player": "%1$s bled out from %2$s's stellar wounds",
+
+  "screen.astralsorcery.perk_tree": "Perk Tree",
+  "screen.astralsorcery.perk_tree.points": "Available Points: %s",
+  "screen.astralsorcery.perk_tree.click_allocate": "Click to allocate",
+  "screen.astralsorcery.perk_tree.locked": "Locked — unlock adjacent perks first",
+  "screen.astralsorcery.perk_tree.allocated": "Allocated",
+
+  "screen.astralsorcery.journal": "Astral Tome",
+  "screen.astralsorcery.journal.tab.discovery": "Discovery",
+  "screen.astralsorcery.journal.tab.constellations": "Constellations",
+  "screen.astralsorcery.journal.tab.knowledge": "Knowledge",
+  "screen.astralsorcery.journal.discovery.title": "Discovered Constellations",
+  "screen.astralsorcery.journal.discovery.empty": "No constellations discovered yet. Gaze upon the night sky...",
+  "screen.astralsorcery.journal.constellations.title": "Constellation Atlas",
+  "screen.astralsorcery.journal.constellation.type.major": "Major Constellation",
+  "screen.astralsorcery.journal.constellation.type.weak": "Weak Constellation",
+  "screen.astralsorcery.journal.constellation.type.minor": "Minor Constellation",
+  "screen.astralsorcery.journal.knowledge.title": "Stellar Knowledge",
+  "screen.astralsorcery.journal.knowledge.hint1": "Gather starlight by placing collector crystals under open sky.",
+  "screen.astralsorcery.journal.knowledge.hint2": "Lenses and prisms can redirect starlight to distant altars.",
+  "screen.astralsorcery.journal.knowledge.hint3": "Attune yourself to a constellation at the Attunement Altar.",
+
+  "entity.astralsorcery.spectral_tool": "Spectral Tool",
+
+  "key.categories.astralsorcery": "Astral Sorcery",
+  "key.astralsorcery.journal": "Open Astral Tome",
+  "key.astralsorcery.perk_tree": "Open Perk Tree"
 }

@@ -8,7 +8,10 @@
 package hellfirepvp.astralsorcery.common.perk.modifier;
 
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -93,6 +96,42 @@ public class PerkAttributeModifier {
             case ADDED_MULTIPLY -> value;
             case STACKING_MULTIPLY -> currentValue * value;
         };
+    }
+
+    // ---- Display ----
+
+    /**
+     * Get a human-readable description of this modifier for tooltip display.
+     * Format: "+1.0 Attack Damage" or "x1.05 Movement Speed"
+     */
+    @Nonnull
+    public Component getDescription() {
+        String prefix = switch (modifierType) {
+            case ADDITION -> value >= 0 ? "+" : "";
+            case ADDED_MULTIPLY -> value >= 0 ? "+" : "";
+            case STACKING_MULTIPLY -> "x";
+        };
+
+        String valueStr = switch (modifierType) {
+            case ADDITION -> String.format("%.1f", value);
+            case ADDED_MULTIPLY -> String.format("%.0f%%", value * 100);
+            case STACKING_MULTIPLY -> String.format("%.2f", value);
+        };
+
+        String attrName = attributeType.getPath().replace("attr_type_", "").replace('_', ' ');
+        // Capitalize first letter of each word
+        String[] words = attrName.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(' ');
+            }
+        }
+        String displayAttr = sb.toString().trim();
+
+        ChatFormatting color = value >= 0 ? ChatFormatting.GREEN : ChatFormatting.RED;
+        MutableComponent desc = Component.literal(prefix + valueStr + " " + displayAttr);
+        return desc.withStyle(color);
     }
 
     // ---- NBT serialization ----
