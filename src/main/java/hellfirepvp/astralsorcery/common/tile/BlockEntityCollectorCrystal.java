@@ -35,6 +35,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick {
     private int crystalSize = 400;
     private int crystalPurity = 100;
     private int crystalCutting = 100;
+    private int ticksExisted = 0;
 
     public BlockEntityCollectorCrystal(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.COLLECTOR_CRYSTAL.get(), pos, state);
@@ -43,6 +44,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side particle effects
             return;
@@ -85,6 +87,31 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick {
     public int getConstellationColor() {
         // TODO: Look up constellation color from ConstellationsAS registry
         return attunedConstellation != null ? 0x4488DD : 0xAAAAFF;
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
+    }
+
+    /**
+     * Whether this is a celestial collector crystal (as opposed to a regular one).
+     * Celestial crystals have enhanced collection rates.
+     */
+    public boolean isCelestial() {
+        // TODO: Check block state or crystal properties for celestial variant
+        return false;
+    }
+
+    /**
+     * Whether this crystal is actively collecting starlight.
+     * Used by the renderer to show collection particle effects.
+     */
+    public boolean isCollecting() {
+        return starlightCollected > 0;
     }
 
     @Override

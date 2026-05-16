@@ -39,6 +39,7 @@ public class BlockEntityWell extends BlockEntityTick {
     private final LazyOptional<IFluidHandler> fluidCap;
 
     private double productionProgress = 0.0;
+    private int ticksExisted = 0;
 
     public BlockEntityWell(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.WELL.get(), pos, state);
@@ -49,6 +50,7 @@ public class BlockEntityWell extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side drip particle effects
             return;
@@ -81,6 +83,31 @@ public class BlockEntityWell extends BlockEntityTick {
 
     public double getProductionProgress() {
         return productionProgress;
+    }
+
+    /**
+     * Get the ratio of stored fluid to max capacity [0, 1].
+     * Used by the renderer to adjust fluid level visuals.
+     */
+    public float getFluidFillRatio() {
+        if (tank.getCapacity() <= 0) return 0f;
+        return (float) tank.getFluid().getAmount() / (float) tank.getCapacity();
+    }
+
+    /**
+     * Whether there is a catalyst item in the well.
+     * Used by the renderer to show/hide the catalyst item.
+     */
+    public boolean hasCatalyst() {
+        return !catalystStack.isEmpty();
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
     }
 
     @Nonnull

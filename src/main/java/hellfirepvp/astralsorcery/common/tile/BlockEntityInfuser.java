@@ -46,6 +46,7 @@ public class BlockEntityInfuser extends BlockEntityTick {
     private int recipeTick = 0;
     private int craftingProgress = 0;
     private boolean structureValid = false;
+    private int ticksExisted = 0;
 
     @Nullable
     private ResourceLocation activeRecipeId = null;
@@ -61,6 +62,7 @@ public class BlockEntityInfuser extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side infusion particle effects
             return;
@@ -106,6 +108,31 @@ public class BlockEntityInfuser extends BlockEntityTick {
     public void setActiveRecipeId(@Nullable ResourceLocation recipeId) {
         this.activeRecipeId = recipeId;
         markForUpdate();
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
+    }
+
+    /**
+     * Whether an infusion recipe is currently in progress.
+     * Used by the renderer to show infusion particle effects.
+     */
+    public boolean isInfusing() {
+        return activeRecipeId != null && craftingProgress > 0;
+    }
+
+    /**
+     * Get the infusion progress as a ratio [0, 1].
+     * Used by the renderer for progress visualization.
+     */
+    public float getInfusionProgress() {
+        if (recipeTick <= 0) return 0f;
+        return Math.min(1.0f, (float) craftingProgress / (float) recipeTick);
     }
 
     @Nonnull

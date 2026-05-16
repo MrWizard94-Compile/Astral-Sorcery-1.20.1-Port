@@ -39,6 +39,7 @@ public class BlockEntityLens extends BlockEntityTick {
     private final List<BlockPos> linkedTargets = new ArrayList<>();
 
     private double transmissionEfficiency = 0.95;
+    private int ticksExisted = 0;
 
     public BlockEntityLens(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.LENS.get(), pos, state);
@@ -47,6 +48,7 @@ public class BlockEntityLens extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
+        ticksExisted++;
         if (isClientSide()) {
             // TODO: Client-side beam rendering particles
             return;
@@ -101,6 +103,22 @@ public class BlockEntityLens extends BlockEntityTick {
 
     public double getTransmissionEfficiency() {
         return transmissionEfficiency;
+    }
+
+    /**
+     * Get the number of ticks this block entity has existed.
+     * Used for renderer animations.
+     */
+    public int getTicksExisted() {
+        return ticksExisted;
+    }
+
+    /**
+     * Whether the lens is actively transmitting starlight.
+     * Used by the renderer to show beam effects.
+     */
+    public boolean isTransmitting() {
+        return !linkedTargets.isEmpty();
     }
 
     @Override

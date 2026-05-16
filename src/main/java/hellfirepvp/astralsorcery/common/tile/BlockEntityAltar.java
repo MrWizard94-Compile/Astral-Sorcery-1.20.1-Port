@@ -84,6 +84,25 @@ public class BlockEntityAltar extends BlockEntityTick {
         this.storedStarlight = Math.max(0, starlight);
     }
 
+    /**
+     * Get stored starlight as a float, for use by renderers.
+     */
+    public float getStarlightStored() {
+        return (float) storedStarlight;
+    }
+
+    /**
+     * Get the starlight capacity for the current altar tier, for use by renderers.
+     */
+    public float getStarlightCapacity() {
+        return switch (getAltarType()) {
+            case DISCOVERY -> 1000f;
+            case ATTUNEMENT -> 2000f;
+            case CONSTELLATION -> 4000f;
+            case RADIANCE -> 8000f;
+        };
+    }
+
     public int getRecipeTick() {
         return recipeTick;
     }
