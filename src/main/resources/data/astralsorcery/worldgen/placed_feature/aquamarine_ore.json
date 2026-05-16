@@ -1,9 +1,9 @@
-{
+﻿{
   "feature": "astralsorcery:aquamarine_ore",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
-      "chance": 3
+      "chance": 5
     },
     {
       "type": "minecraft:in_square"
@@ -12,12 +12,8 @@
       "type": "minecraft:height_range",
       "height": {
         "type": "minecraft:uniform",
-        "min_inclusive": {
-          "absolute": 50
-        },
-        "max_inclusive": {
-          "absolute": 72
-        }
+        "min_inclusive": { "absolute": 56 },
+        "max_inclusive": { "absolute": 72 }
       }
     },
     {

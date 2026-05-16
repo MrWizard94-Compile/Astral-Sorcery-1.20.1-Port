@@ -1,4 +1,4 @@
-{
+﻿{
   "feature": "astralsorcery:marble_vein",
   "placement": [
     {
@@ -12,12 +12,8 @@
       "type": "minecraft:height_range",
       "height": {
         "type": "minecraft:uniform",
-        "min_inclusive": {
-          "absolute": -32
-        },
-        "max_inclusive": {
-          "absolute": 48
-        }
+        "min_inclusive": { "absolute": 0 },
+        "max_inclusive": { "absolute": 80 }
       }
     },
     {
