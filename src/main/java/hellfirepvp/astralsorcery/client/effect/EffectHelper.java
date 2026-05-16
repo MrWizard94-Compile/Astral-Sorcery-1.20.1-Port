@@ -7,6 +7,8 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.effect;
 
+import hellfirepvp.astralsorcery.client.effect.FXOrbital;
+import hellfirepvp.astralsorcery.client.effect.FXVortex;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -245,6 +247,91 @@ public final class EffectHelper {
             props.applyTo(particle);
             EffectManager.getInstance().spawn(particle);
         }
+    }
+
+    // =========================================================================
+    // Orbital
+    // =========================================================================
+
+    /**
+     * Spawn a ring of orbiting particles around a center point.
+     * Uses FXOrbital for smooth circular motion.
+     *
+     * @param center     orbit center
+     * @param color      particle color
+     * @param radius     orbit radius in blocks
+     * @param count      number of orbitals in the ring
+     * @param speed      angular speed (radians/tick)
+     * @param maxAge     lifetime in ticks
+     */
+    public static void orbitalRingFX(@Nonnull Vec3 center, @Nonnull Color color,
+                                      float radius, int count, float speed, int maxAge) {
+        for (int i = 0; i < count; i++) {
+            float startAngle = (float) (i * Math.PI * 2.0 / count);
+            float inclination = (RAND.nextFloat() - 0.5f) * 0.3f;
+
+            FXOrbital orbital = new FXOrbital(
+                    center.x, center.y, center.z,
+                    radius, speed, startAngle, inclination);
+            orbital.setVerticalBob(0.02f);
+            EffectProperties props = EffectProperties.create()
+                    .setColor(color)
+                    .setScale(0.8f + RAND.nextFloat() * 0.4f)
+                    .setMaxAge(maxAge)
+                    .setAlphaFadeInOut();
+            props.applyTo(orbital);
+            EffectManager.getInstance().spawn(orbital);
+        }
+    }
+
+    /**
+     * Spawn a standard starlight orbital ring (6 particles, blue-white).
+     */
+    public static void orbitalStarlight(@Nonnull Vec3 center, float radius) {
+        orbitalRingFX(center, new Color(150, 190, 255), radius, 6, 0.08f, 60);
+    }
+
+    // =========================================================================
+    // Vortex
+    // =========================================================================
+
+    /**
+     * Spawn a vortex of spiraling particles converging on a target.
+     *
+     * @param target   target center (particles spiral toward this)
+     * @param color    particle color
+     * @param radius   starting radius (spread around target)
+     * @param count    number of vortex particles
+     * @param speed    angular speed (radians/tick)
+     * @param maxAge   lifetime in ticks
+     */
+    public static void vortex(@Nonnull Vec3 target, @Nonnull Color color,
+                              float radius, int count, float speed, int maxAge) {
+        for (int i = 0; i < count; i++) {
+            float angle = RAND.nextFloat() * (float) Math.PI * 2.0f;
+            float dist = radius * (0.5f + 0.5f * RAND.nextFloat());
+            double startX = target.x + Math.cos(angle) * dist;
+            double startZ = target.z + Math.sin(angle) * dist;
+            double startY = target.y + (RAND.nextFloat() - 0.5f) * 0.5f;
+
+            FXVortex vort = new FXVortex(
+                    startX, startY, startZ,
+                    target.x, target.y, target.z,
+                    speed + RAND.nextFloat() * 0.02f);
+            EffectProperties props = EffectProperties.create()
+                    .setColor(color)
+                    .setScale(0.6f + RAND.nextFloat() * 0.4f)
+                    .setMaxAge(maxAge);
+            props.applyTo(vort);
+            EffectManager.getInstance().spawn(vort);
+        }
+    }
+
+    /**
+     * Spawn a standard starlight suction vortex.
+     */
+    public static void vortexStarlight(@Nonnull Vec3 target) {
+        vortex(target, new Color(130, 170, 240), 1.5f, 8, 0.12f, 30);
     }
 
     // =========================================================================

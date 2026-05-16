@@ -9,11 +9,18 @@ package hellfirepvp.astralsorcery.common.network;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.network.play.client.PktAttunePlayer;
+import hellfirepvp.astralsorcery.common.network.play.client.PktGatewayTeleport;
+import hellfirepvp.astralsorcery.common.network.play.client.PktPerkAllocate;
+import hellfirepvp.astralsorcery.common.network.play.client.PktPerkDeallocate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestProgress;
+import hellfirepvp.astralsorcery.common.network.play.server.PktAltarCraftingUpdate;
+import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncBlockEntity;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncConstellation;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPerkData;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPlayerProgress;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightCharge;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightNetwork;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -86,6 +93,26 @@ public class PacketChannel {
                 PktParticleEvent::decode,
                 PktParticleEvent::handle);
 
+        register(PktSyncPerkData.class,
+                PktSyncPerkData::encode,
+                PktSyncPerkData::decode,
+                PktSyncPerkData::handle);
+
+        register(PktDiscoveryUpdate.class,
+                PktDiscoveryUpdate::encode,
+                PktDiscoveryUpdate::decode,
+                PktDiscoveryUpdate::handle);
+
+        register(PktAltarCraftingUpdate.class,
+                PktAltarCraftingUpdate::encode,
+                PktAltarCraftingUpdate::decode,
+                PktAltarCraftingUpdate::handle);
+
+        register(PktSyncStarlightCharge.class,
+                PktSyncStarlightCharge::encode,
+                PktSyncStarlightCharge::decode,
+                PktSyncStarlightCharge::handle);
+
         // Client -> Server packets
         register(PktRequestProgress.class,
                 PktRequestProgress::encode,
@@ -96,6 +123,21 @@ public class PacketChannel {
                 PktAttunePlayer::encode,
                 PktAttunePlayer::decode,
                 PktAttunePlayer::handle);
+
+        register(PktPerkAllocate.class,
+                PktPerkAllocate::encode,
+                PktPerkAllocate::decode,
+                PktPerkAllocate::handle);
+
+        register(PktPerkDeallocate.class,
+                PktPerkDeallocate::encode,
+                PktPerkDeallocate::decode,
+                PktPerkDeallocate::handle);
+
+        register(PktGatewayTeleport.class,
+                PktGatewayTeleport::encode,
+                PktGatewayTeleport::decode,
+                PktGatewayTeleport::handle);
     }
 
     /**
