@@ -1,0 +1,10 @@
+﻿{
+  "type": "astralsorcery:astral_loot",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/simple_dungeon"
+    }
+  ],
+  "drop_chance": 0.15
+}

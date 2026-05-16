@@ -133,5 +133,14 @@
   "adv.astralsorcery.allocate_perk.title": "Star Child",
   "adv.astralsorcery.allocate_perk.desc": "Allocate your first perk point in the constellation tree",
   "adv.astralsorcery.reach_radiance.title": "Radiance",
-  "adv.astralsorcery.reach_radiance.desc": "Upgrade your altar to the Radiance tier"
+  "adv.astralsorcery.reach_radiance.desc": "Upgrade your altar to the Radiance tier",
+
+  "death.attack.astralsorcery.stellar": "%1$s was vaporized by starlight",
+  "death.attack.astralsorcery.stellar.player": "%1$s was vaporized by starlight whilst fighting %2$s",
+  "death.attack.astralsorcery.constellation": "%1$s was struck down by celestial forces",
+  "death.attack.astralsorcery.constellation.player": "%1$s was struck down by %2$s's celestial forces",
+  "death.attack.astralsorcery.holy_starlight": "%1$s was purified by holy starlight",
+  "death.attack.astralsorcery.holy_starlight.player": "%1$s was purified by %2$s's holy starlight",
+  "death.attack.astralsorcery.bleed": "%1$s bled out from stellar wounds",
+  "death.attack.astralsorcery.bleed.player": "%1$s bled out from %2$s's stellar wounds"
 }
