@@ -143,6 +143,42 @@ public final class EffectHelper {
     }
 
     // =========================================================================
+    // Lightning
+    // =========================================================================
+
+    /**
+     * Spawn a lightning bolt between two positions.
+     *
+     * @param from         start position
+     * @param to           end position
+     * @param color        bolt color
+     * @param segments     number of bolt segments (more = more jagged)
+     * @param displacement max perpendicular offset
+     * @param maxAge       lifetime in ticks
+     */
+    @Nonnull
+    public static FXLightning lightning(@Nonnull Vec3 from, @Nonnull Vec3 to,
+                                         @Nonnull Color color, int segments,
+                                         float displacement, int maxAge) {
+        FXLightning bolt = new FXLightning(from.x, from.y, from.z,
+                to.x, to.y, to.z, segments, displacement, true);
+        EffectProperties props = EffectProperties.create()
+                .setColor(color)
+                .setMaxAge(maxAge);
+        props.applyTo(bolt);
+        EffectManager.getInstance().spawn(bolt);
+        return bolt;
+    }
+
+    /**
+     * Spawn a standard starlight lightning bolt (blue-white, 6 segments).
+     */
+    @Nonnull
+    public static FXLightning lightningStarlight(@Nonnull Vec3 from, @Nonnull Vec3 to) {
+        return lightning(from, to, new Color(160, 190, 255), 6, 0.12f, 6);
+    }
+
+    // =========================================================================
     // Cube
     // =========================================================================
 
