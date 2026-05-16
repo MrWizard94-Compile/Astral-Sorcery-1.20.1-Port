@@ -7,8 +7,11 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common;
 
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
+import hellfirepvp.astralsorcery.common.loot.GlobalLootModifierAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkEffectHelper;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkRegistry;
@@ -74,6 +77,9 @@ public class CommonProxy {
         WorldGenerationAS.FEATURES.register(modBus);
         StructureTypesAS.STRUCTURE_TYPES.register(modBus);
 
+        // Global loot modifiers
+        GlobalLootModifierAS.LOOT_MODIFIERS.register(modBus);
+
         // Mod lifecycle events
         modBus.addListener(this::onCommonSetup);
         modBus.addListener(CapabilitySetup::registerCapabilities);
@@ -93,6 +99,9 @@ public class CommonProxy {
 
         // Perk effect tick + attribute modifier events
         forgeBus.register(new PerkEffectHelper());
+
+        // Commands (registered via RegisterCommandsEvent)
+        forgeBus.register(new CommandAstralSorcery());
     }
 
     private void onCommonSetup(@Nonnull FMLCommonSetupEvent event) {
@@ -101,6 +110,7 @@ public class CommonProxy {
         event.enqueueWork(() -> {
             PacketChannel.init();
             PerkAttributeTypesAS.init();
+            AstralAdvancementTriggers.init();
         });
     }
 }
