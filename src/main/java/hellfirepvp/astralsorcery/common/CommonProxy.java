@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.common;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
+import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.loot.GlobalLootModifierAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
@@ -110,6 +111,7 @@ public class CommonProxy {
         event.enqueueWork(() -> {
             PacketChannel.init();
             PerkAttributeTypesAS.init();
+            ConstellationsAS.init();
             AstralAdvancementTriggers.init();
         });
     }
