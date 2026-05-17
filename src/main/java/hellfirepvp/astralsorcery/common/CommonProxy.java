@@ -10,6 +10,9 @@ package hellfirepvp.astralsorcery.common;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
+import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
+import hellfirepvp.astralsorcery.common.event.EventHandlerMining;
+import hellfirepvp.astralsorcery.common.event.EventHandlerPerkCombat;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.loot.GlobalLootModifierAS;
@@ -100,6 +103,15 @@ public class CommonProxy {
 
         // Perk effect tick + attribute modifier events
         forgeBus.register(new PerkEffectHelper());
+
+        // Celestial events (shooting stars, starlight distribution)
+        forgeBus.register(new EventHandlerCelestial());
+
+        // Perk combat effects (damage, crit, life steal, elemental resist)
+        forgeBus.register(new EventHandlerPerkCombat());
+
+        // Mining perk effects (break speed, auto-smelt, exp bonus)
+        forgeBus.register(new EventHandlerMining());
 
         // Commands (registered via RegisterCommandsEvent)
         forgeBus.register(new CommandAstralSorcery());
