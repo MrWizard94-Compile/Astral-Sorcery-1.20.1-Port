@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IIndependentStarlightSource;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightSource;
@@ -103,6 +104,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
 
     /**
      * Calculates the starlight production rate for this tick.
+     * Uses {@link CelestialHandler} for time/weather/moon/attunement factors.
      *
      * @return starlight units produced this tick
      */
@@ -116,13 +118,16 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         // Efficiency from purity (70% weight) and cutting (30% weight)
         double efficiency = (crystalPurity / 100.0) * 0.7 + (crystalCutting / 100.0) * 0.3;
 
-        // Night multiplier: full at night, reduced during day
-        double nightMult = level.isNight() ? 1.0 : 0.2;
+        // Celestial distribution factor (time of day + weather + moon phase)
+        float distributionFactor = CelestialHandler.getStarlightDistributionFactor(level);
+
+        // Attunement bonus: 1.5x when attuned constellation is visible
+        float attunementBonus = CelestialHandler.getAttunementBonus(level, attunedConstellation);
 
         // Celestial variant bonus
         double celestialMult = celestial ? CELESTIAL_MULTIPLIER : 1.0;
 
-        return base * efficiency * nightMult * celestialMult;
+        return base * efficiency * distributionFactor * attunementBonus * celestialMult;
     }
 
     // ========================================================================
