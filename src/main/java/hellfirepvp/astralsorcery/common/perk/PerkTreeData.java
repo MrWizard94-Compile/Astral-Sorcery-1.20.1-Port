@@ -8,14 +8,11 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.FocusPerk;
+import hellfirepvp.astralsorcery.common.perk.node.GemSocketPerk;
 import hellfirepvp.astralsorcery.common.perk.node.MajorPerk;
 import hellfirepvp.astralsorcery.common.perk.node.RootPerk;
 import hellfirepvp.astralsorcery.common.perk.node.SmallPerk;
-import hellfirepvp.astralsorcery.common.perk.node.key.KeyAevitas;
-import hellfirepvp.astralsorcery.common.perk.node.key.KeyArmara;
-import hellfirepvp.astralsorcery.common.perk.node.key.KeyDiscidia;
-import hellfirepvp.astralsorcery.common.perk.node.key.KeyEvorsio;
-import hellfirepvp.astralsorcery.common.perk.node.key.KeyVicio;
+import hellfirepvp.astralsorcery.common.perk.node.key.*;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -277,6 +274,230 @@ public final class PerkTreeData {
         connect(focusStarlight, rootEvorsio);
 
         connect(focusCombat, focusStarlight);
+
+        // ======================================================================
+        // Outer constellation branches (extended paths from key perks)
+        // ======================================================================
+
+        // --- Discidia → Lucerna (offense → starlight mastery) ---
+        SmallPerk discOuter1 = smallPerk("disc_o1", 4, -62, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.5f);
+        SmallPerk discOuter2 = smallPerk("disc_o2", 8, -68, PerkAttributeTypesAS.ATTR_TYPE_STARLIGHT_COLLECTION, 0.10f);
+        MajorPerk discOuterMajor = majorPerk("disc_om1", 12, -74,
+                PerkAttributeTypesAS.ATTR_TYPE_STARLIGHT_COLLECTION, 0.15f);
+        KeyLucerna keyLucerna = new KeyLucerna(16, -80);
+
+        PerkTree.register(discOuter1);
+        PerkTree.register(discOuter2);
+        PerkTree.register(discOuterMajor);
+        PerkTree.register(keyLucerna);
+
+        connect(keyDiscidia, discOuter1);
+        connect(discOuter1, discOuter2);
+        connect(discOuter2, discOuterMajor);
+        connect(discOuterMajor, keyLucerna);
+
+        // --- Armara → Fornax (defense → fire/elemental mastery) ---
+        SmallPerk armaOuter1 = smallPerk("arma_o1", 60, -8, PerkAttributeTypesAS.ATTR_TYPE_ARMOR, 1.0f);
+        SmallPerk armaOuter2 = smallPerk("arma_o2", 66, -4, PerkAttributeTypesAS.ATTR_TYPE_ALL_ELEMENTAL_RESIST, 0.10f);
+        MajorPerk armaOuterMajor = majorPerk("arma_om1", 72, 0,
+                PerkAttributeTypesAS.ATTR_TYPE_ALL_ELEMENTAL_RESIST, 0.20f);
+        KeyFornax keyFornax = new KeyFornax(78, 4);
+
+        PerkTree.register(armaOuter1);
+        PerkTree.register(armaOuter2);
+        PerkTree.register(armaOuterMajor);
+        PerkTree.register(keyFornax);
+
+        connect(keyArmara, armaOuter1);
+        connect(armaOuter1, armaOuter2);
+        connect(armaOuter2, armaOuterMajor);
+        connect(armaOuterMajor, keyFornax);
+
+        // --- Vicio → Octans (speed → aquatic mastery) ---
+        SmallPerk viciOuter1 = smallPerk("vici_o1", 24, 56, PerkAttributeTypesAS.ATTR_TYPE_MOVEMENT_SPEED, 0.03f);
+        SmallPerk viciOuter2 = smallPerk("vici_o2", 28, 62, PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL, 0.03f);
+        MajorPerk viciOuterMajor = majorPerk("vici_om1", 32, 68,
+                PerkAttributeTypesAS.ATTR_TYPE_MOVEMENT_SPEED, 0.05f);
+        KeyOctans keyOctans = new KeyOctans(36, 74);
+
+        PerkTree.register(viciOuter1);
+        PerkTree.register(viciOuter2);
+        PerkTree.register(viciOuterMajor);
+        PerkTree.register(keyOctans);
+
+        connect(keyVicio, viciOuter1);
+        connect(viciOuter1, viciOuter2);
+        connect(viciOuter2, viciOuterMajor);
+        connect(viciOuterMajor, keyOctans);
+
+        // --- Aevitas → Bootes (life → farming/husbandry mastery) ---
+        SmallPerk aevOuter1 = smallPerk("aev_o1", -24, 56, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 1.0f);
+        SmallPerk aevOuter2 = smallPerk("aev_o2", -28, 62, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.10f);
+        MajorPerk aevOuterMajor = majorPerk("aev_om1", -32, 68,
+                PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.15f);
+        KeyBootes keyBootes = new KeyBootes(-36, 74);
+
+        PerkTree.register(aevOuter1);
+        PerkTree.register(aevOuter2);
+        PerkTree.register(aevOuterMajor);
+        PerkTree.register(keyBootes);
+
+        connect(keyAevitas, aevOuter1);
+        connect(aevOuter1, aevOuter2);
+        connect(aevOuter2, aevOuterMajor);
+        connect(aevOuterMajor, keyBootes);
+
+        // --- Evorsio → Mineralis (breaking → deep mining mastery) ---
+        SmallPerk evorOuter1 = smallPerk("evor_o1", -60, -8, PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.08f);
+        SmallPerk evorOuter2 = smallPerk("evor_o2", -66, -4, PerkAttributeTypesAS.ATTR_TYPE_REACH, 1.0f);
+        MajorPerk evorOuterMajor = majorPerk("evor_om1", -72, 0,
+                PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.15f);
+        KeyMineralis keyMineralis = new KeyMineralis(-78, 4);
+
+        PerkTree.register(evorOuter1);
+        PerkTree.register(evorOuter2);
+        PerkTree.register(evorOuterMajor);
+        PerkTree.register(keyMineralis);
+
+        connect(keyEvorsio, evorOuter1);
+        connect(evorOuter1, evorOuter2);
+        connect(evorOuter2, evorOuterMajor);
+        connect(evorOuterMajor, keyMineralis);
+
+        // --- Horologium (rare) — accessible from Lucerna + Mineralis outer ring ---
+        SmallPerk horoPath1 = smallPerk("horo_p1", -30, -80, PerkAttributeTypesAS.ATTR_TYPE_PERK_EFFECT, 0.05f);
+        SmallPerk horoPath2 = smallPerk("horo_p2", -16, -84, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.05f);
+        MajorPerk horoMajor = majorPerk("horo_m1", 0, -88,
+                PerkAttributeTypesAS.ATTR_TYPE_PERK_EFFECT, 0.10f);
+        KeyHorologium keyHorologium = new KeyHorologium(0, -96);
+
+        PerkTree.register(horoPath1);
+        PerkTree.register(horoPath2);
+        PerkTree.register(horoMajor);
+        PerkTree.register(keyHorologium);
+
+        // Horologium connects from both Lucerna and Mineralis paths
+        connect(keyLucerna, horoPath2);
+        connect(keyMineralis, horoPath1);
+        connect(horoPath1, horoMajor);
+        connect(horoPath2, horoMajor);
+        connect(horoMajor, keyHorologium);
+
+        // ======================================================================
+        // Gem Socket perks (one per main branch + central)
+        // ======================================================================
+
+        GemSocketPerk gemDiscidia = gemSocketPerk("gem_discidia", 8, -48);
+        PerkTree.register(gemDiscidia);
+        connect(discMajor, gemDiscidia);
+
+        GemSocketPerk gemArmara = gemSocketPerk("gem_armara", 50, -18);
+        PerkTree.register(gemArmara);
+        connect(armaMajor, gemArmara);
+
+        GemSocketPerk gemVicio = gemSocketPerk("gem_vicio", 26, 44);
+        PerkTree.register(gemVicio);
+        connect(viciMajor, gemVicio);
+
+        GemSocketPerk gemAevitas = gemSocketPerk("gem_aevitas", -26, 44);
+        PerkTree.register(gemAevitas);
+        connect(aevMajor, gemAevitas);
+
+        GemSocketPerk gemEvorsio = gemSocketPerk("gem_evorsio", -50, -18);
+        PerkTree.register(gemEvorsio);
+        connect(evorMajor, gemEvorsio);
+
+        // Central gem socket accessible from starlight focus
+        GemSocketPerk gemCentral = gemSocketPerk("gem_central", 0, -14);
+        PerkTree.register(gemCentral);
+        connect(focusCombat, gemCentral);
+
+        // ======================================================================
+        // Additional focus perks (one per non-covered constellation)
+        // ======================================================================
+
+        // Defensive focus (Armara constellation)
+        FocusPerk focusDefense = new FocusPerk(AstralSorcery.key("focus_defense"), 8, 4, AstralSorcery.key("armara"));
+        focusDefense.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_ARMOR.getKey(),
+                ModifierType.ADDED_MULTIPLY, 0.15f));
+        focusDefense.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_KNOCKBACK_RESIST.getKey(),
+                ModifierType.ADDITION, 0.20f));
+        PerkTree.register(focusDefense);
+        connect(focusStarlight, focusDefense);
+
+        // Speed focus (Vicio constellation)
+        FocusPerk focusSpeed = new FocusPerk(AstralSorcery.key("focus_speed"), -8, 4, AstralSorcery.key("vicio"));
+        focusSpeed.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_MOVEMENT_SPEED.getKey(),
+                ModifierType.ADDED_MULTIPLY, 0.10f));
+        focusSpeed.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_REACH.getKey(),
+                ModifierType.ADDITION, 1.0f));
+        PerkTree.register(focusSpeed);
+        connect(focusStarlight, focusSpeed);
+
+        // Life focus (Aevitas constellation)
+        FocusPerk focusLife = new FocusPerk(AstralSorcery.key("focus_life"), 0, 8, AstralSorcery.key("aevitas"));
+        focusLife.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH.getKey(),
+                ModifierType.ADDED_MULTIPLY, 0.15f));
+        focusLife.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL.getKey(),
+                ModifierType.ADDITION, 0.05f));
+        PerkTree.register(focusLife);
+        connect(focusStarlight, focusLife);
+
+        // Mining focus (Evorsio constellation)
+        FocusPerk focusMining = new FocusPerk(AstralSorcery.key("focus_mining"), -8, -8, AstralSorcery.key("evorsio"));
+        focusMining.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED.getKey(),
+                ModifierType.ADDED_MULTIPLY, 0.15f));
+        focusMining.addModifier(new PerkAttributeModifier(
+                PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE.getKey(),
+                ModifierType.ADDED_MULTIPLY, 0.10f));
+        PerkTree.register(focusMining);
+        connect(focusStarlight, focusMining);
+
+        // ======================================================================
+        // Outer ring cross-connections (linking outer key branches)
+        // ======================================================================
+
+        // Bridge between Fornax and Octans outer branches
+        SmallPerk outerBridgeFO = smallPerk("outer_fo", 56, 38,
+                PerkAttributeTypesAS.ATTR_TYPE_ALL_ELEMENTAL_RESIST, 0.05f);
+        PerkTree.register(outerBridgeFO);
+        connect(armaOuterMajor, outerBridgeFO);
+        connect(viciOuterMajor, outerBridgeFO);
+
+        // Bridge between Octans and Bootes outer branches
+        SmallPerk outerBridgeOB = smallPerk("outer_ob", 0, 72,
+                PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL, 0.02f);
+        PerkTree.register(outerBridgeOB);
+        connect(viciOuterMajor, outerBridgeOB);
+        connect(aevOuterMajor, outerBridgeOB);
+
+        // Bridge between Bootes and Mineralis outer branches
+        SmallPerk outerBridgeBM = smallPerk("outer_bm", -56, 38,
+                PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.05f);
+        PerkTree.register(outerBridgeBM);
+        connect(aevOuterMajor, outerBridgeBM);
+        connect(evorOuterMajor, outerBridgeBM);
+
+        // Bridge between Mineralis and Lucerna outer branches
+        SmallPerk outerBridgeML = smallPerk("outer_ml", -38, -72,
+                PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.05f);
+        PerkTree.register(outerBridgeML);
+        connect(evorOuterMajor, outerBridgeML);
+        connect(discOuterMajor, outerBridgeML);
+
+        // Bridge between Lucerna and Fornax outer branches
+        SmallPerk outerBridgeLF = smallPerk("outer_lf", 48, -44,
+                PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.03f);
+        PerkTree.register(outerBridgeLF);
+        connect(discOuterMajor, outerBridgeLF);
+        connect(armaOuterMajor, outerBridgeLF);
     }
 
     // =========================================================================
@@ -299,6 +520,11 @@ public final class PerkTreeData {
         MajorPerk perk = new MajorPerk(AstralSorcery.key(name), x, y);
         perk.addModifier(new PerkAttributeModifier(type.getKey(), ModifierType.ADDITION, value));
         return perk;
+    }
+
+    @Nonnull
+    private static GemSocketPerk gemSocketPerk(@Nonnull String name, int x, int y) {
+        return new GemSocketPerk(AstralSorcery.key(name), x, y);
     }
 
     private static void connect(@Nonnull AbstractPerk a,

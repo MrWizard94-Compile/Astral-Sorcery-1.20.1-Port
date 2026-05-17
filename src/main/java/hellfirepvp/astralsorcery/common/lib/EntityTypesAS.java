@@ -2,8 +2,12 @@ package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.entity.EntityFlare;
+import hellfirepvp.astralsorcery.common.entity.EntityGrapplingHook;
 import hellfirepvp.astralsorcery.common.entity.EntityIlluminationSpark;
+import hellfirepvp.astralsorcery.common.entity.EntityItemHighlighted;
+import hellfirepvp.astralsorcery.common.entity.EntityLiquidSpark;
 import hellfirepvp.astralsorcery.common.entity.EntityNocturnalSpark;
+import hellfirepvp.astralsorcery.common.entity.EntityShootingStar;
 import hellfirepvp.astralsorcery.common.entity.EntitySpectralTool;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -76,13 +80,56 @@ public final class EntityTypesAS {
                             .fireImmune()
                             .build(AstralSorcery.MODID + ":nocturnal_spark"));
 
+    /**
+     * Shooting star — falls from sky during celestial events, drops rare loot on impact.
+     */
+    public static final RegistryObject<EntityType<EntityShootingStar>> SHOOTING_STAR =
+            ENTITY_TYPES.register("shooting_star", () ->
+                    EntityType.Builder.<EntityShootingStar>of(EntityShootingStar::new, MobCategory.MISC)
+                            .sized(0.6f, 0.6f)
+                            .clientTrackingRange(128)
+                            .updateInterval(2)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":shooting_star"));
+
+    /**
+     * Grappling hook — Evorsio perk projectile that pulls the player to the impact point.
+     */
+    public static final RegistryObject<EntityType<EntityGrapplingHook>> GRAPPLING_HOOK =
+            ENTITY_TYPES.register("grappling_hook", () ->
+                    EntityType.Builder.<EntityGrapplingHook>of(EntityGrapplingHook::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(64)
+                            .updateInterval(1)
+                            .build(AstralSorcery.MODID + ":grappling_hook"));
+
+    /**
+     * Highlighted item entity — glowing drop from shooting stars, rituals, etc.
+     */
+    public static final RegistryObject<EntityType<EntityItemHighlighted>> ITEM_HIGHLIGHTED =
+            ENTITY_TYPES.register("item_highlighted", () ->
+                    EntityType.Builder.<EntityItemHighlighted>of(EntityItemHighlighted::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(32)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":item_highlighted"));
+
+    /**
+     * Liquid starlight spark — ambient visual entity orbiting lightwells and chalices.
+     */
+    public static final RegistryObject<EntityType<EntityLiquidSpark>> LIQUID_SPARK =
+            ENTITY_TYPES.register("liquid_spark", () ->
+                    EntityType.Builder.<EntityLiquidSpark>of(EntityLiquidSpark::new, MobCategory.MISC)
+                            .sized(0.1f, 0.1f)
+                            .clientTrackingRange(32)
+                            .updateInterval(5)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":liquid_spark"));
+
     // TODO: Register remaining entity types as they are ported:
-    // - EntityShootingStar (shooting star event)
-    // - EntityGrapplingHook (evorsio grappling)
     // - EntityCrystalTool (crystal tool projectile)
     // - EntityObservatoryHelper (observatory targeting)
-    // - EntityItemHighlighted (glowing item drop)
-    // - EntityLiquidSpark (liquid starlight spark)
     // - EntityStarling (ritual pet entity)
     // - EntityCelestialCrystal (floating crystal drop)
 }
