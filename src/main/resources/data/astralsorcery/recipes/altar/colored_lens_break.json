@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 400,
+  "output": {
+    "item": "astralsorcery:colored_lens_break",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "minecraft:diamond"},
+    {},
+    {"item": "minecraft:iron_pickaxe"},
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "minecraft:iron_pickaxe"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

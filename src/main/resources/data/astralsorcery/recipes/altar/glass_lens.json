@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 80,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:glass_lens",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "minecraft:glass_pane"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:glass_pane"},
+    {},
+    {"item": "minecraft:glass_pane"},
+    {}
+  ]
+}

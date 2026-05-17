@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 800,
+  "output": {
+    "item": "astralsorcery:prism",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:glass_lens"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:marble_runed"},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

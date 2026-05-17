@@ -3,11 +3,17 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.event;
 
+import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
+import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
+import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyPelotrio;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyVorux;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +26,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Handles perk effects related to combat: damage dealt, damage taken,
@@ -55,15 +62,31 @@ public class EventHandlerPerkCombat {
 
         float baseDamage = event.getAmount();
 
+        Set<ResourceLocation> allocated = progress.getAllocatedPerks();
+
         // Apply flat attack damage bonus from perks
         List<PerkAttributeModifier> modifiers = PerkAttributeHelper.collectModifiers(
-                player, progress.getAllocatedPerks(),
+                player, allocated,
                 PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE.getKey());
         if (!modifiers.isEmpty()) {
             // The vanilla attribute system handles the base attack damage modifier,
             // but ADDED_MULTIPLY and STACKING_MULTIPLY layers may apply here
             double modified = PerkAttributeHelper.applyModifiers(baseDamage, modifiers);
             baseDamage = (float) modified;
+        }
+
+        // KeyDiscidia: full-health bonus damage (25% extra at full HP)
+        ResourceLocation discidiaKey = AstralSorcery.key("key_discidia");
+        if (allocated.contains(discidiaKey)) {
+            if (player.getHealth() >= player.getMaxHealth() - 0.1f) {
+                baseDamage *= 1.25f;
+            }
+        }
+
+        // KeyVorux: low-health berserker bonus (up to 50% extra at low HP)
+        ResourceLocation voruxKey = AstralSorcery.key("key_vorux");
+        if (allocated.contains(voruxKey)) {
+            baseDamage += baseDamage * KeyVorux.getLowHealthBonus(player);
         }
 
         // Critical hit chance (separate from vanilla crit)
@@ -92,6 +115,18 @@ public class EventHandlerPerkCombat {
         }
 
         float damage = event.getAmount();
+
+        // Pelotrio revive: prevent death if the perk is allocated and off cooldown
+        if (player.getHealth() - damage <= 0) {
+            ResourceLocation pelotrioKey = AstralSorcery.key("key_pelotrio");
+            if (progress.getAllocatedPerks().contains(pelotrioKey)) {
+                AbstractPerk perk = PerkTree.getPerk(pelotrioKey);
+                if (perk instanceof KeyPelotrio pelotrio && pelotrio.tryRevive(player)) {
+                    event.setCanceled(true);
+                    return;
+                }
+            }
+        }
 
         // Elemental resistance (fire, magic, etc.)
         // In 1.20, damage type checks use tags instead of isFire()/isMagic()

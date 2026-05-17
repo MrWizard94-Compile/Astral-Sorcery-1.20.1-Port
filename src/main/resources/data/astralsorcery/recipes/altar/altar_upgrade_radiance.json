@@ -1,0 +1,30 @@
+{
+  "type": "astralsorcery:altar_upgrade",
+  "altar_type": "constellation",
+  "craft_duration": 600,
+  "starlight_required": 4000,
+  "target_altar_type": "radiance",
+  "inputs": [
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:starmetal_dust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:starmetal_dust"},
+    {"item": "astralsorcery:rock_crystal"},
+    {},
+    {"item": "astralsorcery:rock_crystal"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {}
+  ]
+}

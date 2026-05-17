@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 300,
+  "starlight_required": 1600,
+  "output": {
+    "item": "astralsorcery:collector_crystal",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {}
+  ]
+}

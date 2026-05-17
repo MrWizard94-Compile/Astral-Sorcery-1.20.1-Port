@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 600,
+  "output": {
+    "item": "astralsorcery:crystal_sword",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:rock_crystal"},
+    {},
+    {},
+    {"item": "astralsorcery:rock_crystal"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {"tag": "minecraft:planks"},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

@@ -12,7 +12,22 @@ import hellfirepvp.astralsorcery.common.perk.node.GemSocketPerk;
 import hellfirepvp.astralsorcery.common.perk.node.MajorPerk;
 import hellfirepvp.astralsorcery.common.perk.node.RootPerk;
 import hellfirepvp.astralsorcery.common.perk.node.SmallPerk;
-import hellfirepvp.astralsorcery.common.perk.node.key.*;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAlcara;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAevitas;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyArmara;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyBootes;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDiscidia;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyEvorsio;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyFornax;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyGelu;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyHorologium;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyLucerna;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyMineralis;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyOctans;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyPelotrio;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyUlteria;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyVicio;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyVorux;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -382,6 +397,75 @@ public final class PerkTreeData {
         connect(horoPath1, horoMajor);
         connect(horoPath2, horoMajor);
         connect(horoMajor, keyHorologium);
+
+        // ======================================================================
+        // Minor constellation branches (rare key perks)
+        // ======================================================================
+
+        // --- Pelotrio (revive) — accessible from Aevitas outer branch ---
+        SmallPerk peloPath1 = smallPerk("pelo_p1", -40, 60, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 1.0f);
+        SmallPerk peloPath2 = smallPerk("pelo_p2", -44, 66, PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL, 0.03f);
+        KeyPelotrio keyPelotrio = new KeyPelotrio(-48, 72);
+
+        PerkTree.register(peloPath1);
+        PerkTree.register(peloPath2);
+        PerkTree.register(keyPelotrio);
+
+        connect(keyBootes, peloPath1);
+        connect(peloPath1, peloPath2);
+        connect(peloPath2, keyPelotrio);
+
+        // --- Alcara (nighttime regen + perk amplifier) — between Lucerna and Fornax ---
+        SmallPerk alcaPath1 = smallPerk("alca_p1", 40, -60, PerkAttributeTypesAS.ATTR_TYPE_PERK_EFFECT, 0.05f);
+        SmallPerk alcaPath2 = smallPerk("alca_p2", 48, -54, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.5f);
+        KeyAlcara keyAlcara = new KeyAlcara(56, -48);
+
+        PerkTree.register(alcaPath1);
+        PerkTree.register(alcaPath2);
+        PerkTree.register(keyAlcara);
+
+        connect(keyLucerna, alcaPath1);
+        connect(alcaPath1, alcaPath2);
+        connect(alcaPath2, keyAlcara);
+
+        // --- Gelu (frost defense) — between Fornax and Octans outer ring ---
+        SmallPerk geluPath1 = smallPerk("gelu_p1", 64, 24, PerkAttributeTypesAS.ATTR_TYPE_ALL_ELEMENTAL_RESIST, 0.10f);
+        SmallPerk geluPath2 = smallPerk("gelu_p2", 68, 32, PerkAttributeTypesAS.ATTR_TYPE_ARMOR, 1.0f);
+        KeyGelu keyGelu = new KeyGelu(72, 40);
+
+        PerkTree.register(geluPath1);
+        PerkTree.register(geluPath2);
+        PerkTree.register(keyGelu);
+
+        connect(keyFornax, geluPath1);
+        connect(geluPath1, geluPath2);
+        connect(geluPath2, keyGelu);
+
+        // --- Ulteria (loot/experience) — between Bootes and Mineralis outer ring ---
+        SmallPerk ultePathA = smallPerk("ulte_p1", -64, 24, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.10f);
+        SmallPerk ultePathB = smallPerk("ulte_p2", -68, 32, PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.05f);
+        KeyUlteria keyUlteria = new KeyUlteria(-72, 40);
+
+        PerkTree.register(ultePathA);
+        PerkTree.register(ultePathB);
+        PerkTree.register(keyUlteria);
+
+        connect(keyBootes, ultePathA);
+        connect(ultePathA, ultePathB);
+        connect(ultePathB, keyUlteria);
+
+        // --- Vorux (berserker) — between Discidia key and Horologium ---
+        SmallPerk voruxPath1 = smallPerk("vorux_p1", -10, -90, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.05f);
+        SmallPerk voruxPath2 = smallPerk("vorux_p2", -20, -94, PerkAttributeTypesAS.ATTR_TYPE_CRIT_CHANCE, 0.05f);
+        KeyVorux keyVorux = new KeyVorux(-30, -98);
+
+        PerkTree.register(voruxPath1);
+        PerkTree.register(voruxPath2);
+        PerkTree.register(keyVorux);
+
+        connect(keyHorologium, voruxPath1);
+        connect(voruxPath1, voruxPath2);
+        connect(voruxPath2, keyVorux);
 
         // ======================================================================
         // Gem Socket perks (one per main branch + central)

@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 800,
+  "output": {
+    "item": "astralsorcery:resonating_gem",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:diamond"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_dust"},
+    {},
+    {"item": "astralsorcery:starmetal_dust"},
+    {}
+  ]
+}

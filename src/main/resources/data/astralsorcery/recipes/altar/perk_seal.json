@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 600,
+  "output": {
+    "item": "astralsorcery:perk_seal",
+    "count": 3
+  },
+  "inputs": [
+    {"item": "minecraft:honeycomb"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "minecraft:honeycomb"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "minecraft:honeycomb"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "minecraft:honeycomb"},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

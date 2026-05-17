@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 300,
+  "starlight_required": 1200,
+  "output": {
+    "item": "astralsorcery:observatory",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"tag": "minecraft:planks"},
+    {"item": "minecraft:gold_ingot"},
+    {"tag": "minecraft:planks"},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

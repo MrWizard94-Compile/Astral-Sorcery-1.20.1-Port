@@ -5,11 +5,13 @@ package hellfirepvp.astralsorcery.common.network.play.client;
 
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -68,7 +70,10 @@ public class PktPerkSealAction {
 
             if (pkt.seal) {
                 // Apply seal: check inventory for seal item, consume one
-                // TODO: Check and consume seal item from player inventory
+                int sealSlot = findSealItem(player);
+                if (sealSlot < 0) return; // No seal items available
+
+                player.getInventory().removeItem(sealSlot, 1);
                 progress.sealPerk(perk);
             } else {
                 // Remove seal
@@ -80,5 +85,21 @@ public class PktPerkSealAction {
             PlayerProgressManager.syncProgress(player);
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    /**
+     * Searches the player's inventory for a perk seal item.
+     *
+     * @param player the player to search
+     * @return the slot index containing a seal, or -1 if none found
+     */
+    private static int findSealItem(@Nonnull ServerPlayer player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (!stack.isEmpty() && stack.getItem() == ItemsAS.PERK_SEAL.get()) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

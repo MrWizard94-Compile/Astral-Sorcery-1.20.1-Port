@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 400,
+  "output": {
+    "item": "astralsorcery:colored_lens_fire",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "minecraft:blaze_powder"},
+    {},
+    {"item": "minecraft:blaze_powder"},
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "minecraft:blaze_powder"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

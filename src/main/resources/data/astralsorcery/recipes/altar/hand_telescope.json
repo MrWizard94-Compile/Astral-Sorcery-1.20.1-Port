@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 80,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:hand_telescope",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:glass_lens"},
+    {},
+    {"tag": "minecraft:planks"},
+    {"item": "minecraft:gold_ingot"},
+    {"tag": "minecraft:planks"},
+    {},
+    {"tag": "minecraft:planks"},
+    {}
+  ]
+}

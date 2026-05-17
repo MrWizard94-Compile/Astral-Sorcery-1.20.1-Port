@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 400,
+  "output": {
+    "item": "astralsorcery:colored_lens_spectral",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "minecraft:ender_pearl"},
+    {},
+    {"item": "minecraft:ender_eye"},
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "minecraft:ender_eye"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

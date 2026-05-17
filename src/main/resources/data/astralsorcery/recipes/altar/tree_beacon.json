@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 800,
+  "output": {
+    "item": "astralsorcery:tree_beacon",
+    "count": 1
+  },
+  "inputs": [
+    {"tag": "minecraft:leaves"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"tag": "minecraft:leaves"},
+    {"item": "astralsorcery:aquamarine"},
+    {"tag": "minecraft:saplings"},
+    {"item": "astralsorcery:aquamarine"},
+    {"tag": "minecraft:logs"},
+    {"item": "astralsorcery:stardust"},
+    {"tag": "minecraft:logs"},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

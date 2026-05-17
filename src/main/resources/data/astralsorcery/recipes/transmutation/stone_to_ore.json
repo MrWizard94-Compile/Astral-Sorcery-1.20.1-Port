@@ -1,0 +1,11 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": {
+    "block": "minecraft:stone"
+  },
+  "output": {
+    "block": "minecraft:iron_ore"
+  },
+  "starlight_required": 200,
+  "constellation": "astralsorcery:mineralis"
+}

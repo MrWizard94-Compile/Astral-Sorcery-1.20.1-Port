@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 400,
+  "output": {
+    "item": "astralsorcery:colored_lens_regeneration",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "minecraft:ghast_tear"},
+    {},
+    {"item": "minecraft:golden_apple"},
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "minecraft:golden_apple"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

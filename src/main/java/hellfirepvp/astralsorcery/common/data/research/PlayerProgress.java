@@ -41,6 +41,8 @@ public class PlayerProgress {
     private static final String TAG_PERK_POINTS = "perkPoints";
     private static final String TAG_PERK_EXP = "perkExp";
     private static final String TAG_ALLOCATED_PERKS = "allocatedPerks";
+    private static final String TAG_SEALED_PERKS = "sealedPerks";
+    private static final String TAG_UNLOCKED_RESEARCH = "unlockedResearch";
 
     @Nonnull
     private ProgressionTier tierReached = ProgressionTier.DISCOVERY;
@@ -184,8 +186,16 @@ public class PlayerProgress {
         sealedPerks.add(perk.getKey());
     }
 
+    public void sealPerk(@Nonnull ResourceLocation perkKey) {
+        sealedPerks.add(perkKey);
+    }
+
     public void unsealPerk(@Nonnull AbstractPerk perk) {
         sealedPerks.remove(perk.getKey());
+    }
+
+    public void unsealPerk(@Nonnull ResourceLocation perkKey) {
+        sealedPerks.remove(perkKey);
     }
 
     public boolean isPerkSealed(@Nonnull AbstractPerk perk) {
@@ -243,6 +253,16 @@ public class PlayerProgress {
             perkList.add(StringTag.valueOf(rl.toString()));
         }
         tag.put(TAG_ALLOCATED_PERKS, perkList);
+        ListTag sealedList = new ListTag();
+        for (ResourceLocation rl : sealedPerks) {
+            sealedList.add(StringTag.valueOf(rl.toString()));
+        }
+        tag.put(TAG_SEALED_PERKS, sealedList);
+        ListTag researchList = new ListTag();
+        for (ResourceLocation rl : unlockedResearch) {
+            researchList.add(StringTag.valueOf(rl.toString()));
+        }
+        tag.put(TAG_UNLOCKED_RESEARCH, researchList);
         return tag;
     }
 
@@ -269,6 +289,20 @@ public class PlayerProgress {
             ListTag perkList = tag.getList(TAG_ALLOCATED_PERKS, Tag.TAG_STRING);
             for (int i = 0; i < perkList.size(); i++) {
                 allocatedPerks.add(new ResourceLocation(perkList.getString(i)));
+            }
+        }
+        this.sealedPerks.clear();
+        if (tag.contains(TAG_SEALED_PERKS)) {
+            ListTag sealedList = tag.getList(TAG_SEALED_PERKS, Tag.TAG_STRING);
+            for (int i = 0; i < sealedList.size(); i++) {
+                sealedPerks.add(new ResourceLocation(sealedList.getString(i)));
+            }
+        }
+        this.unlockedResearch.clear();
+        if (tag.contains(TAG_UNLOCKED_RESEARCH)) {
+            ListTag researchList = tag.getList(TAG_UNLOCKED_RESEARCH, Tag.TAG_STRING);
+            for (int i = 0; i < researchList.size(); i++) {
+                unlockedResearch.add(new ResourceLocation(researchList.getString(i)));
             }
         }
     }

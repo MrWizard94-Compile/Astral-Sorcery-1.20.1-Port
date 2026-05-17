@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 60,
+  "starlight_required": 50,
+  "output": {
+    "item": "astralsorcery:illumination_powder",
+    "count": 16
+  },
+  "inputs": [
+    {"item": "minecraft:glowstone_dust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:glowstone_dust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:glowstone_dust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:glowstone_dust"}
+  ]
+}

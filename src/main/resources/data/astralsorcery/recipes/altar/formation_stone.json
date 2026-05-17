@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 100,
+  "starlight_required": 150,
+  "output": {
+    "item": "astralsorcery:formation_stone",
+    "count": 4
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "minecraft:redstone"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "minecraft:redstone"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {}
+  ]
+}

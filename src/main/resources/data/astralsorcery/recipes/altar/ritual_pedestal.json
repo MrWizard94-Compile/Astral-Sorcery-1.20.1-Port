@@ -1,0 +1,33 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "constellation",
+  "craft_duration": 400,
+  "starlight_required": 2800,
+  "output": {
+    "item": "astralsorcery:ritual_pedestal",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

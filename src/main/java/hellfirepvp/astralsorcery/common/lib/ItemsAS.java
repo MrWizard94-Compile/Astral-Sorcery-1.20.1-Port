@@ -10,6 +10,10 @@ import hellfirepvp.astralsorcery.common.item.ItemKnowledgeFragment;
 import hellfirepvp.astralsorcery.common.item.ItemLinkingTool;
 import hellfirepvp.astralsorcery.common.item.ItemResonatingGem;
 import hellfirepvp.astralsorcery.common.item.ItemStardust;
+import hellfirepvp.astralsorcery.common.item.ItemStarmetalDust;
+import hellfirepvp.astralsorcery.common.item.ItemStarmetalIngot;
+import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
+import hellfirepvp.astralsorcery.common.item.ItemPerkSeal;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemRockCrystalSimple;
@@ -53,6 +57,12 @@ public class ItemsAS {
             ITEMS.register("aquamarine", ItemAquamarine::new);
     public static final RegistryObject<ItemStardust> STARDUST =
             ITEMS.register("stardust", ItemStardust::new);
+    public static final RegistryObject<ItemStarmetalIngot> STARMETAL_INGOT =
+            ITEMS.register("starmetal_ingot", ItemStarmetalIngot::new);
+    public static final RegistryObject<ItemStarmetalDust> STARMETAL_DUST =
+            ITEMS.register("starmetal_dust", ItemStarmetalDust::new);
+    public static final RegistryObject<ItemGlassLens> GLASS_LENS =
+            ITEMS.register("glass_lens", ItemGlassLens::new);
     public static final RegistryObject<ItemIlluminationPowder> ILLUMINATION_POWDER =
             ITEMS.register("illumination_powder", ItemIlluminationPowder::new);
     public static final RegistryObject<ItemInfusedGlass> INFUSED_GLASS =
@@ -61,6 +71,8 @@ public class ItemsAS {
             ITEMS.register("resonating_gem", ItemResonatingGem::new);
     public static final RegistryObject<ItemFormationStone> FORMATION_STONE =
             ITEMS.register("formation_stone", ItemFormationStone::new);
+    public static final RegistryObject<ItemPerkSeal> PERK_SEAL =
+            ITEMS.register("perk_seal", ItemPerkSeal::new);
 
     // ---- Perk Gems ----
     public static final RegistryObject<ItemPerkGem> PERK_GEM_DAY =
