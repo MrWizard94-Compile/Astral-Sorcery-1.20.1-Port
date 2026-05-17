@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 80,
+  "starlight_required": 150,
+  "output": {
+    "item": "astralsorcery:well",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "minecraft:bucket"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"}
+  ]
+}

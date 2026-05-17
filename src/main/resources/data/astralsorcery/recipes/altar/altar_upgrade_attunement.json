@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 200,
+  "starlight_required": 500,
+  "output": {
+    "item": "astralsorcery:altar_attunement",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:aquamarine"}
+  ]
+}

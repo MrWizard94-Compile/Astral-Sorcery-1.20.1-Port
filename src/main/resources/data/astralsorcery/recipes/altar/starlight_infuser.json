@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 800,
+  "output": {
+    "item": "astralsorcery:infuser",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:rock_crystal"}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "astralsorcery:aquamarine"
+  },
+  "output": {
+    "fluid": "astralsorcery:liquid_starlight",
+    "amount": 1
+  },
+  "productionMultiplier": 0.5,
+  "color": 2266879
+}

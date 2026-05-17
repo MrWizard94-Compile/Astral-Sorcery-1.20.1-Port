@@ -1,6 +1,9 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
@@ -10,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,6 +25,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Block entity for the Starlight Infuser.
@@ -99,23 +104,190 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         return getBlockPos();
     }
 
+    /** Structure check interval (ticks). */
+    private static final int STRUCTURE_CHECK_INTERVAL = 40;
+
+    /** Liquid starlight consumed per infusion tick. */
+    private static final int FLUID_DRAIN_PER_TICK = 2;
+
+    /** Recipe scan interval when idle (ticks). */
+    private static final int RECIPE_SCAN_INTERVAL = 10;
+
+    @Nullable
+    private LiquidInfusion cachedRecipe = null;
+
     @Override
     public void tick() {
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // TODO: Client-side infusion particle effects
+            // Client-side: infusion particles handled by renderer
             return;
         }
 
-        // TODO: Server-side infusion logic:
-        // 1. Check multiblock structure validity -> structureValid
-        // 2. If structureValid && input item present && tank has fluid:
-        //    - Match infusion recipe for input + fluid
-        //    - Set activeRecipeId
-        //    - Increment recipeTick / craftingProgress
-        // 3. On recipe completion, replace input item with output
-        // 4. Consume liquid starlight from tank
+        Level level = getLevel();
+        if (level == null) return;
+
+        // Periodically validate multiblock structure
+        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+            structureValid = validateStructure();
+        }
+
+        if (!structureValid) {
+            if (craftingProgress > 0) {
+                abortInfusion();
+            }
+            return;
+        }
+
+        // Active infusion in progress
+        if (activeRecipeId != null && cachedRecipe != null) {
+            tickInfusion(level);
+        } else if (ticksExisted % RECIPE_SCAN_INTERVAL == 0) {
+            // Scan for matching recipe
+            tryFindInfusionRecipe(level);
+        }
+    }
+
+    /**
+     * Progresses the active infusion.
+     */
+    private void tickInfusion(@Nonnull Level level) {
+        if (cachedRecipe == null) {
+            abortInfusion();
+            return;
+        }
+
+        // Verify input is still present
+        ItemStack input = inventory.getStackInSlot(0);
+        if (input.isEmpty() || !cachedRecipe.getInputItem().test(input)) {
+            abortInfusion();
+            return;
+        }
+
+        // Drain liquid starlight from tank
+        FluidStack drained = tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.SIMULATE);
+        if (drained.isEmpty() || drained.getAmount() < FLUID_DRAIN_PER_TICK) {
+            // Stall — not enough fluid, but don't abort (more may arrive)
+            return;
+        }
+        tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
+
+        craftingProgress++;
+
+        if (craftingProgress >= recipeTick) {
+            completeInfusion(level);
+        }
+    }
+
+    /**
+     * Attempts to find a matching infusion recipe for the current input + fluid.
+     */
+    private void tryFindInfusionRecipe(@Nonnull Level level) {
+        ItemStack input = inventory.getStackInSlot(0);
+        if (input.isEmpty()) return;
+
+        FluidStack stored = tank.getFluid();
+        if (stored.isEmpty()) return;
+
+        List<LiquidInfusion> allRecipes = level.getRecipeManager()
+                .getAllRecipesFor(RecipeTypesAS.LIQUID_INFUSION.get());
+
+        for (LiquidInfusion recipe : allRecipes) {
+            if (recipe.getInputItem().test(input)) {
+                if (stored.getAmount() >= recipe.getFluidMbRequired()) {
+                    startInfusion(recipe);
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Starts an infusion process.
+     */
+    private void startInfusion(@Nonnull LiquidInfusion recipe) {
+        this.activeRecipeId = recipe.getId();
+        this.cachedRecipe = recipe;
+        this.recipeTick = recipe.getCraftDuration();
+        this.craftingProgress = 0;
+        markForUpdate();
+        AstralSorcery.log.debug("Infuser started recipe {} at {}",
+                recipe.getId(), worldPosition.toShortString());
+    }
+
+    /**
+     * Completes the infusion: replaces input with output.
+     */
+    private void completeInfusion(@Nonnull Level level) {
+        if (cachedRecipe == null) return;
+
+        ItemStack result = cachedRecipe.getOutput().copy();
+        inventory.setStackInSlot(0, result);
+
+        // Consume the required fluid amount beyond what was drained per-tick
+        int totalFluidRequired = cachedRecipe.getFluidMbRequired();
+        int alreadyDrained = craftingProgress * FLUID_DRAIN_PER_TICK;
+        int remaining = totalFluidRequired - alreadyDrained;
+        if (remaining > 0) {
+            tank.drain(remaining, IFluidHandler.FluidAction.EXECUTE);
+        }
+
+        AstralSorcery.log.debug("Infuser completed recipe {} at {}: produced {}",
+                cachedRecipe.getId(), worldPosition.toShortString(),
+                result.getDisplayName().getString());
+
+        this.activeRecipeId = null;
+        this.cachedRecipe = null;
+        this.recipeTick = 0;
+        this.craftingProgress = 0;
+        markForUpdate();
+
+        // TODO: Send particle burst packet for infusion completion visual
+    }
+
+    /**
+     * Aborts the current infusion process.
+     */
+    private void abortInfusion() {
+        this.activeRecipeId = null;
+        this.cachedRecipe = null;
+        this.recipeTick = 0;
+        this.craftingProgress = 0;
+        markForUpdate();
+    }
+
+    /**
+     * Validates the infuser multiblock structure.
+     * Requires 8 chalice positions around the infuser.
+     */
+    private boolean validateStructure() {
+        Level level = getLevel();
+        if (level == null) return false;
+
+        // Must have sky access
+        if (!level.canSeeSky(worldPosition.above())) {
+            return false;
+        }
+
+        // Check for support blocks at cardinal and diagonal positions
+        BlockPos[] supportPositions = {
+                worldPosition.offset(1, 0, 0),
+                worldPosition.offset(-1, 0, 0),
+                worldPosition.offset(0, 0, 1),
+                worldPosition.offset(0, 0, -1),
+                worldPosition.offset(1, 0, 1),
+                worldPosition.offset(-1, 0, 1),
+                worldPosition.offset(1, 0, -1),
+                worldPosition.offset(-1, 0, -1)
+        };
+
+        for (BlockPos support : supportPositions) {
+            if (level.getBlockState(support).isAir()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Nonnull

@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 100,
+  "starlight_required": 250,
+  "output": {
+    "item": "astralsorcery:linking_tool",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:rock_crystal"},
+    {},
+    {"tag": "forge:rods/wooden"},
+    {},
+    {}
+  ]
+}

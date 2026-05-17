@@ -4,9 +4,18 @@
 package hellfirepvp.astralsorcery.common.network.play.client;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.data.world.GatewayHandler;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -14,10 +23,18 @@ import java.util.function.Supplier;
 
 /**
  * Client → Server: Player requests teleportation via a Celestial Gateway.
- * Sends the target gateway position. Server validates the source gateway,
- * checks if destination is a valid linked gateway, and teleports the player.
+ * Sends the target gateway position and dimension. Server validates:
+ * <ol>
+ *   <li>Player is near a valid source gateway</li>
+ *   <li>Target gateway exists in the network</li>
+ *   <li>Target dimension is loaded or loadable</li>
+ * </ol>
+ * Then teleports the player (cross-dimension if needed).
  */
 public class PktGatewayTeleport {
+
+    /** Maximum distance from a gateway for a teleport request to be valid. */
+    private static final double MAX_SOURCE_DISTANCE_SQ = 6.0 * 6.0;
 
     @Nonnull
     private final BlockPos targetPos;
@@ -45,11 +62,90 @@ public class PktGatewayTeleport {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            // TODO: Validate source gateway proximity, target gateway exists,
-            // linked network membership, then teleport player.
-            AstralSorcery.log.debug("Gateway teleport request from {} to {} ({})",
-                    player.getName().getString(), pkt.targetPos, pkt.targetDimension);
+            performTeleport(player, pkt.targetPos, pkt.targetDimension);
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    private static void performTeleport(@Nonnull ServerPlayer player,
+                                         @Nonnull BlockPos targetPos,
+                                         @Nonnull String targetDimension) {
+        MinecraftServer server = player.getServer();
+        if (server == null) return;
+
+        // Step 1: Verify player is near a source gateway
+        ServerLevel sourceLevel = player.serverLevel();
+        BlockPos playerPos = player.blockPosition();
+        BlockEntityGateway sourceGateway = findNearbyGateway(sourceLevel, playerPos);
+        if (sourceGateway == null) {
+            AstralSorcery.log.debug("Gateway teleport denied for {}: not near a gateway",
+                    player.getName().getString());
+            return;
+        }
+
+        // Step 2: Verify target gateway exists in network
+        GatewayHandler handler = GatewayHandler.get(server);
+        ResourceKey<Level> targetDimKey = ResourceKey.create(
+                Registries.DIMENSION, new ResourceLocation(targetDimension));
+
+        GatewayHandler.GatewayEntry targetEntry = handler.getGatewayAt(targetDimKey, targetPos);
+        if (targetEntry == null) {
+            AstralSorcery.log.debug("Gateway teleport denied for {}: target gateway not in network at {} ({})",
+                    player.getName().getString(), targetPos, targetDimension);
+            return;
+        }
+
+        // Step 3: Get or load the target dimension
+        ServerLevel targetLevel = server.getLevel(targetDimKey);
+        if (targetLevel == null) {
+            AstralSorcery.log.warn("Gateway teleport denied: dimension {} not loaded",
+                    targetDimension);
+            return;
+        }
+
+        // Step 4: Teleport the player
+        double destX = targetPos.getX() + 0.5;
+        double destY = targetPos.getY() + 1.0; // Stand on top of gateway block
+        double destZ = targetPos.getZ() + 0.5;
+
+        if (targetLevel == sourceLevel) {
+            // Same dimension: simple teleport
+            player.teleportTo(destX, destY, destZ);
+        } else {
+            // Cross-dimension teleport
+            player.teleportTo(targetLevel, destX, destY, destZ,
+                    player.getYRot(), player.getXRot());
+        }
+
+        AstralSorcery.log.debug("Gateway teleport: {} -> {} in {}",
+                player.getName().getString(), targetPos, targetDimension);
+
+        // TODO: Send particle burst packet at both source and destination
+        // TODO: Play teleportation sound effect
+    }
+
+    /**
+     * Finds a gateway block entity within range of the given position.
+     * Checks a small radius around the player for a valid source gateway.
+     */
+    @javax.annotation.Nullable
+    private static BlockEntityGateway findNearbyGateway(@Nonnull ServerLevel level,
+                                                         @Nonnull BlockPos center) {
+        int searchRadius = 4;
+        for (int dx = -searchRadius; dx <= searchRadius; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                for (int dz = -searchRadius; dz <= searchRadius; dz++) {
+                    BlockPos checkPos = center.offset(dx, dy, dz);
+                    if (center.distSqr(checkPos) > MAX_SOURCE_DISTANCE_SQ) {
+                        continue;
+                    }
+                    BlockEntity be = level.getBlockEntity(checkPos);
+                    if (be instanceof BlockEntityGateway gateway && gateway.isStructureValid()) {
+                        return gateway;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

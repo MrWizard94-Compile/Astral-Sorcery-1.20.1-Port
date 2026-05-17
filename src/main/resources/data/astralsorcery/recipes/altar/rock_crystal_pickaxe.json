@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 120,
+  "starlight_required": 300,
+  "output": {
+    "item": "astralsorcery:crystal_pickaxe",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:rock_crystal"},
+    {"item": "astralsorcery:rock_crystal"},
+    {},
+    {"tag": "forge:rods/wooden"},
+    {},
+    {},
+    {"tag": "forge:rods/wooden"},
+    {}
+  ]
+}

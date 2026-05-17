@@ -5,6 +5,8 @@ import hellfirepvp.astralsorcery.common.util.MiscUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -139,6 +141,70 @@ public class TileInventory extends ItemStackHandler implements Iterable<ItemStac
             setStackInSlot(i, ItemStack.EMPTY);
             onContentsChanged(i);
         }
+    }
+
+    /**
+     * Returns a read-only {@link Container} view of this inventory
+     * for use with the vanilla recipe system (Recipe.matches, assemble, etc.).
+     * The Container wraps the ItemStackHandler slots without duplication.
+     */
+    @Nonnull
+    public Container toContainer() {
+        final TileInventory self = this;
+        return new Container() {
+            @Override
+            public int getContainerSize() {
+                return self.getSlots();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                for (int i = 0; i < self.getSlots(); i++) {
+                    if (!self.getStackInSlot(i).isEmpty()) return false;
+                }
+                return true;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack getItem(int slot) {
+                return self.getStackInSlot(slot);
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack removeItem(int slot, int amount) {
+                return self.extractItem(slot, amount, false);
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack removeItemNoUpdate(int slot) {
+                ItemStack stack = self.getStackInSlot(slot);
+                self.setStackInSlot(slot, ItemStack.EMPTY);
+                return stack;
+            }
+
+            @Override
+            public void setItem(int slot, @Nonnull ItemStack stack) {
+                self.setStackInSlot(slot, stack);
+            }
+
+            @Override
+            public void setChanged() {
+                self.tile.setChanged();
+            }
+
+            @Override
+            public boolean stillValid(@Nonnull Player player) {
+                return true;
+            }
+
+            @Override
+            public void clearContent() {
+                self.clearInventory();
+            }
+        };
     }
 
     @Override

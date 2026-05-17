@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 100,
+  "starlight_required": 200,
+  "output": {
+    "item": "astralsorcery:altar_discovery",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:black_marble_raw"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_raw"}
+  ]
+}

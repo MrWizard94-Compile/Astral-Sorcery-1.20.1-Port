@@ -1,0 +1,34 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "constellation",
+  "craft_duration": 300,
+  "starlight_required": 3000,
+  "output": {
+    "item": "astralsorcery:gateway",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {},
+    {"item": "minecraft:ender_pearl"},
+    {},
+    {"item": "minecraft:ender_pearl"},
+    {},
+    {"item": "minecraft:ender_pearl"},
+    {},
+    {"item": "minecraft:ender_pearl"}
+  ],
+  "focus_constellation": "astralsorcery:vicio"
+}

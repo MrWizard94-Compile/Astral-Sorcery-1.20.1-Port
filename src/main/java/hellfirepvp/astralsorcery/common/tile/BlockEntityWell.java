@@ -1,12 +1,16 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
+import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -17,6 +21,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Block entity for the Lightwell.
@@ -47,23 +52,120 @@ public class BlockEntityWell extends BlockEntityTick {
         this.fluidCap = LazyOptional.of(() -> new TankWrapper(tank));
     }
 
+    /** Sub-mB accumulated but not yet added to the integer tank. */
+    private double fractionalFluid = 0.0;
+
+    /** Ticks until the catalyst degrades by 1 durability point. */
+    private static final int CATALYST_DEGRADE_INTERVAL = 600; // 30 seconds
+
+    /** Base mB produced per tick at perfect conditions (no multiplier). */
+    private static final double BASE_PRODUCTION_PER_TICK = 0.05;
+
+    @Nullable
+    private WellLiquefaction cachedRecipe = null;
+    private boolean recipeDirty = true;
+
     @Override
     public void tick() {
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // TODO: Client-side drip particle effects
+            // Client-side: drip particle effects handled by renderer
             return;
         }
 
         if (catalystStack.isEmpty()) {
+            productionProgress = 0;
+            cachedRecipe = null;
             return;
         }
 
-        // TODO: Look up WellLiquefaction recipe for catalystStack
-        // - Calculate drip rate based on starlight collection, catalyst type, time of day
-        // - Add fluid to tank via precisionAdd
-        // - Degrade catalyst over time
+        Level level = getLevel();
+        if (level == null) return;
+
+        // Find or use cached recipe
+        if (recipeDirty || cachedRecipe == null) {
+            cachedRecipe = findRecipeFor(level, catalystStack);
+            recipeDirty = false;
+        }
+        if (cachedRecipe == null) {
+            return; // No valid recipe for this catalyst
+        }
+
+        // Must have sky access for starlight collection
+        if (!level.canSeeSky(worldPosition.above())) {
+            return;
+        }
+
+        // Production rate modified by time of day and weather
+        float distributionFactor = CelestialHandler.getStarlightDistributionFactor(level);
+        double ratePerTick = BASE_PRODUCTION_PER_TICK
+                * cachedRecipe.getProductionMultiplier()
+                * distributionFactor;
+
+        if (ratePerTick <= 0) return;
+
+        // Accumulate fluid with sub-mB precision
+        fractionalFluid += ratePerTick;
+        productionProgress = Math.min(1.0, productionProgress + ratePerTick / 10.0);
+
+        // When we've accumulated 1+ mB, add to the tank
+        if (fractionalFluid >= 1.0) {
+            int wholeMB = (int) fractionalFluid;
+            fractionalFluid -= wholeMB;
+
+            FluidStack produced = cachedRecipe.getOutputFluid();
+            produced.setAmount(wholeMB);
+
+            int filled = tank.fill(produced, IFluidHandler.FluidAction.EXECUTE);
+            if (filled < wholeMB) {
+                // Tank is full — excess is lost (overflow)
+                fractionalFluid = 0;
+            }
+        }
+
+        // Degrade catalyst over time
+        if (ticksExisted % CATALYST_DEGRADE_INTERVAL == 0) {
+            degradeCatalyst();
+        }
+    }
+
+    /**
+     * Degrades the catalyst item. For damageable items, damages them.
+     * For non-damageable items, shrinks the stack.
+     */
+    private void degradeCatalyst() {
+        if (catalystStack.isEmpty()) return;
+
+        if (catalystStack.isDamageableItem()) {
+            catalystStack.setDamageValue(catalystStack.getDamageValue() + 1);
+            if (catalystStack.getDamageValue() >= catalystStack.getMaxDamage()) {
+                catalystStack = ItemStack.EMPTY;
+                recipeDirty = true;
+                markForUpdate();
+            }
+        } else {
+            catalystStack.shrink(1);
+            if (catalystStack.isEmpty()) {
+                recipeDirty = true;
+                markForUpdate();
+            }
+        }
+    }
+
+    /**
+     * Finds the WellLiquefaction recipe matching the given item.
+     */
+    @Nullable
+    private WellLiquefaction findRecipeFor(@Nonnull Level level, @Nonnull ItemStack stack) {
+        List<WellLiquefaction> allRecipes = level.getRecipeManager()
+                .getAllRecipesFor(RecipeTypesAS.WELL_LIQUEFACTION.get());
+        for (WellLiquefaction recipe : allRecipes) {
+            if (recipe.matches(stack)) {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     @Nonnull
@@ -73,6 +175,9 @@ public class BlockEntityWell extends BlockEntityTick {
 
     public void setCatalystStack(@Nonnull ItemStack stack) {
         this.catalystStack = stack;
+        this.recipeDirty = true;
+        this.fractionalFluid = 0;
+        this.productionProgress = 0;
         markForUpdate();
     }
 
