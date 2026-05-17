@@ -1,11 +1,16 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
+import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -24,6 +29,12 @@ import javax.annotation.Nullable;
  * ResourceLocation for constellation keying</p>
  */
 public class BlockEntityAttunementAltar extends BlockEntityTick {
+
+    /** Total ticks required to complete attunement. */
+    private static final int ATTUNEMENT_DURATION = 200; // 10 seconds
+
+    /** How often to re-check multiblock structure validity. */
+    private static final int STRUCTURE_CHECK_INTERVAL = 40; // Every 2 seconds
 
     @Nonnull
     private ItemStack heldCrystal = ItemStack.EMPTY;
@@ -45,19 +56,139 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // TODO: Client-side attunement visual effects (constellation lines, particles)
             return;
         }
 
-        // TODO: Server-side attunement logic:
-        // 1. Validate multiblock structure -> structureValid
-        // 2. If structureValid && heldCrystal is present && attunedConstellation is set:
-        //    - Set isAttuning = true
-        //    - Increment attunementTick
-        //    - Check sky visibility + constellation visibility
-        // 3. On attunement completion:
-        //    - Apply constellation to crystal NBT
-        //    - Reset attunementTick, isAttuning
+        Level level = getLevel();
+        if (level == null) return;
+
+        // Periodically re-validate multiblock structure
+        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+            structureValid = validateStructure();
+        }
+
+        // Attunement requires: valid structure, crystal present, target constellation set
+        if (!structureValid || heldCrystal.isEmpty() || attunedConstellation == null) {
+            if (isAttuning) {
+                abortAttunement();
+            }
+            return;
+        }
+
+        // Must be nighttime and the target constellation must be visible
+        if (!DayTimeHelper.isNight(level)) {
+            if (isAttuning) {
+                abortAttunement();
+            }
+            return;
+        }
+
+        // Check if target constellation is currently visible in sky
+        if (!isConstellationVisible(level, attunedConstellation)) {
+            if (isAttuning) {
+                abortAttunement();
+            }
+            return;
+        }
+
+        // Must be able to see the sky
+        if (!level.canSeeSky(worldPosition.above())) {
+            if (isAttuning) {
+                abortAttunement();
+            }
+            return;
+        }
+
+        // Begin or continue attunement
+        if (!isAttuning) {
+            isAttuning = true;
+            markForUpdate();
+        }
+
+        attunementTick++;
+
+        if (attunementTick >= ATTUNEMENT_DURATION) {
+            completeAttunement();
+        }
+    }
+
+    /**
+     * Complete the attunement process — mark the crystal with the constellation.
+     */
+    private void completeAttunement() {
+        if (heldCrystal.isEmpty() || attunedConstellation == null) return;
+
+        // Write the constellation attunement to the crystal's NBT
+        CompoundTag itemTag = heldCrystal.getOrCreateTag();
+        itemTag.putString("attunedConstellation", attunedConstellation.toString());
+        heldCrystal.setTag(itemTag);
+
+        // Reset state
+        isAttuning = false;
+        attunementTick = 0;
+        markForUpdate();
+
+        // TODO: Send particle burst packet for completion visual
+        // TODO: Play attunement completion sound
+    }
+
+    /**
+     * Abort an in-progress attunement (conditions no longer met).
+     */
+    private void abortAttunement() {
+        isAttuning = false;
+        attunementTick = 0;
+        markForUpdate();
+    }
+
+    /**
+     * Validates the multiblock structure around the altar.
+     * The attunement altar requires spectral relays at specific positions.
+     *
+     * <p>Structure: The altar at center with 8 sooty marble pillars
+     * in a ring (at ±3, ±3 offsets) each topped with a spectral relay.</p>
+     */
+    private boolean validateStructure() {
+        Level level = getLevel();
+        if (level == null) return false;
+
+        // Check for open sky above
+        if (!level.canSeeSky(worldPosition.above(2))) {
+            return false;
+        }
+
+        // Simplified structure check: verify key positions have solid blocks
+        // Full multiblock validation will use PatternBlockArray when available
+        BlockPos[] pillarPositions = {
+                worldPosition.offset(3, 0, 0),
+                worldPosition.offset(-3, 0, 0),
+                worldPosition.offset(0, 0, 3),
+                worldPosition.offset(0, 0, -3),
+                worldPosition.offset(2, 0, 2),
+                worldPosition.offset(-2, 0, 2),
+                worldPosition.offset(2, 0, -2),
+                worldPosition.offset(-2, 0, -2)
+        };
+
+        for (BlockPos pillar : pillarPositions) {
+            if (level.getBlockState(pillar).isAir()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the target constellation is currently visible in the sky.
+     */
+    private boolean isConstellationVisible(@Nonnull Level level,
+                                            @Nonnull ResourceLocation constellationKey) {
+        for (IConstellation visible : CelestialHandler.getVisibleConstellations(level)) {
+            if (visible.getRegistryName().equals(constellationKey)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nonnull
