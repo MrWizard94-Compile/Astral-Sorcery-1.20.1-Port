@@ -1,0 +1,13 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "astralsorcery:illumination_powder"
+  },
+  "output": {
+    "item": "astralsorcery:nocturnal_powder",
+    "count": 4
+  },
+  "fluidMbRequired": 150,
+  "craftDuration": 80,
+  "requiredConstellation": "astralsorcery:lucerna"
+}

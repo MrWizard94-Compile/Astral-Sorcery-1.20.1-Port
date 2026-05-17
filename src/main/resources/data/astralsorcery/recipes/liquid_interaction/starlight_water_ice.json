@@ -1,0 +1,16 @@
+{
+  "type": "astralsorcery:liquid_interaction",
+  "fluid1": {
+    "fluid": "astralsorcery:liquid_starlight",
+    "amount": 10
+  },
+  "fluid2": {
+    "fluid": "minecraft:water",
+    "amount": 10
+  },
+  "weight": 2.0,
+  "output": {
+    "item": "minecraft:packed_ice",
+    "count": 1
+  }
+}

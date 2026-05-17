@@ -1,0 +1,16 @@
+{
+  "type": "astralsorcery:liquid_interaction",
+  "fluid1": {
+    "fluid": "astralsorcery:liquid_starlight",
+    "amount": 30
+  },
+  "fluid2": {
+    "fluid": "minecraft:lava",
+    "amount": 30
+  },
+  "weight": 0.5,
+  "output": {
+    "item": "astralsorcery:aquamarine",
+    "count": 1
+  }
+}

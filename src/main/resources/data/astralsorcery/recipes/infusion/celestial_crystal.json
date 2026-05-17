@@ -1,0 +1,13 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "astralsorcery:rock_crystal"
+  },
+  "output": {
+    "item": "astralsorcery:celestial_crystal",
+    "count": 1
+  },
+  "fluidMbRequired": 600,
+  "craftDuration": 300,
+  "requiredConstellation": "astralsorcery:aevitas"
+}

@@ -95,6 +95,29 @@ class PlayerProgressSerializationTest {
     }
 
     @Test
+    void testPerkAllocationRoundtrip() {
+        PlayerProgress original = new PlayerProgress();
+        original.setTierReached(ProgressionTier.ATTUNEMENT);
+        original.allocatePerk(new ResourceLocation("astralsorcery", "perk_root_aevitas"));
+        original.allocatePerk(new ResourceLocation("astralsorcery", "perk_aevitas_regen_1"));
+        original.allocatePerk(new ResourceLocation("astralsorcery", "perk_aevitas_life_1"));
+        original.setPerkPoints(2);
+        original.setPerkExp(3200L);
+
+        CompoundTag nbt = original.writeToNBT();
+        PlayerProgress loaded = new PlayerProgress();
+        loaded.readFromNBT(nbt);
+
+        assertEquals(3, loaded.getAllocatedPerks().size());
+        assertTrue(loaded.hasPerkAllocated(new ResourceLocation("astralsorcery", "perk_root_aevitas")));
+        assertTrue(loaded.hasPerkAllocated(new ResourceLocation("astralsorcery", "perk_aevitas_regen_1")));
+        assertTrue(loaded.hasPerkAllocated(new ResourceLocation("astralsorcery", "perk_aevitas_life_1")));
+        assertFalse(loaded.hasPerkAllocated(new ResourceLocation("astralsorcery", "perk_nonexistent")));
+        assertEquals(2, loaded.getPerkPoints());
+        assertEquals(3200L, loaded.getPerkExp());
+    }
+
+    @Test
     void testDoubleSerializeIdempotent() {
         PlayerProgress original = new PlayerProgress();
         original.setTierReached(ProgressionTier.ATTUNEMENT);

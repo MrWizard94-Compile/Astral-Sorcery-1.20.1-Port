@@ -1,14 +1,17 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.entity.EntityCelestialCrystal;
 import hellfirepvp.astralsorcery.common.entity.EntityFlare;
 import hellfirepvp.astralsorcery.common.entity.EntityGrapplingHook;
 import hellfirepvp.astralsorcery.common.entity.EntityIlluminationSpark;
 import hellfirepvp.astralsorcery.common.entity.EntityItemHighlighted;
 import hellfirepvp.astralsorcery.common.entity.EntityLiquidSpark;
 import hellfirepvp.astralsorcery.common.entity.EntityNocturnalSpark;
+import hellfirepvp.astralsorcery.common.entity.EntityObservatoryHelper;
 import hellfirepvp.astralsorcery.common.entity.EntityShootingStar;
 import hellfirepvp.astralsorcery.common.entity.EntitySpectralTool;
+import hellfirepvp.astralsorcery.common.entity.EntityStarling;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -127,9 +130,40 @@ public final class EntityTypesAS {
                             .fireImmune()
                             .build(AstralSorcery.MODID + ":liquid_spark"));
 
-    // TODO: Register remaining entity types as they are ported:
-    // - EntityCrystalTool (crystal tool projectile)
-    // - EntityObservatoryHelper (observatory targeting)
-    // - EntityStarling (ritual pet entity)
-    // - EntityCelestialCrystal (floating crystal drop)
+    /**
+     * Celestial crystal — floating crystal entity from celestial events.
+     */
+    public static final RegistryObject<EntityType<EntityCelestialCrystal>> CELESTIAL_CRYSTAL =
+            ENTITY_TYPES.register("celestial_crystal", () ->
+                    EntityType.Builder.<EntityCelestialCrystal>of(EntityCelestialCrystal::new, MobCategory.MISC)
+                            .sized(0.4f, 0.4f)
+                            .clientTrackingRange(64)
+                            .updateInterval(5)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":celestial_crystal"));
+
+    /**
+     * Observatory helper — invisible mount entity for observatory camera control.
+     */
+    public static final RegistryObject<EntityType<EntityObservatoryHelper>> OBSERVATORY_HELPER =
+            ENTITY_TYPES.register("observatory_helper", () ->
+                    EntityType.Builder.<EntityObservatoryHelper>of(EntityObservatoryHelper::new, MobCategory.MISC)
+                            .sized(0.1f, 0.1f)
+                            .clientTrackingRange(16)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .noSummon()
+                            .build(AstralSorcery.MODID + ":observatory_helper"));
+
+    /**
+     * Starling — glowing companion entity orbiting players or ritual pedestals.
+     */
+    public static final RegistryObject<EntityType<EntityStarling>> STARLING =
+            ENTITY_TYPES.register("starling", () ->
+                    EntityType.Builder.<EntityStarling>of(EntityStarling::new, MobCategory.MISC)
+                            .sized(0.2f, 0.2f)
+                            .clientTrackingRange(32)
+                            .updateInterval(3)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":starling"));
 }

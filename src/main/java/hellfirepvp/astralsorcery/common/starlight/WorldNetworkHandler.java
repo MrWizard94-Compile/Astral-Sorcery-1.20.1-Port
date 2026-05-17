@@ -110,6 +110,22 @@ public class WorldNetworkHandler extends SavedData {
         );
     }
 
+    /**
+     * Gets the starlight network handler if it already exists for this level.
+     * Does not create a new handler if absent — returns null instead.
+     * Used by tick handlers that should not force-create data storage entries.
+     *
+     * @param level the server level (dimension)
+     * @return the existing handler, or null if not yet initialized
+     */
+    @Nullable
+    public static WorldNetworkHandler getIfPresent(@Nonnull ServerLevel level) {
+        return level.getDataStorage().get(
+                tag -> load(tag, level.dimension()),
+                DATA_NAME
+        );
+    }
+
     @Nonnull
     public ResourceKey<Level> getDimension() {
         return dimension;

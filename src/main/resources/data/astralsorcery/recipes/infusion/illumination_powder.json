@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:glowstone_dust"
+  },
+  "output": {
+    "item": "astralsorcery:illumination_powder",
+    "count": 16
+  },
+  "fluidMbRequired": 100,
+  "craftDuration": 60
+}

@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "tag": "forge:ingots/iron"
+  },
+  "output": {
+    "item": "astralsorcery:starmetal_ingot",
+    "count": 1
+  },
+  "fluidMbRequired": 200,
+  "craftDuration": 100
+}

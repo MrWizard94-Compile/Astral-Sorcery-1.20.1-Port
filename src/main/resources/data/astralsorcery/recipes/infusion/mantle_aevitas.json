@@ -1,0 +1,13 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:diamond_chestplate"
+  },
+  "output": {
+    "item": "astralsorcery:mantle_aevitas",
+    "count": 1
+  },
+  "fluidMbRequired": 800,
+  "craftDuration": 400,
+  "requiredConstellation": "astralsorcery:aevitas"
+}
