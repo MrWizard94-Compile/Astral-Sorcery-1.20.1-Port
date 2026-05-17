@@ -14,6 +14,11 @@ import hellfirepvp.astralsorcery.common.item.ItemStarmetalDust;
 import hellfirepvp.astralsorcery.common.item.ItemStarmetalIngot;
 import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
 import hellfirepvp.astralsorcery.common.item.ItemPerkSeal;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleAevitas;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleArmara;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleDiscidia;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleEvorsio;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleVicio;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemRockCrystalSimple;
@@ -105,6 +110,18 @@ public class ItemsAS {
             ITEMS.register("hand_telescope", ItemHandTelescope::new);
     public static final RegistryObject<ItemShiftingStone> SHIFTING_STONE =
             ITEMS.register("shifting_stone", ItemShiftingStone::new);
+
+    // ---- Constellation Mantles ----
+    public static final RegistryObject<ItemMantleDiscidia> MANTLE_DISCIDIA =
+            ITEMS.register("mantle_discidia", ItemMantleDiscidia::new);
+    public static final RegistryObject<ItemMantleArmara> MANTLE_ARMARA =
+            ITEMS.register("mantle_armara", ItemMantleArmara::new);
+    public static final RegistryObject<ItemMantleVicio> MANTLE_VICIO =
+            ITEMS.register("mantle_vicio", ItemMantleVicio::new);
+    public static final RegistryObject<ItemMantleAevitas> MANTLE_AEVITAS =
+            ITEMS.register("mantle_aevitas", ItemMantleAevitas::new);
+    public static final RegistryObject<ItemMantleEvorsio> MANTLE_EVORSIO =
+            ITEMS.register("mantle_evorsio", ItemMantleEvorsio::new);
 
     // ---- Colored Lenses ----
     public static final RegistryObject<ItemColoredLens> COLORED_LENS_FIRE =

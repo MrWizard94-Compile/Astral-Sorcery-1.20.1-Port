@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common.world;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.world.feature.AquamarineFeature;
+import hellfirepvp.astralsorcery.common.world.feature.GlowFlowerFeature;
 import hellfirepvp.astralsorcery.common.world.feature.MarbleVeinFeature;
 import hellfirepvp.astralsorcery.common.world.feature.RockCrystalFeature;
 import net.minecraft.core.registries.Registries;
@@ -71,4 +72,13 @@ public final class WorldGenerationAS {
     public static final RegistryObject<AquamarineFeature> AQUAMARINE_ORE =
             FEATURES.register("aquamarine_ore",
                     () -> new AquamarineFeature(NoneFeatureConfiguration.CODEC));
+
+    /**
+     * Generates glow flower clusters on the surface near marble/crystal deposits.
+     * ConfiguredFeature: worldgen/configured_feature/glow_flower.json
+     * PlacedFeature: worldgen/placed_feature/glow_flower.json
+     */
+    public static final RegistryObject<GlowFlowerFeature> GLOW_FLOWER =
+            FEATURES.register("glow_flower",
+                    () -> new GlowFlowerFeature(NoneFeatureConfiguration.CODEC));
 }
