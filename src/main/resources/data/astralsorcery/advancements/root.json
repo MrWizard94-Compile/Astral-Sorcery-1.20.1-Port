@@ -1,25 +1,21 @@
 {
   "display": {
     "icon": {
-      "item": "astralsorcery:wand"
+      "item": "minecraft:nether_star"
     },
-    "title": {
-      "translate": "adv.astralsorcery.root.title"
-    },
-    "description": {
-      "translate": "adv.astralsorcery.root.desc"
-    },
-    "background": "astralsorcery:textures/gui/advancements/background.png",
+    "title": "Astral Sorcery",
+    "description": "Gaze upon the stars...",
+    "background": "minecraft:textures/block/deepslate.png",
     "show_toast": true,
-    "announce_to_chat": false
+    "announce_to_chat": true
   },
   "criteria": {
-    "has_wand": {
+    "requirement": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["astralsorcery:wand"]
+            "items": ["astralsorcery:aquamarine"]
           }
         ]
       }

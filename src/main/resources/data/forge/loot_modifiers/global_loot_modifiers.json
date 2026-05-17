@@ -2,6 +2,7 @@
   "replace": false,
   "entries": [
     "astralsorcery:dungeon_chest_loot",
-    "astralsorcery:enderman_stardust"
+    "astralsorcery:enderman_stardust",
+    "astralsorcery:astral_dungeon_loot"
   ]
 }

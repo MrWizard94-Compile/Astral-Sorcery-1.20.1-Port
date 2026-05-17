@@ -1,10 +1,10 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:spyglass"
+      "item": "minecraft:crafting_table"
     },
-    "title": "Stargazer",
-    "description": "Discover your first constellation",
+    "title": "Starlight Crafting",
+    "description": "Craft an item at a Luminous Crafting Table",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true
@@ -12,7 +12,7 @@
   "parent": "astralsorcery:root",
   "criteria": {
     "requirement": {
-      "trigger": "astralsorcery:discover_constellation",
+      "trigger": "astralsorcery:altar_craft",
       "conditions": {}
     }
   }

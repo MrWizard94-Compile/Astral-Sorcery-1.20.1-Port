@@ -7,6 +7,9 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.effect;
 
+import hellfirepvp.astralsorcery.client.effect.FXConstellationLine;
+import hellfirepvp.astralsorcery.client.effect.FXDust;
+import hellfirepvp.astralsorcery.client.effect.FXFlare;
 import hellfirepvp.astralsorcery.client.effect.FXOrbital;
 import hellfirepvp.astralsorcery.client.effect.FXVortex;
 import net.minecraft.world.phys.Vec3;
@@ -332,6 +335,95 @@ public final class EffectHelper {
      */
     public static void vortexStarlight(@Nonnull Vec3 target) {
         vortex(target, new Color(130, 170, 240), 1.5f, 8, 0.12f, 30);
+    }
+
+    // =========================================================================
+    // Flare
+    // =========================================================================
+
+    /**
+     * Spawn a brief bright flare effect (crafting completion, tier-up).
+     */
+    @Nonnull
+    public static FXFlare flare(@Nonnull Vec3 pos, @Nonnull Color color, float scale) {
+        FXFlare flare = new FXFlare(pos.x, pos.y, pos.z);
+        EffectProperties props = EffectProperties.create()
+                .setColor(color)
+                .setScale(scale);
+        props.applyTo(flare);
+        EffectManager.getInstance().spawn(flare);
+        return flare;
+    }
+
+    /**
+     * Spawn a standard starlight flare.
+     */
+    @Nonnull
+    public static FXFlare flareStarlight(@Nonnull Vec3 pos) {
+        return flare(pos, new Color(200, 220, 255), 0.3f);
+    }
+
+    // =========================================================================
+    // Dust
+    // =========================================================================
+
+    /**
+     * Spawn a gravity-affected dust particle.
+     */
+    @Nonnull
+    public static FXDust dust(@Nonnull Vec3 pos, @Nonnull Color color, float scale, int maxAge) {
+        FXDust dust = new FXDust(pos.x, pos.y, pos.z);
+        EffectProperties props = EffectProperties.create()
+                .setColor(color)
+                .setScale(scale)
+                .setMaxAge(maxAge);
+        props.applyTo(dust);
+        EffectManager.getInstance().spawn(dust);
+        return dust;
+    }
+
+    /**
+     * Spawn a cloud of falling stardust particles.
+     */
+    public static void dustCloud(@Nonnull Vec3 center, @Nonnull Color color,
+                                  int count, float spread) {
+        for (int i = 0; i < count; i++) {
+            double x = center.x + (RAND.nextDouble() - 0.5) * 2 * spread;
+            double y = center.y + RAND.nextDouble() * spread;
+            double z = center.z + (RAND.nextDouble() - 0.5) * 2 * spread;
+            FXDust d = new FXDust(x, y, z);
+            double mx = (RAND.nextDouble() - 0.5) * 0.03;
+            double my = -0.01 - RAND.nextDouble() * 0.02;
+            double mz = (RAND.nextDouble() - 0.5) * 0.03;
+            EffectProperties props = EffectProperties.create()
+                    .setColor(color)
+                    .setScale(0.05f + RAND.nextFloat() * 0.05f)
+                    .setMaxAge(30 + RAND.nextInt(20))
+                    .setMotion(mx, my, mz);
+            props.applyTo(d);
+            EffectManager.getInstance().spawn(d);
+        }
+    }
+
+    // =========================================================================
+    // Constellation Line
+    // =========================================================================
+
+    /**
+     * Spawn a persistent constellation line between two star positions.
+     */
+    @Nonnull
+    public static FXConstellationLine constellationLine(@Nonnull Vec3 from, @Nonnull Vec3 to,
+                                                         @Nonnull Color color, float width) {
+        FXConstellationLine line = new FXConstellationLine(
+                from.x, from.y, from.z, to.x, to.y, to.z);
+        line.setLineWidth(width);
+        EffectProperties props = EffectProperties.create()
+                .setColor(color)
+                .setMaxAge(Integer.MAX_VALUE);
+        props.applyTo(line);
+        EffectManager.getInstance().spawn(line);
+        return line;
     }
 
     // =========================================================================

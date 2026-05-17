@@ -1,0 +1,10 @@
+{
+  "type": "astralsorcery:astral_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.15
+    }
+  ],
+  "drop_chance": 0.15
+}

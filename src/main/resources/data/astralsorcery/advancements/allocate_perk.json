@@ -1,21 +1,19 @@
 {
   "display": {
     "icon": {
-      "item": "astralsorcery:perk_gem_day"
+      "item": "minecraft:experience_bottle"
     },
-    "title": {
-      "translate": "adv.astralsorcery.allocate_perk.title"
-    },
-    "description": {
-      "translate": "adv.astralsorcery.allocate_perk.desc"
-    },
+    "title": "Stellar Growth",
+    "description": "Allocate your first perk point",
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": false
+    "announce_to_chat": true
   },
   "parent": "astralsorcery:attune_self",
   "criteria": {
-    "perk": {
-      "trigger": "astralsorcery:allocate_perk"
+    "requirement": {
+      "trigger": "astralsorcery:allocate_perk",
+      "conditions": {}
     }
   }
 }
