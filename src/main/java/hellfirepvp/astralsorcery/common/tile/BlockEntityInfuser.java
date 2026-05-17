@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
@@ -8,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -30,10 +33,11 @@ import javax.annotation.Nullable;
  * CapabilityFluidHandler -> ForgeCapabilities.FLUID_HANDLER,
  * LazyOptional pattern unchanged</p>
  */
-public class BlockEntityInfuser extends BlockEntityTick {
+public class BlockEntityInfuser extends BlockEntityTick implements IStarlightReceiver {
 
     private static final int SLOT_COUNT = 1;
     private static final int CAPACITY_MB = 4000;
+    private static final double MAX_STARLIGHT_PER_TICK = 300.0;
 
     @Nonnull
     private final TileInventory inventory;
@@ -50,6 +54,8 @@ public class BlockEntityInfuser extends BlockEntityTick {
 
     @Nullable
     private ResourceLocation activeRecipeId = null;
+    private double storedStarlight = 0;
+    private boolean registeredInNetwork = false;
 
     public BlockEntityInfuser(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.INFUSER.get(), pos, state);
@@ -57,6 +63,40 @@ public class BlockEntityInfuser extends BlockEntityTick {
         this.itemCap = LazyOptional.of(() -> inventory);
         this.tank = new PrecisionSingleFluidTank(CAPACITY_MB);
         this.fluidCap = LazyOptional.of(() -> new TankWrapper(tank));
+    }
+
+    @Override
+    protected void onFirstTick() {
+        super.onFirstTick();
+        if (!isClientSide() && !registeredInNetwork) {
+            StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
+            registeredInNetwork = true;
+        }
+    }
+
+    // ---- IStarlightReceiver ----
+
+    @Override
+    public void receiveStarlight(double amount, @Nullable ResourceLocation constellation) {
+        storedStarlight += amount;
+        setChanged();
+    }
+
+    @Override
+    public double getMaxStarlightInput() {
+        return MAX_STARLIGHT_PER_TICK;
+    }
+
+    @Nullable
+    @Override
+    public Level getReceiverLevel() {
+        return getLevel();
+    }
+
+    @Nonnull
+    @Override
+    public BlockPos getLocationPos() {
+        return getBlockPos();
     }
 
     @Override
@@ -152,6 +192,14 @@ public class BlockEntityInfuser extends BlockEntityTick {
         super.invalidateCaps();
         itemCap.invalidate();
         fluidCap.invalidate();
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (!isClientSide()) {
+            StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
+        }
     }
 
     @Override

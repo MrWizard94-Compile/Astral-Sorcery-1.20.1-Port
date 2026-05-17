@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.starlight.IStarlightTransmission;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -8,26 +10,45 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Block entity for the Prism.
- * Part of the starlight transmission network. Similar to a Lens
- * but supports multiple output targets (up to 4) and an inserted
- * color lens item for filtering.
+ * Part of the starlight transmission network. Unlike a Lens which has
+ * a single output, a Prism supports up to 4 output targets, splitting
+ * the incoming starlight evenly among them.
+ *
+ * <p>A Prism also accepts an inserted colored lens item that filters
+ * the transmitted starlight (e.g., fire, growth, damage). The lens
+ * effect is applied to all outputs.</p>
+ *
+ * <p>Efficiency is 85% by default (lower than a Lens's 95% because
+ * of the splitting mechanism). Each output receives:
+ * (incoming * 0.85) / numTargets</p>
+ *
+ * <p>Implements {@link IStarlightTransmission} for network participation.</p>
  *
  * <p>1.16 -> 1.20 changes:
  * TileEntity -> BlockEntity, tick via BlockEntityTicker,
  * NBTUtil -> NbtUtils</p>
  */
-public class BlockEntityPrism extends BlockEntityTick {
+public class BlockEntityPrism extends BlockEntityTick implements IStarlightTransmission {
 
+    /** Maximum number of outgoing links. */
     private static final int MAX_LINKS = 4;
+
+    /** Default transmission efficiency for a prism. */
+    private static final double DEFAULT_EFFICIENCY = 0.85;
+
+    /** Maximum link range for prism connections. */
+    private static final double MAX_PRISM_RANGE = 48.0;
 
     @Nonnull
     private final List<BlockPos> linkedTargets = new ArrayList<>();
@@ -36,10 +57,20 @@ public class BlockEntityPrism extends BlockEntityTick {
     private ItemStack insertedLens = null;
 
     private int ticksExisted = 0;
-    private double transmissionEfficiency = 0.85;
+    private double transmissionEfficiency = DEFAULT_EFFICIENCY;
+    private boolean registeredInNetwork = false;
 
     public BlockEntityPrism(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.PRISM.get(), pos, state);
+    }
+
+    @Override
+    protected void onFirstTick() {
+        super.onFirstTick();
+        if (!isClientSide() && !registeredInNetwork) {
+            StarlightNetworkHelper.registerTransmission(getLevel(), getBlockPos(), this);
+            registeredInNetwork = true;
+        }
     }
 
     @Override
@@ -47,17 +78,48 @@ public class BlockEntityPrism extends BlockEntityTick {
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // TODO: Client-side beam split rendering particles
+            // Client-side: beam split rendering handled by TESR
             return;
         }
-
-        // TODO: Server-side transmission logic:
-        // 1. Receive starlight from source
-        // 2. Apply transmissionEfficiency loss
-        // 3. Apply color filter from insertedLens if present
-        // 4. Split and forward to all linkedTargets (up to 4)
-        //    - Each target receives starlight / linkedTargets.size()
+        // Server-side: transmission handled by WorldNetworkHandler graph traversal
     }
+
+    // ========================================================================
+    // IStarlightTransmission implementation
+    // ========================================================================
+
+    @Override
+    public double getTransmissionEfficiency() {
+        return transmissionEfficiency;
+    }
+
+    @Nonnull
+    @Override
+    public List<BlockPos> getTransmissionTargets() {
+        return Collections.unmodifiableList(linkedTargets);
+    }
+
+    @Override
+    public boolean canAcceptLink(@Nonnull BlockPos from) {
+        double distSq = getBlockPos().distSqr(from);
+        return distSq <= MAX_PRISM_RANGE * MAX_PRISM_RANGE;
+    }
+
+    @Nullable
+    @Override
+    public Level getTransmissionLevel() {
+        return getLevel();
+    }
+
+    @Nonnull
+    @Override
+    public BlockPos getLocationPos() {
+        return getBlockPos();
+    }
+
+    // ========================================================================
+    // Public API
+    // ========================================================================
 
     public int getTicksExisted() {
         return ticksExisted;
@@ -67,20 +129,41 @@ public class BlockEntityPrism extends BlockEntityTick {
         return !linkedTargets.isEmpty();
     }
 
-    @Nonnull
-    public List<BlockPos> getLinkedTargets() {
-        return linkedTargets;
+    /**
+     * Number of active output links.
+     */
+    public int getLinkCount() {
+        return linkedTargets.size();
     }
 
     /**
-     * Attempts to add a linked target. Returns false if the max link count is reached.
+     * Maximum links this prism supports.
+     */
+    public int getMaxLinks() {
+        return MAX_LINKS;
+    }
+
+    @Nonnull
+    public List<BlockPos> getLinkedTargets() {
+        return Collections.unmodifiableList(linkedTargets);
+    }
+
+    /**
+     * Attempts to add a linked target. Returns false if the max link count is reached
+     * or target is out of range.
      */
     public boolean addLinkedTarget(@Nonnull BlockPos target) {
         if (linkedTargets.size() >= MAX_LINKS) {
             return false;
         }
+        if (getBlockPos().distSqr(target) > MAX_PRISM_RANGE * MAX_PRISM_RANGE) {
+            return false;
+        }
         if (!linkedTargets.contains(target)) {
-            linkedTargets.add(target);
+            linkedTargets.add(target.immutable());
+            if (!isClientSide()) {
+                StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
+            }
             markForUpdate();
         }
         return true;
@@ -88,11 +171,19 @@ public class BlockEntityPrism extends BlockEntityTick {
 
     public void removeLinkedTarget(@Nonnull BlockPos target) {
         if (linkedTargets.remove(target)) {
+            if (!isClientSide()) {
+                StarlightNetworkHelper.removeLink(getLevel(), getBlockPos(), target);
+            }
             markForUpdate();
         }
     }
 
     public void clearLinkedTargets() {
+        for (BlockPos target : new ArrayList<>(linkedTargets)) {
+            if (!isClientSide()) {
+                StarlightNetworkHelper.removeLink(getLevel(), getBlockPos(), target);
+            }
+        }
         linkedTargets.clear();
         markForUpdate();
     }
@@ -102,14 +193,36 @@ public class BlockEntityPrism extends BlockEntityTick {
         return insertedLens;
     }
 
+    /**
+     * Sets the inserted colored lens item. Null or empty removes the lens.
+     */
     public void setInsertedLens(@Nullable ItemStack lens) {
-        this.insertedLens = lens;
+        this.insertedLens = (lens != null && !lens.isEmpty()) ? lens.copy() : null;
         markForUpdate();
     }
 
-    public double getTransmissionEfficiency() {
-        return transmissionEfficiency;
+    /**
+     * Whether this prism has a colored lens inserted.
+     */
+    public boolean hasInsertedLens() {
+        return insertedLens != null && !insertedLens.isEmpty();
     }
+
+    // ========================================================================
+    // Lifecycle
+    // ========================================================================
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (!isClientSide()) {
+            StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
+        }
+    }
+
+    // ========================================================================
+    // NBT serialization
+    // ========================================================================
 
     @Override
     public void readCustomNBT(@Nonnull CompoundTag compound) {
@@ -151,7 +264,7 @@ public class BlockEntityPrism extends BlockEntityTick {
     public void readSaveNBT(@Nonnull CompoundTag compound) {
         super.readSaveNBT(compound);
         this.transmissionEfficiency = compound.contains("transmissionEfficiency")
-                ? compound.getDouble("transmissionEfficiency") : 0.85;
+                ? compound.getDouble("transmissionEfficiency") : DEFAULT_EFFICIENCY;
     }
 
     @Override

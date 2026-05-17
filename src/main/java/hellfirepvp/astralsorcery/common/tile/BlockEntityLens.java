@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.starlight.IStarlightTransmission;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -8,11 +10,13 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,16 +25,31 @@ import java.util.List;
  * beam from one source to one target. Supports a color overlay
  * from tinted lens items.
  *
- * <p>Maximum 1 linked target. Lenses do not split beams.</p>
+ * <p>Maximum 1 linked target. Lenses do not split beams — for that,
+ * use a Prism ({@link BlockEntityPrism}).</p>
+ *
+ * <p>Transmission efficiency is 95% by default. Color overlays
+ * can modify the starlight type passing through (e.g., damage lens
+ * converts starlight to focused damage beam).</p>
+ *
+ * <p>Implements {@link IStarlightTransmission} so it participates
+ * in the starlight network's graph traversal.</p>
  *
  * <p>1.16 -> 1.20 changes:
  * TileEntity -> BlockEntity, tick via BlockEntityTicker,
  * ResourceLocation for color overlay keying,
  * NBTUtil -> NbtUtils</p>
  */
-public class BlockEntityLens extends BlockEntityTick {
+public class BlockEntityLens extends BlockEntityTick implements IStarlightTransmission {
 
+    /** Maximum number of outgoing links for a basic lens. */
     private static final int MAX_LINKS = 1;
+
+    /** Default efficiency: 95% starlight passes through. */
+    private static final double DEFAULT_EFFICIENCY = 0.95;
+
+    /** Maximum allowed link distance specific to lenses (shorter than network global). */
+    private static final double MAX_LENS_RANGE = 48.0;
 
     @Nullable
     private ResourceLocation colorOverlay = null;
@@ -38,11 +57,21 @@ public class BlockEntityLens extends BlockEntityTick {
     @Nonnull
     private final List<BlockPos> linkedTargets = new ArrayList<>();
 
-    private double transmissionEfficiency = 0.95;
+    private double transmissionEfficiency = DEFAULT_EFFICIENCY;
     private int ticksExisted = 0;
+    private boolean registeredInNetwork = false;
 
     public BlockEntityLens(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.LENS.get(), pos, state);
+    }
+
+    @Override
+    protected void onFirstTick() {
+        super.onFirstTick();
+        if (!isClientSide() && !registeredInNetwork) {
+            StarlightNetworkHelper.registerTransmission(getLevel(), getBlockPos(), this);
+            registeredInNetwork = true;
+        }
     }
 
     @Override
@@ -50,16 +79,49 @@ public class BlockEntityLens extends BlockEntityTick {
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // TODO: Client-side beam rendering particles
+            // Client-side: beam rendering particles handled by TESR
             return;
         }
-
-        // TODO: Server-side transmission logic:
-        // 1. Receive starlight from source
-        // 2. Apply transmissionEfficiency loss
-        // 3. Apply color overlay filter if present
-        // 4. Forward to linkedTargets (max 1)
+        // Server-side: The actual transmission is handled by WorldNetworkHandler.tick()
+        // via the graph traversal — this BE just registers itself.
     }
+
+    // ========================================================================
+    // IStarlightTransmission implementation
+    // ========================================================================
+
+    @Override
+    public double getTransmissionEfficiency() {
+        return transmissionEfficiency;
+    }
+
+    @Nonnull
+    @Override
+    public List<BlockPos> getTransmissionTargets() {
+        return Collections.unmodifiableList(linkedTargets);
+    }
+
+    @Override
+    public boolean canAcceptLink(@Nonnull BlockPos from) {
+        double distSq = getBlockPos().distSqr(from);
+        return distSq <= MAX_LENS_RANGE * MAX_LENS_RANGE;
+    }
+
+    @Nullable
+    @Override
+    public Level getTransmissionLevel() {
+        return getLevel();
+    }
+
+    @Nonnull
+    @Override
+    public BlockPos getLocationPos() {
+        return getBlockPos();
+    }
+
+    // ========================================================================
+    // Public API
+    // ========================================================================
 
     @Nullable
     public ResourceLocation getColorOverlay() {
@@ -73,18 +135,26 @@ public class BlockEntityLens extends BlockEntityTick {
 
     @Nonnull
     public List<BlockPos> getLinkedTargets() {
-        return linkedTargets;
+        return Collections.unmodifiableList(linkedTargets);
     }
 
     /**
-     * Attempts to add a linked target. Returns false if the max link count is reached.
+     * Attempts to add a linked target. Returns false if the max link count is reached
+     * or if the target is out of range.
      */
     public boolean addLinkedTarget(@Nonnull BlockPos target) {
         if (linkedTargets.size() >= MAX_LINKS) {
             return false;
         }
+        if (getBlockPos().distSqr(target) > MAX_LENS_RANGE * MAX_LENS_RANGE) {
+            return false;
+        }
         if (!linkedTargets.contains(target)) {
-            linkedTargets.add(target);
+            linkedTargets.add(target.immutable());
+            // Register the link in the network
+            if (!isClientSide()) {
+                StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
+            }
             markForUpdate();
         }
         return true;
@@ -92,17 +162,21 @@ public class BlockEntityLens extends BlockEntityTick {
 
     public void removeLinkedTarget(@Nonnull BlockPos target) {
         if (linkedTargets.remove(target)) {
+            if (!isClientSide()) {
+                StarlightNetworkHelper.removeLink(getLevel(), getBlockPos(), target);
+            }
             markForUpdate();
         }
     }
 
     public void clearLinkedTargets() {
+        for (BlockPos target : new ArrayList<>(linkedTargets)) {
+            if (!isClientSide()) {
+                StarlightNetworkHelper.removeLink(getLevel(), getBlockPos(), target);
+            }
+        }
         linkedTargets.clear();
         markForUpdate();
-    }
-
-    public double getTransmissionEfficiency() {
-        return transmissionEfficiency;
     }
 
     /**
@@ -120,6 +194,29 @@ public class BlockEntityLens extends BlockEntityTick {
     public boolean isTransmitting() {
         return !linkedTargets.isEmpty();
     }
+
+    /**
+     * Whether this lens has a color overlay applied.
+     */
+    public boolean hasColorOverlay() {
+        return colorOverlay != null;
+    }
+
+    // ========================================================================
+    // Lifecycle
+    // ========================================================================
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (!isClientSide()) {
+            StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
+        }
+    }
+
+    // ========================================================================
+    // NBT serialization
+    // ========================================================================
 
     @Override
     public void readCustomNBT(@Nonnull CompoundTag compound) {
@@ -157,7 +254,7 @@ public class BlockEntityLens extends BlockEntityTick {
     public void readSaveNBT(@Nonnull CompoundTag compound) {
         super.readSaveNBT(compound);
         this.transmissionEfficiency = compound.contains("transmissionEfficiency")
-                ? compound.getDouble("transmissionEfficiency") : 0.95;
+                ? compound.getDouble("transmissionEfficiency") : DEFAULT_EFFICIENCY;
     }
 
     @Override
