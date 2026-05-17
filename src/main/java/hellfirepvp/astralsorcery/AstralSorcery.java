@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery;
 
 import hellfirepvp.astralsorcery.client.ClientProxy;
 import hellfirepvp.astralsorcery.common.CommonProxy;
+import hellfirepvp.astralsorcery.common.data.config.ConfigRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
@@ -43,6 +44,9 @@ public class AstralSorcery {
     public AstralSorcery() {
         instance     = this;
         modContainer = ModList.get().getModContainerById(MODID).orElseThrow();
+
+        // Register config files (must be before lifecycle events)
+        ConfigRegistration.register();
 
         this.proxy = DistExecutor.safeRunForDist(
             () -> ClientProxy::new,
