@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.client.effect;
 
 import hellfirepvp.astralsorcery.client.effect.FXConstellationLine;
+import hellfirepvp.astralsorcery.client.effect.FXCrystalGrowth;
 import hellfirepvp.astralsorcery.client.effect.FXDust;
 import hellfirepvp.astralsorcery.client.effect.FXFlare;
 import hellfirepvp.astralsorcery.client.effect.FXOrbital;
@@ -424,6 +425,53 @@ public final class EffectHelper {
         props.applyTo(line);
         EffectManager.getInstance().spawn(line);
         return line;
+    }
+
+    // =========================================================================
+    // Crystal Growth
+    // =========================================================================
+
+    /**
+     * Spawn a crystal growth particle at the given position.
+     *
+     * @param pos         world position
+     * @param color       crystal color
+     * @param targetScale maximum crystal shard size
+     * @param maxAge      lifetime in ticks
+     */
+    @Nonnull
+    public static FXCrystalGrowth crystalGrowth(@Nonnull Vec3 pos, @Nonnull Color color,
+                                                 float targetScale, int maxAge) {
+        FXCrystalGrowth crystal = new FXCrystalGrowth(pos.x, pos.y, pos.z);
+        crystal.setTargetScale(targetScale);
+        EffectProperties props = EffectProperties.create()
+                .setColor(color)
+                .setMaxAge(maxAge);
+        props.applyTo(crystal);
+        EffectManager.getInstance().spawn(crystal);
+        return crystal;
+    }
+
+    /**
+     * Spawn a cluster of crystal growth particles around a position.
+     */
+    public static void crystalGrowthCluster(@Nonnull Vec3 center, @Nonnull Color color,
+                                             int count, float spread) {
+        for (int i = 0; i < count; i++) {
+            double x = center.x + (RAND.nextDouble() - 0.5) * spread;
+            double y = center.y + (RAND.nextDouble() - 0.5) * spread;
+            double z = center.z + (RAND.nextDouble() - 0.5) * spread;
+            float scale = 0.05f + RAND.nextFloat() * 0.08f;
+            int age = 30 + RAND.nextInt(30);
+            FXCrystalGrowth crystal = new FXCrystalGrowth(x, y, z);
+            crystal.setTargetScale(scale);
+            EffectProperties props = EffectProperties.create()
+                    .setColor(color)
+                    .setScale(0.8f + RAND.nextFloat() * 0.4f)
+                    .setMaxAge(age);
+            props.applyTo(crystal);
+            EffectManager.getInstance().spawn(crystal);
+        }
     }
 
     // =========================================================================

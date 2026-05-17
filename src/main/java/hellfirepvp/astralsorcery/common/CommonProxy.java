@@ -16,6 +16,7 @@ import hellfirepvp.astralsorcery.common.event.EventHandlerPerkCombat;
 import hellfirepvp.astralsorcery.common.event.EventHandlerServerTick;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
+import hellfirepvp.astralsorcery.common.lib.StructuresAS;
 import hellfirepvp.astralsorcery.common.loot.GlobalLootModifierAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkEffectHelper;
@@ -129,6 +130,7 @@ public class CommonProxy {
             PerkAttributeTypesAS.init();
             ConstellationsAS.init();
             AstralAdvancementTriggers.init();
+            StructuresAS.init();
         });
     }
 }
