@@ -9,15 +9,20 @@ package hellfirepvp.astralsorcery.common.network;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.network.play.client.PktAttunePlayer;
+import hellfirepvp.astralsorcery.common.network.play.client.PktDiscoverConstellation;
 import hellfirepvp.astralsorcery.common.network.play.client.PktGatewayTeleport;
+import hellfirepvp.astralsorcery.common.network.play.client.PktObservatoryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktPerkAllocate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktPerkDeallocate;
+import hellfirepvp.astralsorcery.common.network.play.client.PktRequestGatewayList;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestProgress;
 import hellfirepvp.astralsorcery.common.network.play.server.PktAltarCraftingUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncBlockEntity;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncConstellation;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncGatewayList;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPerkData;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPlayerProgress;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightCharge;
@@ -138,6 +143,32 @@ public class PacketChannel {
                 PktGatewayTeleport::encode,
                 PktGatewayTeleport::decode,
                 PktGatewayTeleport::handle);
+
+        register(PktDiscoverConstellation.class,
+                PktDiscoverConstellation::encode,
+                PktDiscoverConstellation::decode,
+                PktDiscoverConstellation::handle);
+
+        register(PktObservatoryUpdate.class,
+                PktObservatoryUpdate::encode,
+                PktObservatoryUpdate::decode,
+                PktObservatoryUpdate::handle);
+
+        register(PktRequestGatewayList.class,
+                PktRequestGatewayList::encode,
+                PktRequestGatewayList::decode,
+                PktRequestGatewayList::handle);
+
+        // Additional server -> client packets
+        register(PktPlayEffect.class,
+                PktPlayEffect::encode,
+                PktPlayEffect::decode,
+                PktPlayEffect::handle);
+
+        register(PktSyncGatewayList.class,
+                PktSyncGatewayList::encode,
+                PktSyncGatewayList::decode,
+                PktSyncGatewayList::handle);
     }
 
     /**

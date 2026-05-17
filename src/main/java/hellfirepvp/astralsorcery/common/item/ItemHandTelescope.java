@@ -34,9 +34,13 @@ public class ItemHandTelescope extends ItemAS {
                                                   @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide()) {
-            // TODO: Open constellation discovery GUI
-            // ClientScreenHandler.openHandTelescopeScreen();
+            openTelescopeClient();
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    private static void openTelescopeClient() {
+        hellfirepvp.astralsorcery.client.screen.ClientScreenHandler.openTelescopeScreen();
     }
 }

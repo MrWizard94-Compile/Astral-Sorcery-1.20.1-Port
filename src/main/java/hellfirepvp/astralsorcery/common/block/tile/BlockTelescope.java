@@ -77,10 +77,24 @@ public class BlockTelescope extends BlockEntityBlock {
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (level.isClientSide()) {
+            openTelescopeClient();
             return InteractionResult.SUCCESS;
         }
-        // TODO: Open telescope GUI
+        // Server-side: mark telescope as used
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockEntityTelescope telescope) {
+            telescope.setUsed();
+        }
         return InteractionResult.CONSUME;
+    }
+
+    /**
+     * Opens the telescope screen client-side via dist-safe helper.
+     * Isolated to avoid classloading client classes on the server.
+     */
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    private static void openTelescopeClient() {
+        hellfirepvp.astralsorcery.client.screen.ClientScreenHandler.openTelescopeScreen();
     }
 
     @Nullable
