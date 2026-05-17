@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.data.research;
 
+import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -9,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +55,10 @@ public class PlayerProgress {
     private long perkExp = 0;
     @Nonnull
     private final Set<ResourceLocation> allocatedPerks = new HashSet<>();
+    @Nonnull
+    private final Set<ResourceLocation> sealedPerks = new HashSet<>();
+    @Nonnull
+    private final Set<ResourceLocation> unlockedResearch = new HashSet<>();
 
     // ---- Progression tier ----
 
@@ -162,6 +168,57 @@ public class PlayerProgress {
      */
     public void clearAllocatedPerks() {
         allocatedPerks.clear();
+        sealedPerks.clear();
+    }
+
+    /**
+     * Checks whether a specific perk is allocated by AbstractPerk reference.
+     */
+    public boolean hasPerkAllocated(@Nonnull AbstractPerk perk) {
+        return allocatedPerks.contains(perk.getKey());
+    }
+
+    // ---- Perk sealing ----
+
+    public void sealPerk(@Nonnull AbstractPerk perk) {
+        sealedPerks.add(perk.getKey());
+    }
+
+    public void unsealPerk(@Nonnull AbstractPerk perk) {
+        sealedPerks.remove(perk.getKey());
+    }
+
+    public boolean isPerkSealed(@Nonnull AbstractPerk perk) {
+        return sealedPerks.contains(perk.getKey());
+    }
+
+    public boolean isPerkSealed(@Nonnull ResourceLocation perkKey) {
+        return sealedPerks.contains(perkKey);
+    }
+
+    @Nonnull
+    public Set<ResourceLocation> getSealedPerks() {
+        return Collections.unmodifiableSet(sealedPerks);
+    }
+
+    // ---- Research / Knowledge ----
+
+    @Nonnull
+    public Set<ResourceLocation> getUnlockedResearch() {
+        return Collections.unmodifiableSet(unlockedResearch);
+    }
+
+    public boolean hasResearch(@Nonnull ResourceLocation key) {
+        return unlockedResearch.contains(key);
+    }
+
+    public void unlockResearch(@Nonnull ResourceLocation key) {
+        unlockedResearch.add(key);
+    }
+
+    public void setUnlockedResearch(@Nonnull Collection<ResourceLocation> keys) {
+        unlockedResearch.clear();
+        unlockedResearch.addAll(keys);
     }
 
     // ---- NBT serialization ----

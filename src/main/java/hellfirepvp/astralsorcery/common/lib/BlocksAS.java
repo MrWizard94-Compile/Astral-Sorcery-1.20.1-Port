@@ -18,10 +18,12 @@ import hellfirepvp.astralsorcery.common.block.tile.BlockFountain;
 import hellfirepvp.astralsorcery.common.block.tile.BlockGateway;
 import hellfirepvp.astralsorcery.common.block.tile.BlockInfuser;
 import hellfirepvp.astralsorcery.common.block.tile.BlockLens;
+import hellfirepvp.astralsorcery.common.block.tile.BlockObservatory;
 import hellfirepvp.astralsorcery.common.block.tile.BlockPrism;
 import hellfirepvp.astralsorcery.common.block.tile.BlockRelay;
 import hellfirepvp.astralsorcery.common.block.tile.BlockRitualPedestal;
 import hellfirepvp.astralsorcery.common.block.tile.BlockTelescope;
+import hellfirepvp.astralsorcery.common.block.tile.BlockTreeBeacon;
 import hellfirepvp.astralsorcery.common.block.tile.BlockWell;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
@@ -115,4 +117,8 @@ public class BlocksAS {
             BLOCKS.register("gateway", BlockGateway::new);
     public static final RegistryObject<BlockFountain> FOUNTAIN =
             BLOCKS.register("fountain", BlockFountain::new);
+    public static final RegistryObject<BlockObservatory> OBSERVATORY =
+            BLOCKS.register("observatory", BlockObservatory::new);
+    public static final RegistryObject<BlockTreeBeacon> TREE_BEACON =
+            BLOCKS.register("tree_beacon", BlockTreeBeacon::new);
 }

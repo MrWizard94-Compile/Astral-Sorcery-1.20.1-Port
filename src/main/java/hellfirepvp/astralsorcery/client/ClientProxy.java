@@ -9,7 +9,17 @@ package hellfirepvp.astralsorcery.client;
 
 import hellfirepvp.astralsorcery.client.event.ClientRenderEventHandler;
 import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityCelestialCrystal;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityFlare;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityGrapplingHook;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityIlluminationSpark;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityItemHighlighted;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityLiquidSpark;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityNocturnalSpark;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityObservatoryHelper;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityShootingStar;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntitySpectralTool;
+import hellfirepvp.astralsorcery.client.render.entity.RenderEntityStarling;
 import hellfirepvp.astralsorcery.client.render.layer.LayerStarryGlow;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAltar;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAttunementAltar;
@@ -19,10 +29,12 @@ import hellfirepvp.astralsorcery.client.render.tile.RenderFountain;
 import hellfirepvp.astralsorcery.client.render.tile.RenderGateway;
 import hellfirepvp.astralsorcery.client.render.tile.RenderInfuser;
 import hellfirepvp.astralsorcery.client.render.tile.RenderLens;
+import hellfirepvp.astralsorcery.client.render.tile.RenderObservatory;
 import hellfirepvp.astralsorcery.client.render.tile.RenderPrism;
 import hellfirepvp.astralsorcery.client.render.tile.RenderRelay;
 import hellfirepvp.astralsorcery.client.render.tile.RenderRitualPedestal;
 import hellfirepvp.astralsorcery.client.render.tile.RenderTelescope;
+import hellfirepvp.astralsorcery.client.render.tile.RenderTreeBeacon;
 import hellfirepvp.astralsorcery.client.render.tile.RenderWell;
 import hellfirepvp.astralsorcery.client.screen.ScreenAltarAttunement;
 import hellfirepvp.astralsorcery.client.screen.ScreenAltarConstellation;
@@ -117,9 +129,21 @@ public class ClientProxy extends CommonProxy {
         event.registerBlockEntityRenderer(BlockEntityTypesAS.TELESCOPE.get(), RenderTelescope::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.GATEWAY.get(), RenderGateway::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.FOUNTAIN.get(), RenderFountain::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.OBSERVATORY.get(), RenderObservatory::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.TREE_BEACON.get(), RenderTreeBeacon::new);
 
         // Entity renderers
         event.registerEntityRenderer(EntityTypesAS.SPECTRAL_TOOL.get(), RenderEntitySpectralTool::new);
+        event.registerEntityRenderer(EntityTypesAS.CELESTIAL_CRYSTAL.get(), RenderEntityCelestialCrystal::new);
+        event.registerEntityRenderer(EntityTypesAS.OBSERVATORY_HELPER.get(), RenderEntityObservatoryHelper::new);
+        event.registerEntityRenderer(EntityTypesAS.STARLING.get(), RenderEntityStarling::new);
+        event.registerEntityRenderer(EntityTypesAS.SHOOTING_STAR.get(), RenderEntityShootingStar::new);
+        event.registerEntityRenderer(EntityTypesAS.FLARE.get(), RenderEntityFlare::new);
+        event.registerEntityRenderer(EntityTypesAS.ILLUMINATION_SPARK.get(), RenderEntityIlluminationSpark::new);
+        event.registerEntityRenderer(EntityTypesAS.NOCTURNAL_SPARK.get(), RenderEntityNocturnalSpark::new);
+        event.registerEntityRenderer(EntityTypesAS.LIQUID_SPARK.get(), RenderEntityLiquidSpark::new);
+        event.registerEntityRenderer(EntityTypesAS.GRAPPLING_HOOK.get(), RenderEntityGrapplingHook::new);
+        event.registerEntityRenderer(EntityTypesAS.ITEM_HIGHLIGHTED.get(), RenderEntityItemHighlighted::new);
     }
 
     /**

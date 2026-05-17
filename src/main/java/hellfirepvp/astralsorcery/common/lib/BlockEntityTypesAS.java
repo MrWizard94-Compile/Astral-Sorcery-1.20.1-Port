@@ -9,10 +9,12 @@ import hellfirepvp.astralsorcery.common.tile.BlockEntityFountain;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityInfuser;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityLens;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityObservatory;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityPrism;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRelay;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRitualPedestal;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityTelescope;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityTreeBeacon;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityWell;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -101,6 +103,13 @@ public class BlockEntityTypesAS {
                     BlockEntityType.Builder.of(BlockEntityFountain::new,
                             BlocksAS.FOUNTAIN.get()).build(null));
 
-    // TODO: Add remaining block entity types as they are implemented:
-    // OBSERVATORY, TREE_BEACON, etc.
+    public static final RegistryObject<BlockEntityType<BlockEntityObservatory>> OBSERVATORY =
+            BLOCK_ENTITY_TYPES.register("observatory", () ->
+                    BlockEntityType.Builder.of(BlockEntityObservatory::new,
+                            BlocksAS.OBSERVATORY.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityTreeBeacon>> TREE_BEACON =
+            BLOCK_ENTITY_TYPES.register("tree_beacon", () ->
+                    BlockEntityType.Builder.of(BlockEntityTreeBeacon::new,
+                            BlocksAS.TREE_BEACON.get()).build(null));
 }

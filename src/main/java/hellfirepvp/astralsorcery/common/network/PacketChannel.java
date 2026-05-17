@@ -14,17 +14,22 @@ import hellfirepvp.astralsorcery.common.network.play.client.PktGatewayTeleport;
 import hellfirepvp.astralsorcery.common.network.play.client.PktObservatoryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktPerkAllocate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktPerkDeallocate;
+import hellfirepvp.astralsorcery.common.network.play.client.PktPerkSealAction;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestGatewayList;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestProgress;
 import hellfirepvp.astralsorcery.common.network.play.server.PktAltarCraftingUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncAttunement;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncBlockEntity;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncConfig;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncConstellation;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncGatewayList;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncKnowledgeFragments;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPerkData;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPlayerProgress;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncResearch;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightCharge;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightNetwork;
 import net.minecraft.network.FriendlyByteBuf;
@@ -169,6 +174,31 @@ public class PacketChannel {
                 PktSyncGatewayList::encode,
                 PktSyncGatewayList::decode,
                 PktSyncGatewayList::handle);
+
+        register(PktSyncAttunement.class,
+                PktSyncAttunement::encode,
+                PktSyncAttunement::decode,
+                PktSyncAttunement::handle);
+
+        register(PktSyncResearch.class,
+                PktSyncResearch::encode,
+                PktSyncResearch::decode,
+                PktSyncResearch::handle);
+
+        register(PktSyncConfig.class,
+                PktSyncConfig::encode,
+                PktSyncConfig::decode,
+                PktSyncConfig::handle);
+
+        register(PktSyncKnowledgeFragments.class,
+                PktSyncKnowledgeFragments::encode,
+                PktSyncKnowledgeFragments::decode,
+                PktSyncKnowledgeFragments::handle);
+
+        register(PktPerkSealAction.class,
+                PktPerkSealAction::encode,
+                PktPerkSealAction::decode,
+                PktPerkSealAction::handle);
     }
 
     /**

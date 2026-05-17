@@ -188,4 +188,8 @@ public class ItemsAS {
             ITEMS.register("gateway", () -> new ItemBlockAS(BlocksAS.GATEWAY.get()));
     public static final RegistryObject<BlockItem> FOUNTAIN_ITEM =
             ITEMS.register("fountain", () -> new ItemBlockAS(BlocksAS.FOUNTAIN.get()));
+    public static final RegistryObject<BlockItem> OBSERVATORY_ITEM =
+            ITEMS.register("observatory", () -> new ItemBlockAS(BlocksAS.OBSERVATORY.get()));
+    public static final RegistryObject<BlockItem> TREE_BEACON_ITEM =
+            ITEMS.register("tree_beacon", () -> new ItemBlockAS(BlocksAS.TREE_BEACON.get()));
 }
