@@ -1,6 +1,9 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.entity.EntityFlare;
+import hellfirepvp.astralsorcery.common.entity.EntityIlluminationSpark;
+import hellfirepvp.astralsorcery.common.entity.EntityNocturnalSpark;
 import hellfirepvp.astralsorcery.common.entity.EntitySpectralTool;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -37,15 +40,48 @@ public final class EntityTypesAS {
                             .fireImmune()
                             .build(AstralSorcery.MODID + ":spectral_tool"));
 
+    /**
+     * Illumination spark — floating light entity from Illumination Powder.
+     */
+    public static final RegistryObject<EntityType<EntityIlluminationSpark>> ILLUMINATION_SPARK =
+            ENTITY_TYPES.register("illumination_spark", () ->
+                    EntityType.Builder.<EntityIlluminationSpark>of(EntityIlluminationSpark::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(32)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":illumination_spark"));
+
+    /**
+     * Constellation flare �� projectile launched from ritual configurations.
+     */
+    public static final RegistryObject<EntityType<EntityFlare>> FLARE =
+            ENTITY_TYPES.register("flare", () ->
+                    EntityType.Builder.<EntityFlare>of(EntityFlare::new, MobCategory.MISC)
+                            .sized(0.4f, 0.4f)
+                            .clientTrackingRange(64)
+                            .updateInterval(2)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":flare"));
+
+    /**
+     * Nocturnal spark — homing hostile-seeking spark from Nocturnal Powder.
+     */
+    public static final RegistryObject<EntityType<EntityNocturnalSpark>> NOCTURNAL_SPARK =
+            ENTITY_TYPES.register("nocturnal_spark", () ->
+                    EntityType.Builder.<EntityNocturnalSpark>of(EntityNocturnalSpark::new, MobCategory.MISC)
+                            .sized(0.3f, 0.3f)
+                            .clientTrackingRange(32)
+                            .updateInterval(2)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":nocturnal_spark"));
+
     // TODO: Register remaining entity types as they are ported:
-    // - EntityIlluminationSpark (floating light)
     // - EntityShootingStar (shooting star event)
-    // - EntityFlare (constellation flare projectile)
     // - EntityGrapplingHook (evorsio grappling)
     // - EntityCrystalTool (crystal tool projectile)
     // - EntityObservatoryHelper (observatory targeting)
     // - EntityItemHighlighted (glowing item drop)
-    // - EntityNocturnalSpark (nocturnal powder spark)
     // - EntityLiquidSpark (liquid starlight spark)
     // - EntityStarling (ritual pet entity)
     // - EntityCelestialCrystal (floating crystal drop)

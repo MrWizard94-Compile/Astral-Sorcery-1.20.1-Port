@@ -166,6 +166,9 @@
   "screen.astralsorcery.journal.knowledge.hint3": "Attune yourself to a constellation at the Attunement Altar.",
 
   "entity.astralsorcery.spectral_tool": "Spectral Tool",
+  "entity.astralsorcery.illumination_spark": "Illumination Spark",
+  "entity.astralsorcery.flare": "Constellation Flare",
+  "entity.astralsorcery.nocturnal_spark": "Nocturnal Spark",
 
   "key.categories.astralsorcery": "Astral Sorcery",
   "key.astralsorcery.journal": "Open Astral Tome",

@@ -1,0 +1,15 @@
+{
+  "name": "astralsorcery:desert_shrine/starts",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "astralsorcery:desert_shrine/base",
+        "projection": "rigid",
+        "processors": "minecraft:empty"
+      },
+      "weight": 1
+    }
+  ]
+}

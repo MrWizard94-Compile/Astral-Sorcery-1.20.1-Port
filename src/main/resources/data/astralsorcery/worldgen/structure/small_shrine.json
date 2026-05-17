@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:small_shrine",
+  "biomes": "#minecraft:is_overworld",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "start_pool": "astralsorcery:small_shrine/starts",
+  "start_height": {
+    "type": "minecraft:constant",
+    "value": 0
+  },
+  "project_start_to_heightmap": "WORLD_SURFACE_WG"
+}

@@ -39,4 +39,22 @@ public final class StructureTypesAS {
     public static final RegistryObject<StructureType<AncientShrineStructure>> ANCIENT_SHRINE =
             STRUCTURE_TYPES.register("ancient_shrine",
                     () -> () -> AncientShrineStructure.CODEC);
+
+    /**
+     * Desert shrine — sandstone+marble structure in desert biomes.
+     * Partially buried, contains starlight basin loot.
+     * Structure JSON: worldgen/structure/desert_shrine.json
+     */
+    public static final RegistryObject<StructureType<DesertShrineStructure>> DESERT_SHRINE =
+            STRUCTURE_TYPES.register("desert_shrine",
+                    () -> () -> DesertShrineStructure.CODEC);
+
+    /**
+     * Small shrine — common overworld marble formation with collector crystal.
+     * Primary early-game discovery point. High frequency, small footprint.
+     * Structure JSON: worldgen/structure/small_shrine.json
+     */
+    public static final RegistryObject<StructureType<SmallShrineStructure>> SMALL_SHRINE =
+            STRUCTURE_TYPES.register("small_shrine",
+                    () -> () -> SmallShrineStructure.CODEC);
 }
