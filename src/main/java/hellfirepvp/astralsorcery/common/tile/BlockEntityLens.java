@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.auxiliary.link.LinkableTileEntity;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightTransmission;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
@@ -9,7 +10,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -40,7 +44,7 @@ import java.util.List;
  * ResourceLocation for color overlay keying,
  * NBTUtil -> NbtUtils</p>
  */
-public class BlockEntityLens extends BlockEntityTick implements IStarlightTransmission {
+public class BlockEntityLens extends BlockEntityTick implements IStarlightTransmission, LinkableTileEntity {
 
     /** Maximum number of outgoing links for a basic lens. */
     private static final int MAX_LINKS = 1;
@@ -200,6 +204,75 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
      */
     public boolean hasColorOverlay() {
         return colorOverlay != null;
+    }
+
+    // ========================================================================
+    // LinkableTileEntity implementation
+    // ========================================================================
+
+    @Nullable
+    @Override
+    public Level getLinkWorld() {
+        return getLevel();
+    }
+
+    @Nonnull
+    @Override
+    public BlockPos getLinkPos() {
+        return getBlockPos();
+    }
+
+    @Nonnull
+    @Override
+    public Component getUnLocalizedDisplayName() {
+        return Component.translatable("block.astralsorcery.lens");
+    }
+
+    @Override
+    public boolean doesAcceptLinks() {
+        return true;
+    }
+
+    @Override
+    public void onBlockLinkCreate(@Nonnull Player player, @Nonnull BlockPos other) {
+        // Feedback handled by the linking tool
+    }
+
+    @Override
+    public void onEntityLinkCreate(@Nonnull Player player, @Nonnull Entity entity) {
+        // Lenses don't link to entities
+    }
+
+    @Override
+    public boolean onSelect(@Nonnull Player player) {
+        player.displayClientMessage(
+                Component.translatable("astralsorcery.link.selected.lens"), true);
+        return true;
+    }
+
+    @Override
+    public boolean tryLinkBlock(@Nonnull Player player, @Nonnull BlockPos other) {
+        return addLinkedTarget(other);
+    }
+
+    @Override
+    public boolean tryLinkEntity(@Nonnull Player player, @Nonnull Entity entity) {
+        return false; // Lenses cannot link to entities
+    }
+
+    @Override
+    public boolean tryUnlink(@Nonnull Player player, @Nonnull BlockPos other) {
+        if (linkedTargets.contains(other)) {
+            removeLinkedTarget(other);
+            return true;
+        }
+        return false;
+    }
+
+    @Nonnull
+    @Override
+    public List<BlockPos> getLinkedPositions() {
+        return getLinkedTargets();
     }
 
     // ========================================================================

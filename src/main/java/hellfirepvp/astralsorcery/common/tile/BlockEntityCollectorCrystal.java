@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.auxiliary.link.LinkableTileEntity;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IIndependentStarlightSource;
@@ -8,7 +9,13 @@ import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -16,6 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Block entity for Collector Crystals.
@@ -40,13 +50,22 @@ import javax.annotation.Nullable;
  * world.isNight -> level.isNight()</p>
  */
 public class BlockEntityCollectorCrystal extends BlockEntityTick
-        implements IStarlightSource, IIndependentStarlightSource {
+        implements IStarlightSource, IIndependentStarlightSource, LinkableTileEntity {
 
     /** Base starlight units collected per tick at max size with perfect sky. */
     private static final double BASE_COLLECTION_RATE = 200.0;
 
     /** Celestial collector crystals collect 50% more starlight. */
     private static final double CELESTIAL_MULTIPLIER = 1.5;
+
+    /** Maximum outgoing links for a collector crystal. */
+    private static final int MAX_OUTGOING_LINKS = 4;
+
+    /** Maximum link range (blocks). */
+    private static final double MAX_LINK_RANGE = 64.0;
+
+    @Nonnull
+    private final List<BlockPos> linkedTargets = new ArrayList<>();
 
     @Nullable
     private ResourceLocation attunedConstellation = null;
@@ -275,6 +294,91 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
     }
 
     // ========================================================================
+    // LinkableTileEntity implementation
+    // ========================================================================
+
+    @Nullable
+    @Override
+    public Level getLinkWorld() {
+        return getLevel();
+    }
+
+    @Nonnull
+    @Override
+    public BlockPos getLinkPos() {
+        return getBlockPos();
+    }
+
+    @Nonnull
+    @Override
+    public Component getUnLocalizedDisplayName() {
+        return Component.translatable("block.astralsorcery.collector_crystal");
+    }
+
+    @Override
+    public boolean doesAcceptLinks() {
+        return true;
+    }
+
+    @Override
+    public void onBlockLinkCreate(@Nonnull Player player, @Nonnull BlockPos other) {
+        // Feedback handled by the linking tool
+    }
+
+    @Override
+    public void onEntityLinkCreate(@Nonnull Player player, @Nonnull Entity entity) {
+        // Collectors don't link to entities
+    }
+
+    @Override
+    public boolean onSelect(@Nonnull Player player) {
+        player.displayClientMessage(
+                Component.translatable("astralsorcery.link.selected.collector"), true);
+        return true;
+    }
+
+    @Override
+    public boolean tryLinkBlock(@Nonnull Player player, @Nonnull BlockPos other) {
+        if (linkedTargets.size() >= MAX_OUTGOING_LINKS) {
+            return false;
+        }
+        if (getBlockPos().distSqr(other) > MAX_LINK_RANGE * MAX_LINK_RANGE) {
+            return false;
+        }
+        if (!linkedTargets.contains(other)) {
+            linkedTargets.add(other.immutable());
+            if (!isClientSide()) {
+                StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), other);
+            }
+            markForUpdate();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean tryLinkEntity(@Nonnull Player player, @Nonnull Entity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean tryUnlink(@Nonnull Player player, @Nonnull BlockPos other) {
+        if (linkedTargets.remove(other)) {
+            if (!isClientSide()) {
+                StarlightNetworkHelper.removeLink(getLevel(), getBlockPos(), other);
+            }
+            markForUpdate();
+            return true;
+        }
+        return false;
+    }
+
+    @Nonnull
+    @Override
+    public List<BlockPos> getLinkedPositions() {
+        return Collections.unmodifiableList(linkedTargets);
+    }
+
+    // ========================================================================
     // Lifecycle
     // ========================================================================
 
@@ -308,6 +412,14 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         this.crystalPurity = compound.getInt("crystalPurity");
         this.crystalCutting = compound.getInt("crystalCutting");
         this.celestial = compound.getBoolean("celestial");
+
+        this.linkedTargets.clear();
+        if (compound.contains("linkedTargets")) {
+            ListTag list = compound.getList("linkedTargets", Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                linkedTargets.add(NbtUtils.readBlockPos(list.getCompound(i)));
+            }
+        }
     }
 
     @Override
@@ -320,6 +432,12 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         compound.putInt("crystalPurity", crystalPurity);
         compound.putInt("crystalCutting", crystalCutting);
         compound.putBoolean("celestial", celestial);
+
+        ListTag list = new ListTag();
+        for (BlockPos pos : linkedTargets) {
+            list.add(NbtUtils.writeBlockPos(pos));
+        }
+        compound.put("linkedTargets", list);
     }
 
     @Override

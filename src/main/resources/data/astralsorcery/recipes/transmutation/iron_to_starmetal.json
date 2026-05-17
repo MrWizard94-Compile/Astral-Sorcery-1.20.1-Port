@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:iron_ore",
+  "output": "astralsorcery:starmetal_ore",
+  "starlightRequired": 400
+}

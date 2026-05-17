@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:pumpkin",
+  "output": "minecraft:cake",
+  "starlightRequired": 200
+}

@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:diamond_ore",
+  "output": "minecraft:lapis_ore",
+  "starlightRequired": 300
+}

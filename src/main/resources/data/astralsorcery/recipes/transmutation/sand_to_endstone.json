@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:sand",
+  "output": "minecraft:end_stone",
+  "starlightRequired": 600
+}
