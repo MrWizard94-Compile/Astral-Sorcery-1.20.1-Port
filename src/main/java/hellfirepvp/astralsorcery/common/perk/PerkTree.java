@@ -176,13 +176,13 @@ public final class PerkTree {
     /**
      * Attempts to allocate a perk for a player.
      *
-     * @param player   the player
+     * @param player   the player (nullable for unit testing only)
      * @param progress the player's progress data
      * @param perkKey  the perk to allocate
      * @return the allocation result
      */
     @Nonnull
-    public static AllocationStatus allocate(@Nonnull Player player,
+    public static AllocationStatus allocate(@Nullable Player player,
                                             @Nonnull PlayerProgress progress,
                                             @Nonnull ResourceLocation perkKey) {
         AbstractPerk perk = PERKS.get(perkKey);
@@ -225,23 +225,24 @@ public final class PerkTree {
 
         // Allocate
         progress.allocatePerk(perkKey);
-        perk.onAllocate(player);
-
-        AstralSorcery.log.debug("Player {} allocated perk {}",
-                player.getName().getString(), perkKey);
+        if (player != null) {
+            perk.onAllocate(player);
+            AstralSorcery.log.debug("Player {} allocated perk {}",
+                    player.getName().getString(), perkKey);
+        }
         return AllocationStatus.SUCCESS;
     }
 
     /**
      * Attempts to deallocate a perk for a player.
      *
-     * @param player   the player
+     * @param player   the player (nullable for unit testing only)
      * @param progress the player's progress data
      * @param perkKey  the perk to deallocate
      * @return the allocation result
      */
     @Nonnull
-    public static AllocationStatus deallocate(@Nonnull Player player,
+    public static AllocationStatus deallocate(@Nullable Player player,
                                               @Nonnull PlayerProgress progress,
                                               @Nonnull ResourceLocation perkKey) {
         AbstractPerk perk = PERKS.get(perkKey);
@@ -271,10 +272,11 @@ public final class PerkTree {
         }
 
         progress.deallocatePerk(perkKey);
-        perk.onDeallocate(player);
-
-        AstralSorcery.log.debug("Player {} deallocated perk {}",
-                player.getName().getString(), perkKey);
+        if (player != null) {
+            perk.onDeallocate(player);
+            AstralSorcery.log.debug("Player {} deallocated perk {}",
+                    player.getName().getString(), perkKey);
+        }
         return AllocationStatus.SUCCESS;
     }
 

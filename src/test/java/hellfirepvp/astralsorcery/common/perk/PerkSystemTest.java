@@ -7,6 +7,8 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.perk;
 
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
@@ -14,10 +16,14 @@ import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -293,5 +299,441 @@ class PerkSystemTest {
                 new ResourceLocation("test", "b"), 3, 4);
 
         assertEquals(25.0, a.distanceSqTo(b), 0.001, "3^2 + 4^2 = 25");
+    }
+
+    // ========================================================================
+    // PerkTree allocation/deallocation logic
+    // ========================================================================
+
+    /**
+     * Concrete test implementation of AbstractPerk for unit testing.
+     */
+    private static class TestPerk extends AbstractPerk {
+        private int allocateCount = 0;
+        private int deallocateCount = 0;
+
+        TestPerk(@Nonnull ResourceLocation key, int x, int y, @Nonnull PerkCategory category) {
+            super(key, x, y, category);
+        }
+
+        @Override
+        public void onAllocate(@Nonnull Player player) {
+            allocateCount++;
+        }
+
+        @Override
+        public void onDeallocate(@Nonnull Player player) {
+            deallocateCount++;
+        }
+
+        int getAllocateCount() { return allocateCount; }
+        int getDeallocateCount() { return deallocateCount; }
+    }
+
+    /**
+     * Creates a mock-free PlayerProgress pre-configured for testing.
+     */
+    private PlayerProgress createTestProgress(@Nonnull ProgressionTier tier, long perkExp) {
+        PlayerProgress progress = new PlayerProgress();
+        progress.setTierReached(tier);
+        progress.setPerkExp(perkExp);
+        return progress;
+    }
+
+    @Nested
+    class AllocationTests {
+
+        private static final ResourceLocation ROOT_KEY =
+                new ResourceLocation("astralsorcery", "root.discidia");
+        private static final ResourceLocation NODE_A =
+                new ResourceLocation("astralsorcery", "node.a");
+        private static final ResourceLocation NODE_B =
+                new ResourceLocation("astralsorcery", "node.b");
+        private static final ResourceLocation NODE_C =
+                new ResourceLocation("astralsorcery", "node.c");
+        private static final ResourceLocation ISOLATED =
+                new ResourceLocation("astralsorcery", "node.isolated");
+
+        @BeforeEach
+        void buildTestTree() {
+            PerkTree.clearForTesting();
+
+            // Build a simple tree: ROOT -> A -> B -> C, and ISOLATED (no connections)
+            //   ROOT
+            //    |
+            //    A
+            //   / \
+            //  B   C
+            TestPerk root = new TestPerk(ROOT_KEY, 0, 0, AbstractPerk.PerkCategory.ROOT);
+            TestPerk nodeA = new TestPerk(NODE_A, 0, -10, AbstractPerk.PerkCategory.SMALL);
+            TestPerk nodeB = new TestPerk(NODE_B, -5, -20, AbstractPerk.PerkCategory.SMALL);
+            TestPerk nodeC = new TestPerk(NODE_C, 5, -20, AbstractPerk.PerkCategory.MAJOR);
+            TestPerk isolated = new TestPerk(ISOLATED, 50, 50, AbstractPerk.PerkCategory.SMALL);
+
+            PerkTree.register(root);
+            PerkTree.register(nodeA);
+            PerkTree.register(nodeB);
+            PerkTree.register(nodeC);
+            PerkTree.register(isolated);
+
+            PerkTree.connect(ROOT_KEY, NODE_A);
+            PerkTree.connect(NODE_A, NODE_B);
+            PerkTree.connect(NODE_A, NODE_C);
+            // ISOLATED has no connections
+        }
+
+        @Test
+        void testAllocateRootPerk() {
+            // Level 1 gives enough exp for at least 1 perk point
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(5));
+
+            AllocationStatus status = PerkTree.allocate(null, progress, ROOT_KEY);
+            assertEquals(AllocationStatus.SUCCESS, status);
+            assertTrue(progress.hasPerkAllocated(ROOT_KEY));
+        }
+
+        @Test
+        void testAllocateRequiresAttunementTier() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.DISCOVERY,
+                    PerkLevelManager.getTotalExpForLevel(5));
+
+            AllocationStatus status = PerkTree.allocate(null, progress, ROOT_KEY);
+            assertEquals(AllocationStatus.INSUFFICIENT_TIER, status);
+            assertFalse(progress.hasPerkAllocated(ROOT_KEY));
+        }
+
+        @Test
+        void testAllocateAdjacentPerk() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY); // Pre-allocate root
+
+            AllocationStatus status = PerkTree.allocate(null, progress, NODE_A);
+            assertEquals(AllocationStatus.SUCCESS, status);
+            assertTrue(progress.hasPerkAllocated(NODE_A));
+        }
+
+        @Test
+        void testAllocateNonAdjacentFails() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+
+            // NODE_B is not adjacent to ROOT — it's adjacent to NODE_A
+            AllocationStatus status = PerkTree.allocate(null, progress, NODE_B);
+            assertEquals(AllocationStatus.NOT_REACHABLE, status);
+            assertFalse(progress.hasPerkAllocated(NODE_B));
+        }
+
+        @Test
+        void testAllocateIsolatedFails() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+
+            AllocationStatus status = PerkTree.allocate(null, progress, ISOLATED);
+            assertEquals(AllocationStatus.NOT_REACHABLE, status);
+        }
+
+        @Test
+        void testAllocateAlreadyAllocated() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+
+            AllocationStatus status = PerkTree.allocate(null, progress, ROOT_KEY);
+            assertEquals(AllocationStatus.ALREADY_ALLOCATED, status);
+        }
+
+        @Test
+        void testAllocateInsufficientPoints() {
+            // Level 0 gives 1 point
+            PlayerProgress progress = createTestProgress(ProgressionTier.ATTUNEMENT, 0);
+            progress.allocatePerk(ROOT_KEY); // Spent the 1 point
+
+            AllocationStatus status = PerkTree.allocate(null, progress, NODE_A);
+            assertEquals(AllocationStatus.INSUFFICIENT_POINTS, status);
+        }
+
+        @Test
+        void testAllocateDisabledPerkFails() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+
+            AbstractPerk perk = PerkTree.getPerk(ROOT_KEY);
+            assertNotNull(perk);
+            perk.setEnabled(false);
+
+            AllocationStatus status = PerkTree.allocate(null, progress, ROOT_KEY);
+            assertEquals(AllocationStatus.FAILED, status);
+
+            perk.setEnabled(true); // Reset
+        }
+
+        @Test
+        void testAllocateConstellationRequirement() {
+            ResourceLocation requiredConst = new ResourceLocation("astralsorcery", "discidia");
+            AbstractPerk perk = PerkTree.getPerk(NODE_A);
+            assertNotNull(perk);
+            perk.setRequiredConstellation(requiredConst);
+
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+
+            // Wrong constellation
+            progress.setAttunedConstellation(
+                    new ResourceLocation("astralsorcery", "aevitas"));
+            AllocationStatus status = PerkTree.allocate(null, progress, NODE_A);
+            assertEquals(AllocationStatus.WRONG_CONSTELLATION, status);
+
+            // Correct constellation
+            progress.setAttunedConstellation(requiredConst);
+            status = PerkTree.allocate(null, progress, NODE_A);
+            assertEquals(AllocationStatus.SUCCESS, status);
+
+            // Cleanup
+            perk.setRequiredConstellation(null);
+        }
+
+        @Test
+        void testAllocateUnregisteredPerkFails() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+
+            AllocationStatus status = PerkTree.allocate(null, progress,
+                    new ResourceLocation("astralsorcery", "nonexistent"));
+            assertEquals(AllocationStatus.FAILED, status);
+        }
+    }
+
+    @Nested
+    class DeallocationTests {
+
+        private static final ResourceLocation ROOT_KEY =
+                new ResourceLocation("astralsorcery", "root.discidia");
+        private static final ResourceLocation NODE_A =
+                new ResourceLocation("astralsorcery", "node.a");
+        private static final ResourceLocation NODE_B =
+                new ResourceLocation("astralsorcery", "node.b");
+        private static final ResourceLocation NODE_C =
+                new ResourceLocation("astralsorcery", "node.c");
+
+        @BeforeEach
+        void buildTestTree() {
+            PerkTree.clearForTesting();
+
+            // ROOT -> A -> B
+            //           -> C
+            TestPerk root = new TestPerk(ROOT_KEY, 0, 0, AbstractPerk.PerkCategory.ROOT);
+            TestPerk nodeA = new TestPerk(NODE_A, 0, -10, AbstractPerk.PerkCategory.SMALL);
+            TestPerk nodeB = new TestPerk(NODE_B, -5, -20, AbstractPerk.PerkCategory.SMALL);
+            TestPerk nodeC = new TestPerk(NODE_C, 5, -20, AbstractPerk.PerkCategory.SMALL);
+
+            PerkTree.register(root);
+            PerkTree.register(nodeA);
+            PerkTree.register(nodeB);
+            PerkTree.register(nodeC);
+
+            PerkTree.connect(ROOT_KEY, NODE_A);
+            PerkTree.connect(NODE_A, NODE_B);
+            PerkTree.connect(NODE_A, NODE_C);
+        }
+
+        @Test
+        void testDeallocateLeafPerk() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+            progress.allocatePerk(NODE_A);
+            progress.allocatePerk(NODE_B);
+
+            // NODE_B is a leaf — can be safely removed
+            AllocationStatus status = PerkTree.deallocate(null, progress, NODE_B);
+            assertEquals(AllocationStatus.SUCCESS, status);
+            assertFalse(progress.hasPerkAllocated(NODE_B));
+        }
+
+        @Test
+        void testDeallocateNotAllocated() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+
+            AllocationStatus status = PerkTree.deallocate(null, progress, NODE_A);
+            assertEquals(AllocationStatus.NOT_ALLOCATED, status);
+        }
+
+        @Test
+        void testDeallocateWouldDisconnect() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+            progress.allocatePerk(NODE_A);
+            progress.allocatePerk(NODE_B);
+
+            // NODE_A connects ROOT to NODE_B — removing it would disconnect B
+            AllocationStatus status = PerkTree.deallocate(null, progress, NODE_A);
+            assertEquals(AllocationStatus.WOULD_DISCONNECT, status);
+            assertTrue(progress.hasPerkAllocated(NODE_A), "Perk should still be allocated");
+        }
+
+        @Test
+        void testDeallocateRootWithDependents() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+            progress.allocatePerk(NODE_A);
+
+            // ROOT has NODE_A connected and allocated — cannot remove
+            AllocationStatus status = PerkTree.deallocate(null, progress, ROOT_KEY);
+            assertEquals(AllocationStatus.WOULD_DISCONNECT, status);
+        }
+
+        @Test
+        void testDeallocateRootAlone() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+
+            // ROOT is the only perk — safe to remove
+            AllocationStatus status = PerkTree.deallocate(null, progress, ROOT_KEY);
+            assertEquals(AllocationStatus.SUCCESS, status);
+            assertFalse(progress.hasPerkAllocated(ROOT_KEY));
+        }
+
+        @Test
+        void testDeallocateBranchPreservesOtherBranch() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+            progress.allocatePerk(ROOT_KEY);
+            progress.allocatePerk(NODE_A);
+            progress.allocatePerk(NODE_B);
+            progress.allocatePerk(NODE_C);
+
+            // Both B and C are leaves — can remove either
+            AllocationStatus statusB = PerkTree.deallocate(null, progress, NODE_B);
+            assertEquals(AllocationStatus.SUCCESS, statusB);
+            assertFalse(progress.hasPerkAllocated(NODE_B));
+            assertTrue(progress.hasPerkAllocated(NODE_C), "C should remain");
+
+            AllocationStatus statusC = PerkTree.deallocate(null, progress, NODE_C);
+            assertEquals(AllocationStatus.SUCCESS, statusC);
+            assertFalse(progress.hasPerkAllocated(NODE_C));
+        }
+
+        @Test
+        void testDeallocateUnregisteredPerkFails() {
+            PlayerProgress progress = createTestProgress(
+                    ProgressionTier.ATTUNEMENT,
+                    PerkLevelManager.getTotalExpForLevel(10));
+
+            AllocationStatus status = PerkTree.deallocate(null, progress,
+                    new ResourceLocation("astralsorcery", "fake_perk"));
+            assertEquals(AllocationStatus.FAILED, status);
+        }
+    }
+
+    @Nested
+    class ConnectivityTests {
+
+        @BeforeEach
+        void resetTree() {
+            PerkTree.clearForTesting();
+        }
+
+        @Test
+        void testGetConnectionsDeduplicated() {
+            ResourceLocation rootKey = new ResourceLocation("test", "root");
+            ResourceLocation nodeA = new ResourceLocation("test", "a");
+            ResourceLocation nodeB = new ResourceLocation("test", "b");
+
+            PerkTree.register(new TestPerk(rootKey, 0, 0, AbstractPerk.PerkCategory.ROOT));
+            PerkTree.register(new TestPerk(nodeA, 5, 0, AbstractPerk.PerkCategory.SMALL));
+            PerkTree.register(new TestPerk(nodeB, 10, 0, AbstractPerk.PerkCategory.SMALL));
+
+            PerkTree.connect(rootKey, nodeA);
+            PerkTree.connect(nodeA, nodeB);
+
+            List<PerkTree.Connection> connections = PerkTree.getConnections();
+            assertEquals(2, connections.size(),
+                    "Should have exactly 2 unique edges (root-a, a-b)");
+        }
+
+        @Test
+        void testGetPoints() {
+            ResourceLocation rootKey = new ResourceLocation("test", "root");
+            ResourceLocation nodeA = new ResourceLocation("test", "a");
+
+            PerkTree.register(new TestPerk(rootKey, 0, 0, AbstractPerk.PerkCategory.ROOT));
+            PerkTree.register(new TestPerk(nodeA, 10, -5, AbstractPerk.PerkCategory.SMALL));
+
+            List<PerkTreePoint> points = PerkTree.getPoints();
+            assertEquals(2, points.size());
+        }
+
+        @Test
+        void testGetAdjacentKeys() {
+            ResourceLocation rootKey = new ResourceLocation("test", "root");
+            ResourceLocation nodeA = new ResourceLocation("test", "a");
+            ResourceLocation nodeB = new ResourceLocation("test", "b");
+
+            PerkTree.register(new TestPerk(rootKey, 0, 0, AbstractPerk.PerkCategory.ROOT));
+            PerkTree.register(new TestPerk(nodeA, 5, 0, AbstractPerk.PerkCategory.SMALL));
+            PerkTree.register(new TestPerk(nodeB, 10, 0, AbstractPerk.PerkCategory.SMALL));
+
+            PerkTree.connect(rootKey, nodeA);
+            PerkTree.connect(rootKey, nodeB);
+
+            Set<ResourceLocation> adj = PerkTree.getAdjacentKeys(rootKey);
+            assertEquals(2, adj.size());
+            assertTrue(adj.contains(nodeA));
+            assertTrue(adj.contains(nodeB));
+        }
+
+        @Test
+        void testAdjacentKeysForUnregisteredReturnsEmpty() {
+            Set<ResourceLocation> adj = PerkTree.getAdjacentKeys(
+                    new ResourceLocation("test", "nobody"));
+            assertTrue(adj.isEmpty());
+        }
+
+        @Test
+        void testSizeAndRegistration() {
+            assertEquals(0, PerkTree.size());
+
+            ResourceLocation key = new ResourceLocation("test", "p1");
+            PerkTree.register(new TestPerk(key, 0, 0, AbstractPerk.PerkCategory.SMALL));
+
+            assertEquals(1, PerkTree.size());
+            assertTrue(PerkTree.isRegistered(key));
+            assertNotNull(PerkTree.getPerk(key));
+        }
+
+        @Test
+        void testDuplicateRegistrationIgnored() {
+            ResourceLocation key = new ResourceLocation("test", "dup");
+            PerkTree.register(new TestPerk(key, 0, 0, AbstractPerk.PerkCategory.SMALL));
+            PerkTree.register(new TestPerk(key, 5, 5, AbstractPerk.PerkCategory.MAJOR));
+
+            assertEquals(1, PerkTree.size());
+            // First registration wins
+            assertEquals(0, PerkTree.getPerk(key).getX());
+        }
     }
 }
