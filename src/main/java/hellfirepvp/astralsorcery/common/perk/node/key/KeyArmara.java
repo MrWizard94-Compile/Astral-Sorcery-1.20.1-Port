@@ -8,18 +8,19 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Armara constellation branch.
- * Effect: Grants a damage reduction shield when standing still.
+ * Effect: Passive Resistance I while allocated; knockback resistance via attribute.
  * Provides +4 armor, +2 armor toughness, and 20% knockback resistance.
  */
 public class KeyArmara extends KeyPerk {
-
-    private static final int STILL_TICKS_REQUIRED = 20;
 
     public KeyArmara(int x, int y) {
         super(AstralSorcery.key("key_armara"), x, y);
@@ -36,8 +37,15 @@ public class KeyArmara extends KeyPerk {
     }
 
     @Override
+    public boolean hasTickEffect() {
+        return true;
+    }
+
+    @Override
     public void onPlayerTick(@Nonnull Player player) {
-        // Standing-still damage reduction is applied dynamically
-        // by PerkEffectHelper during damage calculation events
+        if (player.level().isClientSide()) return;
+        // Ambient Resistance I — refreshed each server tick, no particles
+        player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.DAMAGE_RESISTANCE),
+                40, 0, true, false));
     }
 }

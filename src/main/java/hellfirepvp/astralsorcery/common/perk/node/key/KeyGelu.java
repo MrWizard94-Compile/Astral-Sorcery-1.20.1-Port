@@ -8,9 +8,13 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Gelu constellation.
@@ -44,13 +48,10 @@ public class KeyGelu extends KeyPerk {
 
         // Slow nearby hostile mobs within 6 block radius
         player.level().getEntitiesOfClass(
-                net.minecraft.world.entity.monster.Monster.class,
+                Monster.class,
                 player.getBoundingBox().inflate(6.0),
-                monster -> monster.isAlive() && !monster.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN)
-        ).forEach(monster -> {
-            monster.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                    net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
-                    40, 0, false, false));
-        });
+                monster -> monster.isAlive() && !monster.hasEffect(Objects.requireNonNull(MobEffects.MOVEMENT_SLOWDOWN))
+        ).forEach(monster -> monster.addEffect(new MobEffectInstance(
+                Objects.requireNonNull(MobEffects.MOVEMENT_SLOWDOWN), 40, 0, false, false)));
     }
 }

@@ -8,16 +8,21 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Mineralis constellation branch.
- * Effect: Enhanced mining speed and ore-related effects.
- * Provides a significant mining speed bonus and reach increase.
+ * Effect: Haste II underground (y < 60) and Night Vision in caves.
+ * Reach and mining speed bonuses via attributes.
  */
 public class KeyMineralis extends KeyPerk {
+
+    private static final int CAVE_THRESHOLD_Y = 60;
 
     public KeyMineralis(int x, int y) {
         super(AstralSorcery.key("key_mineralis"), x, y);
@@ -31,7 +36,20 @@ public class KeyMineralis extends KeyPerk {
     }
 
     @Override
+    public boolean hasTickEffect() {
+        return true;
+    }
+
+    @Override
     public void onPlayerTick(@Nonnull Player player) {
-        // Mining speed enhancement applied via PerkEffectHelper on block break events
+        if (player.level().isClientSide()) return;
+        if (player.getBlockY() < CAVE_THRESHOLD_Y) {
+            // Haste II underground — stronger than KeyEvorsio's Haste I
+            player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.DIG_SPEED),
+                    40, 1, true, false));
+            // Night Vision underground — helps spot ores in the dark
+            player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.NIGHT_VISION),
+                    300, 0, true, false));
+        }
     }
 }

@@ -8,15 +8,17 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Octans constellation branch.
- * Effect: Improved underwater capabilities — faster swim speed,
- * extended breath, and life steal while submerged. The player
- * regenerates health while in water.
+ * Effect: Water Breathing always; Dolphin's Grace and Regeneration when submerged.
+ * Speed and life-steal bonuses via attributes.
  */
 public class KeyOctans extends KeyPerk {
 
@@ -32,7 +34,23 @@ public class KeyOctans extends KeyPerk {
     }
 
     @Override
+    public boolean hasTickEffect() {
+        return true;
+    }
+
+    @Override
     public void onPlayerTick(@Nonnull Player player) {
-        // Underwater healing and swim speed applied by PerkEffectHelper when player is in water
+        if (player.level().isClientSide()) return;
+        // Water Breathing always active — ambient, no particles
+        player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.WATER_BREATHING),
+                40, 0, true, false));
+        // Additional bonuses while in water
+        if (player.isInWater()) {
+            player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.DOLPHINS_GRACE),
+                    40, 0, true, false));
+            if (player.tickCount % 40 == 0 && player.getHealth() < player.getMaxHealth()) {
+                player.heal(0.5f);
+            }
+        }
     }
 }

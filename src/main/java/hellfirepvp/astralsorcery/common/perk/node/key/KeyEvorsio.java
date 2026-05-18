@@ -8,18 +8,20 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Evorsio constellation branch.
- * Effect: Mining drops extra resources at a low chance (fortune-like).
- * Provides +25% mining speed and +10% experience gain.
+ * Effect: Passive Haste I (mining speed buff). Extra drops are handled
+ * via the break-speed event in EventHandlerMining.
+ * Provides +25% mining speed and +10% experience gain via attributes.
  */
 public class KeyEvorsio extends KeyPerk {
-
-    private static final float EXTRA_DROP_CHANCE = 0.15f;
 
     public KeyEvorsio(int x, int y) {
         super(AstralSorcery.key("key_evorsio"), x, y);
@@ -33,8 +35,15 @@ public class KeyEvorsio extends KeyPerk {
     }
 
     @Override
+    public boolean hasTickEffect() {
+        return true;
+    }
+
+    @Override
     public void onPlayerTick(@Nonnull Player player) {
-        // Extra resource drops handled via BlockBreak event hook
-        // in PerkEffectHelper
+        if (player.level().isClientSide()) return;
+        // Haste I — ambient, no particles; refreshed each tick
+        player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.DIG_SPEED),
+                40, 0, true, false));
     }
 }

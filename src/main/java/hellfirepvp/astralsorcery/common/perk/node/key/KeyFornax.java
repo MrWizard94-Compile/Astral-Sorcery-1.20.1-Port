@@ -8,15 +8,17 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Fornax constellation branch.
- * Effect: Fire resistance and smelting-on-dig capability.
- * Mined ores drop their smelted result, and the player takes
- * reduced fire damage. Also provides elemental resistance.
+ * Effect: Passive Fire Resistance; elemental resistance via attribute.
+ * Auto-smelt on ore break is handled by EventHandlerMining.
  */
 public class KeyFornax extends KeyPerk {
 
@@ -29,7 +31,14 @@ public class KeyFornax extends KeyPerk {
     }
 
     @Override
+    public boolean hasTickEffect() {
+        return true;
+    }
+
+    @Override
     public void onPlayerTick(@Nonnull Player player) {
-        // Auto-smelt and fire resistance handled by event subscribers in PerkEffectHelper
+        if (player.level().isClientSide()) return;
+        player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.FIRE_RESISTANCE),
+                40, 0, true, false));
     }
 }

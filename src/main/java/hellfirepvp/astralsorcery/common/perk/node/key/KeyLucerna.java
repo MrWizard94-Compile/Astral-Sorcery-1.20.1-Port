@@ -8,14 +8,16 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Key perk for the Lucerna constellation branch.
- * Effect: Enhanced night vision and improved starlight collection.
- * The player gains increased experience and starlight collection rate.
+ * Effect: Passive Night Vision; enhanced starlight collection and XP via attributes.
  */
 public class KeyLucerna extends KeyPerk {
 
@@ -31,7 +33,15 @@ public class KeyLucerna extends KeyPerk {
     }
 
     @Override
+    public boolean hasTickEffect() {
+        return true;
+    }
+
+    @Override
     public void onPlayerTick(@Nonnull Player player) {
-        // Night vision effect applied by PerkEffectHelper when it's nighttime
+        if (player.level().isClientSide()) return;
+        // Night Vision — ambient, no particles; always active (not just at night)
+        player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.NIGHT_VISION),
+                300, 0, true, false));
     }
 }
