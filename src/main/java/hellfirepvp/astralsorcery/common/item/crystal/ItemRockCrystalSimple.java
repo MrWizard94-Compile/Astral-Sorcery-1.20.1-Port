@@ -1,6 +1,5 @@
 package hellfirepvp.astralsorcery.common.item.crystal;
 
-import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -30,7 +29,7 @@ import java.util.List;
  * addInformation -> appendHoverText,
  * CompoundNBT -> CompoundTag</p>
  */
-public class ItemRockCrystalSimple extends ItemAS {
+public class ItemRockCrystalSimple extends ItemCrystalBase {
 
     private static final String TAG_SIZE = "crystalSize";
     private static final String TAG_PURITY = "crystalPurity";

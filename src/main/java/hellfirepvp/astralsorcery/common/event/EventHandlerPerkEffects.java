@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -306,7 +305,7 @@ public class EventHandlerPerkEffects {
             }
             if (next == null) break;
             hit.add(next);
-            next.hurt(level.damageSources().lightning(), arcDamage);
+            next.hurt(level.damageSources().lightningBolt(), arcDamage);
             current = next;
         }
     }

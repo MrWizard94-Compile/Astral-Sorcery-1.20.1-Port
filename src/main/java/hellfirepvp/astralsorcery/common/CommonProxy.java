@@ -9,6 +9,10 @@ package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.crafting.nojson.AttunementCraftingRegistry;
+import hellfirepvp.astralsorcery.common.crafting.nojson.LiquidStarlightCraftingRegistry;
+import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
+import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
 import hellfirepvp.astralsorcery.common.event.EventHandlerMining;
@@ -137,6 +141,10 @@ public class CommonProxy {
             AstralAdvancementTriggers.init();
             StructuresAS.init();
             PerkTreeData.buildTree();
+            LiquidStarlightCraftingRegistry.INSTANCE.init();
+            AttunementCraftingRegistry.INSTANCE.init();
+            WorldMeltableRegistry.INSTANCE.init();
+            WorldFreezingRegistry.INSTANCE.init();
         });
     }
 }
