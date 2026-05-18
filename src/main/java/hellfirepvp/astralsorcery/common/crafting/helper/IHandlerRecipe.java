@@ -7,17 +7,23 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crafting.helper;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * Base context class carrying recipe-matching state passed to recipe matching methods.
+ * Extended recipe interface for recipes that match against an {@link IItemHandler}
+ * rather than a vanilla {@link Container}.
  *
- * <p>1.16 → 1.20: bound relaxed from {@code R extends IHandlerRecipe} to
- * {@code R extends Recipe<?>} so that port recipe classes (which extend
- * {@code Recipe<Container>} directly) satisfy the bound without needing to
- * also implement {@link IHandlerRecipe}.</p>
+ * <p>1.16 → 1.20: IInventory → Container, IRecipe → Recipe, World → Level.</p>
  */
-public class RecipeCraftingContext<R extends Recipe<?>, C extends IItemHandler> {
+public interface IHandlerRecipe<I extends IItemHandler> extends Recipe<Container> {
 
+    boolean matches(I handler, Level level);
+
+    @Override
+    default boolean matches(Container inv, Level level) {
+        return false;
+    }
 }

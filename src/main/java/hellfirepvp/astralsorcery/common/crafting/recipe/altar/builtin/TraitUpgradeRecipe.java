@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarUpgradeRecipe;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,7 @@ import javax.annotation.Nullable;
  * <p>1.16 → 1.20: TileAltar → BlockEntityAltar;
  * ALTAR_RADIANCE block and ResearchManager.informCraftedAltar deferred.</p>
  */
-public class TraitUpgradeRecipe extends SimpleAltarRecipe {
+public class TraitUpgradeRecipe extends SimpleAltarRecipe implements AltarUpgradeRecipe {
 
     public TraitUpgradeRecipe(@Nonnull ResourceLocation id,
                                @Nonnull BlockAltar.AltarType altarType,
