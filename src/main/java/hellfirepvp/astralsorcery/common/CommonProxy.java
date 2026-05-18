@@ -13,6 +13,7 @@ import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
 import hellfirepvp.astralsorcery.common.event.EventHandlerMining;
 import hellfirepvp.astralsorcery.common.event.EventHandlerPerkCombat;
+import hellfirepvp.astralsorcery.common.event.EventHandlerPerkEffects;
 import hellfirepvp.astralsorcery.common.event.EventHandlerServerTick;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
@@ -112,6 +113,9 @@ public class CommonProxy {
 
         // Perk combat effects (damage, crit, life steal, elemental resist)
         forgeBus.register(new EventHandlerPerkCombat());
+
+        // Perk gameplay effects (knockback cancel, rampage, magnet drops, tree fell, etc.)
+        forgeBus.register(new EventHandlerPerkEffects());
 
         // Mining perk effects (break speed, auto-smelt, exp bonus)
         forgeBus.register(new EventHandlerMining());

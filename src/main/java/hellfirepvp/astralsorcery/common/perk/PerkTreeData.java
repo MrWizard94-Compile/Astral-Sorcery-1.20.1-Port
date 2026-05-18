@@ -12,21 +12,50 @@ import hellfirepvp.astralsorcery.common.perk.node.GemSocketPerk;
 import hellfirepvp.astralsorcery.common.perk.node.MajorPerk;
 import hellfirepvp.astralsorcery.common.perk.node.RootPerk;
 import hellfirepvp.astralsorcery.common.perk.node.SmallPerk;
-import hellfirepvp.astralsorcery.common.perk.node.key.KeyAlcara;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAddEnchantment;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAevitas;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAlcara;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAreaOfEffect;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyArmara;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyBleed;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyBootes;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyChargeBalancing;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyCheatDeath;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyCleanseBadPotions;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyCullingAttack;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDamageArmor;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDamageEffects;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDigTypes;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDisarm;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyDiscidia;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyEntityReach;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyEvorsio;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyFornax;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyGelu;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyGrowables;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyHorologium;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyLastBreath;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyLightningArc;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyLucerna;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyMagnetDrops;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyMantleFlight;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyMending;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyMineralis;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyNoArmor;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyNoKnockback;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyOctans;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyPelotrio;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyProjectileDistance;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyProjectileProximity;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyRampage;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyReducedFood;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeySpawnLights;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyStepAssist;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyStoneEnrichment;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyTreeConnector;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyUlteria;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyVicio;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyVoidTrash;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyVorux;
 import net.minecraft.resources.ResourceLocation;
 
@@ -582,6 +611,172 @@ public final class PerkTreeData {
         PerkTree.register(outerBridgeLF);
         connect(discOuterMajor, outerBridgeLF);
         connect(armaOuterMajor, outerBridgeLF);
+
+        // ======================================================================
+        // Extended key perk branches: the 29 new gameplay-effect perks
+        // Each gets a short 2-small-perk approach path off a thematically
+        // related existing key perk.
+        // ======================================================================
+
+        // --- Combat branch off KeyDiscidia ---
+        SmallPerk discExt1 = smallPerk("disc_ext1", -4, -60, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.3f);
+        SmallPerk discExt2 = smallPerk("disc_ext2", -8, -66, PerkAttributeTypesAS.ATTR_TYPE_CRIT_CHANCE, 0.03f);
+        KeyBleed keyBleed = new KeyBleed(-12, -72);
+        PerkTree.register(discExt1); PerkTree.register(discExt2); PerkTree.register(keyBleed);
+        connect(keyDiscidia, discExt1); connect(discExt1, discExt2); connect(discExt2, keyBleed);
+
+        SmallPerk discExt3 = smallPerk("disc_ext3", 4, -60, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.03f);
+        SmallPerk discExt4 = smallPerk("disc_ext4", 8, -66, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.3f);
+        KeyRampage keyRampage = new KeyRampage(12, -72);
+        PerkTree.register(discExt3); PerkTree.register(discExt4); PerkTree.register(keyRampage);
+        connect(keyDiscidia, discExt3); connect(discExt3, discExt4); connect(discExt4, keyRampage);
+
+        SmallPerk discExt5 = smallPerk("disc_ext5", -4, -74, PerkAttributeTypesAS.ATTR_TYPE_CRIT_MULTIPLIER, 0.05f);
+        KeyCullingAttack keyCulling = new KeyCullingAttack(-8, -80);
+        PerkTree.register(discExt5); PerkTree.register(keyCulling);
+        connect(keyBleed, discExt5); connect(discExt5, keyCulling);
+
+        SmallPerk discExt6 = smallPerk("disc_ext6", 4, -74, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.5f);
+        KeyDamageArmor keyDamageArmor = new KeyDamageArmor(8, -80);
+        PerkTree.register(discExt6); PerkTree.register(keyDamageArmor);
+        connect(keyRampage, discExt6); connect(discExt6, keyDamageArmor);
+
+        SmallPerk discExt7 = smallPerk("disc_ext7", 0, -86, PerkAttributeTypesAS.ATTR_TYPE_CRIT_CHANCE, 0.04f);
+        KeyLightningArc keyLightningArc = new KeyLightningArc(0, -92);
+        PerkTree.register(discExt7); PerkTree.register(keyLightningArc);
+        connect(keyCulling, discExt7); connect(keyDamageArmor, discExt7); connect(discExt7, keyLightningArc);
+
+        SmallPerk discExt8 = smallPerk("disc_ext8", -14, -78, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.4f);
+        KeyAreaOfEffect keyAreaOfEffect = new KeyAreaOfEffect(-18, -84);
+        PerkTree.register(discExt8); PerkTree.register(keyAreaOfEffect);
+        connect(keyCulling, discExt8); connect(discExt8, keyAreaOfEffect);
+
+        SmallPerk discExt9 = smallPerk("disc_ext9", -20, -66, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.04f);
+        KeyNoArmor keyNoArmor = new KeyNoArmor(-24, -72);
+        PerkTree.register(discExt9); PerkTree.register(keyNoArmor);
+        connect(keyDiscidia, discExt9); connect(discExt9, keyNoArmor);
+
+        SmallPerk discExt10 = smallPerk("disc_ext10", 20, -66, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.3f);
+        KeyDamageEffects keyDamageEffects = new KeyDamageEffects(24, -72);
+        PerkTree.register(discExt10); PerkTree.register(keyDamageEffects);
+        connect(keyDiscidia, discExt10); connect(discExt10, keyDamageEffects);
+
+        // Projectile off Lucerna (ranged/vision theme)
+        SmallPerk lucExt1 = smallPerk("luc_ext1", 20, -84, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.03f);
+        KeyProjectileDistance keyProjDist = new KeyProjectileDistance(24, -90);
+        PerkTree.register(lucExt1); PerkTree.register(keyProjDist);
+        connect(keyLucerna, lucExt1); connect(lucExt1, keyProjDist);
+
+        SmallPerk lucExt2 = smallPerk("luc_ext2", 26, -84, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.3f);
+        KeyProjectileProximity keyProjProx = new KeyProjectileProximity(32, -90);
+        PerkTree.register(lucExt2); PerkTree.register(keyProjProx);
+        connect(keyLucerna, lucExt2); connect(lucExt2, keyProjProx);
+
+        // --- Defense/utility off KeyArmara ---
+        SmallPerk armaExt1 = smallPerk("arma_ext1", 58, -16, PerkAttributeTypesAS.ATTR_TYPE_ARMOR, 0.5f);
+        SmallPerk armaExt2 = smallPerk("arma_ext2", 64, -20, PerkAttributeTypesAS.ATTR_TYPE_KNOCKBACK_RESIST, 0.05f);
+        KeyNoKnockback keyNoKnockback = new KeyNoKnockback(70, -24);
+        PerkTree.register(armaExt1); PerkTree.register(armaExt2); PerkTree.register(keyNoKnockback);
+        connect(keyArmara, armaExt1); connect(armaExt1, armaExt2); connect(armaExt2, keyNoKnockback);
+
+        SmallPerk armaExt3 = smallPerk("arma_ext3", 58, -6, PerkAttributeTypesAS.ATTR_TYPE_ARMOR_TOUGHNESS, 0.5f);
+        KeyDisarm keyDisarm = new KeyDisarm(64, -2);
+        PerkTree.register(armaExt3); PerkTree.register(keyDisarm);
+        connect(keyArmara, armaExt3); connect(armaExt3, keyDisarm);
+
+        // --- Speed/mobility off KeyVicio ---
+        SmallPerk viciExt1 = smallPerk("vici_ext1", 28, 54, PerkAttributeTypesAS.ATTR_TYPE_MOVEMENT_SPEED, 0.03f);
+        KeyStepAssist keyStepAssist = new KeyStepAssist(36, 60);
+        PerkTree.register(viciExt1); PerkTree.register(keyStepAssist);
+        connect(keyVicio, viciExt1); connect(viciExt1, keyStepAssist);
+
+        SmallPerk viciExt2 = smallPerk("vici_ext2", 14, 54, PerkAttributeTypesAS.ATTR_TYPE_MOVEMENT_SPEED, 0.02f);
+        KeyMantleFlight keyMantleFlight = new KeyMantleFlight(8, 60);
+        PerkTree.register(viciExt2); PerkTree.register(keyMantleFlight);
+        connect(keyVicio, viciExt2); connect(viciExt2, keyMantleFlight);
+
+        // --- Life/sustain off KeyAevitas ---
+        SmallPerk aevExt1 = smallPerk("aev_ext1", -28, 54, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 0.5f);
+        KeyMending keyMending = new KeyMending(-36, 60);
+        PerkTree.register(aevExt1); PerkTree.register(keyMending);
+        connect(keyAevitas, aevExt1); connect(aevExt1, keyMending);
+
+        SmallPerk aevExt2 = smallPerk("aev_ext2", -14, 54, PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL, 0.02f);
+        KeyCleanseBadPotions keyCleanse = new KeyCleanseBadPotions(-8, 60);
+        PerkTree.register(aevExt2); PerkTree.register(keyCleanse);
+        connect(keyAevitas, aevExt2); connect(aevExt2, keyCleanse);
+
+        SmallPerk aevExt3 = smallPerk("aev_ext3", -20, 54, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 1.0f);
+        KeyReducedFood keyReducedFood = new KeyReducedFood(-16, 62);
+        PerkTree.register(aevExt3); PerkTree.register(keyReducedFood);
+        connect(keyAevitas, aevExt3); connect(aevExt3, keyReducedFood);
+
+        // --- Mining/tools off KeyEvorsio ---
+        SmallPerk evorExt1 = smallPerk("evor_ext1", -58, -16, PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.05f);
+        KeyDigTypes keyDigTypes = new KeyDigTypes(-66, -20);
+        PerkTree.register(evorExt1); PerkTree.register(keyDigTypes);
+        connect(keyEvorsio, evorExt1); connect(evorExt1, keyDigTypes);
+
+        SmallPerk evorExt2 = smallPerk("evor_ext2", -58, -6, PerkAttributeTypesAS.ATTR_TYPE_REACH, 0.5f);
+        KeyEntityReach keyEntityReach = new KeyEntityReach(-66, -2);
+        PerkTree.register(evorExt2); PerkTree.register(keyEntityReach);
+        connect(keyEvorsio, evorExt2); connect(evorExt2, keyEntityReach);
+
+        // --- Nature off KeyBootes ---
+        SmallPerk booExt1 = smallPerk("boo_ext1", -40, 78, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.05f);
+        KeyGrowables keyGrowables = new KeyGrowables(-48, 84);
+        PerkTree.register(booExt1); PerkTree.register(keyGrowables);
+        connect(keyBootes, booExt1); connect(booExt1, keyGrowables);
+
+        SmallPerk booExt2 = smallPerk("boo_ext2", -28, 78, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.05f);
+        KeyTreeConnector keyTreeConn = new KeyTreeConnector(-20, 84);
+        PerkTree.register(booExt2); PerkTree.register(keyTreeConn);
+        connect(keyBootes, booExt2); connect(booExt2, keyTreeConn);
+
+        SmallPerk booExt3 = smallPerk("boo_ext3", -34, 80, PerkAttributeTypesAS.ATTR_TYPE_LIFE_STEAL, 0.02f);
+        KeyMagnetDrops keyMagnetDrops = new KeyMagnetDrops(-40, 88);
+        PerkTree.register(booExt3); PerkTree.register(keyMagnetDrops);
+        connect(keyBootes, booExt3); connect(booExt3, keyMagnetDrops);
+
+        // --- Mining spoils off KeyMineralis ---
+        SmallPerk minExt1 = smallPerk("min_ext1", -82, 8, PerkAttributeTypesAS.ATTR_TYPE_MINING_SPEED, 0.05f);
+        KeyStoneEnrichment keyStoneEnrich = new KeyStoneEnrichment(-88, 12);
+        PerkTree.register(minExt1); PerkTree.register(keyStoneEnrich);
+        connect(keyMineralis, minExt1); connect(minExt1, keyStoneEnrich);
+
+        SmallPerk minExt2 = smallPerk("min_ext2", -82, -2, PerkAttributeTypesAS.ATTR_TYPE_EXPERIENCE, 0.05f);
+        KeyVoidTrash keyVoidTrash = new KeyVoidTrash(-88, -6);
+        PerkTree.register(minExt2); PerkTree.register(keyVoidTrash);
+        connect(keyMineralis, minExt2); connect(minExt2, keyVoidTrash);
+
+        // --- Death-cheating off KeyPelotrio (survival theme) ---
+        SmallPerk peloExt1 = smallPerk("pelo_ext1", -52, 76, PerkAttributeTypesAS.ATTR_TYPE_MAX_HEALTH, 0.5f);
+        KeyCheatDeath keyCheatDeath = new KeyCheatDeath(-56, 82);
+        PerkTree.register(peloExt1); PerkTree.register(keyCheatDeath);
+        connect(keyPelotrio, peloExt1); connect(peloExt1, keyCheatDeath);
+
+        // --- Low-health rampage off KeyVorux ---
+        SmallPerk voruxExt1 = smallPerk("vorux_ext1", -34, -102, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_DAMAGE, 0.3f);
+        KeyLastBreath keyLastBreath = new KeyLastBreath(-40, -106);
+        PerkTree.register(voruxExt1); PerkTree.register(keyLastBreath);
+        connect(keyVorux, voruxExt1); connect(voruxExt1, keyLastBreath);
+
+        // --- Utility off KeyAlcara (enchantment/starlight theme) ---
+        SmallPerk alcaExt1 = smallPerk("alca_ext1", 60, -52, PerkAttributeTypesAS.ATTR_TYPE_PERK_EFFECT, 0.05f);
+        KeyAddEnchantment keyAddEnch = new KeyAddEnchantment(64, -58);
+        PerkTree.register(alcaExt1); PerkTree.register(keyAddEnch);
+        connect(keyAlcara, alcaExt1); connect(alcaExt1, keyAddEnch);
+
+        // --- Misc off KeyHorologium (time/charge theme) ---
+        SmallPerk horoExt1 = smallPerk("horo_ext1", 4, -100, PerkAttributeTypesAS.ATTR_TYPE_PERK_EFFECT, 0.05f);
+        KeySpawnLights keySpawnLights = new KeySpawnLights(8, -106);
+        PerkTree.register(horoExt1); PerkTree.register(keySpawnLights);
+        connect(keyHorologium, horoExt1); connect(horoExt1, keySpawnLights);
+
+        SmallPerk horoExt2 = smallPerk("horo_ext2", -4, -100, PerkAttributeTypesAS.ATTR_TYPE_ATTACK_SPEED, 0.03f);
+        KeyChargeBalancing keyChargeBalance = new KeyChargeBalancing(-8, -106);
+        PerkTree.register(horoExt2); PerkTree.register(keyChargeBalance);
+        connect(keyHorologium, horoExt2); connect(horoExt2, keyChargeBalance);
     }
 
     // =========================================================================
