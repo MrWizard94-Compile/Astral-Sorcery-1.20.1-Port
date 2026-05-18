@@ -1,7 +1,9 @@
 package hellfirepvp.astralsorcery.common.constellation;
 
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectProvider;
+import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry;
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffect;
+import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -21,14 +23,12 @@ public interface IWeakConstellation extends IConstellation {
 
     @Nullable
     default ConstellationEffectProvider getConstellationEffect() {
-        // Deferred: RegistriesAS.REGISTRY_CONSTELLATION_EFFECT.getValue(this.getRegistryName())
-        return null;
+        return ConstellationEffectRegistry.getProvider(this);
     }
 
     @Nullable
     default MantleEffect getMantleEffect() {
-        // Deferred: RegistriesAS.REGISTRY_MANTLE_EFFECT.getValue(this.getRegistryName())
-        return null;
+        return MantleEffectRegistry.getEffect(this);
     }
 
     @Nonnull

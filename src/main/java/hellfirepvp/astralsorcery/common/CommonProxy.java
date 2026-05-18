@@ -9,6 +9,8 @@ package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry;
+import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.AttunementCraftingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.LiquidStarlightCraftingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
@@ -138,6 +140,8 @@ public class CommonProxy {
             PacketChannel.init();
             PerkAttributeTypesAS.init();
             ConstellationsAS.init();
+            ConstellationEffectRegistry.init();
+            MantleEffectRegistry.init();
             AstralAdvancementTriggers.init();
             StructuresAS.init();
             PerkTreeData.buildTree();
