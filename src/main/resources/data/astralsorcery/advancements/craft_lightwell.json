@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:well"
+    },
+    "title": "Liquid Starlight",
+    "description": "Craft a Lightwell to produce Liquid Starlight",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:first_altar_craft",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:well"]
+          }
+        ]
+      }
+    }
+  }
+}

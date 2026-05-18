@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:attunement_altar"
+    },
+    "title": "Iridescent Altar",
+    "description": "Upgrade your altar to the Attunement tier",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:first_altar_craft",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:attunement_altar"]
+          }
+        ]
+      }
+    }
+  }
+}

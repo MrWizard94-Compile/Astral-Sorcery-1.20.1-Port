@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:starmetal_ingot"
+    },
+    "title": "Stellar Transmutation",
+    "description": "Complete your first Starlight Infusion",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:craft_starlight_infuser",
+  "criteria": {
+    "requirement": {
+      "trigger": "astralsorcery:infusion_craft",
+      "conditions": {}
+    }
+  }
+}

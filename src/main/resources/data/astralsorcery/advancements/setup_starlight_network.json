@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:linking_tool"
+    },
+    "title": "Stellar Network",
+    "description": "Craft a Linking Tool to connect starlight nodes",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:first_altar_craft",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:linking_tool"]
+          }
+        ]
+      }
+    }
+  }
+}

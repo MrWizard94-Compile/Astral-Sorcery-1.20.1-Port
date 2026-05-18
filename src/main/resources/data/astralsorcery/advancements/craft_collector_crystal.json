@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:collector_crystal"
+    },
+    "title": "Starlight Collector",
+    "description": "Craft a Rock Crystal Collector to gather starlight",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:setup_starlight_network",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:collector_crystal"]
+          }
+        ]
+      }
+    }
+  }
+}

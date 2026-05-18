@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "astralsorcery:perk_gem_day",
+    "astralsorcery:perk_gem_night",
+    "astralsorcery:perk_gem_sky"
+  ]
+}

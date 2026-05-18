@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:gateway"
+    },
+    "title": "Celestial Gateway",
+    "description": "Craft a Gateway for instant travel",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:attune_self",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:gateway"]
+          }
+        ]
+      }
+    }
+  }
+}

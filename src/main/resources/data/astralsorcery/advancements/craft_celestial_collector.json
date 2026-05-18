@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:celestial_collector_crystal"
+    },
+    "title": "Celestial Focus",
+    "description": "Craft a Celestial Collector Crystal",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:craft_collector_crystal",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:celestial_collector_crystal"]
+          }
+        ]
+      }
+    }
+  }
+}

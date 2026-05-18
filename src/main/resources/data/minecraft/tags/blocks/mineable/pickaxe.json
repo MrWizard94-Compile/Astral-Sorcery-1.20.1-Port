@@ -1,0 +1,33 @@
+{
+  "replace": false,
+  "values": [
+    "astralsorcery:marble_raw",
+    "astralsorcery:marble_arch",
+    "astralsorcery:marble_bricks",
+    "astralsorcery:marble_chiseled",
+    "astralsorcery:marble_engraved",
+    "astralsorcery:marble_runed",
+    "astralsorcery:marble_pillar",
+    "astralsorcery:marble_slab",
+    "astralsorcery:marble_stairs",
+    "astralsorcery:black_marble_raw",
+    "astralsorcery:rock_crystal_ore",
+    "astralsorcery:aquamarine_sand_ore",
+    "astralsorcery:altar",
+    "astralsorcery:attunement_altar",
+    "astralsorcery:collector_crystal",
+    "astralsorcery:celestial_collector_crystal",
+    "astralsorcery:lens",
+    "astralsorcery:prism",
+    "astralsorcery:relay",
+    "astralsorcery:well",
+    "astralsorcery:infuser",
+    "astralsorcery:ritual_pedestal",
+    "astralsorcery:chalice",
+    "astralsorcery:telescope",
+    "astralsorcery:gateway",
+    "astralsorcery:fountain",
+    "astralsorcery:observatory",
+    "astralsorcery:illuminator"
+  ]
+}

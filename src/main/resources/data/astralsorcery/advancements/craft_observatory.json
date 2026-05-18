@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:observatory"
+    },
+    "title": "The Stars Align",
+    "description": "Craft an Observatory for advanced constellation tracking",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:craft_telescope",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:observatory"]
+          }
+        ]
+      }
+    }
+  }
+}

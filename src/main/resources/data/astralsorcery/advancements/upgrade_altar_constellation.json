@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:altar"
+    },
+    "title": "Constellation Altar",
+    "description": "Upgrade your altar to the Constellation tier",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:upgrade_altar_attunement",
+  "criteria": {
+    "requirement": {
+      "trigger": "astralsorcery:altar_upgrade",
+      "conditions": {}
+    }
+  }
+}

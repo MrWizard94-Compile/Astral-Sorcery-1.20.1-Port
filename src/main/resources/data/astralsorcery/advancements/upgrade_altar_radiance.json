@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:altar"
+    },
+    "title": "Radiance Altar",
+    "description": "Upgrade your altar to the final Radiance tier",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:upgrade_altar_constellation",
+  "criteria": {
+    "requirement": {
+      "trigger": "astralsorcery:altar_upgrade",
+      "conditions": {}
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "astralsorcery:ritual_pedestal"
+    },
+    "title": "Ritual Master",
+    "description": "Craft a Ritual Pedestal for constellation effects",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "astralsorcery:attune_self",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["astralsorcery:ritual_pedestal"]
+          }
+        ]
+      }
+    }
+  }
+}
