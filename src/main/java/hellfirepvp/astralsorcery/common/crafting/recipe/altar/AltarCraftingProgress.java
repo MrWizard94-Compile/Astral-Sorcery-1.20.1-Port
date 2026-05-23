@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crafting.recipe.altar;
 
+import hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.nbt.CompoundTag;
 

@@ -2,12 +2,17 @@ package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.block.base.LiquidStarlightOwned;
+import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityWell;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -21,9 +26,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Lightwell — converts rock crystals into liquid starlight over time.
@@ -68,15 +80,57 @@ public class BlockWell extends BlockEntityBlock implements LiquidStarlightOwned 
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("null")
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        // TODO: Handle crystal insertion and fluid interaction
-        return InteractionResult.CONSUME;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlockEntityWell well)) {
+            return InteractionResult.PASS;
+        }
+        ItemStack heldItem = player.getItemInHand(hand);
+        if (heldItem.isEmpty()) {
+            return InteractionResult.PASS;
+        }
+
+        // Try inserting as a liquefaction catalyst (only if slot is empty)
+        if (!well.hasCatalyst()) {
+            List<WellLiquefaction> recipes = level.getRecipeManager()
+                    .getAllRecipesFor(RecipeTypesAS.WELL_LIQUEFACTION.get());
+            for (WellLiquefaction recipe : recipes) {
+                if (recipe.matches(heldItem)) {
+                    well.setCatalystStack(heldItem.copyWithCount(1));
+                    if (!player.isCreative()) {
+                        heldItem.shrink(1);
+                    }
+                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP,
+                            SoundSource.PLAYERS, 0.2F,
+                            ((level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                    return InteractionResult.CONSUME;
+                }
+            }
+        }
+
+        // Try filling a fluid container (bucket, etc.) from the well's tank
+        IFluidHandler fluidHandler = well.getCapability(ForgeCapabilities.FLUID_HANDLER)
+                .resolve().orElse(null);
+        if (fluidHandler != null) {
+            FluidActionResult far = FluidUtil.tryFillContainerAndStow(
+                    heldItem, fluidHandler, new InvWrapper(player.getInventory()),
+                    FluidType.BUCKET_VOLUME, player, true);
+            if (far.isSuccess()) {
+                player.setItemInHand(hand, far.getResult());
+                level.playSound(null, pos, SoundEvents.BUCKET_FILL,
+                        SoundSource.PLAYERS, 1F, 1F);
+                well.markForUpdate();
+                return InteractionResult.CONSUME;
+            }
+        }
+
+        return InteractionResult.PASS;
     }
 
     @Nullable

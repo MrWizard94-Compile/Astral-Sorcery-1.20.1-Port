@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "minecraft:snow_block"
+  },
+  "output": {
+    "fluid": "minecraft:water",
+    "amount": 1
+  },
+  "productionMultiplier": 0.3,
+  "color": 16777215
+}

@@ -8,26 +8,28 @@
 package hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin;
 
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
-import hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarUpgradeRecipe;
-import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * Upgrade recipe that promotes a Discovery altar to an Attunement altar.
- *
- * <p>1.16 → 1.20: TileAltar → BlockEntityAltar, ALTAR_ATTUNEMENT → ATTUNEMENT_ALTAR.get();
- * ResearchManager.informCraftedAltar deferred until ResearchManager is ported.</p>
+ * Changes the altar block state to AltarType.ATTUNEMENT and grants the player
+ * the ATTUNEMENT progression tier.
  */
 public class AttunementUpgradeRecipe extends SimpleAltarRecipe implements AltarUpgradeRecipe {
 
@@ -47,11 +49,18 @@ public class AttunementUpgradeRecipe extends SimpleAltarRecipe implements AltarU
                 other.getIngredients(), other.getFocusConstellation());
     }
 
-    // TODO: call ResearchManager.informCraftedAltar once ResearchManager is ported
-    public void onRecipeCompletion(@Nonnull BlockEntityAltar altar,
-                                   @Nonnull ActiveSimpleAltarRecipe activeRecipe) {
+    @Override
+    @SuppressWarnings("null")
+    public void onRecipeCompletion(@Nonnull BlockEntityAltar altar) {
         Level level = altar.getLevel();
         if (level == null) return;
-        level.setBlock(altar.getBlockPos(), BlocksAS.ATTUNEMENT_ALTAR.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos pos = altar.getBlockPos();
+        BlockState upgraded = level.getBlockState(pos)
+                .setValue(BlockAltar.ALTAR_TYPE, BlockAltar.AltarType.ATTUNEMENT);
+        level.setBlock(pos, upgraded, Block.UPDATE_ALL);
+
+        Player nearest = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 16.0, null);
+        ResearchManager.informCraftedAltar(nearest instanceof ServerPlayer sp ? sp : null,
+                BlockAltar.AltarType.ATTUNEMENT);
     }
 }

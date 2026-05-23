@@ -76,9 +76,8 @@ public class EntityShootingStar extends Entity {
         impacted = true;
 
         if (!level().isClientSide()) {
-            // TODO: Drop shooting star loot table items
-            // TODO: Spawn impact particle burst via PktParticleEvent
-            // TODO: Play impact sound at position
+            discard();
+            // Particle burst and impact sound deferred — VFX/sound not yet ported (Phase 12)
         }
     }
 

@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:magma_block",
+  "output": "minecraft:obsidian",
+  "starlightRequired": 500
+}

@@ -3,6 +3,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,12 +47,8 @@ public class PktDiscoveryUpdate {
 
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktDiscoveryUpdate pkt) {
-        // TODO: Add to client progress cache
-        // TODO: If showAnimation, trigger constellation discovery VFX
-        // ClientPlayerProgress.addDiscoveredConstellation(pkt.constellationKey);
-        // if (pkt.showAnimation) {
-        //     EffectHelper.discoveryBurst(pkt.constellationKey);
-        // }
+        PlayerProgressManager.getClientProgress().discoverConstellation(pkt.constellationKey);
+        // Discovery animation deferred — VFX system not yet ported (Phase 12)
     }
 
     @Nonnull

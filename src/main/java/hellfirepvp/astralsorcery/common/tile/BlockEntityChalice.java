@@ -9,6 +9,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -52,6 +54,7 @@ public class BlockEntityChalice extends BlockEntityTick {
         this.fluidCap = LazyOptional.of(() -> new TankWrapper(tank));
     }
 
+    @SuppressWarnings("null")
     @Override
     public void tick() {
         super.tick();
@@ -61,12 +64,44 @@ public class BlockEntityChalice extends BlockEntityTick {
             return;
         }
 
-        // TODO: Auto-balance fluid between linked chalices:
-        // 1. Iterate linkedChalices positions
-        // 2. For each valid loaded BlockEntityChalice:
-        //    - Compare fluid levels
-        //    - Transfer from higher to lower to equalize
-        // 3. Remove invalid/unloaded positions from linkedChalices
+        if (ticksExisted % 20 != 0) return;
+
+        Level level = getLevel();
+        if (level == null) return;
+
+        FluidStack thisFluid = tank.getFluid();
+        if (thisFluid.isEmpty()) return;
+
+        linkedChalices.removeIf(pos -> {
+            BlockEntity be = level.getBlockEntity(pos);
+            return !(be instanceof BlockEntityChalice);
+        });
+
+        for (BlockPos otherPos : linkedChalices) {
+            BlockEntity be = level.getBlockEntity(otherPos);
+            if (!(be instanceof BlockEntityChalice other)) continue;
+
+            FluidStack otherFluid = other.tank.getFluid();
+            if (otherFluid.isEmpty() || !otherFluid.isFluidEqual(thisFluid)) continue;
+
+            int thisAmt = thisFluid.getAmount();
+            int otherAmt = otherFluid.getAmount();
+            if (thisAmt == otherAmt) continue;
+
+            // Move half the imbalance per tick, minimum 1 mB
+            int delta = (thisAmt - otherAmt) / 2;
+            if (delta == 0) continue;
+
+            if (delta > 0) {
+                FluidStack moved = tank.drain(delta, IFluidHandler.FluidAction.EXECUTE);
+                other.tank.fill(moved, IFluidHandler.FluidAction.EXECUTE);
+            } else {
+                FluidStack moved = other.tank.drain(-delta, IFluidHandler.FluidAction.EXECUTE);
+                tank.fill(moved, IFluidHandler.FluidAction.EXECUTE);
+            }
+            markForUpdate();
+            other.markForUpdate();
+        }
     }
 
     @Nonnull

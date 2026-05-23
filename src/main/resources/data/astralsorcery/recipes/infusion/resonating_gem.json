@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "astralsorcery:aquamarine"
+  },
+  "output": {
+    "item": "astralsorcery:resonating_gem",
+    "count": 1
+  },
+  "fluidMbRequired": 500,
+  "craftDuration": 200
+}

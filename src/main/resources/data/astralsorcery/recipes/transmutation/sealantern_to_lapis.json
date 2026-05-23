@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:sea_lantern",
+  "output": "minecraft:lapis_block",
+  "starlightRequired": 300
+}

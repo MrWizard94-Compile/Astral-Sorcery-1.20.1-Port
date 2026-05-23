@@ -68,6 +68,7 @@ public class EventHandlerMining {
      * Handles block break events for auto-smelt (Fornax) and experience bonuses.
      * Auto-smelt converts raw ore drops to their smelted equivalents.
      */
+    @SuppressWarnings("null")
     @SubscribeEvent
     public void onBlockBreak(@Nonnull BlockEvent.BreakEvent event) {
         if (!(event.getPlayer() instanceof ServerPlayer player)) {
@@ -90,7 +91,7 @@ public class EventHandlerMining {
 
         // Auto-smelt (Fornax perk): convert drops to smelted form
         if (hasFornaxPerk(progress)) {
-            applyAutoSmelt(player, pos, state);
+            applyAutoSmelt(event, player, pos, state);
         }
     }
 
@@ -114,20 +115,18 @@ public class EventHandlerMining {
     }
 
     /**
-     * Applies the Fornax auto-smelt effect: if the block would drop a raw item
-     * that has a smelting recipe, replace the drops with the smelted result.
-     *
-     * <p>This is handled by modifying block drops after breaking. In 1.20,
-     * we use Block.getDrops() and then look up smelting recipes.</p>
+     * Applies the Fornax auto-smelt effect: cancels the break event, removes the block
+     * without vanilla drops, then spawns the smelted equivalents manually.
      */
-    private void applyAutoSmelt(@Nonnull ServerPlayer player,
+    @SuppressWarnings("null")
+    private void applyAutoSmelt(@Nonnull BlockEvent.BreakEvent event,
+                                 @Nonnull ServerPlayer player,
                                  @Nonnull BlockPos pos,
                                  @Nonnull BlockState state) {
         if (!(player.level() instanceof ServerLevel serverLevel)) {
             return;
         }
 
-        // Get block drops
         List<ItemStack> drops = Block.getDrops(state, serverLevel, pos,
                 serverLevel.getBlockEntity(pos), player, player.getMainHandItem());
 
@@ -135,7 +134,6 @@ public class EventHandlerMining {
             return;
         }
 
-        // Check each drop for a smelting recipe
         boolean hasSmeltable = false;
         for (int i = 0; i < drops.size(); i++) {
             ItemStack drop = drops.get(i);
@@ -148,11 +146,16 @@ public class EventHandlerMining {
             }
         }
 
-        if (hasSmeltable) {
-            // Replace block drops with smelted versions
-            // This is done by spawning the items manually and suppressing normal drops
-            // via canceling the break event and breaking the block ourselves
-            // TODO: Implement drop replacement via loot modifier or mixin for cleaner approach
+        if (!hasSmeltable) {
+            return;
+        }
+
+        // Cancel normal break so vanilla doesn't spawn raw drops, then handle manually.
+        event.setCanceled(true);
+        serverLevel.removeBlock(pos, false);
+        state.getBlock().popExperience(serverLevel, pos, event.getExpToDrop());
+        for (ItemStack stack : drops) {
+            Block.popResource(serverLevel, pos, stack);
         }
     }
 

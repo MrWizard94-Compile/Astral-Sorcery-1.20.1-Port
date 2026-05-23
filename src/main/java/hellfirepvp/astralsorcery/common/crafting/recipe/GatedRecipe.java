@@ -7,11 +7,13 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crafting.recipe;
 
+import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nonnull;
 
@@ -23,7 +25,7 @@ import javax.annotation.Nonnull;
  */
 public interface GatedRecipe {
 
-    boolean hasProgressionServer(Player player);
+    boolean hasProgressionServer(@Nonnull Player player);
 
     @OnlyIn(Dist.CLIENT)
     boolean hasProgressionClient();
@@ -33,16 +35,16 @@ public interface GatedRecipe {
         @Nonnull
         ProgressionTier getRequiredProgression();
 
-        // TODO: replace stub once ResearchHelper and ResearchProgression are ported
         @Override
-        default boolean hasProgressionServer(Player player) {
-            return false;
+        default boolean hasProgressionServer(@Nonnull Player player) {
+            PlayerProgress progress = PlayerProgressHelper.getProgress(player);
+            return progress != null && progress.isAtLeast(getRequiredProgression());
         }
 
         @OnlyIn(Dist.CLIENT)
         @Override
         default boolean hasProgressionClient() {
-            return false;
+            return PlayerProgressManager.getClientProgress().isAtLeast(getRequiredProgression());
         }
     }
 }

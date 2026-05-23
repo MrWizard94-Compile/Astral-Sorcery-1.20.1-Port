@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 100,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:marble_stairs",
+    "count": 8
+  },
+  "inputs": [
+    {"item": "astralsorcery:marble_raw"},
+    {},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:marble_raw"}
+  ]
+}

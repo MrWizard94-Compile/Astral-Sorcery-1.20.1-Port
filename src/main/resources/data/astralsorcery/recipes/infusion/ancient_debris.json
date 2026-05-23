@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:ancient_debris"
+  },
+  "output": {
+    "item": "minecraft:netherite_scrap",
+    "count": 2
+  },
+  "fluidMbRequired": 800,
+  "craftDuration": 250
+}

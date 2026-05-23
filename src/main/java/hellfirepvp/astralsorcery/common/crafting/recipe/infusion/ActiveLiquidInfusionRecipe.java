@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.infusion;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityInfuser;
 import hellfirepvp.astralsorcery.common.util.RecipeHelper;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
@@ -66,11 +67,18 @@ public class ActiveLiquidInfusionRecipe {
         return getTicksCrafting() >= getTotalCraftingTime();
     }
 
+    @SuppressWarnings("null")
     public void createItemOutputs(@Nonnull BlockEntityInfuser infuser,
                                   @Nonnull Consumer<ItemStack> output) {
-        // TODO: call ResearchManager.informCraftedInfuser once ResearchManager is ported
-        // TODO: apply NBT copy if LiquidInfusion.doesCopyNBTToOutputs() is added back to port
-        output.accept(this.recipeToCraft.getOutput().copy());
+        ItemStack result = this.recipeToCraft.getOutput().copy();
+        if (this.recipeToCraft.doesCopyNBTToOutputs()) {
+            ItemStack inputStack = infuser.getInventory().getStackInSlot(0);
+            if (!inputStack.isEmpty() && inputStack.hasTag()) {
+                result.setTag(inputStack.getTag() != null ? inputStack.getTag().copy() : null);
+            }
+        }
+        ResearchManager.informCraftedInfuser(infuser, this, result);
+        output.accept(result);
     }
 
     public void consumeInputs(@Nonnull BlockEntityInfuser infuser) {

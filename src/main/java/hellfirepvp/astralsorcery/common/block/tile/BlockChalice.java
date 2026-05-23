@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +22,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,7 +62,6 @@ public class BlockChalice extends BlockEntityBlock implements LiquidStarlightOwn
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;
@@ -62,15 +69,48 @@ public class BlockChalice extends BlockEntityBlock implements LiquidStarlightOwn
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("null")
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        // TODO: Handle bucket/fluid interaction
-        return InteractionResult.CONSUME;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlockEntityChalice chalice)) {
+            return InteractionResult.PASS;
+        }
+        ItemStack heldItem = player.getItemInHand(hand);
+        if (!FluidUtil.getFluidHandler(heldItem).isPresent()) {
+            return InteractionResult.PASS;
+        }
+        IFluidHandler chaliceHandler = chalice.getCapability(ForgeCapabilities.FLUID_HANDLER)
+                .resolve().orElse(null);
+        if (chaliceHandler == null) {
+            return InteractionResult.PASS;
+        }
+
+        FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
+        if (contained.isEmpty()) {
+            // Fill container from chalice
+            FluidActionResult far = FluidUtil.tryFillContainerAndStow(heldItem, chaliceHandler,
+                    new InvWrapper(player.getInventory()), FluidType.BUCKET_VOLUME, player, true);
+            if (far.isSuccess()) {
+                player.setItemInHand(hand, far.getResult());
+                chalice.markForUpdate();
+                return InteractionResult.CONSUME;
+            }
+        } else {
+            // Drain container into chalice
+            FluidActionResult far = FluidUtil.tryEmptyContainerAndStow(heldItem, chaliceHandler,
+                    new InvWrapper(player.getInventory()), FluidType.BUCKET_VOLUME, player, true);
+            if (far.isSuccess()) {
+                player.setItemInHand(hand, far.getResult());
+                chalice.markForUpdate();
+                return InteractionResult.CONSUME;
+            }
+        }
+        return InteractionResult.PASS;
     }
 
     @Nullable

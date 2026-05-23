@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:bone"
+  },
+  "output": {
+    "item": "minecraft:bone_meal",
+    "count": 4
+  },
+  "fluidMbRequired": 50,
+  "craftDuration": 40
+}

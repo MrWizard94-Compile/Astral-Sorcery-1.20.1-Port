@@ -1,0 +1,37 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "radiance",
+  "craft_duration": 500,
+  "starlight_required": 5800,
+  "output": {
+    "item": "astralsorcery:shifting_star_aevitas",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {"tag": "minecraft:saplings"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:shifting_star"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"tag": "minecraft:saplings"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

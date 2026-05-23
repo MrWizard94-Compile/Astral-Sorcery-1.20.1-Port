@@ -1,0 +1,37 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "radiance",
+  "craft_duration": 500,
+  "starlight_required": 7700,
+  "output": {
+    "item": "astralsorcery:mantle_aevitas",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {"tag": "minecraft:saplings"},
+    {},
+    {},
+    {"item": "astralsorcery:resonating_gem"},
+    {"tag": "minecraft:saplings"},
+    {"item": "minecraft:leather_chestplate"},
+    {"tag": "minecraft:saplings"},
+    {"item": "astralsorcery:resonating_gem"},
+    {},
+    {},
+    {"tag": "minecraft:saplings"},
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

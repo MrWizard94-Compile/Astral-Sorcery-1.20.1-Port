@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 300,
+  "starlight_required": 1200,
+  "output": {
+    "item": "astralsorcery:blink_wand",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {},
+    {},
+    {"item": "minecraft:ender_pearl"},
+    {},
+    {},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "minecraft:diamond"},
+    {},
+    {"item": "astralsorcery:marble_runed"}
+  ]
+}

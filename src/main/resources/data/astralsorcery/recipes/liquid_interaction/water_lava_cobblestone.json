@@ -1,0 +1,16 @@
+{
+  "type": "astralsorcery:liquid_interaction",
+  "fluid1": {
+    "fluid": "minecraft:water",
+    "amount": 30
+  },
+  "fluid2": {
+    "fluid": "minecraft:lava",
+    "amount": 30
+  },
+  "weight": 6.0,
+  "output": {
+    "item": "minecraft:cobblestone",
+    "count": 1
+  }
+}

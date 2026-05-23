@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -49,7 +50,6 @@ public class BlockRitualPedestal extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;
@@ -57,14 +57,42 @@ public class BlockRitualPedestal extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("null")
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        // TODO: Handle crystal placement/removal
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlockEntityRitualPedestal pedestal)) {
+            return InteractionResult.PASS;
+        }
+        ItemStack heldItem = player.getItemInHand(hand);
+        ItemStack inPedestal = pedestal.getHeldCrystal();
+
+        if (player.isShiftKeyDown()) {
+            // Sneak-click: always eject held crystal to player
+            if (!inPedestal.isEmpty()) {
+                pedestal.setHeldCrystal(ItemStack.EMPTY);
+                if (heldItem.isEmpty()) {
+                    player.setItemInHand(hand, inPedestal);
+                } else if (!player.addItem(inPedestal)) {
+                    Block.popResource(level, pos, inPedestal);
+                }
+            }
+        } else {
+            // Normal click: place held item, return old crystal
+            if (!heldItem.isEmpty() && inPedestal.isEmpty()) {
+                pedestal.setHeldCrystal(heldItem.copyWithCount(1));
+                if (!player.isCreative()) {
+                    heldItem.shrink(1);
+                }
+            } else if (heldItem.isEmpty() && !inPedestal.isEmpty()) {
+                pedestal.setHeldCrystal(ItemStack.EMPTY);
+                player.setItemInHand(hand, inPedestal);
+            }
+        }
         return InteractionResult.CONSUME;
     }
 

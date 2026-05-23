@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.auxiliary.link.LinkableTileEntity;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IIndependentStarlightSource;
@@ -265,8 +267,13 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
      * Get the tint color for rendering based on attuned constellation.
      */
     public int getConstellationColor() {
-        // TODO: Look up constellation color from ConstellationsAS registry
-        return attunedConstellation != null ? 0x4488DD : 0xAAAAFF;
+        if (attunedConstellation != null) {
+            IConstellation c = ConstellationRegistry.getConstellation(attunedConstellation);
+            if (c != null) {
+                return c.getConstellationColor().getRGB();
+            }
+        }
+        return 0xAAAAFF;
     }
 
     /**

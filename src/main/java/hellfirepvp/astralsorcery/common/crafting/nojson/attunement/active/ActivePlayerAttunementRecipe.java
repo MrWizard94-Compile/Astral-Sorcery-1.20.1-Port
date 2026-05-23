@@ -5,10 +5,15 @@ package hellfirepvp.astralsorcery.common.crafting.nojson.attunement.active;
 
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunePlayerRecipe;
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunementRecipe;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,9 +58,15 @@ public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<Attune
     }
 
     @Override
+    @SuppressWarnings("null")
     public void finishRecipe(@Nonnull BlockEntityAttunementAltar altar) {
-        // Player attunement: apply constellation to player progress.
-        // Deferred until ResearchManager / PlayerProgress is fully ported.
+        if (constellation == null || playerUUID == null) return;
+        MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
+        if (srv == null) return;
+        Player player = srv.getPlayerList().getPlayer(playerUUID);
+        if (player instanceof ServerPlayer sp) {
+            ResearchManager.attuneTo(sp, constellation);
+        }
     }
 
     @Override

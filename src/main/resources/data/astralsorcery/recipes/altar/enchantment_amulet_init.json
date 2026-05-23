@@ -1,0 +1,31 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "constellation",
+  "craft_duration": 400,
+  "starlight_required": 3500,
+  "output": {
+    "item": "astralsorcery:enchantment_amulet",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {},
+    {},
+    {"item": "minecraft:gold_ingot"},
+    {"item": "minecraft:string"},
+    {},
+    {"item": "astralsorcery:shifting_star"},
+    {"item": "minecraft:ender_eye"},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {}, {}, {}
+  ]
+}

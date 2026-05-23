@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 200,
+  "starlight_required": 150,
+  "output": {
+    "item": "astralsorcery:resonator",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:infused_wood"},
+    {"item": "minecraft:gold_ingot"},
+    {"item": "astralsorcery:infused_wood"}
+  ]
+}

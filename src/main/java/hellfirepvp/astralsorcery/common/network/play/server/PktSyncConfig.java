@@ -3,6 +3,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.common.data.config.ConfigManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -45,7 +46,7 @@ public class PktSyncConfig {
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             // Client-side: apply server config overrides
-            // TODO: ConfigManager.applySyncedConfig(pkt.configData);
+            ConfigManager.applySyncedConfig(pkt.configData);
         });
         ctx.get().setPacketHandled(true);
     }

@@ -1,0 +1,487 @@
+# Astral Sorcery 1.16 → 1.20.1 Forge Port
+
+## Context
+
+Astral Sorcery (by HellFirePvP) is a magic mod focused on starlight and constellations. Development stopped at 1.16; no 1.20 port exists. The full source is public at `github.com/HellFirePvP/AstralSorcery` (branch `1.16-indev`). We're porting to **Forge 1.20.1** (47.3.0) targeting the largest active modpack ecosystem. ObserverLib (the author's multiblock library) has no 1.20 release — we'll inline the ~300 lines AS actually uses.
+
+**Scope**: 1,319 Java files across rendering (127 files), perks (127 files), recipes (100+), worldgen (45), starlight network (20+), networking (30+), and more.
+
+**Scaffolding status**: Project shell at `C:\Projects\Astral_Sorcery_Port` is complete — build.gradle, gradle.properties, settings.gradle, mods.toml, pack.mcmeta, AstralSorcery.java, CommonProxy.java, ClientProxy.java all written for Forge 1.20.1.
+
+---
+
+## Phase 1: Build Environment & Gradle Wrapper
+
+**Goal**: Get the skeleton compiling with `gradlew build`.
+
+1. Download Forge 1.20.1 MDK, copy `gradlew`, `gradlew.bat`, and `gradle/wrapper/` into project root
+2. Run `gradlew genIntellijRuns` (or Eclipse equivalent)
+3. Run `gradlew build` — confirm zero errors on empty skeleton
+4. Initialize git repo, commit scaffolding
+
+**Files**: `build.gradle`, `gradle.properties`, `settings.gradle`
+
+---
+
+## Phase 2: Registry Infrastructure & Lib Constants
+
+**Goal**: Port all `DeferredRegister` holders and static constant classes so content has somewhere to land.
+
+**1.16 → 1.20 key renames**:
+- `TileEntityType` → `BlockEntityType`
+- `ContainerType` → `MenuType`
+- `net.minecraft.util.ResourceLocation` → `net.minecraft.resources.ResourceLocation`
+- `IForgeRegistry` access patterns remain similar
+
+**1.16 → 1.20 new systems to add**:
+- **Creative tabs**: `ItemGroup` is gone. Must register via `DeferredRegister<CreativeModeTab>` using `CreativeModeTab.builder()`. AS has a custom tab with a custom icon — create `CreativeTabsAS.java` and populate items via `BuildCreativeModeTabContentsEvent`.
+- **Fluid types**: Forge 1.20 added `FluidType` as a new abstraction layer above `Fluid`. Any `ForgeFlowingFluid.Properties` usage must be updated to register `FluidType` entries first via `DeferredRegister<FluidType>`. AS uses fluids in lightwell processing — add `FluidTypesAS.java` to the registry list.
+
+**Source files to port** (from `common/lib/`):
+- `BlocksAS.java` — 40+ block registry entries
+- `ItemsAS.java` — all item entries
+- `TileEntityTypesAS.java` → rename to `BlockEntityTypesAS.java`
+- `ContainerTypesAS.java` → rename to `MenuTypesAS.java`
+- `EntityTypesAS.java`
+- `RecipeTypesAS.java`, `RecipeSerializersAS.java`
+- `SoundsAS.java`, `EffectsAS.java`, `EnchantmentsAS.java`
+- `ConstellationsAS.java`
+- **`FluidTypesAS.java`** — new file, register `FluidType` entries for AS fluids (liquid starlight, etc.)
+- **`CreativeTabsAS.java`** — new file, register `CreativeModeTab` via builder pattern
+- `PerkAttributeTypesAS.java`, `PerkConvertersAS.java`, `PerkCustomModifiersAS.java`, `PerkNamesAS.java`
+- `WorldGenerationAS.java`
+- `StructuresAS.java`
+
+**Also port**: `common/registry/` event handler classes (the actual registration logic).
+
+**Approach**: Start with empty `DeferredRegister` holders pointing at correct 1.20 registries. Content entries get added as we port each system. Creative tab and fluid type registries are new — build these from scratch using 1.20 patterns.
+
+---
+
+## Phase 3: ObserverLib Replacement
+
+**Goal**: Inline the multiblock pattern matching AS uses, removing the external dependency.
+
+**What AS uses from ObserverLib**:
+- `PatternBlockArray` — defines multiblock shapes (used in `StructuresAS.java` for altars, pedestals, infuser, collector, relay, gateway, singularity, fountain)
+- Block change subscription (structure validation)
+- Data marker processing
+
+**Approach**:
+1. Create `hellfirepvp.astralsorcery.common.lib.structure.PatternBlockArray` — a self-contained multiblock pattern class
+2. Port the matching logic: iterate pattern positions, compare `BlockState` against expected states
+3. Wire into tile entity tick/validation where AS currently calls ObserverLib
+4. ~300-500 lines of focused code
+
+**Files to create**: `common/lib/structure/PatternBlockArray.java`, `common/lib/structure/StructureValidator.java`
+
+---
+
+## Phase 4: Base Types, Enums & Utilities
+
+**Goal**: Port the foundational types everything else imports.
+
+**Key packages**:
+- `common/base/` — enums, base interfaces
+- `common/util/` — 27+ utility classes (math, NBT helpers, block helpers, etc.)
+- `common/auxiliary/` — helper utilities
+- `common/data/` — world data, config entries (50+ files)
+- `common/constellation/` — constellation definitions, celestial events, day/time helpers
+
+**1.16 → 1.20 changes**:
+- `CompoundNBT` → `CompoundTag`
+- `ListNBT` → `ListTag`
+- `INBT` → `Tag`
+- `StringNBT` → `StringTag`
+- `BlockPos` — stable, no changes
+- `Vector3d` → `Vec3`
+- Various `net.minecraft.util.*` → reorganized packages
+
+**Damage types** (new in 1.20):
+- AS has custom damage sources (stellar damage, starry sky damage, etc.)
+- `DamageSource` factory pattern is **gone** in 1.20 — damage types are now data-driven
+- Must create JSON files under `data/astralsorcery/damage_type/` for each custom damage type
+- Access via `level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)` instead of `DamageSource` constructors
+- Create `DamageTypesAS.java` to hold `ResourceKey<DamageType>` constants
+- This is an explicit step, not a footnote — every class that creates a `DamageSource` needs updating
+
+**Approach**: Batch rename imports, fix compilation errors. Most logic is unchanged — it's pure package/class renames. Damage type JSONs and the new `DamageTypesAS` constants file are created here so Phase 5 content can reference them.
+
+---
+
+## Phase 5: Blocks, Items & Block Entities
+
+**Goal**: Port all content definitions — the physical stuff in the game.
+
+**Blocks** (`common/block/` — 30+ files):
+- Marble variants, black marble, infused wood
+- Altars (4 tiers), attunement altar
+- Collector crystal, celestial collector crystal
+- Lenses, prisms, telescopes, observatory
+- Wells, chalices, ritual pedestals
+- Relay, gateway, tree beacon, fountain
+
+**Items** (`common/item/` — 40+ files):
+- Crystal tools, wands, lenses
+- Aquamarine, stardust, illumination powder
+- Perk gems, seals, mantles
+- Attuned crystals (rock crystal, celestial crystal)
+
+**Block Entities** (`common/tile/` — 40+ files):
+- Every interactive block has a corresponding BE
+- Key rename: `TileEntity` → `BlockEntity`, `TileEntityType` → `BlockEntityType`
+- `ITickableTileEntity` → implement tick via `BlockEntityTicker<T>` in the Block class
+- `markDirty()` → `setChanged()`
+- `world` field → `level` field
+
+**Containers** → **Menus** (`common/container/` — 10+ files):
+- `Container` → `AbstractContainerMenu`
+- `ContainerType` → `MenuType`
+- `PlayerInventory` → `Inventory`
+
+**Approach**: Port blocks first (they're mostly constructors + properties), then items, then BEs (the logic-heavy part), then menus.
+
+---
+
+## Phase 6: Recipe System
+
+**Goal**: Port AS's 5 custom recipe types and their serializers.
+
+**Recipe types**:
+1. `WellLiquefaction` — lightwell processing
+2. `LiquidInfusion` — starlight infuser
+3. `BlockTransmutation` — block-to-block conversion
+4. `SimpleAltarRecipe` — altar crafting (4 tiers, most complex)
+5. `LiquidInteraction` — liquid reactions
+
+**1.16 → 1.20 changes**:
+- `IRecipe<C>` → `Recipe<C>` (interface → abstract in some cases)
+- `IRecipeSerializer` → `RecipeSerializer`
+- `IRecipeType` → `RecipeType`
+- Recipe JSON format largely compatible
+- `RecipeManager` access patterns changed slightly
+
+**Key files**: `common/crafting/recipe/`, `common/crafting/builder/`, `common/crafting/serializer/`
+
+**The altar recipe system is the most complex** — `SimpleAltarRecipe.java`, `ActiveSimpleAltarRecipe.java` (13.7 KB), `AltarRecipeGrid.java` (17.2 KB) handle multi-tier crafting with starlight costs, constellation focus requirements, and relay inputs.
+
+---
+
+## Phase 7: Starlight Network
+
+**Goal**: Port the starlight transmission/collection system.
+
+**Key files** (`common/starlight/`):
+- `WorldNetworkHandler.java` (13 KB) — central manager
+- `IStarlightSource.java`, `IStarlightReceiver.java`, `IStarlightTransmission.java`
+- `IIndependentStarlightSource.java`
+- `network/` and `transmission/` subdirectories
+
+**Dependencies**: Needs block entities (Phase 5) to exist. The starlight network connects sources (collector crystals) to receivers (altars, infusers) via transmission nodes (lenses, prisms).
+
+**1.16 → 1.20 changes**: Mostly internal logic — depends on capability/world data systems which need the NBT renames from Phase 4.
+
+---
+
+## Phase 8: Capability System ⚠️ HIGH RISK
+
+**Goal**: Port Forge capabilities for player data, chunk data, etc. This is higher risk than it looks — AS's capabilities are deeply coupled to world data serialization. If capability serialization breaks, the perk system (Phase 9) and attunement system both fail silently in ways that are hard to debug.
+
+**Known capabilities**:
+- `ChunkFluidEntry` — per-chunk fluid resources (lightwell system)
+- Player attunement data (constellation attunement)
+- Player perk data (perk tree allocations)
+- Research/discovery progress
+
+**1.16 → 1.20 changes**:
+- `AttachCapabilitiesEvent` still exists but registration pattern changed significantly
+- `LazyOptional<T>` still used
+- `ICapabilityProvider` → similar but check for API changes
+- `INBTSerializable<CompoundNBT>` → `INBTSerializable<CompoundTag>`
+- Entity capability attachment method changed in 1.20.1 Forge
+
+**Mandatory smoke test**: After porting capabilities, immediately write a basic test (or manual /command) that:
+1. Attaches a capability to a player
+2. Writes data to it
+3. Serializes to NBT and back
+4. Reads data and confirms it matches
+Do NOT proceed to Phase 9 until this roundtrip works. Silent serialization failures here will cascade into invisible bugs across perks and attunement.
+
+---
+
+## Phase 9: Perk & Attunement System
+
+**Goal**: Port the entire perk tree — 127 files, the largest single system.
+
+**Structure**:
+- Core framework: `AbstractPerk`, `PerkTree`, `PerkLevelManager`, `PerkAttributeHelper`, `PerkEffectHelper`
+- 50+ perk node types (root, key, major, focus, socket perks)
+- 28 attribute type classes (armor, damage, movement, crit, etc.)
+- 8 attribute modifier classes
+- 8 perk attribute reader classes
+- Perk data loading/serialization
+- Equipment modifier sources
+
+**Approach**: Port bottom-up:
+1. Attribute types and modifiers (pure data, no MC deps)
+2. Core framework classes
+3. Individual perk implementations (mostly extend AbstractPerk)
+4. Perk tree data loading
+5. Perk effect application and ticking
+
+**This system is large but self-contained** — most perks follow the same pattern and can be ported mechanically.
+
+---
+
+## Phase 10: Networking
+
+**Goal**: Port all 30+ packet classes.
+
+**Architecture**: Forge `SimpleChannel` with play and login phase packets.
+
+**1.16 → 1.20 changes**:
+- `SimpleChannel` API is stable
+- `PacketDistributor` largely unchanged
+- `PacketBuffer` → `FriendlyByteBuf` (may already be renamed in 1.16)
+- Login packet handling may need minor tweaks
+
+**Approach**: Port `PacketChannel.java` first, then individual packets. Most packets are read/write/handle triads — mechanical porting.
+
+---
+
+## Phase 11: World Generation
+
+**Goal**: Rewrite worldgen for the 1.18+ system. This is a **full rewrite**, not a port.
+
+**What AS generates**:
+- **Structures**: Ancient shrine, desert shrine, small shrine (NBT template-based)
+- **Features**: Rock crystal ore, aquamarine (riverbed), glow flowers, marble veins
+
+**1.16 → 1.20 changes** (MAJOR):
+- `Structure<>` → new `StructureType<>` registration system
+- `Feature<>` → `ConfiguredFeature<>` + `PlacedFeature<>` (two-step)
+- Biome modification via `BiomeModifiers` (data-driven in 1.20)
+- Template structures still work but registration hooks completely changed
+- Placement modifiers replaced old decoration system
+
+**Approach**:
+1. Port `ReplaceBlockFeature` and `RockCrystalFeature` as `Feature<>` + `ConfiguredFeature` + `PlacedFeature`
+2. Port shrine structures using 1.20's `Structure` + `StructureType` + template pieces
+3. Create biome modifier JSONs for feature/structure placement
+4. Test in-world generation
+
+---
+
+## Phase 12: Client Rendering (THE BIG ONE)
+
+**Goal**: Rewrite the entire rendering pipeline for 1.20's graphics system.
+
+### Critical API changes:
+| 1.16 | 1.20 | Impact |
+|------|------|--------|
+| `MatrixStack` | `PoseStack` | Class rename, same concept |
+| `IRenderTypeBuffer` | `MultiBufferSource` | Rename |
+| `IVertexBuilder` | `VertexConsumer` | Rename |
+| `TileEntityRenderer` | `BlockEntityRenderer` | Rename |
+| `RenderState` (public builder) | Internal/restricted | **RenderStateBuilder breaks entirely** |
+| `RenderSystem.shadeModel()` | Removed (legacy GL) | Sky renderer needs rewrite |
+| `RenderSystem.pushMatrix()` | Removed | Use PoseStack only |
+| `DefaultVertexFormats` | `DefaultVertexFormat` | Singular + field renames |
+| `VertexBuffer.bindBuffer()/draw()` | New API | OBJ model render rewrite |
+
+### Sub-phases:
+
+**12a: RenderType Definitions** (`client/lib/RenderTypesAS.java`)
+- 40+ custom RenderType definitions
+- `RenderType.State.Builder` pattern completely broken in 1.20
+- Must rewrite using `RenderType.CompositeRenderType` or `RenderType.create()` with `CompositeState`
+- **This is the #1 blocker** — everything else depends on it
+
+**12b: Render Utilities**
+- `RenderStateBuilder.java` — full rewrite
+- `IDrawRenderTypeBuffer.java` — rename IRenderTypeBuffer → MultiBufferSource
+- `RenderingDrawUtils`, `RenderingConstellationUtils` — update vertex writing
+
+**12c: Block Entity Renderers** (`client/render/tile/` — 13+ files)
+- RenderAltar, RenderAttunementAltar, RenderChalice, RenderCollectorCrystal, RenderInfuser, RenderLens, RenderObservatory, RenderPrism, RenderRefractionTable, RenderRitualPedestal, RenderSmallShrine, RenderTelescope, RenderWitchwood
+- Mostly mechanical: update TESR signature, use PoseStack, use MultiBufferSource
+
+**12d: Particle/Effect System** (`client/effect/` — 50+ files)
+- Base classes: `EntityComplexFX`, `EntityDynamicFX`, `EntityVisualFX`
+- 9 render contexts (particle, burst, crystal, lightbeam, lightning, etc.)
+- VFX controllers (alpha, color, motion, scale)
+- Orbital effects for various constellations
+- Depends on RenderTypesAS being done first
+
+**12e: Sky Renderer** (`client/sky/`)
+- `AstralSkyRenderer.java` — custom ISkyRenderHandler
+- Direct RenderSystem manipulation, custom vertex batching
+- `RenderSystem.shadeModel()` removed — need shader-based smooth shading or vertex color interpolation
+- Constellation sky rendering
+- Fog/blending management
+- **Second hardest rendering task** after RenderTypes
+
+**12f: Screen/GUI System** (`client/screen/` — 40+ files)
+- Container screens for all altar tiers, attunement, infuser, etc.
+- Journal system with multiple page types
+- Perk tree visualization (5+ files with batching, dynamics, halo rendering)
+- `Screen` base class mostly stable; main changes are in rendering calls within screens
+
+**12g: Models & Entity Rendering**
+- OBJ model loading (`ObjModelRender.java`) — VertexBuffer API rewrite
+- Custom armor models
+- Entity renderers (spectral tool, grappling hook, etc.)
+- Player layer renderers (StarryLayerRenderer)
+
+---
+
+## Phase 13: Integration, Mixins & Data Generators
+
+**Goal**: Port mod integration, mixin system, and data generation.
+
+- **JEI integration** — JEI 1.20.1 API had a significant rewrite. Recipe category registration moved to a builder pattern with `IRecipeCategoryRegistration`. AS has custom JEI categories for altar crafting, infusion, transmutation, well liquefaction, and liquid interaction — each needs a full category rewrite, not just import fixes. Budget real time for this.
+- **Mixins** — `MixinConnector.java` + mixin classes; verify targets still exist in 1.20
+- **Data generators** — `AstralDataGenerator.java`; `DataProvider` API changed
+- **Loot modifiers** — `common/loot/`; global loot modifier system evolved
+- **Commands** — `common/cmd/`; brigadier API stable
+- **Advancements** — `common/advancement/`; criterion trigger API changed slightly
+
+---
+
+## Phase 14: Testing & Polish
+
+1. **Compile test**: `gradlew build` with zero errors
+2. **Client launch**: Start client, verify mod loads, check creative tabs
+3. **Block/item verification**: Place every block, use every item
+4. **Recipe testing**: Craft at all altar tiers, test transmutation, infusion, wells
+5. **Worldgen testing**: New world, verify marble/crystals/shrines generate
+6. **Perk system**: Attune player, allocate perks, verify effects apply
+7. **Starlight network**: Set up collector → lens → altar chain, verify transmission
+8. **Visual QA**: Check every TESR, particle effect, sky rendering, GUI
+9. **Multiplayer**: Test dedicated server, verify networking packets
+
+---
+
+## Execution Order & Dependencies
+
+```
+Phase 1: Build Environment            ← START HERE (already mostly done)
+    ↓
+Phase 2: Registries & Lib Constants   ← everything depends on this
+    ↓
+Phase 3: ObserverLib Replacement      ← needed by structure validation
+    ↓
+Phase 4: Base Types & Utilities       ← needed by everything below
+    ↓
+    ├→ Phase 5: Blocks/Items/BEs      ← content definitions
+    │      ↓
+    │  Phase 6: Recipes               ← needs blocks/items
+    │
+    ├→ Phase 8: Capabilities          ← MUST pass smoke test before Phase 7 or 9
+    │      ↓
+    │  Phase 7: Starlight Network     ← needs BEs (Phase 5) AND capabilities (Phase 8)
+    │      ↓                            WorldNetworkHandler likely persists via saved data/caps
+    │  Phase 9: Perks/Attunement      ← BLOCKED on Phase 8 smoke test passing
+    │
+    └→ Phase 10: Networking           ← needs content to reference
+         ↓
+    Phase 11: World Generation        ← needs blocks, structures
+         ↓
+    Phase 12: Client Rendering        ← needs all server-side content
+         ↓
+    Phase 13: Integration & Datagen   ← needs everything
+         ↓
+    Phase 14: Testing & Polish        ← final validation
+
+Note: Phase 7 depends on BOTH Phase 5 and Phase 8.
+      Phase 9 is NOT independent — it requires Phase 8's capability
+      smoke test to pass first. Do not start Phase 9 until verified.
+```
+
+**Pre-Phase 7 checkpoint**: Before starting Phase 7, read `WorldNetworkHandler.java` source to confirm whether it persists network state via world saved data or capabilities. If it uses capabilities, Phase 8 must be complete first. (Likely it does — flag this for verification.)
+
+---
+
+## Risk Summary
+
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| RenderType/RenderState rewrite | **Critical** | Research 1.20 CompositeRenderType API before starting Phase 12 |
+| Worldgen rewrite | **High** | Use 1.20 MDK examples as reference; start with features before structures |
+| Capability serialization | **High** | Port early, smoke test immediately — silent failures cascade into perks/attunement |
+| Creative tab system | **High** | Completely new system in 1.19.3+ — must build from scratch, not port |
+| Damage type system | **High** | Data-driven in 1.20 — every DamageSource usage needs rewrite + JSON files |
+| Fluid type registration | **High** | New FluidType layer in Forge 1.20 — blocks fluid content until done |
+| Recipe system adaptation | **Medium** | Port one recipe type fully first as template |
+| JEI integration rewrite | **Medium** | Builder pattern API — budget real time, not a footnote |
+| Perk system scale (127 files) | **Medium** | Mechanical — same pattern repeated; batch-port |
+| ObserverLib replacement | **Low** | Narrow surface area (~300 lines); well-understood |
+| Import/package renames | **Low** | Tedious but mechanical; do in bulk passes |
+
+---
+
+## Code Quality Requirements (CRITICAL)
+
+### 1. Testing Strategy
+
+Tests are split into three tiers based on what's realistic for a Minecraft mod:
+
+**Tier 1 — Unit tests (pure logic, no Minecraft dependencies)**:
+Written alongside ported code, run via `gradlew test`. These cover:
+- Math utilities, vector helpers, color functions
+- NBT serialization roundtrips (construct → serialize → deserialize → compare)
+- Recipe matching logic (valid inputs match, invalid inputs reject)
+- Perk attribute calculations, modifier stacking, level progression math
+- Packet encode/decode roundtrips for every packet class
+- `PatternBlockArray` pattern matching (correct, incorrect, partial, rotated)
+- Damage type resource key resolution
+- Any pure-data transform or validation function
+
+**Tier 2 — Smoke tests (integration points, minimal game state)**:
+Run via `gradlew test` or in-game commands. These verify:
+- All `DeferredRegister` entries resolve (no null registry objects at runtime)
+- Capability attach/serialize/deserialize roundtrip (Phase 8 gate — mandatory before Phase 9)
+- Creative tab populates with expected items
+- Fluid type registration resolves correctly
+
+**Tier 3 — Manual QA (game-state-dependent, visual)**:
+Checked by hand in a running client/server. Cannot be automated meaningfully:
+- Block entity ticking behavior
+- Starlight network graph traversal
+- Perk effect application on player
+- Worldgen feature/structure placement
+- All rendering (TESRs, particles, sky, GUIs)
+- Multiplayer packet delivery
+
+**Test directory**: `src/test/java/hellfirepvp/astralsorcery/` mirroring main source structure.
+
+### 2. Type Hints & Linting: 100% Compliance
+
+All Java code must meet these standards:
+
+- **No raw types**: Every generic must be fully parameterized (`List<ItemStack>`, not `List`)
+- **No unchecked casts**: Use proper generic bounds or `@SuppressWarnings("unchecked")` only when genuinely unavoidable, with a comment explaining why
+- **`@Nullable` / `@Nonnull` annotations**: Every method parameter and return type that could be null must be annotated. Use `javax.annotation.Nullable` / `javax.annotation.Nonnull`
+- **`@Override` on every override**: No exceptions
+- **No unused imports**: Clean after every file
+- **No unused variables or parameters**: Remove or prefix with `_` if required by interface contract
+- **Access modifiers**: Minimum necessary visibility — `private` by default, widen only when required
+- **Consistent formatting**: 4-space indent, braces on same line, max 120 char line width
+
+**Linting enforcement**: Configure `build.gradle` with:
+- `-Xlint:unchecked` and `-Xlint:rawtypes` compiler flags (catches real type-safety issues)
+- Do NOT use `-Werror` globally — Forge's own APIs and annotation processors emit deprecation warnings we can't fix. Use `-Werror` scoped to `unchecked` and `rawtypes` only if the compiler supports it, otherwise treat those categories as manual review gates.
+
+---
+
+## Verification
+
+After each phase:
+- `gradlew build` with `-Xlint:unchecked -Xlint:rawtypes` must compile clean
+- Unit tests for pure logic must pass: `gradlew test`
+- Manual QA checklist completed for game-state-dependent systems
+- After Phase 1: client launches to title screen
+- After Phase 5: blocks/items visible in creative menu
+- After Phase 8: capability smoke test passes (serialize/deserialize roundtrip) — **gate for Phase 7 and 9**
+- After Phase 12: visual effects render correctly in-game
+- After Phase 14: full playthrough of progression (discovery → attunement → constellation → radiance)

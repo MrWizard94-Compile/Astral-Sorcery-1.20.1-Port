@@ -2,7 +2,12 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
+import hellfirepvp.astralsorcery.common.container.ContainerAltarAttunement;
+import hellfirepvp.astralsorcery.common.container.ContainerAltarConstellation;
+import hellfirepvp.astralsorcery.common.container.ContainerAltarDiscovery;
+import hellfirepvp.astralsorcery.common.container.ContainerAltarRadiance;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarUpgradeRecipe;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
@@ -12,10 +17,18 @@ import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import java.util.List;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -46,7 +59,7 @@ import java.util.Optional;
  * CapabilityItemHandler -> ForgeCapabilities.ITEM_HANDLER,
  * Container/Menu system for player interaction</p>
  */
-public class BlockEntityAltar extends BlockEntityTick implements IStarlightReceiver {
+public class BlockEntityAltar extends BlockEntityTick implements IStarlightReceiver, MenuProvider {
 
     private static final int MAX_SLOTS = 25;
 
@@ -215,11 +228,12 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     /**
      * Completes the active recipe: consumes inputs, produces output.
      */
+    @SuppressWarnings("null")
     private void completeCrafting(@Nonnull Level level) {
         if (activeRecipe == null) return;
 
-        ItemStack result = activeRecipe.assemble(inventory.toContainer(),
-                level.registryAccess());
+        // Compute outputs BEFORE consuming inputs so subclasses can read ingredient stacks
+        List<ItemStack> results = activeRecipe.getOutputs(this);
 
         // Consume inputs: one item from each non-empty slot
         int slotCount = activeRecipe.getExpectedSlotCount();
@@ -235,11 +249,15 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             }
         }
 
-        // Output goes to the first empty slot beyond the crafting grid, or drops
-        // For now, use slot 0 as output (the center result slot concept)
-        // In the original mod, the output appears floating above the altar
-        // and is collected by the player. Here we spawn it as an item entity.
-        spawnCraftResult(result);
+        // Spawn all output items above the altar
+        for (ItemStack result : results) {
+            spawnCraftResult(result);
+        }
+
+        // Upgrade recipe post-completion hook (block state change + tier grant)
+        if (activeRecipe instanceof AltarUpgradeRecipe upgradeRecipe) {
+            upgradeRecipe.onRecipeCompletion(this);
+        }
 
         // Reset state
         this.activeRecipe = null;
@@ -248,11 +266,12 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         this.recipeTick = 0;
         markForUpdate();
 
-        AstralSorcery.log.debug("Altar craft complete at {}: produced {}",
-                worldPosition.toShortString(), result.getDisplayName().getString());
+        AstralSorcery.log.debug("Altar craft complete at {}: produced {} item type(s)",
+                worldPosition.toShortString(), results.size());
 
-        // TODO: Send particle burst packet for craft completion visual
-        // TODO: Play altar crafting completion sound
+        // TODO: Send particle burst packet for craft completion visual (Phase 12)
+        level.playSound(null, worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP,
+                SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.2F);
     }
 
     /**
@@ -407,6 +426,29 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     @Nullable
     public ResourceLocation getReceivedConstellation() {
         return receivedConstellation;
+    }
+
+    // ========================================================================
+    // MenuProvider implementation
+    // ========================================================================
+
+    @SuppressWarnings("null")
+    @Nonnull
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("block.astralsorcery.altar");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory playerInv,
+                                            @Nonnull Player player) {
+        return switch (getAltarType()) {
+            case DISCOVERY -> new ContainerAltarDiscovery(containerId, playerInv, this);
+            case ATTUNEMENT -> new ContainerAltarAttunement(containerId, playerInv, this);
+            case CONSTELLATION -> new ContainerAltarConstellation(containerId, playerInv, this);
+            case RADIANCE -> new ContainerAltarRadiance(containerId, playerInv, this);
+        };
     }
 
     /**

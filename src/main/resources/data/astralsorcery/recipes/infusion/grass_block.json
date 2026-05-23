@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:dirt"
+  },
+  "output": {
+    "item": "minecraft:grass_block",
+    "count": 1
+  },
+  "fluidMbRequired": 50,
+  "craftDuration": 40
+}

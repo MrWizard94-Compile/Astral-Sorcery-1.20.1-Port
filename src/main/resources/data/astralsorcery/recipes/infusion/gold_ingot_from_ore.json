@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "tag": "forge:ores/gold"
+  },
+  "output": {
+    "item": "minecraft:gold_ingot",
+    "count": 3
+  },
+  "fluidMbRequired": 150,
+  "craftDuration": 80
+}

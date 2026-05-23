@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:blaze_rod"
+  },
+  "output": {
+    "item": "minecraft:blaze_powder",
+    "count": 4
+  },
+  "fluidMbRequired": 100,
+  "craftDuration": 60
+}

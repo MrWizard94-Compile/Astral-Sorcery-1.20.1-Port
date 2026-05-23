@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:melon_slice"
+  },
+  "output": {
+    "item": "minecraft:glistering_melon_slice",
+    "count": 1
+  },
+  "fluidMbRequired": 200,
+  "craftDuration": 80
+}

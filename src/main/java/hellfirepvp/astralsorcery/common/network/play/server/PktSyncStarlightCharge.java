@@ -3,6 +3,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.client.ClientStarlightCache;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -51,9 +52,7 @@ public class PktSyncStarlightCharge {
 
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktSyncStarlightCharge pkt) {
-        // TODO: Update client-side starlight cache for HUD rendering
-        // ClientStarlightCache.setCharge(pkt.chargeLevel, pkt.maxCharge);
-        // ClientStarlightCache.setCharging(pkt.isCharging);
+        ClientStarlightCache.update(pkt.chargeLevel, pkt.maxCharge, pkt.isCharging);
     }
 
     public float getChargeLevel() { return chargeLevel; }

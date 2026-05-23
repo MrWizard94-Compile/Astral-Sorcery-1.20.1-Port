@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 300,
+  "starlight_required": 1400,
+  "output": {
+    "item": "astralsorcery:knowledge_share",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:illumination_powder"},
+    {},
+    {"item": "astralsorcery:illumination_powder"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:illumination_powder"},
+    {},
+    {"item": "astralsorcery:illumination_powder"},
+    {"item": "minecraft:feather"},
+    {"item": "astralsorcery:parchment"},
+    {"item": "minecraft:black_dye"},
+    {}
+  ]
+}

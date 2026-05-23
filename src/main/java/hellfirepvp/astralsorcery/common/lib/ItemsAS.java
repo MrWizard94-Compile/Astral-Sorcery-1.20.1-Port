@@ -1,25 +1,34 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.item.ItemChisel;
 import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
+import hellfirepvp.astralsorcery.common.item.ItemEnchantmentAmulet;
 import hellfirepvp.astralsorcery.common.item.ItemFormationStone;
 import hellfirepvp.astralsorcery.common.item.ItemHandTelescope;
 import hellfirepvp.astralsorcery.common.item.ItemIlluminationPowder;
+import hellfirepvp.astralsorcery.common.item.ItemNocturnalPowder;
 import hellfirepvp.astralsorcery.common.item.ItemInfusedGlass;
 import hellfirepvp.astralsorcery.common.item.ItemKnowledgeFragment;
+import hellfirepvp.astralsorcery.common.item.ItemKnowledgeShare;
 import hellfirepvp.astralsorcery.common.item.ItemLinkingTool;
+import hellfirepvp.astralsorcery.common.item.ItemParchment;
 import hellfirepvp.astralsorcery.common.item.ItemResonatingGem;
+import hellfirepvp.astralsorcery.common.item.ItemResonator;
 import hellfirepvp.astralsorcery.common.item.ItemStardust;
 import hellfirepvp.astralsorcery.common.item.ItemStarmetalDust;
 import hellfirepvp.astralsorcery.common.item.ItemStarmetalIngot;
 import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
 import hellfirepvp.astralsorcery.common.item.ItemPerkSeal;
+import hellfirepvp.astralsorcery.common.item.ItemTome;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleAevitas;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleArmara;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleDiscidia;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleEvorsio;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleVicio;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemRockCrystalSimple;
 import hellfirepvp.astralsorcery.common.item.gem.ItemAquamarine;
@@ -29,7 +38,18 @@ import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalAxe;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalPickaxe;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalShovel;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalSword;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStar;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarAevitas;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarArmara;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarDiscidia;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarEvorsio;
+import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarVicio;
 import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStone;
+import hellfirepvp.astralsorcery.common.item.wand.ItemArchitectWand;
+import hellfirepvp.astralsorcery.common.item.wand.ItemBlinkWand;
+import hellfirepvp.astralsorcery.common.item.wand.ItemExchangeWand;
+import hellfirepvp.astralsorcery.common.item.wand.ItemGrappleWand;
+import hellfirepvp.astralsorcery.common.item.wand.ItemIlluminationWand;
 import hellfirepvp.astralsorcery.common.item.wand.ItemWand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -50,12 +70,28 @@ public class ItemsAS {
     // ---- Tools ----
     public static final RegistryObject<ItemWand> WAND =
             ITEMS.register("wand", ItemWand::new);
+    public static final RegistryObject<ItemArchitectWand> ARCHITECT_WAND =
+            ITEMS.register("architect_wand", ItemArchitectWand::new);
+    public static final RegistryObject<ItemBlinkWand> BLINK_WAND =
+            ITEMS.register("blink_wand", ItemBlinkWand::new);
+    public static final RegistryObject<ItemExchangeWand> EXCHANGE_WAND =
+            ITEMS.register("exchange_wand", ItemExchangeWand::new);
+    public static final RegistryObject<ItemGrappleWand> GRAPPLE_WAND =
+            ITEMS.register("grapple_wand", ItemGrappleWand::new);
+    public static final RegistryObject<ItemIlluminationWand> ILLUMINATION_WAND =
+            ITEMS.register("illumination_wand", ItemIlluminationWand::new);
+    public static final RegistryObject<ItemChisel> CHISEL =
+            ITEMS.register("chisel", ItemChisel::new);
 
     // ---- Crystals ----
     public static final RegistryObject<ItemRockCrystalSimple> ROCK_CRYSTAL =
             ITEMS.register("rock_crystal", ItemRockCrystalSimple::new);
+    public static final RegistryObject<ItemAttunedRockCrystal> ATTUNED_ROCK_CRYSTAL =
+            ITEMS.register("attuned_rock_crystal", ItemAttunedRockCrystal::new);
     public static final RegistryObject<ItemCelestialCrystal> CELESTIAL_CRYSTAL =
             ITEMS.register("celestial_crystal", ItemCelestialCrystal::new);
+    public static final RegistryObject<ItemAttunedCelestialCrystal> ATTUNED_CELESTIAL_CRYSTAL =
+            ITEMS.register("attuned_celestial_crystal", ItemAttunedCelestialCrystal::new);
 
     // ---- Materials ----
     public static final RegistryObject<ItemAquamarine> AQUAMARINE =
@@ -70,6 +106,8 @@ public class ItemsAS {
             ITEMS.register("glass_lens", ItemGlassLens::new);
     public static final RegistryObject<ItemIlluminationPowder> ILLUMINATION_POWDER =
             ITEMS.register("illumination_powder", ItemIlluminationPowder::new);
+    public static final RegistryObject<ItemNocturnalPowder> NOCTURNAL_POWDER =
+            ITEMS.register("nocturnal_powder", ItemNocturnalPowder::new);
     public static final RegistryObject<ItemInfusedGlass> INFUSED_GLASS =
             ITEMS.register("infused_glass", ItemInfusedGlass::new);
     public static final RegistryObject<ItemResonatingGem> RESONATING_GEM =
@@ -139,6 +177,32 @@ public class ItemsAS {
     public static final RegistryObject<ItemColoredLens> COLORED_LENS_SPECTRAL =
             ITEMS.register("colored_lens_spectral", () -> new ItemColoredLens(ItemColoredLens.LensColor.SPECTRAL));
 
+    // ---- Shifting Stars ----
+    public static final RegistryObject<ItemShiftingStar> SHIFTING_STAR =
+            ITEMS.register("shifting_star", ItemShiftingStar::new);
+    public static final RegistryObject<ItemShiftingStarAevitas> SHIFTING_STAR_AEVITAS =
+            ITEMS.register("shifting_star_aevitas", ItemShiftingStarAevitas::new);
+    public static final RegistryObject<ItemShiftingStarArmara> SHIFTING_STAR_ARMARA =
+            ITEMS.register("shifting_star_armara", ItemShiftingStarArmara::new);
+    public static final RegistryObject<ItemShiftingStarDiscidia> SHIFTING_STAR_DISCIDIA =
+            ITEMS.register("shifting_star_discidia", ItemShiftingStarDiscidia::new);
+    public static final RegistryObject<ItemShiftingStarEvorsio> SHIFTING_STAR_EVORSIO =
+            ITEMS.register("shifting_star_evorsio", ItemShiftingStarEvorsio::new);
+    public static final RegistryObject<ItemShiftingStarVicio> SHIFTING_STAR_VICIO =
+            ITEMS.register("shifting_star_vicio", ItemShiftingStarVicio::new);
+
+    // ---- Miscellaneous Items ----
+    public static final RegistryObject<ItemEnchantmentAmulet> ENCHANTMENT_AMULET =
+            ITEMS.register("enchantment_amulet", ItemEnchantmentAmulet::new);
+    public static final RegistryObject<ItemParchment> PARCHMENT =
+            ITEMS.register("parchment", ItemParchment::new);
+    public static final RegistryObject<ItemTome> TOME =
+            ITEMS.register("tome", ItemTome::new);
+    public static final RegistryObject<ItemResonator> RESONATOR =
+            ITEMS.register("resonator", ItemResonator::new);
+    public static final RegistryObject<ItemKnowledgeShare> KNOWLEDGE_SHARE =
+            ITEMS.register("knowledge_share", ItemKnowledgeShare::new);
+
     // ---- Block Items ----
     // Marble family
     public static final RegistryObject<BlockItem> MARBLE_RAW_ITEM =
@@ -163,6 +227,18 @@ public class ItemsAS {
     // Black marble
     public static final RegistryObject<BlockItem> BLACK_MARBLE_RAW_ITEM =
             ITEMS.register("black_marble_raw", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_RAW.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_ARCH_ITEM =
+            ITEMS.register("black_marble_arch", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_ARCH.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_BRICKS_ITEM =
+            ITEMS.register("black_marble_bricks", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_BRICKS.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_CHISELED_ITEM =
+            ITEMS.register("black_marble_chiseled", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_CHISELED.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_ENGRAVED_ITEM =
+            ITEMS.register("black_marble_engraved", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_ENGRAVED.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_RUNED_ITEM =
+            ITEMS.register("black_marble_runed", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_RUNED.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_PILLAR_ITEM =
+            ITEMS.register("black_marble_pillar", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_PILLAR.get()));
 
     // Infused wood family
     public static final RegistryObject<BlockItem> INFUSED_WOOD_ITEM =
@@ -183,6 +259,28 @@ public class ItemsAS {
             ITEMS.register("rock_crystal_ore", () -> new ItemBlockAS(BlocksAS.ROCK_CRYSTAL_ORE.get()));
     public static final RegistryObject<BlockItem> AQUAMARINE_ORE_ITEM =
             ITEMS.register("aquamarine_sand_ore", () -> new ItemBlockAS(BlocksAS.AQUAMARINE_ORE.get()));
+    public static final RegistryObject<BlockItem> STARMETAL_ORE_ITEM =
+            ITEMS.register("starmetal_ore", () -> new ItemBlockAS(BlocksAS.STARMETAL_ORE.get()));
+    public static final RegistryObject<BlockItem> STARMETAL_ITEM =
+            ITEMS.register("starmetal", () -> new ItemBlockAS(BlocksAS.STARMETAL.get()));
+
+    // Foliage
+    public static final RegistryObject<BlockItem> GLOW_FLOWER_ITEM =
+            ITEMS.register("glow_flower", () -> new ItemBlockAS(BlocksAS.GLOW_FLOWER.get()));
+
+    // Crystal clusters
+    public static final RegistryObject<BlockItem> CELESTIAL_CRYSTAL_CLUSTER_ITEM =
+            ITEMS.register("celestial_crystal_cluster", () -> new ItemBlockAS(BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get()));
+    public static final RegistryObject<BlockItem> GEM_CRYSTAL_CLUSTER_ITEM =
+            ITEMS.register("gem_crystal_cluster", () -> new ItemBlockAS(BlocksAS.GEM_CRYSTAL_CLUSTER.get()));
+
+    // Craftable functional blocks
+    public static final RegistryObject<BlockItem> REFRACTION_TABLE_ITEM =
+            ITEMS.register("refraction_table", () -> new ItemBlockAS(BlocksAS.REFRACTION_TABLE.get()));
+    public static final RegistryObject<BlockItem> RITUAL_LINK_ITEM =
+            ITEMS.register("ritual_link", () -> new ItemBlockAS(BlocksAS.RITUAL_LINK.get()));
+    public static final RegistryObject<BlockItem> SPECTRAL_RELAY_ITEM =
+            ITEMS.register("spectral_relay", () -> new ItemBlockAS(BlocksAS.SPECTRAL_RELAY.get()));
 
     // Special
     public static final RegistryObject<BlockItem> ILLUMINATOR_ITEM =

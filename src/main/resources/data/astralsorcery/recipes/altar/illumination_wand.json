@@ -1,0 +1,31 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "constellation",
+  "craft_duration": 400,
+  "starlight_required": 3500,
+  "output": {
+    "item": "astralsorcery:illumination_wand",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {"item": "astralsorcery:illumination_powder"},
+    {},
+    {"item": "astralsorcery:illumination_powder"},
+    {"item": "astralsorcery:shifting_star"},
+    {"item": "astralsorcery:illumination_powder"},
+    {},
+    {"item": "astralsorcery:marble_runed"},
+    {"item": "astralsorcery:illumination_powder"},
+    {},
+    {},
+    {},
+    {},
+    {"item": "astralsorcery:marble_runed"},
+    {},
+    {},
+    {},
+    {}, {}, {}
+  ]
+}

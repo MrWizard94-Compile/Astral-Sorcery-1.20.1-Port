@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "tag": "forge:ores/lapis"
+  },
+  "output": {
+    "item": "minecraft:lapis_block",
+    "count": 1
+  },
+  "fluidMbRequired": 200,
+  "craftDuration": 100
+}

@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "tag": "forge:ores/diamond"
+  },
+  "output": {
+    "item": "minecraft:diamond",
+    "count": 5
+  },
+  "fluidMbRequired": 400,
+  "craftDuration": 150
+}

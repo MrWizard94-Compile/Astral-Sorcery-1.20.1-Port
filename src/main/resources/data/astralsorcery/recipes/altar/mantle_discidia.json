@@ -1,0 +1,37 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "radiance",
+  "craft_duration": 500,
+  "starlight_required": 7700,
+  "output": {
+    "item": "astralsorcery:mantle_discidia",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {"item": "minecraft:flint"},
+    {},
+    {},
+    {"item": "astralsorcery:resonating_gem"},
+    {"item": "minecraft:flint"},
+    {"item": "minecraft:leather_chestplate"},
+    {"item": "minecraft:flint"},
+    {"item": "astralsorcery:resonating_gem"},
+    {},
+    {},
+    {"item": "minecraft:flint"},
+    {},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

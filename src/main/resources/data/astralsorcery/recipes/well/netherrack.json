@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "minecraft:netherrack"
+  },
+  "output": {
+    "fluid": "minecraft:lava",
+    "amount": 1
+  },
+  "productionMultiplier": 0.3,
+  "color": 12533248
+}

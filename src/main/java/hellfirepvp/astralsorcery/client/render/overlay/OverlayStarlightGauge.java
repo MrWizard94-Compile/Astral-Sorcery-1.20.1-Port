@@ -9,7 +9,7 @@ package hellfirepvp.astralsorcery.client.render.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import hellfirepvp.astralsorcery.AstralSorcery;
-import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
+import hellfirepvp.astralsorcery.client.ClientStarlightCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -90,27 +90,7 @@ public class OverlayStarlightGauge implements IGuiOverlay {
         return true;
     }
 
-    /**
-     * Get the current starlight fill level [0, 1].
-     * Reads from the player's starlight capability.
-     */
     private float getStarlightFillLevel() {
-        // TODO: Read from player starlight capability
-        // Placeholder: simulate based on time of day (nighttime = high)
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return 0.0f;
-
-        long dayTime = mc.level.getDayTime() % 24000;
-        // Night is ~13000-23000
-        if (dayTime >= 13000 && dayTime <= 23000) {
-            // Calculate brightness based on how deep into night
-            float nightProgress = (dayTime - 13000f) / 10000f;
-            if (nightProgress <= 0.5f) {
-                return nightProgress * 2.0f; // Ramp up
-            } else {
-                return (1.0f - nightProgress) * 2.0f; // Ramp down
-            }
-        }
-        return 0.05f; // Minimal during day
+        return ClientStarlightCache.getFillFraction();
     }
 }

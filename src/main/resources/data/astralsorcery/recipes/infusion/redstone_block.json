@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "tag": "forge:ores/redstone"
+  },
+  "output": {
+    "item": "minecraft:redstone_block",
+    "count": 1
+  },
+  "fluidMbRequired": 200,
+  "craftDuration": 100
+}

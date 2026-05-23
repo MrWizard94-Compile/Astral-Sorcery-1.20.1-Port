@@ -1,12 +1,16 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.crafting.nojson.FountainEffectRegistry;
+import hellfirepvp.astralsorcery.common.crafting.nojson.fountain.FountainEffect;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.StructuresAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -49,6 +53,7 @@ public class BlockEntityFountain extends BlockEntityTick {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void tick() {
         super.tick();
         ticksExisted++;
@@ -57,13 +62,38 @@ public class BlockEntityFountain extends BlockEntityTick {
             return;
         }
 
-        // TODO: Server-side fountain logic:
-        // 1. Validate multiblock structure -> structureValid
-        // 2. If structureValid && fountainPrime is present && tank has fluid:
-        //    - Increment effectTick
-        //    - Apply effect based on fountainPrime type
-        //    - Consume liquid starlight from tank
-        // 3. If not valid, reset effectTick
+        Level level = getLevel();
+        if (level == null) return;
+
+        if (ticksExisted % 40 == 0) {
+            boolean wasValid = structureValid;
+            structureValid = StructuresAS.getFountain().matches(level, worldPosition);
+            if (wasValid != structureValid) {
+                markForUpdate();
+            }
+        }
+
+        if (!structureValid || fountainPrime == null || fountainPrime.isEmpty()) {
+            if (effectTick > 0) {
+                effectTick = 0;
+                markForUpdate();
+            }
+            return;
+        }
+
+        FluidStack stored = tank.getFluid();
+        if (stored.isEmpty()) return;
+
+        tank.drain(1, IFluidHandler.FluidAction.EXECUTE);
+        effectTick++;
+
+        // Tick the registered effect if one exists for this prime item (Phase 12 wires concrete effects)
+        FountainEffect<?> effect = FountainEffectRegistry.getEffect(
+                net.minecraft.resources.ResourceLocation.tryParse(fountainPrime.getItem().toString()));
+        if (effect != null) {
+            // Effect ticking deferred to Phase 12 VFX wiring
+        }
+        markForUpdate();
     }
 
     public int getTicksExisted() {

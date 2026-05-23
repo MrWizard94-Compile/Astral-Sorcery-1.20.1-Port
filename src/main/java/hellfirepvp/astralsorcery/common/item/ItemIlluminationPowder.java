@@ -1,12 +1,12 @@
 package hellfirepvp.astralsorcery.common.item;
 
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
+import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +25,7 @@ public class ItemIlluminationPowder extends ItemAS {
         super(defaultProperties());
     }
 
+    @SuppressWarnings("null")
     @Nonnull
     @Override
     public InteractionResult useOn(@Nonnull UseOnContext context) {
@@ -35,9 +36,7 @@ public class ItemIlluminationPowder extends ItemAS {
 
         BlockPos targetPos = context.getClickedPos().relative(context.getClickedFace());
         if (level.isEmptyBlock(targetPos)) {
-            // TODO: Place BlocksAS.ILLUMINATOR (custom light block) once registered
-            // For now, place a light source block
-            level.setBlock(targetPos, Blocks.LIGHT.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(targetPos, BlocksAS.ILLUMINATOR.get().defaultBlockState(), Block.UPDATE_ALL);
             context.getItemInHand().shrink(1);
             return InteractionResult.CONSUME;
         }

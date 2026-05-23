@@ -7,9 +7,12 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.data.config;
 
+import hellfirepvp.astralsorcery.common.util.log.LogCategory;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Common config (synced server → client, affects gameplay logic).
@@ -180,6 +183,14 @@ public final class CommonConfig {
     public final ForgeConfigSpec.DoubleValue gatewayCostPerBlock;
 
     // ========================================================================
+    // Debug Logging
+    // ========================================================================
+
+    /** Per-category debug logging toggles. */
+    public final Map<LogCategory, ForgeConfigSpec.BooleanValue> debugLogging
+            = new EnumMap<>(LogCategory.class);
+
+    // ========================================================================
     // Constructor — builds the config spec
     // ========================================================================
 
@@ -330,5 +341,27 @@ public final class CommonConfig {
                 .comment("Starlight cost per block of teleportation distance")
                 .defineInRange("costPerBlock", 0.1, 0.0, 10.0);
         builder.pop();
+
+        // --- Debug Logging ---
+        builder.push("debug");
+        for (LogCategory category : LogCategory.values()) {
+            debugLogging.put(category, builder
+                    .comment("Enable debug logging for the " + category.name() + " category")
+                    .define("log" + toTitleCase(category.name()), false));
+        }
+        builder.pop();
+    }
+
+    @SuppressWarnings("null")
+    private static String toTitleCase(@Nonnull String upper) {
+        if (upper.isEmpty()) return upper;
+        String lower = upper.toLowerCase(java.util.Locale.ROOT).replace('_', ' ');
+        StringBuilder sb = new StringBuilder();
+        for (String word : lower.split(" ")) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+            }
+        }
+        return sb.toString();
     }
 }

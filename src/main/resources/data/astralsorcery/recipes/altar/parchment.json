@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 200,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:parchment",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "minecraft:paper"},
+    {},
+    {"item": "minecraft:paper"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:paper"},
+    {},
+    {"item": "minecraft:paper"},
+    {}
+  ]
+}

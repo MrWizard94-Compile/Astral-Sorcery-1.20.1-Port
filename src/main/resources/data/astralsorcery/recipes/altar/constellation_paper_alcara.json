@@ -1,0 +1,37 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "radiance",
+  "craft_duration": 300,
+  "starlight_required": 3840,
+  "output": {
+    "item": "astralsorcery:constellation_paper",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {"item": "minecraft:nether_wart"},
+    {},
+    {},
+    {},
+    {"item": "minecraft:feather"},
+    {},
+    {},
+    {"item": "minecraft:nether_wart"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:parchment"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "minecraft:nether_wart"},
+    {},
+    {"item": "minecraft:black_dye"},
+    {},
+    {},
+    {},
+    {"item": "minecraft:nether_wart"},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

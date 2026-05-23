@@ -17,6 +17,9 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingConstellationUtils;
 import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.client.PktPerkAllocate;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import hellfirepvp.astralsorcery.common.perk.PerkTreePoint;
@@ -356,9 +359,8 @@ public class ScreenPerkTree extends Screen {
      * In production, this checks player capability data.
      */
     private boolean isPerkAllocated(@Nonnull AbstractPerk perk) {
-        // TODO: Check player capability for allocated perks
-        // For now, root perks start allocated (player picks one at attunement)
-        return perk instanceof RootPerk;
+        return PlayerProgressManager.getClientProgress().getAllocatedPerks()
+                .contains(perk.getKey());
     }
 
     /**
@@ -378,16 +380,14 @@ public class ScreenPerkTree extends Screen {
      * Attempt to allocate a perk. Sends packet to server.
      */
     private void allocatePerk(@Nonnull AbstractPerk perk) {
-        // TODO: Send PktPerkAllocate packet to server
-        // Server validates and applies. Client-side prediction handled separately.
+        PacketChannel.sendToServer(new PktPerkAllocate(perk.getKey()));
     }
 
     /**
      * Get available perk points for the player.
      */
     private int getAvailablePerkPoints(@Nonnull LocalPlayer player) {
-        // TODO: Read from player capability
-        return player.experienceLevel; // Placeholder: 1 point per XP level
+        return PlayerProgressManager.getClientProgress().getPerkPoints();
     }
 
     // =========================================================================

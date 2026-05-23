@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:sand"
+  },
+  "output": {
+    "item": "minecraft:clay",
+    "count": 1
+  },
+  "fluidMbRequired": 50,
+  "craftDuration": 40
+}

@@ -37,7 +37,7 @@ public class ResultSpawnEntity extends InteractionResult {
     }
 
     public static ResultSpawnEntity spawnEntity(EntityType<?> type) {
-        if (!type.isSummonable()) {
+        if (!type.canSummon()) {
             throw new IllegalArgumentException("EntityType " + ForgeRegistries.ENTITY_TYPES.getKey(type) + " is not summonable!");
         }
         ResultSpawnEntity result = new ResultSpawnEntity();

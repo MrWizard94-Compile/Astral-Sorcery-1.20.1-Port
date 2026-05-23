@@ -4,26 +4,40 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.block.BlackMarble;
 import hellfirepvp.astralsorcery.common.block.BlockIlluminator;
 import hellfirepvp.astralsorcery.common.block.BlockInfusedWood;
+import hellfirepvp.astralsorcery.common.block.foliage.BlockGlowFlower;
+import hellfirepvp.astralsorcery.common.block.marble.BlockBlackMarblePillar;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarble;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarblePillar;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarbleSlab;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarbleStairs;
 import hellfirepvp.astralsorcery.common.block.ore.BlockAquamarineOre;
 import hellfirepvp.astralsorcery.common.block.ore.BlockRockCrystalOre;
+import hellfirepvp.astralsorcery.common.block.ore.BlockStarmetal;
+import hellfirepvp.astralsorcery.common.block.ore.BlockStarmetalOre;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAttunementAltar;
+import hellfirepvp.astralsorcery.common.block.tile.BlockCelestialCrystalCluster;
 import hellfirepvp.astralsorcery.common.block.tile.BlockChalice;
 import hellfirepvp.astralsorcery.common.block.tile.BlockCollectorCrystal;
+import hellfirepvp.astralsorcery.common.block.tile.BlockFlareLight;
 import hellfirepvp.astralsorcery.common.block.tile.BlockFountain;
 import hellfirepvp.astralsorcery.common.block.tile.BlockGateway;
+import hellfirepvp.astralsorcery.common.block.tile.BlockGemCrystalCluster;
 import hellfirepvp.astralsorcery.common.block.tile.BlockInfuser;
 import hellfirepvp.astralsorcery.common.block.tile.BlockLens;
 import hellfirepvp.astralsorcery.common.block.tile.BlockObservatory;
 import hellfirepvp.astralsorcery.common.block.tile.BlockPrism;
+import hellfirepvp.astralsorcery.common.block.tile.BlockRefractionTable;
 import hellfirepvp.astralsorcery.common.block.tile.BlockRelay;
+import hellfirepvp.astralsorcery.common.block.tile.BlockRitualLink;
 import hellfirepvp.astralsorcery.common.block.tile.BlockRitualPedestal;
+import hellfirepvp.astralsorcery.common.block.tile.BlockSpectralRelay;
+import hellfirepvp.astralsorcery.common.block.tile.BlockStructural;
 import hellfirepvp.astralsorcery.common.block.tile.BlockTelescope;
+import hellfirepvp.astralsorcery.common.block.tile.BlockTranslucentBlock;
 import hellfirepvp.astralsorcery.common.block.tile.BlockTreeBeacon;
+import hellfirepvp.astralsorcery.common.block.tile.BlockTreeBeaconComponent;
+import hellfirepvp.astralsorcery.common.block.tile.BlockVanishing;
 import hellfirepvp.astralsorcery.common.block.tile.BlockWell;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
@@ -63,6 +77,18 @@ public class BlocksAS {
     // ---- Black marble ----
     public static final RegistryObject<BlackMarble> BLACK_MARBLE_RAW =
             BLOCKS.register("black_marble_raw", BlackMarble::new);
+    public static final RegistryObject<BlackMarble> BLACK_MARBLE_ARCH =
+            BLOCKS.register("black_marble_arch", BlackMarble::new);
+    public static final RegistryObject<BlackMarble> BLACK_MARBLE_BRICKS =
+            BLOCKS.register("black_marble_bricks", BlackMarble::new);
+    public static final RegistryObject<BlackMarble> BLACK_MARBLE_CHISELED =
+            BLOCKS.register("black_marble_chiseled", BlackMarble::new);
+    public static final RegistryObject<BlackMarble> BLACK_MARBLE_ENGRAVED =
+            BLOCKS.register("black_marble_engraved", BlackMarble::new);
+    public static final RegistryObject<BlackMarble> BLACK_MARBLE_RUNED =
+            BLOCKS.register("black_marble_runed", BlackMarble::new);
+    public static final RegistryObject<BlockBlackMarblePillar> BLACK_MARBLE_PILLAR =
+            BLOCKS.register("black_marble_pillar", BlockBlackMarblePillar::new);
 
     // ---- Infused wood ----
     public static final RegistryObject<BlockInfusedWood> INFUSED_WOOD =
@@ -83,10 +109,32 @@ public class BlocksAS {
             BLOCKS.register("rock_crystal_ore", BlockRockCrystalOre::new);
     public static final RegistryObject<BlockAquamarineOre> AQUAMARINE_ORE =
             BLOCKS.register("aquamarine_sand_ore", BlockAquamarineOre::new);
+    public static final RegistryObject<BlockStarmetalOre> STARMETAL_ORE =
+            BLOCKS.register("starmetal_ore", BlockStarmetalOre::new);
+    public static final RegistryObject<BlockStarmetal> STARMETAL =
+            BLOCKS.register("starmetal", BlockStarmetal::new);
 
-    // ---- Special ----
+    // ---- Foliage ----
+    public static final RegistryObject<BlockGlowFlower> GLOW_FLOWER =
+            BLOCKS.register("glow_flower", BlockGlowFlower::new);
+
+    // ---- Crystal clusters (world gen) ----
+    public static final RegistryObject<BlockCelestialCrystalCluster> CELESTIAL_CRYSTAL_CLUSTER =
+            BLOCKS.register("celestial_crystal_cluster", BlockCelestialCrystalCluster::new);
+    public static final RegistryObject<BlockGemCrystalCluster> GEM_CRYSTAL_CLUSTER =
+            BLOCKS.register("gem_crystal_cluster", BlockGemCrystalCluster::new);
+
+    // ---- Special / Internal ----
     public static final RegistryObject<BlockIlluminator> ILLUMINATOR =
             BLOCKS.register("illuminator", BlockIlluminator::new);
+    public static final RegistryObject<BlockFlareLight> FLARE_LIGHT =
+            BLOCKS.register("flare_light", BlockFlareLight::new);
+    public static final RegistryObject<BlockStructural> STRUCTURAL =
+            BLOCKS.register("structural", BlockStructural::new);
+    public static final RegistryObject<BlockVanishing> VANISHING =
+            BLOCKS.register("vanishing", BlockVanishing::new);
+    public static final RegistryObject<BlockTranslucentBlock> TRANSLUCENT_BLOCK =
+            BLOCKS.register("translucent_block", BlockTranslucentBlock::new);
 
     // ---- Tile entity blocks ----
     public static final RegistryObject<BlockAltar> ALTAR =
@@ -121,4 +169,12 @@ public class BlocksAS {
             BLOCKS.register("observatory", BlockObservatory::new);
     public static final RegistryObject<BlockTreeBeacon> TREE_BEACON =
             BLOCKS.register("tree_beacon", BlockTreeBeacon::new);
+    public static final RegistryObject<BlockTreeBeaconComponent> TREE_BEACON_COMPONENT =
+            BLOCKS.register("tree_beacon_component", BlockTreeBeaconComponent::new);
+    public static final RegistryObject<BlockRefractionTable> REFRACTION_TABLE =
+            BLOCKS.register("refraction_table", BlockRefractionTable::new);
+    public static final RegistryObject<BlockRitualLink> RITUAL_LINK =
+            BLOCKS.register("ritual_link", BlockRitualLink::new);
+    public static final RegistryObject<BlockSpectralRelay> SPECTRAL_RELAY =
+            BLOCKS.register("spectral_relay", BlockSpectralRelay::new);
 }

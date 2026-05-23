@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "minecraft:ice"
+  },
+  "output": {
+    "fluid": "minecraft:water",
+    "amount": 1
+  },
+  "productionMultiplier": 0.5,
+  "color": 33023
+}

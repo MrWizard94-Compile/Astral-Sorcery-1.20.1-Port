@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 400,
+  "starlight_required": 1600,
+  "output": {
+    "item": "astralsorcery:shifting_star",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:illumination_powder"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:illumination_powder"}
+  ]
+}

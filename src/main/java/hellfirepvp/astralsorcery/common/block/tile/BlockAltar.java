@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -83,7 +85,10 @@ public class BlockAltar extends BlockEntityBlock {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        // TODO: Open altar GUI (Phase 5 completion — needs menu/screen infrastructure)
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockEntityAltar altar) {
+            NetworkHooks.openScreen((ServerPlayer) player, altar, pos);
+        }
         return InteractionResult.CONSUME;
     }
 

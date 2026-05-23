@@ -1,0 +1,31 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "constellation",
+  "craft_duration": 300,
+  "starlight_required": 2000,
+  "output": {
+    "item": "astralsorcery:ritual_link",
+    "count": 2
+  },
+  "inputs": [
+    {},
+    {"item": "minecraft:gold_nugget"},
+    {},
+    {"item": "minecraft:gold_nugget"},
+    {"item": "minecraft:gold_ingot"},
+    {"item": "minecraft:gold_nugget"},
+    {},
+    {"item": "astralsorcery:glass_lens"},
+    {},
+    {"item": "astralsorcery:resonating_gem"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "minecraft:glass_pane"},
+    {"item": "astralsorcery:stardust"},
+    {},
+    {"item": "minecraft:glass_pane"},
+    {},
+    {},
+    {},
+    {}, {}, {}
+  ]
+}

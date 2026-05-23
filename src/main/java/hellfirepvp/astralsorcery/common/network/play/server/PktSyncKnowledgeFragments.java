@@ -3,6 +3,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.common.data.KnowledgeFragmentManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
@@ -53,7 +54,7 @@ public class PktSyncKnowledgeFragments {
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             // Client-side: update local fragment knowledge
-            // TODO: KnowledgeFragmentManager.setClientFragments(pkt.fragmentKeys);
+            KnowledgeFragmentManager.setClientFragments(pkt.fragmentKeys);
         });
         ctx.get().setPacketHandled(true);
     }

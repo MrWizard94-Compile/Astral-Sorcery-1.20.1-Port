@@ -3,7 +3,8 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
-import net.minecraft.client.Minecraft;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -63,10 +64,11 @@ public class PktSyncPerkData {
 
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktSyncPerkData pkt) {
-        // TODO: Store in client-side player progress cache
-        // ClientPlayerProgress.setAllocatedPerks(pkt.allocatedPerks);
-        // ClientPlayerProgress.setPerkExp(pkt.perkExp);
-        // ClientPlayerProgress.setAvailablePoints(pkt.availablePoints);
+        PlayerProgress progress = PlayerProgressManager.getClientProgress();
+        progress.clearAllocatedPerks();
+        pkt.allocatedPerks.forEach(progress::allocatePerk);
+        progress.setPerkExp(pkt.perkExp);
+        progress.setPerkPoints(pkt.availablePoints);
     }
 
     @Nonnull

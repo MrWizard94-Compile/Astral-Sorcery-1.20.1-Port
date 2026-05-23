@@ -1,12 +1,15 @@
 package hellfirepvp.astralsorcery.common.data.config.entry;
 
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.util.log.LogCategory;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Configuration entry for debug logging categories.
- * Stub for Phase 4 — will be expanded when the full config system is ported.
+ * Delegates to {@link CommonConfig#debugLogging} which is populated during config build.
  */
 public class LogConfig {
 
@@ -16,13 +19,11 @@ public class LogConfig {
 
     /**
      * Check if logging is enabled for the given category.
-     * Default: enabled in dev, disabled in prod. For now, always enabled.
-     *
-     * @param category the log category
-     * @return true if logging for this category is active
+     * Reads from the Forge config; falls back to {@code false} if config is not yet loaded.
      */
     public boolean isLoggingEnabled(@Nonnull LogCategory category) {
-        // TODO: Wire to Forge config once config system is ported
-        return true;
+        @Nullable ForgeConfigSpec.BooleanValue entry =
+                CommonConfig.CONFIG.debugLogging.get(category);
+        return entry != null && entry.get();
     }
 }

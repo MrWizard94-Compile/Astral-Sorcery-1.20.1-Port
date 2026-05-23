@@ -1,0 +1,17 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 100,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:infused_wood_planks",
+    "count": 4
+  },
+  "inputs": [
+    {}, {}, {},
+    {},
+    {"item": "astralsorcery:infused_wood"},
+    {},
+    {}, {}, {}
+  ]
+}

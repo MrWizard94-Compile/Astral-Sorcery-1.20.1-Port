@@ -5,6 +5,7 @@ package hellfirepvp.astralsorcery.common.network.play.client;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.perk.AllocationStatus;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import net.minecraft.network.FriendlyByteBuf;
@@ -48,15 +49,16 @@ public class PktPerkAllocate {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            // TODO: Get player progress from capability
-            // PlayerProgress progress = getProgress(player);
-            // AllocationStatus status = PerkTree.allocate(player, progress, pkt.perkKey);
-            // if (status == AllocationStatus.SUCCESS) {
-            //     syncProgressToClient(player, progress);
-            // }
+            PlayerProgress progress = PlayerProgressManager.getProgress(player);
+            if (progress == null) return;
 
-            AstralSorcery.log.debug("Perk allocate request from {}: {}",
-                    player.getName().getString(), pkt.perkKey);
+            AllocationStatus status = PerkTree.allocate(player, progress, pkt.perkKey);
+            if (status == AllocationStatus.SUCCESS) {
+                PlayerProgressManager.syncProgress(player);
+            } else {
+                AstralSorcery.log.debug("Perk allocate denied for {} ({}): {}",
+                        player.getName().getString(), status, pkt.perkKey);
+            }
         });
         ctx.get().setPacketHandled(true);
     }

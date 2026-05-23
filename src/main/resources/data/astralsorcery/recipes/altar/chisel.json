@@ -1,0 +1,25 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "attunement",
+  "craft_duration": 200,
+  "starlight_required": 800,
+  "output": {
+    "item": "astralsorcery:chisel",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "minecraft:gold_nugget"},
+    {},
+    {"item": "astralsorcery:infused_wood_planks"},
+    {"item": "minecraft:gold_nugget"},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

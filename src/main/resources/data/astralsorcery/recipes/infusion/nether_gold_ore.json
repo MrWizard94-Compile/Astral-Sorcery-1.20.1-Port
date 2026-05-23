@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:nether_gold_ore"
+  },
+  "output": {
+    "item": "minecraft:gold_nugget",
+    "count": 21
+  },
+  "fluidMbRequired": 100,
+  "craftDuration": 60
+}

@@ -69,7 +69,10 @@ public class BlockCollectorCrystal extends BlockEntityBlock implements BlockDyna
         if (tintIndex != 0 || level == null || pos == null) {
             return 0xFFFFFF;
         }
-        // TODO: Read constellation color from BlockEntity once implemented
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockEntityCollectorCrystal collector) {
+            return collector.getConstellationColor();
+        }
         return celestial ? 0x4488DD : 0xAAAAFF;
     }
 

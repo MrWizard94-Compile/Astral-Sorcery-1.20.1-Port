@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "minecraft:magma_block"
+  },
+  "output": {
+    "fluid": "minecraft:lava",
+    "amount": 1
+  },
+  "productionMultiplier": 1.0,
+  "color": 16752640
+}

@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 200,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:wand",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "minecraft:ender_pearl"},
+    {},
+    {"item": "astralsorcery:marble_raw"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:marble_raw"},
+    {},
+    {}
+  ]
+}

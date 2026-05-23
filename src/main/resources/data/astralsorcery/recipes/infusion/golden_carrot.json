@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:carrot"
+  },
+  "output": {
+    "item": "minecraft:golden_carrot",
+    "count": 1
+  },
+  "fluidMbRequired": 200,
+  "craftDuration": 80
+}

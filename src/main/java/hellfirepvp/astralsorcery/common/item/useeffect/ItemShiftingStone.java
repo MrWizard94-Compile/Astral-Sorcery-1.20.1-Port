@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.item.useeffect;
 
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
+import hellfirepvp.astralsorcery.common.perk.PerkTreeManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -28,13 +30,13 @@ public class ItemShiftingStone extends ItemAS {
 
     @Override
     @Nonnull
+    @SuppressWarnings("null")
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level,
                                                   @Nonnull Player player,
                                                   @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide()) {
-            // TODO: Cycle perk tree configuration
-            // PerkTreeManager.cycleConfiguration(player);
+        if (!level.isClientSide() && player instanceof ServerPlayer sp) {
+            PerkTreeManager.cycleConfiguration(sp);
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }

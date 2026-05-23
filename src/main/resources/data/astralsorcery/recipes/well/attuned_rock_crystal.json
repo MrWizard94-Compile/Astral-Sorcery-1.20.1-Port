@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "astralsorcery:attuned_rock_crystal"
+  },
+  "output": {
+    "fluid": "astralsorcery:liquid_starlight",
+    "amount": 1
+  },
+  "productionMultiplier": 1.5,
+  "color": 4430335
+}

@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.client;
 import hellfirepvp.astralsorcery.client.event.ClientRenderEventHandler;
 import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityCelestialCrystal;
+import hellfirepvp.astralsorcery.client.render.overlay.OverlayStarlightGauge;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityFlare;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityGrapplingHook;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityIlluminationSpark;
@@ -53,6 +54,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -91,6 +93,9 @@ public class ClientProxy extends CommonProxy {
 
         // Keybind registration
         modBus.addListener(KeyBindingsAS::register);
+
+        // HUD overlay registration
+        modBus.addListener(this::onRegisterOverlays);
 
         // Client setup (menu screens, etc.)
         modBus.addListener(this::onClientSetup);
@@ -161,10 +166,16 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    @SuppressWarnings("null")
+    private void onRegisterOverlays(@Nonnull RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll("starlight_gauge", OverlayStarlightGauge.INSTANCE);
+    }
+
     /**
      * Client setup: register menu screens, keybinds, etc.
      * Fired on the mod event bus after registry events.
      */
+    @SuppressWarnings("null")
     private void onClientSetup(@Nonnull FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // Register menu screens — all 4 altar tiers
@@ -172,9 +183,6 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypesAS.ALTAR_ATTUNEMENT.get(), ScreenAltarAttunement::new);
             MenuScreens.register(MenuTypesAS.ALTAR_CONSTELLATION.get(), ScreenAltarConstellation::new);
             MenuScreens.register(MenuTypesAS.ALTAR_RADIANCE.get(), ScreenAltarRadiance::new);
-
-            // Keybinds registered via RegisterKeyMappingsEvent (mod bus)
-            // TODO: Register overlay renderers (HUD effects, starlight gauge)
         });
     }
 }

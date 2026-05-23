@@ -57,15 +57,12 @@ public class BlockAttunementAltar extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-        // TODO: Handle crystal placement for attunement
-        return InteractionResult.CONSUME;
+        // Attunement is passive — triggered by standing on the altar during
+        // the right celestial conditions. No direct player interaction needed.
+        return InteractionResult.PASS;
     }
 
     @Nullable

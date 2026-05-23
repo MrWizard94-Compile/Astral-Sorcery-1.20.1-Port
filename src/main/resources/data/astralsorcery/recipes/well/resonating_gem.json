@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:well_liquefaction",
+  "input": {
+    "item": "astralsorcery:resonating_gem"
+  },
+  "output": {
+    "fluid": "astralsorcery:liquid_starlight",
+    "amount": 1
+  },
+  "productionMultiplier": 0.8,
+  "color": 4430335
+}

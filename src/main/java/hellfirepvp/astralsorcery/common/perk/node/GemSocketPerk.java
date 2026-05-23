@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common.perk.node;
 
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
+import hellfirepvp.astralsorcery.common.perk.node.socket.IPerkGem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -69,18 +70,18 @@ public class GemSocketPerk extends AbstractPerk {
 
     @Override
     @Nonnull
+    @SuppressWarnings("null")
     public List<PerkAttributeModifier> getEffectiveModifiers(@Nonnull Player player) {
         List<PerkAttributeModifier> effective = new ArrayList<>(getModifiers());
-        if (hasGem()) {
-            // TODO: Extract modifiers from the socketed gem item and merge them
-            //  with the base modifiers. This requires the gem item type to expose
-            //  its PerkAttributeModifier list (e.g., via an IPerkGem interface).
+        if (hasGem() && socketedGem.getItem() instanceof IPerkGem gemItem) {
+            effective.addAll(gemItem.getPerkModifiers(socketedGem));
         }
         return effective;
     }
 
     @Override
     @Nonnull
+    @SuppressWarnings("null")
     public CompoundTag writeToNBT() {
         CompoundTag tag = super.writeToNBT();
         if (hasGem()) {
@@ -90,6 +91,7 @@ public class GemSocketPerk extends AbstractPerk {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void readFromNBT(@Nonnull CompoundTag tag) {
         super.readFromNBT(tag);
         if (tag.contains(TAG_SOCKETED_GEM)) {

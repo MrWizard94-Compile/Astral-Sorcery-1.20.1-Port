@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "minecraft:glass"
+  },
+  "output": {
+    "item": "minecraft:ice",
+    "count": 1
+  },
+  "fluidMbRequired": 100,
+  "craftDuration": 60
+}

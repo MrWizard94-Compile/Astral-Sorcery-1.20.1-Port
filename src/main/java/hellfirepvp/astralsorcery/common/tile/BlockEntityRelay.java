@@ -1,5 +1,7 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
+import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
@@ -7,7 +9,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -49,6 +55,7 @@ public class BlockEntityRelay extends BlockEntityTick {
         this.itemCap = LazyOptional.of(() -> inventory);
     }
 
+    @SuppressWarnings("null")
     @Override
     public void tick() {
         super.tick();
@@ -58,10 +65,57 @@ public class BlockEntityRelay extends BlockEntityTick {
             return;
         }
 
-        // TODO: Server-side relay logic:
-        // 1. Check if linkedAltar position contains a valid BlockEntityAltar
-        // 2. Collect starlight based on heldItem properties
-        // 3. Forward collected starlight to the linked altar
+        Level level = getLevel();
+        if (level == null) return;
+
+        BlockPos above = getBlockPos().above();
+        boolean skyBlocked = !level.canSeeSky(above);
+
+        ItemStack held = getHeldItem();
+        if (skyBlocked) {
+            if (!held.isEmpty()) {
+                Block.popResource(level, getBlockPos(), held);
+                setHeldItem(ItemStack.EMPTY);
+                markForUpdate();
+            }
+            return;
+        }
+
+        if (held.isEmpty() || !(held.getItem() instanceof ItemGlassLens)) return;
+
+        if (linkedAltar == null && (ticksExisted % 200 == 1)) {
+            BlockPos closest = null;
+            double bestDist = Double.MAX_VALUE;
+            for (BlockPos candidate : BlockPos.betweenClosed(
+                    getBlockPos().offset(-16, -8, -16),
+                    getBlockPos().offset(16, 8, 16))) {
+                BlockEntity be = level.getBlockEntity(candidate);
+                if (be instanceof BlockEntityAltar) {
+                    double d = candidate.distSqr(getBlockPos());
+                    if (d < bestDist) {
+                        bestDist = d;
+                        closest = candidate.immutable();
+                    }
+                }
+            }
+            if (closest != null) {
+                linkedAltar = closest;
+                markForUpdate();
+            }
+        }
+
+        if (linkedAltar == null) return;
+        BlockEntity target = level.getBlockEntity(linkedAltar);
+        if (!(target instanceof BlockEntityAltar altar)) {
+            linkedAltar = null;
+            markForUpdate();
+            return;
+        }
+
+        double y = getBlockPos().getY();
+        float heightFactor = Mth.clamp((float) Math.pow(y / 7.0, 1.5) / 60.0F, 0.0F, 1.0F);
+        float daytimeFactor = CelestialHandler.getStarlightDistributionFactor(level);
+        altar.receiveStarlight((0.7F + heightFactor * 0.3F) * daytimeFactor * 45.0, null);
     }
 
     public int getTicksExisted() {
