@@ -17,6 +17,7 @@ import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
+import hellfirepvp.astralsorcery.common.event.EventHandlerEnchantmentTick;
 import hellfirepvp.astralsorcery.common.event.EventHandlerMining;
 import hellfirepvp.astralsorcery.common.event.EventHandlerPerkCombat;
 import hellfirepvp.astralsorcery.common.event.EventHandlerPerkEffects;
@@ -129,6 +130,9 @@ public class CommonProxy {
 
         // Server tick handling (transmutation decay, starlight network per-dim tick)
         forgeBus.register(new EventHandlerServerTick());
+
+        // Per-player tick callbacks for EnchantmentPlayerTick subclasses (e.g. NightVision)
+        forgeBus.register(new EventHandlerEnchantmentTick());
 
         // Commands (registered via RegisterCommandsEvent)
         forgeBus.register(new CommandAstralSorcery());

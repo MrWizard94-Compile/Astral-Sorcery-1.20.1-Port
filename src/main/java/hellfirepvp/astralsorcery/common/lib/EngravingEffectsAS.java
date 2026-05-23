@@ -6,6 +6,7 @@ import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
+import hellfirepvp.astralsorcery.common.lib.EnchantmentsAS;
 
 /**
  * All constellation engraving effects, registered into {@link EngravingEffectRegistry}.
@@ -16,8 +17,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
  * Effects → MobEffects;
  * effect field names updated to match port's PerkAttributeTypesAS;
  * ModifierEffects whose attribute type is not yet in PerkAttributeTypesAS are omitted;
- * EnchantmentsAS.SCORCHING_HEAT → Enchantments.FIRE_ASPECT (TODO: restore custom ench);
- * EnchantmentsAS.NIGHT_VISION → Enchantments.RESPIRATION (TODO: restore custom ench);
  * Forge registry replaced by EngravingEffectRegistry map.</p>
  */
 public final class EngravingEffectsAS {
@@ -102,7 +101,7 @@ public final class EngravingEffectsAS {
                 .addEffect(new EngravingEffect.PotionEffect(() -> MobEffects.FIRE_RESISTANCE, 0, 0))
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FIRE_ASPECT, 1, 3))
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FLAMING_ARROWS, 1, 2))
-                // TODO: restore EnchantmentsAS.SCORCHING_HEAT once custom enchantment class is ported
+                .addEffect(new EngravingEffect.EnchantmentEffect(() -> EnchantmentsAS.SCORCHING_HEAT.get(), 1, 1))
                 .addEffect(new EngravingEffect.ModifierEffect(() -> PerkAttributeTypesAS.ATTR_TYPE_CRIT_CHANCE,
                         ModifierType.ADDED_MULTIPLY, 0.1F, 0.2F)
                         .addApplicableCategory(EnchantmentCategory.WEAPON)
@@ -130,7 +129,7 @@ public final class EngravingEffectsAS {
 
         EngravingEffectRegistry.register(new EngravingEffect(ConstellationsAS.LUCERNA.getRegistryName())
                 .addEffect(new EngravingEffect.PotionEffect(() -> MobEffects.NIGHT_VISION, 0, 0))
-                // TODO: restore EnchantmentsAS.NIGHT_VISION once custom enchantment class is ported
+                .addEffect(new EngravingEffect.EnchantmentEffect(() -> EnchantmentsAS.NIGHT_VISION.get(), 1, 1))
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.RESPIRATION, 1, 1)));
 
         EngravingEffectRegistry.register(new EngravingEffect(ConstellationsAS.MINERALIS.getRegistryName())
@@ -147,7 +146,7 @@ public final class EngravingEffectsAS {
         EngravingEffectRegistry.register(new EngravingEffect(ConstellationsAS.PELOTRIO.getRegistryName())
                 .addEffect(new EngravingEffect.PotionEffect(() -> MobEffects.ABSORPTION, 1, 4))
                 .addEffect(new EngravingEffect.PotionEffect(() -> MobEffects.REGENERATION, 2, 4))
-                .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FISHING_LUCK, 3, 5))
+                .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FISHING_SPEED, 3, 5))
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.INFINITY_ARROWS, 1, 1)));
 
         // Minor constellations
@@ -156,9 +155,9 @@ public final class EngravingEffectsAS {
                 .addEffect(new EngravingEffect.PotionEffect(() -> MobEffects.INVISIBILITY, 0, 1))
                 .addEffect(new EngravingEffect.PotionEffect(() -> MobEffects.MOVEMENT_SPEED, 1, 2))
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.SWEEPING_EDGE, 3, 6))
-                .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FISHING_LUCK, 2, 5)
+                .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FISHING_SPEED, 2, 5)
                         .setIgnoreCompatibility())
-                .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.LUCK_OF_THE_SEA, 3, 6)
+                .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.FISHING_LUCK, 3, 6)
                         .setIgnoreCompatibility())
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.SILK_TOUCH, 1, 1))
                 .addEffect(new EngravingEffect.EnchantmentEffect(() -> Enchantments.QUICK_CHARGE, 1, 4)));
