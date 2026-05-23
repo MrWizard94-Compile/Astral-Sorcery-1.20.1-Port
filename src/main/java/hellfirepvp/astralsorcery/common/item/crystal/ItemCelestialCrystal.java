@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.item.crystal;
 
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
@@ -45,5 +47,11 @@ public class ItemCelestialCrystal extends ItemRockCrystalSimple {
      */
     public static float getCelestialQualityFactor(@Nonnull ItemStack stack) {
         return Math.min(1.0f, getQualityFactor(stack) * 1.2f);
+    }
+
+    @Override
+    @Nullable
+    public Item getTunedItemVariant() {
+        return ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get();
     }
 }

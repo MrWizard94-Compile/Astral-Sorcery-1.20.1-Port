@@ -4,6 +4,9 @@
 package hellfirepvp.astralsorcery.common.item.armor;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
+import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffect;
+import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -51,6 +54,24 @@ public class ItemMantle extends ArmorItem {
     @Nonnull
     public ResourceLocation getConstellation() {
         return constellation;
+    }
+
+    /**
+     * Returns the {@link MantleEffect} for the given constellation if the entity
+     * is wearing a mantle attuned to it, or {@code null} otherwise.
+     * Used by mantle effect event handlers to gate their logic.
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T extends MantleEffect> T getEffect(
+            @Nullable net.minecraft.world.entity.LivingEntity entity,
+            @Nullable IWeakConstellation constellation) {
+        if (entity == null || constellation == null) return null;
+        net.minecraft.world.item.ItemStack chest =
+                entity.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
+        if (chest.isEmpty() || !(chest.getItem() instanceof ItemMantle mantle)) return null;
+        if (!mantle.constellation.equals(constellation.getRegistryName())) return null;
+        return (T) MantleEffectRegistry.getEffect(constellation);
     }
 
     @Nullable

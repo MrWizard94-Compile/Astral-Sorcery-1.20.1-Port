@@ -1,6 +1,7 @@
 package hellfirepvp.astralsorcery.common.item.crystal;
 
 import net.minecraft.nbt.CompoundTag;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -114,5 +115,11 @@ public class ItemRockCrystalSimple extends ItemCrystalBase {
     @Override
     public boolean isFoil(@Nonnull ItemStack stack) {
         return getPurity(stack) >= 90;
+    }
+
+    @Override
+    @Nullable
+    public Item getTunedItemVariant() {
+        return ItemsAS.ATTUNED_ROCK_CRYSTAL.get();
     }
 }

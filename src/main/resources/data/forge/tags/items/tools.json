@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:tools/swords",
-    "#forge:tools/pickaxes",
-    "#forge:tools/axes",
-    "#forge:tools/shovels"
-  ]
-}

@@ -5,8 +5,12 @@ package hellfirepvp.astralsorcery.common.constellation.mantle;
 
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.constellation.mantle.effect.*;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -42,14 +46,23 @@ public final class MantleEffectRegistry {
     private static void register(IWeakConstellation constellation, MantleEffect effect) {
         if (constellation != null) {
             REGISTRY.put(constellation.getRegistryName(), effect);
+            effect.attachEventListeners(Objects.requireNonNull(MinecraftForge.EVENT_BUS));
         }
     }
 
     @Nullable
     public static MantleEffect getEffect(@Nullable IWeakConstellation constellation) {
-        if (constellation == null) {
-            return null;
-        }
+        if (constellation == null) return null;
         return REGISTRY.get(constellation.getRegistryName());
+    }
+
+    /**
+     * Looks up the mantle effect for the constellation encoded in the given
+     * ItemMantle item instance. Used by EventHandlerMantleTick.
+     */
+    @Nullable
+    public static MantleEffect getEffectForItem(@Nullable ItemMantle mantle) {
+        if (mantle == null) return null;
+        return REGISTRY.get(mantle.getConstellation());
     }
 }

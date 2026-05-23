@@ -183,6 +183,13 @@ public final class CommonConfig {
     public final ForgeConfigSpec.DoubleValue gatewayCostPerBlock;
 
     // ========================================================================
+    // Mob Spawning
+    // ========================================================================
+
+    /** If true, the Lucerna ritual spawn-deny effect blocks all mob types (not just monsters). */
+    public final ForgeConfigSpec.BooleanValue mobSpawningDenyAllTypes;
+
+    // ========================================================================
     // Debug Logging
     // ========================================================================
 
@@ -340,6 +347,13 @@ public final class CommonConfig {
         gatewayCostPerBlock = builder
                 .comment("Starlight cost per block of teleportation distance")
                 .defineInRange("costPerBlock", 0.1, 0.0, 10.0);
+        builder.pop();
+
+        // --- Mob Spawning ---
+        builder.push("mob_spawning");
+        mobSpawningDenyAllTypes = builder
+                .comment("If true, the Lucerna spawn-deny ritual blocks all mob types instead of only monsters")
+                .define("denyAllTypes", false);
         builder.pop();
 
         // --- Debug Logging ---

@@ -4,10 +4,20 @@
 package hellfirepvp.astralsorcery.common.constellation.mantle;
 
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
+import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
@@ -41,12 +51,44 @@ public abstract class MantleEffect {
 
     public abstract Config getConfig();
 
-    /** Called once per tick on the server while the player wears this mantle. */
+    /**
+     * Called once per tick on the server while the player wears this mantle.
+     * Driven by {@link hellfirepvp.astralsorcery.common.event.EventHandlerMantleTick}.
+     */
     protected void tickServer(@Nonnull Player player) {}
 
-    /** Whether this effect overrides {@link #tickServer} (or the client equivalent). */
+    /** Whether this effect uses {@link #tickServer}. */
     protected boolean usesTickMethods() {
         return false;
+    }
+
+    /**
+     * Override to register event listeners on the Forge event bus.
+     * Called from {@link hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry#init()}.
+     */
+    protected void attachEventListeners(@Nonnull IEventBus bus) {}
+
+    /**
+     * Dispatch the server tick. Skips fake players and disabled configs.
+     * Called by EventHandlerMantleTick.
+     */
+    public final void onServerTick(@Nonnull Player player) {
+        if (!getConfig().enabled.get()) return;
+        if (!(player instanceof ServerPlayer)) return;
+        if (player instanceof FakePlayer) return;
+        tickServer(player);
+    }
+
+    /**
+     * Returns the persistent NBT data stored on the mantle item in the chest slot.
+     * Returns an empty tag (not stored) if the entity is null or not wearing a mantle.
+     */
+    @Nonnull
+    protected static CompoundTag getData(@Nullable LivingEntity entity) {
+        if (entity == null) return new CompoundTag();
+        ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
+        if (chest.isEmpty() || !(chest.getItem() instanceof ItemMantle)) return new CompoundTag();
+        return NBTHelper.getPersistentData(chest);
     }
 
     // -------------------------------------------------------------------------

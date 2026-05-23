@@ -1,24 +1,45 @@
 /*******************************************************************************
  * HellFirePvP / Astral Sorcery 2024
+ *
+ * All rights reserved.
+ * The source code is available on github: https://github.com/HellFirePvP/AstralSorcery
+ * For further details, see the License file there.
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crafting.nojson.starlight;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.item.ItemStardust;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
+import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Transforms a max-size rock crystal into a celestial crystal cluster block
- * when placed in liquid starlight under starlight-exposed sky.
- * Full logic deferred until CrystalAttributes and the cluster block are ported.
+ * Transforms a Stardust item entity and a crystal item entity dropped together in
+ * liquid starlight into a Celestial Crystal Cluster block.
+ *
+ * <p>Trigger: the Stardust entity triggers the recipe. Requires exactly one other
+ * entity in the same block — a crystal. After 50–69 ticks both are consumed and a
+ * CELESTIAL_CRYSTAL_CLUSTER block is placed.</p>
+ *
+ * <p>Crystal attribute transfer to the cluster block entity is deferred until
+ * BlockEntityCelestialCrystals is ported (Phase TBD).</p>
+ *
+ * <p>1.16 → 1.20: MathHelper.getPositionRandom(at) → RandomSource.create(at.asLong()),
+ * isTopSolid() → isFaceSturdy(level, pos, Direction.UP),
+ * world.setBlockState() → level.setBlock().</p>
  */
 public class FormCelestialCrystalClusterRecipe extends LiquidStarlightRecipe {
 
@@ -29,27 +50,49 @@ public class FormCelestialCrystalClusterRecipe extends LiquidStarlightRecipe {
     @Override
     @Nonnull
     public List<Ingredient> getInputForRender() {
-        return Collections.emptyList();
+        return Arrays.asList(
+                Ingredient.of(ItemsAS.STARDUST.get()),
+                Ingredient.of(ItemsAS.ROCK_CRYSTAL.get()));
     }
 
     @Override
     @Nonnull
     public List<Ingredient> getOutputForRender() {
-        return Collections.emptyList();
+        return Collections.singletonList(Ingredient.of(BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get()));
     }
 
     @Override
     public boolean doesStartRecipe(@Nonnull ItemStack item) {
-        return !item.isEmpty() && item.getItem() instanceof ItemCrystalBase;
+        return !item.isEmpty() && item.getItem() instanceof ItemStardust;
     }
 
     @Override
     public boolean matches(@Nonnull ItemEntity trigger, @Nonnull Level level, @Nonnull BlockPos at) {
-        return false; // deferred until CrystalAttributes ported
+        if (!level.getBlockState(at.below()).isFaceSturdy(level, at.below(), Direction.UP)) {
+            return false;
+        }
+        List<Entity> others = getEntitiesInBlock(level, at);
+        others.remove(trigger);
+        boolean hasCrystal = others.stream()
+                .filter(e -> e instanceof ItemEntity)
+                .anyMatch(e -> ((ItemEntity) e).getItem().getItem() instanceof ItemCrystalBase);
+        return hasCrystal && others.size() == 1;
     }
 
     @Override
     public void doServerCraftTick(@Nonnull ItemEntity trigger, @Nonnull Level level, @Nonnull BlockPos at) {
-        // Deferred until CrystalAttributes and cluster block system are ported.
+        RandomSource r = RandomSource.create(at.asLong());
+        if (getAndIncrementCraftingTick(trigger) <= 50 + r.nextInt(20)) return;
+
+        ItemStack stardust = consumeItemEntityInBlock(level, at, 1,
+                stack -> stack.getItem() instanceof ItemStardust);
+        if (stardust == null) return;
+
+        ItemStack crystal = consumeItemEntityInBlock(level, at, 1,
+                stack -> stack.getItem() instanceof ItemCrystalBase);
+        if (crystal == null) return;
+
+        level.setBlock(at, BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get().defaultBlockState(), 3);
+        // Crystal attribute transfer deferred — BlockEntityCelestialCrystals not yet ported
     }
 }

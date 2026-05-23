@@ -27,7 +27,7 @@ public class CollisionManager {
 
     public static void init() {
         // In 1.16: register(new MantleEffectAevitas.PlayerWalkableAir());
-        // Deferred until MantleEffectAevitas is ported (Phase 9)
+        // Deferred until Phase 13 mixin rewrites the BlockCollisions hook for 1.20.
     }
 
     public static void register(@Nonnull CustomCollisionHandler handler) {

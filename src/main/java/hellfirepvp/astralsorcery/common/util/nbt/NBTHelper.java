@@ -1,6 +1,7 @@
 package hellfirepvp.astralsorcery.common.util.nbt;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -451,5 +452,27 @@ public class NBTHelper {
     }
 
     // ---- Vector3 serialization ----
-    // TODO: Add writeVector3/readVector3 when Vector3 class is ported
+
+    @Nonnull
+    public static CompoundTag writeVector3(@Nonnull Vector3 v) {
+        CompoundTag tag = new CompoundTag();
+        writeVector3(v, tag);
+        return tag;
+    }
+
+    @Nonnull
+    public static CompoundTag writeVector3(@Nonnull Vector3 v, @Nonnull CompoundTag tag) {
+        tag.putDouble("vecPosX", v.getX());
+        tag.putDouble("vecPosY", v.getY());
+        tag.putDouble("vecPosZ", v.getZ());
+        return tag;
+    }
+
+    @Nonnull
+    public static Vector3 readVector3(@Nonnull CompoundTag tag) {
+        return new Vector3(
+                tag.getDouble("vecPosX"),
+                tag.getDouble("vecPosY"),
+                tag.getDouble("vecPosZ"));
+    }
 }

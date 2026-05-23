@@ -4,6 +4,10 @@
 package hellfirepvp.astralsorcery.common.event;
 
 import hellfirepvp.astralsorcery.common.auxiliary.TransmutationHelper;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperInvulnerability;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperSpawnDeny;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperTemporaryFlight;
+import hellfirepvp.astralsorcery.common.util.tick.TickManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
@@ -32,6 +36,14 @@ import javax.annotation.Nonnull;
  */
 public class EventHandlerServerTick {
 
+    /** Central tick manager for all server-side ITickHandler instances. */
+    public static final TickManager SERVER_TICK_MANAGER = new TickManager();
+
+    @SubscribeEvent
+    public void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
+        SERVER_TICK_MANAGER.tick(event);
+    }
+
     @SubscribeEvent
     public void onLevelTick(@Nonnull TickEvent.LevelTickEvent event) {
         if (event.side != LogicalSide.SERVER) {
@@ -53,5 +65,8 @@ public class EventHandlerServerTick {
     @SubscribeEvent
     public void onServerStopping(@Nonnull ServerStoppingEvent event) {
         TransmutationHelper.clearAll();
+        EventHelperInvulnerability.clearServer();
+        EventHelperTemporaryFlight.clearServer();
+        EventHelperSpawnDeny.clearServer();
     }
 }

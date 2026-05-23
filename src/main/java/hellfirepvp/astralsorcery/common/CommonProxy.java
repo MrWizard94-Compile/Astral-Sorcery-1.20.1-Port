@@ -9,6 +9,9 @@ package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperInvulnerability;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperSpawnDeny;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperTemporaryFlight;
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry;
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.AttunementCraftingRegistry;
@@ -16,13 +19,16 @@ import hellfirepvp.astralsorcery.common.crafting.nojson.LiquidStarlightCraftingR
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
+import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
 import hellfirepvp.astralsorcery.common.event.EventHandlerEnchantmentTick;
+import hellfirepvp.astralsorcery.common.event.EventHandlerMantleTick;
 import hellfirepvp.astralsorcery.common.event.EventHandlerMining;
 import hellfirepvp.astralsorcery.common.event.EventHandlerPerkCombat;
 import hellfirepvp.astralsorcery.common.event.EventHandlerPerkEffects;
 import hellfirepvp.astralsorcery.common.event.EventHandlerServerTick;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
+import hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS;
 import hellfirepvp.astralsorcery.common.lib.EngravingEffectsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.lib.StructuresAS;
@@ -134,8 +140,20 @@ public class CommonProxy {
         // Per-player tick callbacks for EnchantmentPlayerTick subclasses (e.g. NightVision)
         forgeBus.register(new EventHandlerEnchantmentTick());
 
+        // Per-player tick callbacks for MantleEffect subclasses + alignment charge regen
+        forgeBus.register(new EventHandlerMantleTick());
+        forgeBus.register(AlignmentChargeHandler.INSTANCE);
+
         // Commands (registered via RegisterCommandsEvent)
         forgeBus.register(new CommandAstralSorcery());
+
+        // Event helpers: register event listeners and tick handlers
+        EventHelperInvulnerability.attachListeners(forgeBus);
+        EventHelperSpawnDeny.attachListeners(forgeBus);
+        EventHelperTemporaryFlight.attachListeners(forgeBus);
+        EventHelperInvulnerability.attachTickListener(EventHandlerServerTick.SERVER_TICK_MANAGER::register);
+        EventHelperSpawnDeny.attachTickListener(EventHandlerServerTick.SERVER_TICK_MANAGER::register);
+        EventHelperTemporaryFlight.attachTickListener(EventHandlerServerTick.SERVER_TICK_MANAGER::register);
     }
 
     private void onCommonSetup(@Nonnull FMLCommonSetupEvent event) {
@@ -145,6 +163,7 @@ public class CommonProxy {
             PacketChannel.init();
             PerkAttributeTypesAS.init();
             ConstellationsAS.init();
+            CrystalPropertiesAS.init();
             EngravingEffectsAS.init();
             ConstellationEffectRegistry.init();
             MantleEffectRegistry.init();
