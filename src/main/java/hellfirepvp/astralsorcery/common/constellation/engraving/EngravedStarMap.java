@@ -116,26 +116,61 @@ public class EngravedStarMap {
     /**
      * Returns true if any constellation on this map has an engraving effect
      * applicable to the given item stack.
-     * Full check deferred until {@link EngravingEffect} is implemented.
      */
     public boolean canAffect(@Nonnull ItemStack stack) {
         for (ResourceLocation key : getConstellationKeys()) {
             IConstellation cst = ConstellationRegistry.getConstellation(key);
-            if (cst != null && cst.getEngravingEffect() != null) {
-                return true; // stub — EngravingEffect.getApplicableEffects deferred
+            if (cst == null) continue;
+            EngravingEffect effect = cst.getEngravingEffect();
+            if (effect != null && !effect.getApplicableEffects(stack).isEmpty()) {
+                return true;
             }
         }
         return false;
     }
 
     /**
-     * Applies all eligible engraving effects to the given item stack.
-     * Full application deferred until {@link EngravingEffect} is implemented;
-     * returns the stack unchanged for now.
+     * Applies all eligible engraving effects from each constellation on this map
+     * to the given item stack. Each constellation's distribution score scales
+     * the effect strength.
      */
     @Nonnull
+    @SuppressWarnings("null")
     public ItemStack applyEffects(@Nonnull ItemStack stack) {
-        // Deferred: EngravingEffect.getApplicableEffects / ApplicableEffect.apply
+        List<EngravingEffect.ApplicableEffect> incompatible = new ArrayList<>();
+        List<Map.Entry<EngravingEffect.ApplicableEffect, Float>> toApply = new ArrayList<>();
+
+        for (ResourceLocation key : getConstellationKeys()) {
+            IConstellation cst = ConstellationRegistry.getConstellation(key);
+            if (cst == null) continue;
+            EngravingEffect effect = cst.getEngravingEffect();
+            if (effect == null) continue;
+            float dist = distributions.getOrDefault(key, 0F);
+            for (EngravingEffect.ApplicableEffect applicable : effect.getApplicableEffects(stack)) {
+                if (applicable instanceof EngravingEffect.EnchantmentEffect ench
+                        && !ench.isIgnoreCompatibility()) {
+                    // Collect non-compat enchantments; apply only the best one later
+                    incompatible.add(applicable);
+                } else {
+                    toApply.add(Map.entry(applicable, dist));
+                }
+            }
+        }
+
+        // Apply exactly one non-compatibility-ignored enchantment (highest distribution wins)
+        if (!incompatible.isEmpty()) {
+            EngravingEffect.ApplicableEffect best = incompatible.get(0);
+            float bestDist = 0F;
+            for (ResourceLocation key : getConstellationKeys()) {
+                float d = distributions.getOrDefault(key, 0F);
+                if (d >= bestDist) { bestDist = d; best = incompatible.get(0); }
+            }
+            toApply.add(Map.entry(best, bestDist));
+        }
+
+        for (Map.Entry<EngravingEffect.ApplicableEffect, Float> entry : toApply) {
+            stack = entry.getKey().apply(stack, entry.getValue(), rand);
+        }
         return stack;
     }
 

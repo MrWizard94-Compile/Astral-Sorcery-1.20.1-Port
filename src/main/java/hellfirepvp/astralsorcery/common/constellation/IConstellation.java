@@ -1,6 +1,7 @@
 package hellfirepvp.astralsorcery.common.constellation;
 
 import hellfirepvp.astralsorcery.common.constellation.engraving.EngravingEffect;
+import hellfirepvp.astralsorcery.common.constellation.engraving.EngravingEffectRegistry;
 import hellfirepvp.astralsorcery.common.constellation.star.StarConnection;
 import hellfirepvp.astralsorcery.common.constellation.star.StarLocation;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
@@ -126,8 +127,7 @@ public interface IConstellation extends Comparable<IConstellation> {
      */
     @Nullable
     default EngravingEffect getEngravingEffect() {
-        // Deferred: RegistriesAS.REGISTRY_ENGRAVING_EFFECT.getValue(this.getRegistryName())
-        return null;
+        return EngravingEffectRegistry.get(this.getRegistryName());
     }
 
     @Nonnull
