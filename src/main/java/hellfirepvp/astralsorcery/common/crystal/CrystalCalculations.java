@@ -87,4 +87,12 @@ public class CrystalCalculations {
         float purity = (float) properties.getPurity() / CrystalProperties.MAX_PURITY;
         return 1.0F + purity * 2.0F;
     }
+
+    /**
+     * Crystal count produced when using this crystal as a crafting input.
+     * Size 0-299 → 1, 300-599 → 2, 600-900 → 3.
+     */
+    public static int getSizeCraftingAmount(@Nonnull CrystalProperties properties) {
+        return Mth.clamp(properties.getSize() / 300 + 1, 1, 3);
+    }
 }

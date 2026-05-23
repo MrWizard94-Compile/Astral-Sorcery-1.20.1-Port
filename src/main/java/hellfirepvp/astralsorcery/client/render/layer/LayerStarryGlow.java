@@ -12,6 +12,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingUtils;
+import hellfirepvp.astralsorcery.common.capability.PlayerCapabilityProvider;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,6 +29,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.Random;
 
@@ -68,8 +75,6 @@ public class LayerStarryGlow extends RenderLayer<AbstractClientPlayer, PlayerMod
                         float limbSwing, float limbSwingAmount,
                         float partialTick, float ageInTicks,
                         float netHeadYaw, float headPitch) {
-        // TODO: Check if player is attuned (via capability)
-        // For now, always render a subtle effect for testing
         if (!isPlayerAttuned(player)) {
             return;
         }
@@ -117,23 +122,29 @@ public class LayerStarryGlow extends RenderLayer<AbstractClientPlayer, PlayerMod
         RenderingUtils.vertex(buffer, matrix, x - half, y + half, z, r, g, b, a, 0, 1);
     }
 
-    /**
-     * Check if the player is attuned to a constellation.
-     * TODO: Read from player capability when implemented.
-     */
     private boolean isPlayerAttuned(@Nonnull AbstractClientPlayer player) {
-        // Placeholder: always show for testing
-        // In production: check player.getCapability(AstralCapabilities.PLAYER_PROGRESS)
-        return true;
+        return getAttunedConstellationKey(player) != null;
     }
 
-    /**
-     * Get the constellation color for the player's attunement.
-     * TODO: Read from player capability when implemented.
-     */
+    @Nullable
+    private ResourceLocation getAttunedConstellationKey(@Nonnull AbstractClientPlayer player) {
+        if (player == Minecraft.getInstance().player) {
+            return PlayerProgressManager.getClientProgress().getAttunedConstellation();
+        }
+        return player.getCapability(PlayerCapabilityProvider.CAPABILITY)
+                .map(PlayerProgress::getAttunedConstellation)
+                .orElse(null);
+    }
+
     @Nonnull
     private Color getAttunedConstellationColor(@Nonnull AbstractClientPlayer player) {
-        // Placeholder: blue-white starlight color
+        ResourceLocation key = getAttunedConstellationKey(player);
+        if (key != null) {
+            IConstellation c = ConstellationRegistry.getConstellation(key);
+            if (c != null) {
+                return c.getConstellationColor();
+            }
+        }
         return new Color(160, 200, 255);
     }
 }

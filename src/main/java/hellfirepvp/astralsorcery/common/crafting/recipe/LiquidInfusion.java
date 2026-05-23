@@ -37,10 +37,12 @@ public class LiquidInfusion implements Recipe<Container> {
     @Nullable
     private final ResourceLocation requiredConstellation;
     private final boolean consumeMultiple;
+    private final boolean copyNBTToOutputs;
 
     public LiquidInfusion(@Nonnull ResourceLocation id, @Nonnull Ingredient inputItem,
                           @Nonnull ItemStack output, int fluidMbRequired, int craftDuration,
-                          @Nullable ResourceLocation requiredConstellation, boolean consumeMultiple) {
+                          @Nullable ResourceLocation requiredConstellation, boolean consumeMultiple,
+                          boolean copyNBTToOutputs) {
         this.id = id;
         this.inputItem = inputItem;
         this.output = output;
@@ -48,6 +50,7 @@ public class LiquidInfusion implements Recipe<Container> {
         this.craftDuration = craftDuration;
         this.requiredConstellation = requiredConstellation;
         this.consumeMultiple = consumeMultiple;
+        this.copyNBTToOutputs = copyNBTToOutputs;
     }
 
     @Nonnull
@@ -75,6 +78,10 @@ public class LiquidInfusion implements Recipe<Container> {
 
     public boolean doesConsumeMultiple() {
         return consumeMultiple;
+    }
+
+    public boolean doesCopyNBTToOutputs() {
+        return copyNBTToOutputs;
     }
 
     public boolean matches(@Nonnull ItemStack stack) {
@@ -134,7 +141,8 @@ public class LiquidInfusion implements Recipe<Container> {
                     ? new ResourceLocation(GsonHelper.getAsString(json, "requiredConstellation"))
                     : null;
             boolean multi = GsonHelper.getAsBoolean(json, "consumeMultiple", false);
-            return new LiquidInfusion(id, input, output, fluidMb, duration, constellation, multi);
+            boolean copyNBT = GsonHelper.getAsBoolean(json, "copyNBTToOutputs", false);
+            return new LiquidInfusion(id, input, output, fluidMb, duration, constellation, multi, copyNBT);
         }
 
         @Nullable
@@ -146,7 +154,8 @@ public class LiquidInfusion implements Recipe<Container> {
             int duration = buf.readVarInt();
             ResourceLocation constellation = buf.readBoolean() ? buf.readResourceLocation() : null;
             boolean multi = buf.readBoolean();
-            return new LiquidInfusion(id, input, output, fluidMb, duration, constellation, multi);
+            boolean copyNBT = buf.readBoolean();
+            return new LiquidInfusion(id, input, output, fluidMb, duration, constellation, multi, copyNBT);
         }
 
         @Override
@@ -162,6 +171,7 @@ public class LiquidInfusion implements Recipe<Container> {
                 buf.writeBoolean(false);
             }
             buf.writeBoolean(recipe.consumeMultiple);
+            buf.writeBoolean(recipe.copyNBTToOutputs);
         }
     }
 }

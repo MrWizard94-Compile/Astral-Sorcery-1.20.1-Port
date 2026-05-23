@@ -9,6 +9,9 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin;
 
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
+import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +19,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Altar recipe that averages the CrystalAttributes of all input crystal items
@@ -40,5 +45,32 @@ public class ConstellationBaseAverageStatsRecipe extends ConstellationBaseItemRe
                 other.getIngredients(), other.getFocusConstellation());
     }
 
-    // TODO: override getOutputs(BlockEntityAltar) to average CrystalAttributes once ported
+    @Nonnull
+    @Override
+    @SuppressWarnings("null")
+    public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
+        List<ItemStack> out = new ArrayList<>(super.getOutputs(altar));
+        TileInventory inv = altar.getInventory();
+        out.forEach(stack -> applyAverageProps(stack, inv));
+        return out;
+    }
+
+    @SuppressWarnings("null")
+    private void applyAverageProps(@Nonnull ItemStack out, @Nonnull TileInventory inv) {
+        int count = 0;
+        int totalSize = 0, totalPurity = 0, totalCutting = 0;
+        for (int i = 0; i < getExpectedSlotCount(); i++) {
+            CrystalProperties props = CrystalProperties.getFromStack(inv.getStackInSlot(i));
+            if (props != null) {
+                totalSize += props.getSize();
+                totalPurity += props.getPurity();
+                totalCutting += props.getCutting();
+                count++;
+            }
+        }
+        if (count > 0) {
+            CrystalProperties.setOnStack(out,
+                    new CrystalProperties(totalSize / count, totalPurity / count, totalCutting / count));
+        }
+    }
 }

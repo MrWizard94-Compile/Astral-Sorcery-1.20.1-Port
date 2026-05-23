@@ -9,6 +9,8 @@ import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -115,6 +117,7 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     /**
      * Complete the attunement process — mark the crystal with the constellation.
      */
+    @SuppressWarnings("null")
     private void completeAttunement() {
         if (heldCrystal.isEmpty() || attunedConstellation == null) return;
 
@@ -128,8 +131,12 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         attunementTick = 0;
         markForUpdate();
 
-        // TODO: Send particle burst packet for completion visual
-        // TODO: Play attunement completion sound
+        // TODO: Send particle burst packet for completion visual (Phase 12)
+        Level level = getLevel();
+        if (level != null) {
+            level.playSound(null, getBlockPos(), SoundEvents.BEACON_ACTIVATE,
+                    SoundSource.BLOCKS, 1.0F, 1.2F);
+        }
     }
 
     /**

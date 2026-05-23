@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.client.render.overlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.ClientStarlightCache;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -55,7 +56,6 @@ public class OverlayStarlightGauge implements IGuiOverlay {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        // TODO: Check if player is attuned (has starlight capability)
         if (!shouldRender()) return;
 
         float starlightFill = getStarlightFillLevel();
@@ -85,9 +85,7 @@ public class OverlayStarlightGauge implements IGuiOverlay {
      * Only shown when the player is attuned.
      */
     private boolean shouldRender() {
-        // TODO: Check player attunement capability
-        // Placeholder: always show
-        return true;
+        return PlayerProgressManager.getClientProgress().getAttunedConstellation() != null;
     }
 
     private float getStarlightFillLevel() {

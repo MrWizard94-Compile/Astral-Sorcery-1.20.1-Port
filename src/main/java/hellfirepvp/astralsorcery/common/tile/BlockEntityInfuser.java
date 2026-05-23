@@ -13,6 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -219,6 +221,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     /**
      * Completes the infusion: replaces input with output.
      */
+    @SuppressWarnings("null")
     private void completeInfusion(@Nonnull Level level) {
         if (cachedRecipe == null) return;
 
@@ -243,7 +246,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         this.craftingProgress = 0;
         markForUpdate();
 
-        // TODO: Send particle burst packet for infusion completion visual
+        // TODO: Send particle burst packet for infusion completion visual (Phase 12)
+        level.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
     }
 
     /**

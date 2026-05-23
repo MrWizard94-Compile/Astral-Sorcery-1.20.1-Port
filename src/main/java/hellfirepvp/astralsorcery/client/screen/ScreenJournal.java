@@ -13,6 +13,7 @@ import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
 import hellfirepvp.astralsorcery.common.constellation.Constellation;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -349,9 +350,12 @@ public class ScreenJournal extends ScreenBaseAS {
      */
     private void loadDiscoveredConstellations() {
         discoveredConstellations.clear();
-        // TODO: Read from player capability data
-        // For now, show all registered constellations as discovered
-        discoveredConstellations.addAll(ConstellationRegistry.getAllConstellations());
+        for (ResourceLocation key : PlayerProgressManager.getClientProgress().getDiscoveredConstellations()) {
+            IConstellation c = ConstellationRegistry.getConstellation(key);
+            if (c != null) {
+                discoveredConstellations.add(c);
+            }
+        }
     }
 
     // =========================================================================

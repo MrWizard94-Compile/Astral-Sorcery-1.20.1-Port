@@ -9,6 +9,9 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin;
 
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.crystal.CrystalCalculations;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +19,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Altar recipe that produces multiple output crystals by setting their stack count
@@ -40,5 +44,19 @@ public class CrystalCountRecipe extends ConstellationBaseAverageStatsRecipe {
                 other.getIngredients(), other.getFocusConstellation());
     }
 
-    // TODO: override getOutputs(BlockEntityAltar) to set output count from CrystalAttributes once ported
+    @Nonnull
+    @Override
+    @SuppressWarnings("null")
+    public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
+        List<ItemStack> out = super.getOutputs(altar); // calls ConstellationBaseAverageStatsRecipe first
+        out.forEach(this::setAmount);
+        return out;
+    }
+
+    private void setAmount(@Nonnull ItemStack out) {
+        CrystalProperties props = CrystalProperties.getFromStack(out);
+        if (props != null) {
+            out.setCount(CrystalCalculations.getSizeCraftingAmount(props));
+        }
+    }
 }

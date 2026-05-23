@@ -9,13 +9,18 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin;
 
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
+import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Altar recipe that copies CrystalAttributes from a source input crystal to the output.
@@ -39,5 +44,28 @@ public class ConstellationCopyStatsRecipe extends ConstellationBaseItemRecipe {
                 other.getIngredients(), other.getFocusConstellation());
     }
 
-    // TODO: override getOutputs(BlockEntityAltar) to copy CrystalAttributes once ported
+    @Nonnull
+    @Override
+    @SuppressWarnings("null")
+    public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
+        List<ItemStack> out = new ArrayList<>(super.getOutputs(altar));
+        TileInventory inv = altar.getInventory();
+        out.forEach(stack -> copyConstellation(stack, inv));
+        return out;
+    }
+
+    @SuppressWarnings("null")
+    private void copyConstellation(@Nonnull ItemStack out, @Nonnull TileInventory inv) {
+        CompoundTag outTag = out.getTag();
+        if (outTag != null && outTag.contains("attunedConstellation")) return;
+        for (int i = 0; i < getExpectedSlotCount(); i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains("attunedConstellation")) {
+                out.getOrCreateTag().putString("attunedConstellation",
+                        tag.getString("attunedConstellation"));
+                return;
+            }
+        }
+    }
 }

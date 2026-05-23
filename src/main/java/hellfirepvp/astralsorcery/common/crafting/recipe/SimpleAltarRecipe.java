@@ -21,6 +21,8 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -84,6 +86,17 @@ public class SimpleAltarRecipe implements Recipe<Container> {
     @Nonnull
     public ItemStack getOutput() {
         return output.copy();
+    }
+
+    /**
+     * Returns the crafted output(s) given the altar's current inventory.
+     * Called <em>before</em> inputs are consumed so subclasses can read ingredient stacks.
+     * Override to implement crystal-attribute manipulation, constellation copying, etc.
+     */
+    @Nonnull
+    @SuppressWarnings("null")
+    public List<ItemStack> getOutputs(@Nonnull hellfirepvp.astralsorcery.common.tile.BlockEntityAltar altar) {
+        return Collections.singletonList(output.copy());
     }
 
     @Nonnull

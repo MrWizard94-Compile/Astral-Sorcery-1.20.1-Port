@@ -73,11 +73,12 @@ public class PktAltarCraftingUpdate {
 
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktAltarCraftingUpdate pkt) {
-        // TODO: Update altar block entity client state for rendering
+        // Phase 12: dispatch VFX by state
         // - STARTED: begin crafting animation, particles
-        // - PROGRESS: update progress bar in GUI / render
+        // - PROGRESS: particle stream update
         // - COMPLETED: burst effect, item pop animation
         // - FAILED: fizzle particle effect
+        // GUI progress bar reads isCrafting/recipeTick directly from BlockEntityAltar via normal BE sync.
     }
 
     @Nonnull

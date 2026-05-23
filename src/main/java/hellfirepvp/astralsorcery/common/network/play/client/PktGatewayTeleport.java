@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
@@ -120,8 +122,11 @@ public class PktGatewayTeleport {
         AstralSorcery.log.debug("Gateway teleport: {} -> {} in {}",
                 player.getName().getString(), targetPos, targetDimension);
 
-        // TODO: Send particle burst packet at both source and destination
-        // TODO: Play teleportation sound effect
+        // TODO: Send particle burst packet at both source and destination (Phase 12)
+        sourceLevel.playSound(null, BlockPos.containing(player.position()),
+                SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);
+        targetLevel.playSound(null, targetPos,
+                SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 0.9F);
     }
 
     /**
