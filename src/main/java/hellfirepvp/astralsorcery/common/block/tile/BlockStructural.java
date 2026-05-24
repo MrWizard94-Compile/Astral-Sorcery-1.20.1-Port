@@ -4,6 +4,7 @@ import hellfirepvp.astralsorcery.common.block.base.BlockAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
@@ -21,7 +22,6 @@ import java.util.Locale;
 /**
  * Structural block used internally by multiblock structures (e.g. the telescope upper portion).
  * Not obtainable in survival. Uses a BlockType enum state to drive per-structure behavior.
- * Full neighbor-change logic (self-removal when support block is missing) deferred.
  */
 public class BlockStructural extends BlockAS {
 
@@ -56,6 +56,17 @@ public class BlockStructural extends BlockAS {
             case TELESCOPE -> SHAPE_TELESCOPE;
             default -> Shapes.block();
         };
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
+                                @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
+        if (state.getValue(BLOCK_TYPE) == BlockType.TELESCOPE && level.isEmptyBlock(pos.below())) {
+            level.removeBlock(pos, isMoving);
+            return;
+        }
+        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
     }
 
     public enum BlockType implements StringRepresentable {
