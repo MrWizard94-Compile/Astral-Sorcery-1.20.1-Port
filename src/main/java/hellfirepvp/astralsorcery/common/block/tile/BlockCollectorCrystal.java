@@ -2,10 +2,18 @@ package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockDynamicColor;
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationItem;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationTile;
+import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeItem;
+import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeTile;
+import hellfirepvp.astralsorcery.common.item.block.ItemBlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -74,6 +82,38 @@ public class BlockCollectorCrystal extends BlockEntityBlock implements BlockDyna
             return collector.getConstellationColor();
         }
         return celestial ? 0x4488DD : 0xAAAAFF;
+    }
+
+    @Override
+    public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                            @Nullable LivingEntity placer, @Nonnull ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlockEntityCollectorCrystal collector)) return;
+        Item item = stack.getItem();
+        if (item instanceof CrystalAttributeItem attrItem) {
+            collector.setAttributes(attrItem.getAttributes(stack));
+        }
+        if (item instanceof ConstellationItem cItem) {
+            collector.setAttunedConstellation(cItem.getAttunedConstellation(stack));
+            collector.setTraitConstellation(cItem.getTraitConstellation(stack));
+        }
+        collector.setCelestial(celestial);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getCloneItemStack(@Nonnull BlockGetter level, @Nonnull BlockPos pos,
+                                       @Nonnull BlockState state) {
+        ItemStack stack = new ItemStack(this);
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockEntityCollectorCrystal collector) {
+            ItemBlockCollectorCrystal ibcc = (ItemBlockCollectorCrystal) stack.getItem();
+            ibcc.setAttributes(stack, collector.getAttributes());
+            ibcc.setAttunedConstellation(stack, collector.getAttunedConstellation());
+            ibcc.setTraitConstellation(stack, collector.getTraitConstellation());
+        }
+        return stack;
     }
 
     @Nullable

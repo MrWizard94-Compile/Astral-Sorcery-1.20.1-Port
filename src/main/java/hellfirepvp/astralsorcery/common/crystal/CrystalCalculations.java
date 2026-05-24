@@ -4,6 +4,8 @@ import net.minecraft.util.Mth;
 
 import javax.annotation.Nonnull;
 
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_COLLECTOR_CRYSTAL;
+
 /**
  * Calculation formulas for crystal-dependent systems.
  * Centralizes the math so individual systems don't reimplement formulas.
@@ -13,6 +15,20 @@ import javax.annotation.Nonnull;
 public class CrystalCalculations {
 
     private CrystalCalculations() {}
+
+    /**
+     * Apply CrystalAttributes property modifiers to derive the collection rate multiplier.
+     * Starts at 1.0 and applies each property's modifier with USE_COLLECTOR_CRYSTAL context.
+     * Range approximately 1.0–11.0 depending on property tiers.
+     */
+    public static double getCollectorCrystalCollectionRate(@Nonnull CrystalAttributes attributes) {
+        CalculationContext ctx = CalculationContext.Builder.withUsage(USE_COLLECTOR_CRYSTAL).build();
+        double rate = 1.0;
+        for (CrystalAttributes.Attribute attr : attributes.getCrystalAttributes()) {
+            rate = attr.getProperty().modify(rate, attr.getTier(), ctx);
+        }
+        return rate;
+    }
 
     /**
      * Calculate starlight collection rate per tick for a collector crystal.

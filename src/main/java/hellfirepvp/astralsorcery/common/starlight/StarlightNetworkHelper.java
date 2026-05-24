@@ -51,7 +51,7 @@ public final class StarlightNetworkHelper {
                 && independentSource.providesAutoLink();
 
         WorldNetworkHandler handler = WorldNetworkHandler.getOrCreate(serverLevel);
-        handler.registerSource(pos, source.getAttunedConstellation(), autoLink);
+        handler.registerSource(pos, source.getAttunedConstellationKey(), autoLink);
 
         if (source instanceof IIndependentStarlightSource independentSource) {
             handler.storeIndependentSourceData(pos, independentSource.serializeSourceNBT());

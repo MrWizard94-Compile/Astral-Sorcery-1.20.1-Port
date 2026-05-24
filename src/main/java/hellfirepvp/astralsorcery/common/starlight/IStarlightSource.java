@@ -28,12 +28,14 @@ public interface IStarlightSource extends ILocatable {
     double getStarlightProduction();
 
     /**
-     * Get the constellation this source is attuned to, if any.
+     * Get the registry key of the constellation this source is attuned to, if any.
+     * Named distinctly from {@code ConstellationTile.getAttunedConstellation()} to avoid
+     * return-type conflict when both interfaces are implemented.
      *
      * @return constellation key, or null if unattuned
      */
     @Nullable
-    ResourceLocation getAttunedConstellation();
+    ResourceLocation getAttunedConstellationKey();
 
     /**
      * Get the level this source exists in.

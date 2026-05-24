@@ -34,6 +34,7 @@ import hellfirepvp.astralsorcery.common.item.armor.ItemMantleOctans;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantlePelotrio;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleVicio;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
+import hellfirepvp.astralsorcery.common.item.block.ItemBlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
@@ -323,10 +324,10 @@ public class ItemsAS {
             ITEMS.register("altar", () -> new ItemBlockAS(BlocksAS.ALTAR.get()));
     public static final RegistryObject<BlockItem> ATTUNEMENT_ALTAR_ITEM =
             ITEMS.register("attunement_altar", () -> new ItemBlockAS(BlocksAS.ATTUNEMENT_ALTAR.get()));
-    public static final RegistryObject<BlockItem> COLLECTOR_CRYSTAL_ITEM =
-            ITEMS.register("collector_crystal", () -> new ItemBlockAS(BlocksAS.COLLECTOR_CRYSTAL.get()));
-    public static final RegistryObject<BlockItem> CELESTIAL_COLLECTOR_CRYSTAL_ITEM =
-            ITEMS.register("celestial_collector_crystal", () -> new ItemBlockAS(BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get()));
+    public static final RegistryObject<ItemBlockCollectorCrystal> COLLECTOR_CRYSTAL_ITEM =
+            ITEMS.register("collector_crystal", () -> new ItemBlockCollectorCrystal(BlocksAS.COLLECTOR_CRYSTAL.get()));
+    public static final RegistryObject<ItemBlockCollectorCrystal> CELESTIAL_COLLECTOR_CRYSTAL_ITEM =
+            ITEMS.register("celestial_collector_crystal", () -> new ItemBlockCollectorCrystal(BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get()));
     public static final RegistryObject<BlockItem> LENS_ITEM =
             ITEMS.register("lens", () -> new ItemBlockAS(BlocksAS.LENS.get()));
     public static final RegistryObject<BlockItem> PRISM_ITEM =
