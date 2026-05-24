@@ -8,9 +8,11 @@
 package hellfirepvp.astralsorcery.common.perk;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
@@ -229,6 +231,9 @@ public final class PerkTree {
             perk.onAllocate(player);
             AstralSorcery.log.debug("Player {} allocated perk {}",
                     player.getName().getString(), perkKey);
+            if (player instanceof ServerPlayer sp) {
+                AstralAdvancementTriggers.ALLOCATE_PERK.trigger(sp);
+            }
         }
         return AllocationStatus.SUCCESS;
     }

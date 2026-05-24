@@ -1,6 +1,9 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInteraction;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import net.minecraft.core.BlockPos;
@@ -9,6 +12,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,6 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,6 +51,7 @@ public class BlockEntityChalice extends BlockEntityTick {
     private final LazyOptional<IFluidHandler> fluidCap;
 
     private int ticksExisted = 0;
+    private int nextInteractionTick = -1;
 
     @Nonnull
     private final List<BlockPos> linkedChalices = new ArrayList<>();
@@ -102,6 +110,113 @@ public class BlockEntityChalice extends BlockEntityTick {
             markForUpdate();
             other.markForUpdate();
         }
+
+        tickInteractions(level);
+    }
+
+    private void tickInteractions(@Nonnull Level level) {
+        RandomSource rng = level.getRandom();
+        if (nextInteractionTick < 0) {
+            nextInteractionTick = ticksExisted + 20 + rng.nextInt(40);
+            return;
+        }
+        if (ticksExisted < nextInteractionTick) return;
+        nextInteractionTick = ticksExisted + 20 + rng.nextInt(40);
+
+        FluidStack thisFluid = tank.getFluid();
+        if (thisFluid.isEmpty()) return;
+
+        List<LiquidInteraction> allRecipes = level.getRecipeManager()
+                .getAllRecipesFor(RecipeTypesAS.LIQUID_INTERACTION.get());
+        if (allRecipes.isEmpty()) return;
+
+        // Scan nearby positions for other chalices (±16 X/Z, ±4 Y)
+        BlockPos thisPos = getBlockPos();
+        List<BlockEntityChalice> nearby = new ArrayList<>();
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int dx = -16; dx <= 16; dx++) {
+            for (int dy = -4; dy <= 4; dy++) {
+                for (int dz = -16; dz <= 16; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    mutable.set(thisPos.getX() + dx, thisPos.getY() + dy, thisPos.getZ() + dz);
+                    if (level.getBlockState(mutable).getBlock() == BlocksAS.CHALICE.get()) {
+                        BlockEntity be = level.getBlockEntity(mutable);
+                        if (be instanceof BlockEntityChalice other) {
+                            nearby.add(other);
+                        }
+                    }
+                }
+            }
+        }
+        if (nearby.isEmpty()) return;
+
+        // Fisher-Yates shuffle using level RNG for fairness
+        for (int i = nearby.size() - 1; i > 0; i--) {
+            int j = rng.nextInt(i + 1);
+            BlockEntityChalice tmp = nearby.get(i);
+            nearby.set(i, nearby.get(j));
+            nearby.set(j, tmp);
+        }
+
+        for (BlockEntityChalice other : nearby) {
+            FluidStack otherFluid = other.tank.getFluid();
+            if (otherFluid.isEmpty() || thisFluid.getFluid() == otherFluid.getFluid()) continue;
+
+            List<LiquidInteraction> matching = new ArrayList<>();
+            for (LiquidInteraction recipe : allRecipes) {
+                if (recipe.matchesFluids(thisFluid, otherFluid)) matching.add(recipe);
+            }
+            if (matching.isEmpty()) continue;
+
+            LiquidInteraction recipe = pickWeightedRecipe(matching, rng);
+            if (recipe == null) continue;
+
+            FluidStack rf1 = recipe.getInputFluid1();
+            FluidStack rf2 = recipe.getInputFluid2();
+            int drainThis, drainOther;
+            if (rf1.getFluid() == thisFluid.getFluid()) {
+                drainThis = rf1.getAmount();
+                drainOther = rf2.getAmount();
+            } else {
+                drainThis = rf2.getAmount();
+                drainOther = rf1.getAmount();
+            }
+
+            if (tank.getFluidAmount() < drainThis || other.tank.getFluidAmount() < drainOther) continue;
+
+            tank.drain(drainThis, IFluidHandler.FluidAction.EXECUTE);
+            other.tank.drain(drainOther, IFluidHandler.FluidAction.EXECUTE);
+            markForUpdate();
+            other.markForUpdate();
+
+            ItemStack output = recipe.getOutputItem();
+            if (!output.isEmpty()) {
+                BlockPos otherPos = other.getBlockPos();
+                double mx = (thisPos.getX() + otherPos.getX()) / 2.0 + 0.5;
+                double my = Math.max(thisPos.getY(), otherPos.getY()) + 1.2;
+                double mz = (thisPos.getZ() + otherPos.getZ()) / 2.0 + 0.5;
+                ItemEntity item = new ItemEntity(level, mx, my, mz, output);
+                item.setDefaultPickUpDelay();
+                level.addFreshEntity(item);
+            }
+            return; // one interaction per trigger
+        }
+    }
+
+    @Nullable
+    private static LiquidInteraction pickWeightedRecipe(@Nonnull List<LiquidInteraction> candidates,
+                                                         @Nonnull RandomSource rng) {
+        if (candidates.isEmpty()) return null;
+        if (candidates.size() == 1) return candidates.get(0);
+        float total = 0;
+        for (LiquidInteraction r : candidates) total += r.getWeight();
+        float roll = rng.nextFloat() * total;
+        float cum = 0;
+        for (LiquidInteraction r : candidates) {
+            cum += r.getWeight();
+            if (roll < cum) return r;
+        }
+        return candidates.get(candidates.size() - 1);
     }
 
     @Nonnull

@@ -1,6 +1,7 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarAttunement;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarConstellation;
@@ -268,6 +269,13 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
 
         AstralSorcery.log.debug("Altar craft complete at {}: produced {} item type(s)",
                 worldPosition.toShortString(), results.size());
+
+        Player nearest = level.getNearestPlayer(
+                worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
+                16.0, null);
+        if (nearest instanceof net.minecraft.server.level.ServerPlayer sp) {
+            AstralAdvancementTriggers.ALTAR_CRAFT.trigger(sp);
+        }
 
         // TODO: Send particle burst packet for craft completion visual (Phase 12)
         level.playSound(null, worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP,

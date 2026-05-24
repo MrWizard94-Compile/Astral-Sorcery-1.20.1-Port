@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperDamageCancelling;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperInvulnerability;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperSpawnDeny;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperTemporaryFlight;
@@ -20,6 +21,8 @@ import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
+import hellfirepvp.astralsorcery.common.enchantment.amulet.PlayerAmuletHandler;
+import hellfirepvp.astralsorcery.common.event.DynamicEnchantmentEvent;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
 import hellfirepvp.astralsorcery.common.event.EventHandlerEnchantmentTick;
 import hellfirepvp.astralsorcery.common.event.EventHandlerMantleTick;
@@ -33,6 +36,7 @@ import hellfirepvp.astralsorcery.common.lib.EngravingEffectsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.lib.StructuresAS;
 import hellfirepvp.astralsorcery.common.perk.PerkTreeData;
+import hellfirepvp.astralsorcery.common.lib.LootAS;
 import hellfirepvp.astralsorcery.common.loot.GlobalLootModifierAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkEffectHelper;
@@ -101,6 +105,7 @@ public class CommonProxy {
 
         // Global loot modifiers
         GlobalLootModifierAS.LOOT_MODIFIERS.register(modBus);
+        LootAS.LOOT_FUNCTION_TYPES.register(modBus);
 
         // Mod lifecycle events
         modBus.addListener(this::onCommonSetup);
@@ -144,10 +149,15 @@ public class CommonProxy {
         forgeBus.register(new EventHandlerMantleTick());
         forgeBus.register(AlignmentChargeHandler.INSTANCE);
 
+        // Amulet enchantment tick + DynamicEnchantmentEvent.Add wiring
+        forgeBus.register(PlayerAmuletHandler.INSTANCE);
+        forgeBus.addListener(PlayerAmuletHandler::onEnchantmentAdd);
+
         // Commands (registered via RegisterCommandsEvent)
         forgeBus.register(new CommandAstralSorcery());
 
         // Event helpers: register event listeners and tick handlers
+        EventHelperDamageCancelling.attachListeners(forgeBus);
         EventHelperInvulnerability.attachListeners(forgeBus);
         EventHelperSpawnDeny.attachListeners(forgeBus);
         EventHelperTemporaryFlight.attachListeners(forgeBus);
