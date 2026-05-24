@@ -1,10 +1,13 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
+import hellfirepvp.astralsorcery.client.screen.ClientScreenHandler;
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
 import hellfirepvp.astralsorcery.common.util.MiscUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -109,12 +112,22 @@ public class BlockRefractionTable extends BlockEntityBlock {
                             player.setItemInHand(hand, held);
                         }
                     }
-                    // TODO Phase 12: else open REFRACTION_TABLE GUI
                 }
-                // TODO Phase 12: else open REFRACTION_TABLE GUI
+            }
+        } else if (!player.isShiftKeyDown() && held.isEmpty()) {
+            // Client-side: open engraving screen when right-clicking with empty hand
+            BlockEntityRefractionTable te = MiscUtils.getTileAt(level, pos,
+                    BlockEntityRefractionTable.class, true);
+            if (te != null) {
+                openRefractionScreen(te);
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static void openRefractionScreen(@Nonnull BlockEntityRefractionTable te) {
+        ClientScreenHandler.openRefractionTableScreen(te);
     }
 
     @Override

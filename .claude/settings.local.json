@@ -60,7 +60,11 @@
       "Bash(gradlew.bat compileJava)",
       "Bash(powershell -Command \"\\(Get-ChildItem src/main/resources/data/astralsorcery/recipes/well/*.json\\).Count; \\(Get-ChildItem src/main/resources/data/astralsorcery/recipes/infusion/*.json\\).Count; \\(Get-ChildItem src/main/resources/data/astralsorcery/recipes/transmutation/*.json\\).Count; \\(Get-ChildItem src/main/resources/data/astralsorcery/recipes/liquid_interaction/*.json\\).Count; \\(Get-ChildItem src/main/resources/data/astralsorcery/recipes/altar/*.json\\).Count\")",
       "Bash(Get-ChildItem \"c:\\\\Projects\\\\Astral_Sorcery_Port\\\\src\\\\main\\\\java\\\\hellfirepvp\\\\astralsorcery\\\\common\\\\capability\\\\\" | Select-Object Name)",
-      "Bash(grep -v \"//.*TODO.*Phase\\\\|// TODO: Phase\\\\|TODO.*client-only\\\\|TODO.*rendering\\\\|TODO.*particle\\\\|TODO.*sound\\\\|TODO.*visual\\\\|TODO.*VFX\\\\|TODO.*render\\\\|TODO.*screen\\\\|TODO.*GUI\\\\|TODO.*client\")"
+      "Bash(grep -v \"//.*TODO.*Phase\\\\|// TODO: Phase\\\\|TODO.*client-only\\\\|TODO.*rendering\\\\|TODO.*particle\\\\|TODO.*sound\\\\|TODO.*visual\\\\|TODO.*VFX\\\\|TODO.*render\\\\|TODO.*screen\\\\|TODO.*GUI\\\\|TODO.*client\")",
+      "Bash(xargs grep -l \"CrystalAttributes\\\\|ResearchManager\")",
+      "Bash(Remove-Item -Recurse -Force \"c:\\\\Projects\\\\Astral_Sorcery_Port\\\\src\\\\main\\\\resources\\\\data\\\\forge\" -ErrorAction Stop)",
+      "Bash(Write-Host \"Removed data/forge directory\")",
+      "Bash(grep -rn \"throw new UnsupportedOperationException\\\\|return null; // STUB\\\\|// FIXME\\\\|//FIXME\\\\|// HACK\\\\|//HACK\" \"c:\\\\Projects\\\\Astral_Sorcery_Port\\\\src\\\\main\\\\java\" --include=\"*.java\")"
     ]
   }
 }

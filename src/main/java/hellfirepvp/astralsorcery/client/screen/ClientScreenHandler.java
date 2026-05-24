@@ -3,9 +3,12 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.screen;
 
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 /**
  * Client-side helper for opening Astral Sorcery GUI screens.
@@ -44,5 +47,13 @@ public final class ClientScreenHandler {
      */
     public static void openJournalScreen() {
         Minecraft.getInstance().setScreen(new ScreenJournal());
+    }
+
+    /**
+     * Opens the refraction table engraving screen.
+     * Called from BlockRefractionTable when right-clicked with empty hand.
+     */
+    public static void openRefractionTableScreen(@Nonnull BlockEntityRefractionTable tile) {
+        Minecraft.getInstance().setScreen(new ScreenRefractionTable(tile));
     }
 }
