@@ -2,6 +2,7 @@ package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
+import hellfirepvp.astralsorcery.common.tile.BlockEntitySpectralRelay;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCelestialCrystals;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityChalice;
@@ -55,6 +56,11 @@ public class BlockEntityTypesAS {
                     BlockEntityType.Builder.of(BlockEntityCollectorCrystal::new,
                             BlocksAS.COLLECTOR_CRYSTAL.get(),
                             BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntitySpectralRelay>> SPECTRAL_RELAY =
+            BLOCK_ENTITY_TYPES.register("spectral_relay", () ->
+                    BlockEntityType.Builder.of(BlockEntitySpectralRelay::new,
+                            BlocksAS.SPECTRAL_RELAY.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<BlockEntityWell>> WELL =
             BLOCK_ENTITY_TYPES.register("well", () ->
