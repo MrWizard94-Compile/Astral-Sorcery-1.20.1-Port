@@ -43,9 +43,14 @@ import hellfirepvp.astralsorcery.client.screen.ScreenAltarDiscovery;
 import hellfirepvp.astralsorcery.client.screen.ScreenAltarRadiance;
 import hellfirepvp.astralsorcery.client.sky.AstralSkyRenderer;
 import hellfirepvp.astralsorcery.common.CommonProxy;
+import hellfirepvp.astralsorcery.common.item.ItemResonator;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.lib.MenuTypesAS;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -183,6 +188,15 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypesAS.ALTAR_ATTUNEMENT.get(), ScreenAltarAttunement::new);
             MenuScreens.register(MenuTypesAS.ALTAR_CONSTELLATION.get(), ScreenAltarConstellation::new);
             MenuScreens.register(MenuTypesAS.ALTAR_RADIANCE.get(), ScreenAltarRadiance::new);
+
+            // Resonator model override: selects starlight/liquid/structure model based on active upgrade
+            ItemProperties.register(ItemsAS.RESONATOR.get(),
+                    new ResourceLocation("upgrade"),
+                    (stack, level, entity, seed) -> {
+                        if (!(entity instanceof Player)) return 0f;
+                        return ItemResonator.getSelectedUpgrade(stack).ordinal()
+                                / (float) ItemResonator.ResonatorUpgrade.values().length;
+                    });
         });
     }
 }

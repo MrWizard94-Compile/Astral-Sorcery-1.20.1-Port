@@ -1,0 +1,30 @@
+{
+  "type": "astralsorcery:resonator_upgrade",
+  "altar_type": "constellation",
+  "target_upgrade": "fluid_fields",
+  "craft_duration": 400,
+  "starlight_required": 3000,
+  "inputs": [
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:aquamarine"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:resonator"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {},
+    {"item": "astralsorcery:aquamarine"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:stardust"}
+  ]
+}
