@@ -39,9 +39,6 @@ import java.util.List;
  * entity in the same block — a crystal. After 50–69 ticks both are consumed and a
  * CELESTIAL_CRYSTAL_CLUSTER block is placed.</p>
  *
- * <p>Crystal attribute transfer to the cluster block entity is deferred until
- * BlockEntityCelestialCrystals is ported (Phase TBD).</p>
- *
  * <p>1.16 → 1.20: MathHelper.getPositionRandom(at) → RandomSource.create(at.asLong()),
  * isTopSolid() → isFaceSturdy(level, pos, Direction.UP),
  * world.setBlockState() → level.setBlock().</p>

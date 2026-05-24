@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 100,
+  "starlight_required": 800,
+  "output": {
+    "item": "astralsorcery:nocturnal_powder",
+    "count": 4
+  },
+  "inputs": [
+    {},
+    {"tag": "forge:dyes/black"},
+    {},
+    {"tag": "minecraft:coals"},
+    {"item": "astralsorcery:illumination_powder"},
+    {"tag": "minecraft:coals"},
+    {},
+    {"tag": "forge:dyes/blue"},
+    {}
+  ]
+}

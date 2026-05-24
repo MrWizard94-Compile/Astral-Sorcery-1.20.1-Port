@@ -8,6 +8,9 @@
 package hellfirepvp.astralsorcery.common.auxiliary.charge;
 
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightCharge;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -118,5 +121,12 @@ public class AlignmentChargeHandler {
 
         current = Math.min(current + regenPerTick, max);
         currentCharge.computeIfAbsent(side, s -> new HashMap<>()).put(player.getUUID(), current);
+
+        if (side == LogicalSide.SERVER && player instanceof ServerPlayer serverPlayer
+                && player.tickCount % 20 == 0) {
+            PacketChannel.sendToPlayer(
+                    new PktSyncStarlightCharge(current, max, regenPerTick > 0 && current < max),
+                    serverPlayer);
+        }
     }
 }

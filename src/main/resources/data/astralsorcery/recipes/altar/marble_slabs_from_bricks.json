@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 40,
+  "starlight_required": 100,
+  "output": {
+    "item": "astralsorcery:marble_slab",
+    "count": 6
+  },
+  "inputs": [
+    {},
+    {},
+    {},
+    {"item": "astralsorcery:marble_bricks"},
+    {"item": "astralsorcery:marble_bricks"},
+    {"item": "astralsorcery:marble_bricks"},
+    {},
+    {},
+    {}
+  ]
+}
