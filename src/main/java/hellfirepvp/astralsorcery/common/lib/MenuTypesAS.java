@@ -41,5 +41,4 @@ public class MenuTypesAS {
             MENU_TYPES.register("altar_radiance",
                     () -> IForgeMenuType.create(ContainerAltarRadiance::fromNetwork));
 
-    // TODO: TOME, OBSERVATORY menus when those containers are ported
 }
