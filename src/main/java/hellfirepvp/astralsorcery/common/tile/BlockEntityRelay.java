@@ -3,7 +3,10 @@ package hellfirepvp.astralsorcery.common.tile;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
+import net.minecraft.server.level.ServerLevel;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -60,10 +63,7 @@ public class BlockEntityRelay extends BlockEntityTick {
     public void tick() {
         super.tick();
         ticksExisted++;
-        if (isClientSide()) {
-            // TODO: Client-side relay glow/particle effects
-            return;
-        }
+        if (isClientSide()) return;
 
         Level level = getLevel();
         if (level == null) return;
@@ -116,6 +116,12 @@ public class BlockEntityRelay extends BlockEntityTick {
         float heightFactor = Mth.clamp((float) Math.pow(y / 7.0, 1.5) / 60.0F, 0.0F, 1.0F);
         float daytimeFactor = CelestialHandler.getStarlightDistributionFactor(level);
         altar.receiveStarlight((0.7F + heightFactor * 0.3F) * daytimeFactor * 45.0, null);
+
+        if (ticksExisted % 20 == 0) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.WELL_COLLECT, getBlockPos()),
+                    (ServerLevel) level, getBlockPos());
+        }
     }
 
     public int getTicksExisted() {

@@ -123,6 +123,10 @@ public class PlayerProgress {
         return discoveredConstellations.add(constellation);
     }
 
+    public boolean undiscoverConstellation(@Nonnull ResourceLocation constellation) {
+        return discoveredConstellations.remove(constellation);
+    }
+
     public void clearDiscoveredConstellations() {
         discoveredConstellations.clear();
     }

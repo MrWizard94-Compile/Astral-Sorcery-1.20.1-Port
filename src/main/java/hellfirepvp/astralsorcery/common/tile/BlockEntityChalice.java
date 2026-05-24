@@ -4,8 +4,11 @@ import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInteraction;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -67,10 +70,7 @@ public class BlockEntityChalice extends BlockEntityTick {
     public void tick() {
         super.tick();
         ticksExisted++;
-        if (isClientSide()) {
-            // TODO: Client-side fluid level visual effects
-            return;
-        }
+        if (isClientSide()) return;
 
         if (ticksExisted % 20 != 0) return;
 
@@ -79,6 +79,12 @@ public class BlockEntityChalice extends BlockEntityTick {
 
         FluidStack thisFluid = tank.getFluid();
         if (thisFluid.isEmpty()) return;
+
+        if (ticksExisted % 40 == 0) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.WELL_COLLECT, getBlockPos()),
+                    (ServerLevel) level, getBlockPos());
+        }
 
         linkedChalices.removeIf(pos -> {
             BlockEntity be = level.getBlockEntity(pos);

@@ -10,9 +10,12 @@ package hellfirepvp.astralsorcery.common.network.play.server;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.capability.PlayerCapabilityProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
@@ -75,20 +78,42 @@ public class PktSyncConstellation {
     }
 
     private static void handleClient(@Nonnull PktSyncConstellation msg) {
-        Player player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null) return;
+
         player.getCapability(PlayerCapabilityProvider.CAPABILITY).ifPresent(progress -> {
             if (msg.discovered) {
                 progress.discoverConstellation(msg.constellation);
                 AstralSorcery.log.debug("Constellation discovered: {}", msg.constellation);
+                spawnDiscoveryBurst(mc, player);
             } else {
-                // Removal requires clearing and re-adding all except the target.
-                // For now, log — full removal support added when research system is complete.
-                AstralSorcery.log.debug("Constellation removal requested: {}", msg.constellation);
+                progress.undiscoverConstellation(msg.constellation);
+                AstralSorcery.log.debug("Constellation removed: {}", msg.constellation);
             }
         });
-        // TODO: Trigger constellation discovery VFX on client
+    }
+
+    private static void spawnDiscoveryBurst(@Nonnull Minecraft mc, @Nonnull Player player) {
+        ClientLevel level = mc.level;
+        if (level == null) return;
+        Vec3 pos = player.position().add(0, player.getEyeHeight(), 0);
+        java.util.Random rng = new java.util.Random();
+        for (int i = 0; i < 40; i++) {
+            double ox = (rng.nextDouble() - 0.5) * 2.0;
+            double oy = (rng.nextDouble() - 0.5) * 2.0;
+            double oz = (rng.nextDouble() - 0.5) * 2.0;
+            level.addParticle(ParticleTypes.END_ROD,
+                    pos.x + ox * 0.5, pos.y + oy * 0.5, pos.z + oz * 0.5,
+                    ox * 0.1, oy * 0.1 + 0.05, oz * 0.1);
+        }
+        for (int i = 0; i < 20; i++) {
+            double ox = (rng.nextDouble() - 0.5) * 1.5;
+            double oy = rng.nextDouble() * 1.5;
+            double oz = (rng.nextDouble() - 0.5) * 1.5;
+            level.addParticle(ParticleTypes.FLASH,
+                    pos.x + ox, pos.y + oy, pos.z + oz,
+                    0, 0, 0);
+        }
     }
 }
