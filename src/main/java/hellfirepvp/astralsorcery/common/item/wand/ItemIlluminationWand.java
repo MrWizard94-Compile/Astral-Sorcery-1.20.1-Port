@@ -105,7 +105,7 @@ public class ItemIlluminationWand extends ItemAS implements AlignmentChargeConsu
 
         BlockEntityIlluminator illum = MiscUtils.getTileAt(level, pos, BlockEntityIlluminator.class, true);
         if (illum != null) {
-            illum.onWandUsed();
+            illum.onWandUsed(getConfiguredColor(stack));
             SoundHelper.playSoundAround(SoundsAS.ILLUMINATION_WAND_LIGHT.get(),
                     SoundSource.BLOCKS, level, pos, 0.6F, 1F);
             return InteractionResult.SUCCESS;

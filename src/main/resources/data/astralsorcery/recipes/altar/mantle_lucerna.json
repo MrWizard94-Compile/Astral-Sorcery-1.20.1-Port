@@ -1,0 +1,55 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "radiance",
+  "craft_duration": 600,
+  "starlight_required": 6400,
+  "output": {
+    "item": "astralsorcery:mantle_lucerna",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {
+      "item": "astralsorcery:stardust"
+    },
+    {},
+    {},
+    {},
+    {
+      "item": "minecraft:glowstone_dust"
+    },
+    {},
+    {},
+    {
+      "item": "astralsorcery:resonating_gem"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    },
+    {
+      "item": "minecraft:leather_chestplate"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    },
+    {
+      "item": "astralsorcery:resonating_gem"
+    },
+    {},
+    {},
+    {
+      "item": "minecraft:glowstone_dust"
+    },
+    {},
+    {},
+    {
+      "item": "astralsorcery:stardust"
+    },
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}

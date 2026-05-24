@@ -23,8 +23,15 @@ import hellfirepvp.astralsorcery.common.item.ItemPerkSeal;
 import hellfirepvp.astralsorcery.common.item.ItemTome;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleAevitas;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleArmara;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleBootes;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleDiscidia;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleEvorsio;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleFornax;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleHorologium;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleLucerna;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleMineralis;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantleOctans;
+import hellfirepvp.astralsorcery.common.item.armor.ItemMantlePelotrio;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleVicio;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
@@ -163,6 +170,20 @@ public class ItemsAS {
             ITEMS.register("mantle_aevitas", ItemMantleAevitas::new);
     public static final RegistryObject<ItemMantleEvorsio> MANTLE_EVORSIO =
             ITEMS.register("mantle_evorsio", ItemMantleEvorsio::new);
+    public static final RegistryObject<ItemMantleBootes> MANTLE_BOOTES =
+            ITEMS.register("mantle_bootes", ItemMantleBootes::new);
+    public static final RegistryObject<ItemMantleFornax> MANTLE_FORNAX =
+            ITEMS.register("mantle_fornax", ItemMantleFornax::new);
+    public static final RegistryObject<ItemMantleHorologium> MANTLE_HOROLOGIUM =
+            ITEMS.register("mantle_horologium", ItemMantleHorologium::new);
+    public static final RegistryObject<ItemMantleLucerna> MANTLE_LUCERNA =
+            ITEMS.register("mantle_lucerna", ItemMantleLucerna::new);
+    public static final RegistryObject<ItemMantleMineralis> MANTLE_MINERALIS =
+            ITEMS.register("mantle_mineralis", ItemMantleMineralis::new);
+    public static final RegistryObject<ItemMantleOctans> MANTLE_OCTANS =
+            ITEMS.register("mantle_octans", ItemMantleOctans::new);
+    public static final RegistryObject<ItemMantlePelotrio> MANTLE_PELOTRIO =
+            ITEMS.register("mantle_pelotrio", ItemMantlePelotrio::new);
 
     // ---- Colored Lenses ----
     public static final RegistryObject<ItemColoredLens> COLORED_LENS_FIRE =

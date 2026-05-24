@@ -169,9 +169,9 @@ public class BlockEntityIlluminator extends BlockEntityTick {
         return playerPlaced;
     }
 
-    public void onWandUsed() {
+    public void onWandUsed(DyeColor color) {
         this.boostedTicks = 10 * 60 * 20;
-        // TODO Phase 12: setColor(ItemIlluminationWand.getConfiguredColor(stack))
+        setColor(color);
     }
 
     @Override

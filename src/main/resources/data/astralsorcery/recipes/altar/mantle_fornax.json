@@ -1,0 +1,55 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "radiance",
+  "craft_duration": 600,
+  "starlight_required": 6400,
+  "output": {
+    "item": "astralsorcery:mantle_fornax",
+    "count": 1
+  },
+  "inputs": [
+    {},
+    {},
+    {
+      "item": "astralsorcery:stardust"
+    },
+    {},
+    {},
+    {},
+    {
+      "item": "minecraft:coal"
+    },
+    {},
+    {},
+    {
+      "item": "astralsorcery:resonating_gem"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "minecraft:leather_chestplate"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "astralsorcery:resonating_gem"
+    },
+    {},
+    {},
+    {
+      "item": "minecraft:coal"
+    },
+    {},
+    {},
+    {
+      "item": "astralsorcery:stardust"
+    },
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}
