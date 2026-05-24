@@ -481,7 +481,22 @@ public class MiscUtils {
         return Character.toTitleCase(str.charAt(0)) + str.substring(1);
     }
 
-    // transferEntityTo deferred — depends on NoOpTeleporter (not ported)
+    /**
+     * Teleports any entity to the given position in the target level.
+     * Players use the 1.20 {@code ServerPlayer.teleportTo} API; other entities
+     * use {@code changeDimension} with a {@link NoOpTeleporter}.
+     */
+    public static void transferEntityTo(@Nonnull Entity entity,
+                                        @Nonnull ServerLevel targetLevel,
+                                        @Nonnull BlockPos target) {
+        if (entity instanceof ServerPlayer sp) {
+            sp.teleportTo(targetLevel,
+                    target.getX() + 0.5, target.getY(), target.getZ() + 0.5,
+                    sp.getYRot(), sp.getXRot());
+        } else {
+            entity.changeDimension(targetLevel, new NoOpTeleporter(targetLevel, target));
+        }
+    }
 
     // ---- Raytrace ----
 
