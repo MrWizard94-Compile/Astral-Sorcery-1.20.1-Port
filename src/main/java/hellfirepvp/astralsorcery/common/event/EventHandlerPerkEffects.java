@@ -21,6 +21,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -52,6 +53,20 @@ public class EventHandlerPerkEffects {
 
     /** UUID → tick timestamp of when a cooldown was last set. */
     private static final Map<UUID, Long> CHEAT_DEATH_COOLDOWN = new WeakHashMap<>();
+
+    // -----------------------------------------------------------------------
+    // Perk tick dispatch
+    // -----------------------------------------------------------------------
+
+    @SubscribeEvent
+    public void onPerkPlayerTick(@Nonnull TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        Player player = event.player;
+        if (player.level().isClientSide()) return;
+        PlayerProgress progress = PlayerProgressHelper.getProgress(player);
+        if (progress == null) return;
+        PerkTree.tickPerks(player, progress.getAllocatedPerks());
+    }
 
     // -----------------------------------------------------------------------
     // Utility
