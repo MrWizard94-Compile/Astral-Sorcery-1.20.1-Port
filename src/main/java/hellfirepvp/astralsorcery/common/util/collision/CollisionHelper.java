@@ -28,11 +28,6 @@ import java.util.List;
  */
 public class CollisionHelper {
 
-    // TODO: Rewrite onCollision for 1.20's collision iteration system.
-    // In 1.16, this was called from a mixin into VoxelShapeSpliterator.
-    // The 1.20 equivalent needs to hook into BlockCollisions or
-    // Entity.collide() via mixin. Deferred to Phase 13 (Mixins).
-
     /**
      * Adjusts entity movement based on custom collision boxes.
      * Called from entity collision processing.
