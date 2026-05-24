@@ -18,6 +18,8 @@ import hellfirepvp.astralsorcery.common.network.play.client.PktPerkDeallocate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktPerkSealAction;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestGatewayList;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestProgress;
+import hellfirepvp.astralsorcery.common.network.play.client.PktRequestSeed;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncSeed;
 import hellfirepvp.astralsorcery.common.network.play.server.PktAltarCraftingUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
@@ -205,6 +207,16 @@ public class PacketChannel {
                 PktEngraveGlass::encode,
                 PktEngraveGlass::decode,
                 PktEngraveGlass::handle);
+
+        register(PktRequestSeed.class,
+                PktRequestSeed::encode,
+                PktRequestSeed::decode,
+                PktRequestSeed::handle);
+
+        register(PktSyncSeed.class,
+                PktSyncSeed::encode,
+                PktSyncSeed::decode,
+                PktSyncSeed::handle);
     }
 
     /**

@@ -5,6 +5,8 @@ package hellfirepvp.astralsorcery.common.network.play.client;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.data.world.GatewayHandler;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -122,8 +124,14 @@ public class PktGatewayTeleport {
         AstralSorcery.log.debug("Gateway teleport: {} -> {} in {}",
                 player.getName().getString(), targetPos, targetDimension);
 
-        // TODO: Send particle burst packet at both source and destination (Phase 12)
-        sourceLevel.playSound(null, BlockPos.containing(player.position()),
+        BlockPos sourcePos = BlockPos.containing(player.position());
+        PacketChannel.sendToAllTracking(
+                new PktParticleEvent(PktParticleEvent.GATEWAY_ACTIVATE, sourcePos),
+                sourceLevel, sourcePos);
+        PacketChannel.sendToAllTracking(
+                new PktParticleEvent(PktParticleEvent.GATEWAY_ACTIVATE, targetPos),
+                targetLevel, targetPos);
+        sourceLevel.playSound(null, sourcePos,
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);
         targetLevel.playSound(null, targetPos,
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 0.9F);

@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
@@ -131,9 +133,11 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         attunementTick = 0;
         markForUpdate();
 
-        // TODO: Send particle burst packet for completion visual (Phase 12)
         Level level = getLevel();
         if (level != null) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.ATTUNEMENT_BEAM, getBlockPos()),
+                    (net.minecraft.server.level.ServerLevel) level, getBlockPos());
             level.playSound(null, getBlockPos(), SoundEvents.BEACON_ACTIVATE,
                     SoundSource.BLOCKS, 1.0F, 1.2F);
         }

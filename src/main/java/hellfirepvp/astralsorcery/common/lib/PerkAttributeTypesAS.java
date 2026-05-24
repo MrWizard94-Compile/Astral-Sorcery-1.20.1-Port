@@ -48,6 +48,11 @@ public final class PerkAttributeTypesAS {
     public static PerkAttributeType ATTR_TYPE_STARLIGHT_COLLECTION;
     public static PerkAttributeType ATTR_TYPE_PERK_EFFECT;
 
+    // ---- Alignment charge types ----
+
+    public static PerkAttributeType ATTR_TYPE_ALIGNMENT_CHARGE_MAX;
+    public static PerkAttributeType ATTR_TYPE_ALIGNMENT_CHARGE_REGEN;
+
     /**
      * Registers all built-in perk attribute types.
      * Must be called once during common mod initialization.
@@ -132,5 +137,13 @@ public final class PerkAttributeTypesAS {
         ATTR_TYPE_PERK_EFFECT = AttributeTypeRegistry.register(
                 new PerkAttributeType(
                         AstralSorcery.key("perk.attr.perk_effect")));
+
+        ATTR_TYPE_ALIGNMENT_CHARGE_MAX = AttributeTypeRegistry.register(
+                new PerkAttributeType(
+                        AstralSorcery.key("perk.attr.alignment_charge_max")));
+
+        ATTR_TYPE_ALIGNMENT_CHARGE_REGEN = AttributeTypeRegistry.register(
+                new PerkAttributeType(
+                        AstralSorcery.key("perk.attr.alignment_charge_regen")));
     }
 }

@@ -7,9 +7,13 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.auxiliary.charge;
 
+import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightCharge;
+import hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -103,6 +107,19 @@ public class AlignmentChargeHandler {
         Player player = event.player;
         LogicalSide side = event.side;
 
+        // Recompute perk-modified max charge every 100 ticks on server
+        if (side == LogicalSide.SERVER && player.tickCount % 100 == 0) {
+            PlayerProgress progress = PlayerProgressHelper.getProgress(player);
+            if (progress != null && !progress.getAllocatedPerks().isEmpty()) {
+                float modifiedMax = (float) PerkAttributeHelper.computeValue(
+                        player, progress.getAllocatedPerks(),
+                        PerkAttributeTypesAS.ATTR_TYPE_ALIGNMENT_CHARGE_MAX.getKey(),
+                        MAX_CHARGE);
+                maximumCharge.computeIfAbsent(side, s -> new java.util.HashMap<>())
+                        .put(player.getUUID(), Math.max(modifiedMax, 1F));
+            }
+        }
+
         float current = getCurrentCharge(player, side);
         float max = getMaximumCharge(player, side);
         if (current >= max) return;
@@ -118,6 +135,18 @@ public class AlignmentChargeHandler {
 
         regenPerTick *= dayMultiplier;
         regenPerTick *= caveMultiplier;
+
+        // Apply perk regen multiplier after environment scaling
+        if (side == LogicalSide.SERVER) {
+            PlayerProgress progress = PlayerProgressHelper.getProgress(player);
+            if (progress != null && !progress.getAllocatedPerks().isEmpty()) {
+                regenPerTick = (float) PerkAttributeHelper.computeValue(
+                        player, progress.getAllocatedPerks(),
+                        PerkAttributeTypesAS.ATTR_TYPE_ALIGNMENT_CHARGE_REGEN.getKey(),
+                        regenPerTick);
+                regenPerTick = Math.max(regenPerTick, 0F);
+            }
+        }
 
         current = Math.min(current + regenPerTick, max);
         currentCharge.computeIfAbsent(side, s -> new HashMap<>()).put(player.getUUID(), current);

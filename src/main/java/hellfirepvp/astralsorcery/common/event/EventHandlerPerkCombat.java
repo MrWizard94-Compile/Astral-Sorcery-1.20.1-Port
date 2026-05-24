@@ -4,6 +4,8 @@
 package hellfirepvp.astralsorcery.common.event;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
@@ -148,7 +150,10 @@ public class EventHandlerPerkCombat {
             float freezeChance = 0.10f;
             if (player.getRandom().nextFloat() < freezeChance) {
                 event.setCanceled(true);
-                // TODO: Send particle event for time-freeze visual
+                net.minecraft.core.BlockPos freezePos = player.blockPosition();
+                PacketChannel.sendToAllTracking(
+                        new PktParticleEvent(PktParticleEvent.RITUAL_ACTIVATE, freezePos),
+                        (net.minecraft.server.level.ServerLevel) player.level(), freezePos);
                 return;
             }
         }

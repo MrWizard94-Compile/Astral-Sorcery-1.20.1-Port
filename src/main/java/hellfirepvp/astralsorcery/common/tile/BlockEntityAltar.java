@@ -8,6 +8,8 @@ import hellfirepvp.astralsorcery.common.container.ContainerAltarConstellation;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarDiscovery;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarRadiance;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarUpgradeRecipe;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
@@ -277,7 +279,9 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             AstralAdvancementTriggers.ALTAR_CRAFT.trigger(sp);
         }
 
-        // TODO: Send particle burst packet for craft completion visual (Phase 12)
+        PacketChannel.sendToAllTracking(
+                new PktParticleEvent(PktParticleEvent.ALTAR_CRAFT, worldPosition),
+                (net.minecraft.server.level.ServerLevel) level, worldPosition);
         level.playSound(null, worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP,
                 SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.2F);
     }

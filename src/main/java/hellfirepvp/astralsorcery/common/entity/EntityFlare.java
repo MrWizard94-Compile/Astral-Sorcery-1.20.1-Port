@@ -7,6 +7,9 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.entity;
 
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -88,7 +91,10 @@ public class EntityFlare extends ThrowableProjectile {
     protected void onHitBlock(@Nonnull BlockHitResult result) {
         super.onHitBlock(result);
         if (!level().isClientSide()) {
-            // TODO: Spawn burst particle event at impact position
+            BlockPos impactPos = result.getBlockPos();
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.STARLIGHT_BURST, impactPos),
+                    (net.minecraft.server.level.ServerLevel) level(), impactPos);
             this.discard();
         }
     }

@@ -2,6 +2,8 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
@@ -246,7 +248,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         this.craftingProgress = 0;
         markForUpdate();
 
-        // TODO: Send particle burst packet for infusion completion visual (Phase 12)
+        PacketChannel.sendToAllTracking(
+                new PktParticleEvent(PktParticleEvent.INFUSER_CRAFT, worldPosition),
+                (net.minecraft.server.level.ServerLevel) level, worldPosition);
         level.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME,
                 SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
     }

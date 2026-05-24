@@ -1,5 +1,7 @@
 package hellfirepvp.astralsorcery.common.util.world;
 
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.client.PktRequestSeed;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -50,8 +52,7 @@ public class WorldSeedCache {
             if (current - lastServerQuery > 5_000) {
                 lastServerQuery = current;
                 activeSession++;
-                // Network request deferred — PktRequestSeed not yet ported (Phase 10)
-                // PacketChannel.CHANNEL.sendToServer(new PktRequestSeed(activeSession, dim));
+                PacketChannel.sendToServer(new PktRequestSeed(activeSession, dim));
             }
             return Optional.empty();
         }
