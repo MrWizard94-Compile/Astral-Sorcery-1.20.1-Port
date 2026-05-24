@@ -43,6 +43,10 @@ public class PlayerProgress {
     private static final String TAG_ALLOCATED_PERKS = "allocatedPerks";
     private static final String TAG_SEALED_PERKS = "sealedPerks";
     private static final String TAG_UNLOCKED_RESEARCH = "unlockedResearch";
+    private static final String TAG_PERK_CONFIGS = "perkConfigs";
+    private static final String TAG_ACTIVE_PERK_CONFIG = "activePerkConfig";
+
+    public static final int MAX_PERK_CONFIGS = 3;
 
     @Nonnull
     private ProgressionTier tierReached = ProgressionTier.DISCOVERY;
@@ -61,6 +65,11 @@ public class PlayerProgress {
     private final Set<ResourceLocation> sealedPerks = new HashSet<>();
     @Nonnull
     private final Set<ResourceLocation> unlockedResearch = new HashSet<>();
+
+    // Shifting Stone configuration slots
+    private int activePerkConfig = 0;
+    @Nonnull
+    private final List<Set<ResourceLocation>> perkConfigs = new ArrayList<>();
 
     // ---- Progression tier ----
 
@@ -173,6 +182,32 @@ public class PlayerProgress {
         sealedPerks.clear();
     }
 
+    // ---- Shifting Stone configuration slots ----
+
+    public int getActivePerkConfig() {
+        return activePerkConfig;
+    }
+
+    public void setActivePerkConfig(int slot) {
+        this.activePerkConfig = Math.floorMod(slot, MAX_PERK_CONFIGS);
+    }
+
+    @Nonnull
+    public List<Set<ResourceLocation>> getPerkConfigs() {
+        return perkConfigs;
+    }
+
+    public void savePerkConfig(int slot, @Nonnull Set<ResourceLocation> perks) {
+        while (perkConfigs.size() <= slot) perkConfigs.add(new HashSet<>());
+        perkConfigs.set(slot, new HashSet<>(perks));
+    }
+
+    @Nonnull
+    public Set<ResourceLocation> getPerkConfig(int slot) {
+        if (slot < 0 || slot >= perkConfigs.size()) return new HashSet<>();
+        return perkConfigs.get(slot);
+    }
+
     /**
      * Checks whether a specific perk is allocated by AbstractPerk reference.
      */
@@ -263,6 +298,16 @@ public class PlayerProgress {
             researchList.add(StringTag.valueOf(rl.toString()));
         }
         tag.put(TAG_UNLOCKED_RESEARCH, researchList);
+        tag.putInt(TAG_ACTIVE_PERK_CONFIG, activePerkConfig);
+        ListTag configsTag = new ListTag();
+        for (Set<ResourceLocation> config : perkConfigs) {
+            ListTag slotTag = new ListTag();
+            for (ResourceLocation rl : config) {
+                slotTag.add(StringTag.valueOf(rl.toString()));
+            }
+            configsTag.add(slotTag);
+        }
+        tag.put(TAG_PERK_CONFIGS, configsTag);
         return tag;
     }
 
@@ -305,6 +350,19 @@ public class PlayerProgress {
                 unlockedResearch.add(new ResourceLocation(researchList.getString(i)));
             }
         }
+        this.activePerkConfig = tag.getInt(TAG_ACTIVE_PERK_CONFIG);
+        this.perkConfigs.clear();
+        if (tag.contains(TAG_PERK_CONFIGS)) {
+            ListTag configsTag = tag.getList(TAG_PERK_CONFIGS, Tag.TAG_LIST);
+            for (int i = 0; i < configsTag.size(); i++) {
+                ListTag slotTag = (ListTag) configsTag.get(i);
+                Set<ResourceLocation> slot = new HashSet<>();
+                for (int j = 0; j < slotTag.size(); j++) {
+                    slot.add(new ResourceLocation(slotTag.getString(j)));
+                }
+                perkConfigs.add(slot);
+            }
+        }
     }
 
     /**
@@ -321,5 +379,10 @@ public class PlayerProgress {
         this.perkExp = other.perkExp;
         this.allocatedPerks.clear();
         this.allocatedPerks.addAll(other.allocatedPerks);
+        this.activePerkConfig = other.activePerkConfig;
+        this.perkConfigs.clear();
+        for (Set<ResourceLocation> slot : other.perkConfigs) {
+            this.perkConfigs.add(new HashSet<>(slot));
+        }
     }
 }
