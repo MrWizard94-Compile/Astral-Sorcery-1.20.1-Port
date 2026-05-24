@@ -6,12 +6,16 @@ package hellfirepvp.astralsorcery.common.crafting.nojson.attunement.active;
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunePlayerRecipe;
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunementRecipe;
 import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -67,10 +71,25 @@ public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<Attune
         if (player instanceof ServerPlayer sp) {
             ResearchManager.attuneTo(sp, constellation);
         }
+        Level level = altar.getLevel();
+        if (level instanceof ServerLevel sl) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.CONSTELLATION_DISCOVER, altar.getBlockPos()),
+                    sl, altar.getBlockPos());
+        }
     }
 
     @Override
-    public void doTick(@Nonnull LogicalSide side, @Nonnull BlockEntityAttunementAltar altar) {}
+    public void doTick(@Nonnull LogicalSide side, @Nonnull BlockEntityAttunementAltar altar) {
+        if (side.isClient()) return;
+        Level level = altar.getLevel();
+        if (level == null) return;
+        if (getTick() % 10 == 0) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.ATTUNEMENT_BEAM, altar.getBlockPos()),
+                    (ServerLevel) level, altar.getBlockPos());
+        }
+    }
 
     @Override
     public void writeToNBT(@Nonnull CompoundTag nbt) {

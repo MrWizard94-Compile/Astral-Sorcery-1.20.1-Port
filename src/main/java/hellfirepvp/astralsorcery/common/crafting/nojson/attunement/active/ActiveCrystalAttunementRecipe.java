@@ -15,9 +15,12 @@ import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttuneCrystalRecipe;
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunementRecipe;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -78,7 +81,7 @@ public class ActiveCrystalAttunementRecipe extends AttunementRecipe.Active<Attun
 
     @Override
     public void doTick(@Nonnull LogicalSide side, @Nonnull BlockEntityAttunementAltar altar) {
-        if (side.isClient()) return; // Client VFX deferred to Phase 12
+        if (side.isClient()) return;
         Level level = altar.getLevel();
         if (level == null) return;
         ItemEntity crystal = getEntity(level);
@@ -90,6 +93,12 @@ public class ActiveCrystalAttunementRecipe extends AttunementRecipe.Active<Attun
         double hoverZ = altar.getBlockPos().getZ() + 0.5;
         crystal.setPos(hoverX, hoverY, hoverZ);
         crystal.setDeltaMovement(0, 0, 0);
+
+        if (getTick() % 10 == 0) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.ATTUNEMENT_BEAM, altar.getBlockPos()),
+                    (ServerLevel) level, altar.getBlockPos());
+        }
     }
 
     @Override
@@ -126,7 +135,9 @@ public class ActiveCrystalAttunementRecipe extends AttunementRecipe.Active<Attun
                 ci.setTraitConstellation(stack, minor);
             }
             crystalEntity.setItem(stack);
-            // AdvancementsAS.ATTUNE_CRYSTAL trigger deferred (advancement not yet ported)
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.CONSTELLATION_DISCOVER, altar.getBlockPos()),
+                    (ServerLevel) level, altar.getBlockPos());
         }
     }
 
