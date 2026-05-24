@@ -4,11 +4,14 @@ import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
+import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,7 +19,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
@@ -33,7 +35,7 @@ import java.util.List;
  * CapabilityFluidHandler -> ForgeCapabilities.FLUID_HANDLER,
  * LazyOptional pattern unchanged</p>
  */
-public class BlockEntityWell extends BlockEntityTick {
+public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiver {
 
     private static final int CAPACITY_MB = 2000;
 
@@ -55,6 +57,9 @@ public class BlockEntityWell extends BlockEntityTick {
     /** Sub-mB accumulated but not yet added to the integer tank. */
     private double fractionalFluid = 0.0;
 
+    /** Starlight received from the network this tick — consumed during production. */
+    private double starlightBuffer = 0.0;
+
     /** Ticks until the catalyst degrades by 1 durability point. */
     private static final int CATALYST_DEGRADE_INTERVAL = 600; // 30 seconds
 
@@ -64,6 +69,37 @@ public class BlockEntityWell extends BlockEntityTick {
     @Nullable
     private WellLiquefaction cachedRecipe = null;
     private boolean recipeDirty = true;
+
+    @Override
+    protected void onFirstTick() {
+        super.onFirstTick();
+        if (!isClientSide()) {
+            StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
+    }
+
+    // IStarlightReceiver implementation
+    @Override
+    public void receiveStarlight(double amount, @Nullable ResourceLocation constellation) {
+        starlightBuffer += amount;
+    }
+
+    @Override
+    public double getMaxStarlightInput() {
+        return 4.0;
+    }
+
+    @Nullable
+    @Override
+    public Level getReceiverLevel() {
+        return this.level;
+    }
 
     @Override
     public void tick() {
@@ -97,11 +133,14 @@ public class BlockEntityWell extends BlockEntityTick {
             return;
         }
 
-        // Production rate modified by time of day and weather
+        // Production rate modified by time of day, weather, and received starlight
         float distributionFactor = CelestialHandler.getStarlightDistributionFactor(level);
+        double starlightBoost = Math.sqrt(starlightBuffer + 1.0);
         double ratePerTick = BASE_PRODUCTION_PER_TICK
                 * cachedRecipe.getProductionMultiplier()
-                * distributionFactor;
+                * distributionFactor
+                * starlightBoost;
+        starlightBuffer = 0;
 
         if (ratePerTick <= 0) return;
 

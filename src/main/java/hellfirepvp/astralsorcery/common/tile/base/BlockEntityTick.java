@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 public abstract class BlockEntityTick extends BlockEntitySynchronized {
 
     private boolean firstTick = true;
+    private int tickCount = 0;
 
     protected BlockEntityTick(@Nonnull BlockEntityType<?> type, @Nonnull BlockPos pos,
                               @Nonnull BlockState state) {
@@ -53,6 +54,16 @@ public abstract class BlockEntityTick extends BlockEntitySynchronized {
             firstTick = false;
             onFirstTick();
         }
+        tickCount++;
+    }
+
+    public int getTicksExisted() {
+        return tickCount;
+    }
+
+    protected boolean doesSeeSky() {
+        Level level = getLevel();
+        return level != null && level.canSeeSky(getBlockPos());
     }
 
     /**

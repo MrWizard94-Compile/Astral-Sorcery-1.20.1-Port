@@ -113,7 +113,10 @@ public class ColorUtils {
                 String.format("color.minecraft.%s", color.getSerializedName()));
     }
 
-    // flareColorFromDye deferred until ColorsAS is ported
+    @Nonnull
+    public static Color flareColorFromDye(@Nonnull DyeColor color) {
+        return new Color(color.getFireworkColor());
+    }
 
     @Nonnull
     public static ChatFormatting textFormattingForDye(@Nonnull DyeColor color) {

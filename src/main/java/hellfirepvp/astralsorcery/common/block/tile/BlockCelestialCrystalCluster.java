@@ -1,10 +1,16 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
-import hellfirepvp.astralsorcery.common.block.base.BlockAS;
+import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityCelestialCrystals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -13,13 +19,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Celestial crystal cluster — grows in stages from 0 (sprout) to 4 (full).
  * Spawns during world gen in starlight-rich cave environments.
- * Full TE logic (TileCelestialCrystals, starlight growth) deferred to later phase.
  */
-public class BlockCelestialCrystalCluster extends BlockAS {
+public class BlockCelestialCrystalCluster extends BlockEntityBlock {
 
     public static final IntegerProperty STAGE = IntegerProperty.create("stage", 0, 4);
 
@@ -56,5 +62,19 @@ public class BlockCelestialCrystalCluster extends BlockAS {
             case 3 -> SHAPE_3;
             default -> SHAPE_4;
         };
+    }
+
+    @Nonnull
+    @Override
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return new BlockEntityCelestialCrystals(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
+                                                                   @Nonnull BlockState state,
+                                                                   @Nonnull BlockEntityType<T> type) {
+        return createTicker(type, BlockEntityTypesAS.CELESTIAL_CRYSTAL_CLUSTER.get());
     }
 }

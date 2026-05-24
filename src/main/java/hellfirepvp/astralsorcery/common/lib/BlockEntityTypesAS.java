@@ -3,18 +3,26 @@ package hellfirepvp.astralsorcery.common.lib;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityCelestialCrystals;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityChalice;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityFountain;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityGemCrystals;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityIlluminator;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityInfuser;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityLens;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityObservatory;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityPrism;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRelay;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityRitualLink;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRitualPedestal;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityTelescope;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityTranslucentBlock;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityTreeBeacon;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityTreeBeaconComponent;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityVanishing;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityWell;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -112,4 +120,44 @@ public class BlockEntityTypesAS {
             BLOCK_ENTITY_TYPES.register("tree_beacon", () ->
                     BlockEntityType.Builder.of(BlockEntityTreeBeacon::new,
                             BlocksAS.TREE_BEACON.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityTreeBeaconComponent>> TREE_BEACON_COMPONENT =
+            BLOCK_ENTITY_TYPES.register("tree_beacon_component", () ->
+                    BlockEntityType.Builder.of(BlockEntityTreeBeaconComponent::new,
+                            BlocksAS.TREE_BEACON_COMPONENT.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityCelestialCrystals>> CELESTIAL_CRYSTAL_CLUSTER =
+            BLOCK_ENTITY_TYPES.register("celestial_crystal_cluster", () ->
+                    BlockEntityType.Builder.of(BlockEntityCelestialCrystals::new,
+                            BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityGemCrystals>> GEM_CRYSTAL_CLUSTER =
+            BLOCK_ENTITY_TYPES.register("gem_crystal_cluster", () ->
+                    BlockEntityType.Builder.of(BlockEntityGemCrystals::new,
+                            BlocksAS.GEM_CRYSTAL_CLUSTER.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityTranslucentBlock>> TRANSLUCENT_BLOCK =
+            BLOCK_ENTITY_TYPES.register("translucent_block", () ->
+                    BlockEntityType.Builder.of(BlockEntityTranslucentBlock::new,
+                            BlocksAS.TRANSLUCENT_BLOCK.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityIlluminator>> ILLUMINATOR =
+            BLOCK_ENTITY_TYPES.register("illuminator", () ->
+                    BlockEntityType.Builder.of(BlockEntityIlluminator::new,
+                            BlocksAS.ILLUMINATOR.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityVanishing>> VANISHING =
+            BLOCK_ENTITY_TYPES.register("vanishing", () ->
+                    BlockEntityType.Builder.of(BlockEntityVanishing::new,
+                            BlocksAS.VANISHING.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityRefractionTable>> REFRACTION_TABLE =
+            BLOCK_ENTITY_TYPES.register("refraction_table", () ->
+                    BlockEntityType.Builder.of(BlockEntityRefractionTable::new,
+                            BlocksAS.REFRACTION_TABLE.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityRitualLink>> RITUAL_LINK =
+            BLOCK_ENTITY_TYPES.register("ritual_link", () ->
+                    BlockEntityType.Builder.of(BlockEntityRitualLink::new,
+                            BlocksAS.RITUAL_LINK.get()).build(null));
 }

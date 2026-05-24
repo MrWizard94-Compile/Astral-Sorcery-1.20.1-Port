@@ -2,6 +2,7 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -49,6 +50,20 @@ public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlight
 
     public BlockEntityTreeBeacon(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.TREE_BEACON.get(), pos, state);
+    }
+
+    @Override
+    protected void onFirstTick() {
+        super.onFirstTick();
+        if (!isClientSide()) {
+            StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
     }
 
     @Override

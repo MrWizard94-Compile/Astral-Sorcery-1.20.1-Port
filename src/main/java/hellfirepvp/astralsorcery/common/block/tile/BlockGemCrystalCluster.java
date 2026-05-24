@@ -1,11 +1,17 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
-import hellfirepvp.astralsorcery.common.block.base.BlockAS;
+import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityGemCrystals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -14,13 +20,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 /**
  * Gem crystal cluster — grows in three stages (DAY/NIGHT/SKY) influenced by perk gem type.
- * Spawns during world gen. Full TE logic (TileGemCrystals) deferred to later phase.
+ * Spawns during world gen.
  */
-public class BlockGemCrystalCluster extends BlockAS {
+public class BlockGemCrystalCluster extends BlockEntityBlock {
 
     public static final EnumProperty<GrowthStageType> STAGE = EnumProperty.create("stage", GrowthStageType.class);
 
@@ -52,6 +59,20 @@ public class BlockGemCrystalCluster extends BlockAS {
             case DAY_1, NIGHT_1, SKY_1 -> SHAPE_1;
             default -> SHAPE_2_SKY;
         };
+    }
+
+    @Nonnull
+    @Override
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return new BlockEntityGemCrystals(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level,
+                                                                   @Nonnull BlockState state,
+                                                                   @Nonnull BlockEntityType<T> type) {
+        return createTicker(type, BlockEntityTypesAS.GEM_CRYSTAL_CLUSTER.get());
     }
 
     public enum GrowthStageType implements StringRepresentable {

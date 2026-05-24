@@ -62,6 +62,10 @@ public abstract class MantleEffect {
         return false;
     }
 
+    public final boolean shouldTick() {
+        return usesTickMethods();
+    }
+
     /**
      * Override to register event listeners on the Forge event bus.
      * Called from {@link hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry#init()}.
