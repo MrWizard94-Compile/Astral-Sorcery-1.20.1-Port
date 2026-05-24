@@ -18,8 +18,7 @@ import java.util.Optional;
  * Seeds are used for deterministic constellation placement calculations.
  *
  * <p>1.16 -> 1.20 changes:
- * RegistryKey&lt;World&gt; -> ResourceKey&lt;Level&gt;,
- * PacketChannel usage deferred until networking is ported (Phase 10)</p>
+ * RegistryKey&lt;World&gt; -> ResourceKey&lt;Level&gt;</p>
  */
 public class WorldSeedCache {
 

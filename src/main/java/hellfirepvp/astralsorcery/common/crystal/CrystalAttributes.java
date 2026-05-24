@@ -26,9 +26,8 @@ import java.util.stream.Collectors;
  *
  * <p>1.16 → 1.20: CompoundNBT → CompoundTag, ListNBT → ListTag,
  * Constants.NBT.TAG_COMPOUND → Tag.TAG_COMPOUND,
- * ForgeRegistryEntry removed from CrystalProperty,
- * ResearchHelper/PlayerProgress references removed (research system not yet ported),
- * tooltip rendering deferred to Phase 12.</p>
+ * ForgeRegistryEntry removed from CrystalProperty.
+ * Tooltip rendering deferred to Phase 12.</p>
  */
 public final class CrystalAttributes {
 

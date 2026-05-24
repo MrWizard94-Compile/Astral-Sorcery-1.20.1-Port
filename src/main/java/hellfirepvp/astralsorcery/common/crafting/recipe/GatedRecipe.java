@@ -20,8 +20,7 @@ import javax.annotation.Nonnull;
 /**
  * Marks a recipe that requires a research gate to craft.
  *
- * <p>1.16 → 1.20: PlayerEntity → Player; ResearchHelper/ResearchProgression not yet
- * ported — {@link Progression} stubs both checks as {@code false} until they are.</p>
+ * <p>1.16 → 1.20: PlayerEntity → Player.</p>
  */
 public interface GatedRecipe {
 

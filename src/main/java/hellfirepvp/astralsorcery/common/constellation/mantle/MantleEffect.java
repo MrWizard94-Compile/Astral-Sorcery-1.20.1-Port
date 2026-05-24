@@ -103,8 +103,9 @@ public abstract class MantleEffect {
      * Per-constellation config block. Each subclass holds a static instance
      * that is built with the Forge config spec at class-load time.
      *
-     * <p>Full config wiring (addConfigEntry → ServerConfig) is deferred until
-     * the ServerConfig system is ported.</p>
+     * <p>Each subclass builds its own standalone spec; values are read-only
+     * defaults (not user-configurable via file) until specs are registered
+     * with Forge's config system.</p>
      */
     public static class Config {
 

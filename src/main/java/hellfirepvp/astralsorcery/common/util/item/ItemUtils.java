@@ -79,8 +79,6 @@ public class ItemUtils {
         return ei;
     }
 
-    // decrementItem(TileInventory, ...) deferred — TileInventory not ported
-
     public static void decrementItem(@Nonnull Supplier<ItemStack> getFromInventory,
                                      @Nonnull Consumer<ItemStack> setIntoInventory,
                                      @Nonnull Consumer<ItemStack> handleExcess) {

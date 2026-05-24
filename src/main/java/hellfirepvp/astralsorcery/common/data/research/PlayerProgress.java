@@ -25,7 +25,7 @@ import java.util.Set;
  *   <li>Progression tier (discovery, attunement, constellation, etc.)</li>
  *   <li>Discovered constellations</li>
  *   <li>Attuned constellation (if player is attuned)</li>
- *   <li>Perk point allocation (deferred to Phase 9)</li>
+ *   <li>Perk point allocation and configuration slots</li>
  * </ul>
  *
  * <p>1.16 -> 1.20 changes:

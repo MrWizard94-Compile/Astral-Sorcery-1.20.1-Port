@@ -3,17 +3,26 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.entity;
 
+import hellfirepvp.astralsorcery.common.lib.LootAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * A shooting star entity that falls from the sky during special celestial events.
@@ -75,9 +84,20 @@ public class EntityShootingStar extends Entity {
         if (impacted) return;
         impacted = true;
 
-        if (!level().isClientSide()) {
+        if (!level().isClientSide() && level() instanceof ServerLevel serverLevel) {
+            Vec3 pos = position();
+            LootTable table = serverLevel.getServer().getLootData()
+                    .getLootTable(LootAS.STARFALL_SHOOTING_STAR_REWARD);
+            LootParams params = new LootParams.Builder(serverLevel)
+                    .withParameter(LootContextParams.ORIGIN, pos)
+                    .create(LootContextParamSets.CHEST);
+            List<ItemStack> drops = table.getRandomItems(params);
+            for (ItemStack drop : drops) {
+                ItemEntity ie = new ItemEntity(serverLevel, pos.x, pos.y + 0.5, pos.z, drop);
+                ie.setDefaultPickUpDelay();
+                serverLevel.addFreshEntity(ie);
+            }
             discard();
-            // Particle burst and impact sound deferred — VFX/sound not yet ported (Phase 12)
         }
     }
 

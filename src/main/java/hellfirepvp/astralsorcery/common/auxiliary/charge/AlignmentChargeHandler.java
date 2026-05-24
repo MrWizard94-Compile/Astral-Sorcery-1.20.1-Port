@@ -40,10 +40,7 @@ import java.util.UUID;
  * PlayerEntity → Player, getUniqueID → getUUID,
  * getEntityWorld → level(), getPosition → blockPosition(),
  * DayTimeHelper → CelestialHandler, MathHelper → Mth,
- * Heightmap.Type → Heightmap.Types.
- * Perk attribute scaling of max/regen is not yet wired
- * (PerkAttributeTypesAS.ATTR_TYPE_ALIGNMENT_CHARGE_* not yet registered).
- * Client sync (PktSyncCharge) deferred.</p>
+ * Heightmap.Type → Heightmap.Types.</p>
  */
 public class AlignmentChargeHandler {
 

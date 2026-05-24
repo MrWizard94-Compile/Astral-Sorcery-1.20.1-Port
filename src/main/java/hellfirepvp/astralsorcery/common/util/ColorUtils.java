@@ -92,7 +92,6 @@ public class ColorUtils {
 
     /**
      * Get the tint color for an item stack (block or item color handler).
-     * Depends on ItemUtils.createBlockState (deferred until ItemUtils is ported).
      */
     @OnlyIn(Dist.CLIENT)
     public static int getOverlayColor(@Nonnull ItemStack stack) {

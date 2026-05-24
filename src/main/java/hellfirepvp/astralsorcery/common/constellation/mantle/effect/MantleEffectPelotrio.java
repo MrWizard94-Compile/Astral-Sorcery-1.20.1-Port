@@ -40,10 +40,6 @@ import javax.annotation.Nonnull;
  * a spectral axe may spawn. When breaking any block with a pickaxe, a spectral
  * pickaxe may spawn. Each spawn costs alignment charge.</p>
  *
- * <p>1.16 → 1.20 adaptation: EntitySpectralTool.ToolTask is not yet ported — the
- * entity spawns visually but does not perform block-breaking or attacking.
- * Speed/duration config values are retained for when ToolTask is re-implemented.</p>
- *
  * <p>1.16 → 1.20 API changes:
  * ToolType removed — axe/pickaxe detection now uses instanceof checks on the item class.
  * state.isIn(tag) → state.is(tag).
@@ -135,7 +131,6 @@ public class MantleEffectPelotrio extends MantleEffect {
         public ForgeConfigSpec.DoubleValue chanceSpawnSword;
         public ForgeConfigSpec.DoubleValue chanceSpawnPickaxe;
         public ForgeConfigSpec.DoubleValue chanceSpawnAxe;
-        // Speed/duration/ticks retained for when ToolTask is ported
         public ForgeConfigSpec.DoubleValue speedSword;
         public ForgeConfigSpec.DoubleValue speedPickaxe;
         public ForgeConfigSpec.DoubleValue speedAxe;

@@ -224,9 +224,6 @@ public class MiscUtils {
         return minElement;
     }
 
-    // ---- Sky visibility ----
-    // canSeeSky deferred — depends on GameRulesAS (not ported)
-
     // ---- Functional combinators ----
 
     @Nonnull
@@ -718,6 +715,4 @@ public class MiscUtils {
         return Optional.empty();
     }
 
-    // isPlayerFakeMP deferred — depends on Mods class (not ported)
-    // itDownTopBlock deferred — needs 1.20 chunk height rework
 }

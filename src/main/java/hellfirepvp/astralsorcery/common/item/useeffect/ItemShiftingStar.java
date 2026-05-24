@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 /**
  * Shifting Star — changes the player's attuned constellation (or clears it).
  * Subclasses override getBaseConstellation() for constellation-specific variants.
- * Perk XP realignment toward the new constellation is deferred to Phase 9 perk tree.
  *
  * <p>1.16 → 1.20: PlayerEntity → Player, ServerPlayerEntity → ServerPlayer,
  * ItemUseContext → InteractionHand, World → Level.</p>

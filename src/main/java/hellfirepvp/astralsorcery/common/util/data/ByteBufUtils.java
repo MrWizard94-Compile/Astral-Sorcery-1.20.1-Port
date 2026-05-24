@@ -310,8 +310,6 @@ public class ByteBufUtils {
         return new Vector3(x, y, z);
     }
 
-    // ModifierSource read/write deferred until perk system is ported (Phase 9)
-
     // ---- ItemStack ----
 
     public static void writeItemStack(@Nonnull FriendlyByteBuf byteBuf, @Nonnull ItemStack stack) {

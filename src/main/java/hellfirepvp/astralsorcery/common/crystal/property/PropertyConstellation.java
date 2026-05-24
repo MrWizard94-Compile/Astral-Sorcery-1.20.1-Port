@@ -13,11 +13,8 @@ import hellfirepvp.astralsorcery.common.crystal.CrystalProperty;
 
 /**
  * Crystal property for a specific constellation attunement on a crystal.
- * Modifiers for collector/ritual crystal source contexts are deferred until
- * the PropertySource/AttunedSourceInstance system is fully ported (Phase TBD).
  *
- * <p>1.16 → 1.20: ForgeRegistryEntry removed; carry ResourceLocation directly.
- * PlayerProgress.hasConstellationDiscovered deferred with research system.</p>
+ * <p>1.16 → 1.20: ForgeRegistryEntry removed; carry ResourceLocation directly.</p>
  */
 public class PropertyConstellation extends CrystalProperty {
 
@@ -26,7 +23,6 @@ public class PropertyConstellation extends CrystalProperty {
     public PropertyConstellation(IWeakConstellation cst) {
         super(AstralSorcery.key("constellation." + cst.getSimpleName()));
         this.cst = cst;
-        // Source-based collector/ritual modifiers deferred until PropertySource is wired
     }
 
     public IWeakConstellation getConstellation() {

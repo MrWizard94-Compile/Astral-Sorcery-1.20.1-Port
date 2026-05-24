@@ -41,8 +41,6 @@ import java.util.Optional;
  */
 public class RecipeHelper {
 
-    // findAltarRecipeResult deferred — depends on SimpleAltarRecipe (Phase 6)
-
     @Nonnull
     public static Optional<Tuple<ItemStack, Float>> findSmeltingResult(@Nonnull Level level,
                                                                        @Nonnull BlockState input) {

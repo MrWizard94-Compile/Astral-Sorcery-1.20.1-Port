@@ -223,10 +223,6 @@ public class EntityUtils {
         return closestElement;
     }
 
-    // Spawning methods deferred — the 1.20 spawning API (SpawnPlacements,
-    // NaturalSpawner, biome mob settings) is substantially restructured.
-    // Ported when constellation effects are implemented (Phase 9).
-
     public static class SpawnConditionFlags {
 
         public static final int IGNORE_PLACEMENT_RULES         = 0b0001;

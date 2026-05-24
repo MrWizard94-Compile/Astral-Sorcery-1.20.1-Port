@@ -19,7 +19,6 @@ import java.util.function.Predicate;
 /**
  * Abstract base for a single crystal property (size, purity, shape, etc.).
  * 1.16 → 1.20: ForgeRegistryEntry removed; carry ResourceLocation directly.
- * ResearchProgression requirement deferred (research system not yet ported).
  * ITextComponent → Component, TranslationTextComponent → Component.translatable.
  */
 public abstract class CrystalProperty implements Comparable<CrystalProperty> {
