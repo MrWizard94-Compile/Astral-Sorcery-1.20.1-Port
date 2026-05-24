@@ -14,10 +14,8 @@ import javax.annotation.Nullable;
  * A weak constellation — has ritual effects and mantle effects.
  * Major constellations extend this.
  *
- * <p>1.16 → 1.20 changes:
- * ITextComponent → Component,
- * TranslationTextComponent → Component.translatable(),
- * Registry lookups deferred until registries are populated</p>
+ * <p>1.16 → 1.20: ITextComponent → Component,
+ * TranslationTextComponent → Component.translatable().</p>
  */
 public interface IWeakConstellation extends IConstellation {
 
