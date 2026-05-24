@@ -1,0 +1,30 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "constellation",
+  "craft_duration": 600,
+  "starlight_required": 4000,
+  "output": {"item": "astralsorcery:fountain_prime_vortex", "count": 1},
+  "inputs": [
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {},
+    {"item": "astralsorcery:celestial_crystal"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {},
+    {"item": "astralsorcery:starmetal_ingot"},
+    {"item": "astralsorcery:stardust"},
+    {"item": "astralsorcery:celestial_crystal"},
+    {"item": "astralsorcery:stardust"}
+  ]
+}

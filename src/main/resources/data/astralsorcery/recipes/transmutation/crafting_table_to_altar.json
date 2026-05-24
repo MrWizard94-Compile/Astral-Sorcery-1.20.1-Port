@@ -1,0 +1,6 @@
+{
+  "type": "astralsorcery:block_transmutation",
+  "input": "minecraft:crafting_table",
+  "output": "astralsorcery:altar_discovery",
+  "starlightRequired": 60
+}

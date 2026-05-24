@@ -8,8 +8,11 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrime;
+import hellfirepvp.astralsorcery.common.lib.structure.MatchableState;
 import hellfirepvp.astralsorcery.common.lib.structure.PatternBlockArray;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -310,9 +313,22 @@ public final class StructuresAS {
      */
     private static PatternBlockArray buildFountain() {
         PatternBlockArray pattern = register("fountain");
-        // Small marble base
+        // 3x3 marble base at y=-1
         pattern.addBlockCube(BlocksAS.MARBLE_RAW.get().defaultBlockState(),
                 -1, -1, -1, 1, -1, 1);
+        // Override center (0,-1,0): accept marble_raw OR any BlockFountainPrime placed by the player
+        pattern.addBlock(new MatchableState() {
+            @Override
+            public BlockState getDescriptiveState(long tick) {
+                return BlocksAS.MARBLE_RAW.get().defaultBlockState();
+            }
+
+            @Override
+            public boolean matches(BlockState state) {
+                return state.getBlock() == BlocksAS.MARBLE_RAW.get()
+                        || state.getBlock() instanceof BlockFountainPrime;
+            }
+        }, 0, -1, 0);
         // Engraved corners at y=0
         pattern.addBlock(BlocksAS.MARBLE_ENGRAVED.get().defaultBlockState(), -1, 0, -1);
         pattern.addBlock(BlocksAS.MARBLE_ENGRAVED.get().defaultBlockState(), 1, 0, -1);

@@ -6,6 +6,7 @@ import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInteraction;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.AltarUpgradeRecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -43,4 +44,8 @@ public class RecipeSerializersAS {
     public static final RegistryObject<RecipeSerializer<LiquidInteraction>> LIQUID_INTERACTION =
             RECIPE_SERIALIZERS.register("liquid_interaction",
                     LiquidInteraction.Serializer::new);
+
+    public static final RegistryObject<RecipeSerializer<SimpleAltarRecipe>> ALTAR_UPGRADE =
+            RECIPE_SERIALIZERS.register("altar_upgrade",
+                    AltarUpgradeRecipeSerializer::new);
 }

@@ -1,26 +1,29 @@
-/*******************************************************************************
- * HellFirePvP / Astral Sorcery 2024
- ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crafting.nojson;
 
 import hellfirepvp.astralsorcery.common.crafting.nojson.fountain.FountainEffect;
+import hellfirepvp.astralsorcery.common.crafting.nojson.fountain.FountainEffectLiquid;
+import hellfirepvp.astralsorcery.common.crafting.nojson.fountain.FountainEffectVortex;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Registry for fountain effects. Full effect implementations (liquid, vortex)
- * are deferred to Phase 12 (client rendering / block entity behavior).
- */
 public class FountainEffectRegistry {
+
+    public static final FountainEffectLiquid EFFECT_LIQUID = new FountainEffectLiquid();
+    public static final FountainEffectVortex EFFECT_VORTEX = new FountainEffectVortex();
 
     private static final Map<ResourceLocation, FountainEffect<?>> registry = new HashMap<>();
 
     private FountainEffectRegistry() {}
 
-    public static void register(@Nullable FountainEffect<?> effect) {
+    public static void registerAll() {
+        register(EFFECT_LIQUID);
+        register(EFFECT_VORTEX);
+    }
+
+    private static void register(@Nullable FountainEffect<?> effect) {
         if (effect != null) {
             registry.put(effect.getId(), effect);
         }

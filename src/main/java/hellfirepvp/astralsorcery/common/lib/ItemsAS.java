@@ -263,6 +263,10 @@ public class ItemsAS {
             ITEMS.register("black_marble_runed", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_RUNED.get()));
     public static final RegistryObject<BlockItem> BLACK_MARBLE_PILLAR_ITEM =
             ITEMS.register("black_marble_pillar", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_PILLAR.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_SLAB_ITEM =
+            ITEMS.register("black_marble_slab", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_SLAB.get()));
+    public static final RegistryObject<BlockItem> BLACK_MARBLE_STAIRS_ITEM =
+            ITEMS.register("black_marble_stairs", () -> new ItemBlockAS(BlocksAS.BLACK_MARBLE_STAIRS.get()));
 
     // Infused wood family
     public static final RegistryObject<BlockItem> INFUSED_WOOD_ITEM =
@@ -277,6 +281,10 @@ public class ItemsAS {
             ITEMS.register("infused_wood_enriched", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_ENRICHED.get()));
     public static final RegistryObject<BlockItem> INFUSED_WOOD_PLANKS_ITEM =
             ITEMS.register("infused_wood_planks", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_PLANKS.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_SLAB_ITEM =
+            ITEMS.register("infused_wood_slab", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_SLAB.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_STAIRS_ITEM =
+            ITEMS.register("infused_wood_stairs", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_STAIRS.get()));
 
     // Ores
     public static final RegistryObject<BlockItem> ROCK_CRYSTAL_ORE_ITEM =
@@ -339,6 +347,10 @@ public class ItemsAS {
             ITEMS.register("gateway", () -> new ItemBlockAS(BlocksAS.GATEWAY.get()));
     public static final RegistryObject<BlockItem> FOUNTAIN_ITEM =
             ITEMS.register("fountain", () -> new ItemBlockAS(BlocksAS.FOUNTAIN.get()));
+    public static final RegistryObject<BlockItem> FOUNTAIN_PRIME_LIQUID_ITEM =
+            ITEMS.register("fountain_prime_liquid", () -> new ItemBlockAS(BlocksAS.FOUNTAIN_PRIME_LIQUID.get()));
+    public static final RegistryObject<BlockItem> FOUNTAIN_PRIME_VORTEX_ITEM =
+            ITEMS.register("fountain_prime_vortex", () -> new ItemBlockAS(BlocksAS.FOUNTAIN_PRIME_VORTEX.get()));
     public static final RegistryObject<BlockItem> OBSERVATORY_ITEM =
             ITEMS.register("observatory", () -> new ItemBlockAS(BlocksAS.OBSERVATORY.get()));
     public static final RegistryObject<BlockItem> TREE_BEACON_ITEM =

@@ -4,8 +4,12 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.block.BlackMarble;
 import hellfirepvp.astralsorcery.common.block.BlockIlluminator;
 import hellfirepvp.astralsorcery.common.block.BlockInfusedWood;
+import hellfirepvp.astralsorcery.common.block.BlockInfusedWoodSlab;
+import hellfirepvp.astralsorcery.common.block.BlockInfusedWoodStairs;
 import hellfirepvp.astralsorcery.common.block.foliage.BlockGlowFlower;
 import hellfirepvp.astralsorcery.common.block.marble.BlockBlackMarblePillar;
+import hellfirepvp.astralsorcery.common.block.marble.BlockBlackMarbleSlab;
+import hellfirepvp.astralsorcery.common.block.marble.BlockBlackMarbleStairs;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarble;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarblePillar;
 import hellfirepvp.astralsorcery.common.block.marble.BlockMarbleSlab;
@@ -21,6 +25,8 @@ import hellfirepvp.astralsorcery.common.block.tile.BlockChalice;
 import hellfirepvp.astralsorcery.common.block.tile.BlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.block.tile.BlockFlareLight;
 import hellfirepvp.astralsorcery.common.block.tile.BlockFountain;
+import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrimeLiquid;
+import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrimeVortex;
 import hellfirepvp.astralsorcery.common.block.tile.BlockGateway;
 import hellfirepvp.astralsorcery.common.block.tile.BlockGemCrystalCluster;
 import hellfirepvp.astralsorcery.common.block.tile.BlockInfuser;
@@ -90,6 +96,10 @@ public class BlocksAS {
             BLOCKS.register("black_marble_runed", BlackMarble::new);
     public static final RegistryObject<BlockBlackMarblePillar> BLACK_MARBLE_PILLAR =
             BLOCKS.register("black_marble_pillar", BlockBlackMarblePillar::new);
+    public static final RegistryObject<BlockBlackMarbleSlab> BLACK_MARBLE_SLAB =
+            BLOCKS.register("black_marble_slab", BlockBlackMarbleSlab::new);
+    public static final RegistryObject<BlockBlackMarbleStairs> BLACK_MARBLE_STAIRS =
+            BLOCKS.register("black_marble_stairs", () -> new BlockBlackMarbleStairs(() -> BLACK_MARBLE_RAW.get().defaultBlockState()));
 
     // ---- Infused wood ----
     public static final RegistryObject<BlockInfusedWood> INFUSED_WOOD =
@@ -104,6 +114,10 @@ public class BlocksAS {
             BLOCKS.register("infused_wood_enriched", BlockInfusedWood::new);
     public static final RegistryObject<BlockInfusedWood> INFUSED_WOOD_PLANKS =
             BLOCKS.register("infused_wood_planks", BlockInfusedWood::new);
+    public static final RegistryObject<BlockInfusedWoodSlab> INFUSED_WOOD_SLAB =
+            BLOCKS.register("infused_wood_slab", BlockInfusedWoodSlab::new);
+    public static final RegistryObject<BlockInfusedWoodStairs> INFUSED_WOOD_STAIRS =
+            BLOCKS.register("infused_wood_stairs", () -> new BlockInfusedWoodStairs(() -> INFUSED_WOOD_PLANKS.get().defaultBlockState()));
 
     // ---- Ores ----
     public static final RegistryObject<BlockRockCrystalOre> ROCK_CRYSTAL_ORE =
@@ -166,6 +180,10 @@ public class BlocksAS {
             BLOCKS.register("gateway", BlockGateway::new);
     public static final RegistryObject<BlockFountain> FOUNTAIN =
             BLOCKS.register("fountain", BlockFountain::new);
+    public static final RegistryObject<BlockFountainPrimeLiquid> FOUNTAIN_PRIME_LIQUID =
+            BLOCKS.register("fountain_prime_liquid", BlockFountainPrimeLiquid::new);
+    public static final RegistryObject<BlockFountainPrimeVortex> FOUNTAIN_PRIME_VORTEX =
+            BLOCKS.register("fountain_prime_vortex", BlockFountainPrimeVortex::new);
     public static final RegistryObject<BlockObservatory> OBSERVATORY =
             BLOCKS.register("observatory", BlockObservatory::new);
     public static final RegistryObject<BlockTreeBeacon> TREE_BEACON =

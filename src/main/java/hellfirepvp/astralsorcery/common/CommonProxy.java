@@ -16,6 +16,7 @@ import hellfirepvp.astralsorcery.common.event.helper.EventHelperTemporaryFlight;
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry;
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.AttunementCraftingRegistry;
+import hellfirepvp.astralsorcery.common.crafting.nojson.FountainEffectRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.LiquidStarlightCraftingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
@@ -184,6 +185,7 @@ public class CommonProxy {
             AttunementCraftingRegistry.INSTANCE.init();
             WorldMeltableRegistry.INSTANCE.init();
             WorldFreezingRegistry.INSTANCE.init();
+            FountainEffectRegistry.registerAll();
         });
     }
 }

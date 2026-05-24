@@ -1,12 +1,9 @@
 {
-  "type": "astralsorcery:altar",
+  "type": "astralsorcery:altar_upgrade",
   "altar_type": "discovery",
+  "target_altar_type": "attunement",
   "craft_duration": 200,
   "starlight_required": 500,
-  "output": {
-    "item": "astralsorcery:altar_attunement",
-    "count": 1
-  },
   "inputs": [
     {"item": "astralsorcery:aquamarine"},
     {"item": "astralsorcery:rock_crystal"},

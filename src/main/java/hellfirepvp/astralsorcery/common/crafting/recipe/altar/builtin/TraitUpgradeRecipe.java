@@ -10,6 +10,8 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarUpgradeRecipe;
+import hellfirepvp.astralsorcery.common.lib.RecipeSerializersAS;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.core.BlockPos;
@@ -45,6 +47,12 @@ public class TraitUpgradeRecipe extends SimpleAltarRecipe implements AltarUpgrad
                 other.getId(), other.getAltarType(), other.getCraftDuration(),
                 other.getStarlightRequired(), other.getOutput(),
                 other.getIngredients(), other.getFocusConstellation());
+    }
+
+    @Nonnull
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return RecipeSerializersAS.ALTAR_UPGRADE.get();
     }
 
     @Override
