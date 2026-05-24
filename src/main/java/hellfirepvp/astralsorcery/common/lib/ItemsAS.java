@@ -51,8 +51,11 @@ import hellfirepvp.astralsorcery.common.item.wand.ItemExchangeWand;
 import hellfirepvp.astralsorcery.common.item.wand.ItemGrappleWand;
 import hellfirepvp.astralsorcery.common.item.wand.ItemIlluminationWand;
 import hellfirepvp.astralsorcery.common.item.wand.ItemWand;
+import hellfirepvp.astralsorcery.common.lib.FluidsAS;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -319,4 +322,10 @@ public class ItemsAS {
             ITEMS.register("observatory", () -> new ItemBlockAS(BlocksAS.OBSERVATORY.get()));
     public static final RegistryObject<BlockItem> TREE_BEACON_ITEM =
             ITEMS.register("tree_beacon", () -> new ItemBlockAS(BlocksAS.TREE_BEACON.get()));
+
+    // ---- Fluid buckets ----
+    public static final RegistryObject<BucketItem> BUCKET_LIQUID_STARLIGHT =
+            ITEMS.register("bucket_liquid_starlight", () -> new BucketItem(
+                    () -> FluidsAS.LIQUID_STARLIGHT.get(),
+                    new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 }

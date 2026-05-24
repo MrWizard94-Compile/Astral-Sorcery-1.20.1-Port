@@ -39,6 +39,7 @@ import hellfirepvp.astralsorcery.common.block.tile.BlockTreeBeacon;
 import hellfirepvp.astralsorcery.common.block.tile.BlockTreeBeaconComponent;
 import hellfirepvp.astralsorcery.common.block.tile.BlockVanishing;
 import hellfirepvp.astralsorcery.common.block.tile.BlockWell;
+import hellfirepvp.astralsorcery.common.fluid.BlockLiquidStarlight;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -177,4 +178,8 @@ public class BlocksAS {
             BLOCKS.register("ritual_link", BlockRitualLink::new);
     public static final RegistryObject<BlockSpectralRelay> SPECTRAL_RELAY =
             BLOCKS.register("spectral_relay", BlockSpectralRelay::new);
+
+    // ---- Fluid blocks ----
+    public static final RegistryObject<BlockLiquidStarlight> FLUID_LIQUID_STARLIGHT =
+            BLOCKS.register("fluid_liquid_starlight", BlockLiquidStarlight::new);
 }
