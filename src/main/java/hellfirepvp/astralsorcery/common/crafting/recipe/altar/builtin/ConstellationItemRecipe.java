@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 
 /**
  * Altar recipe that produces items with constellation attunement.
- * Extends {@link ConstellationBaseItemRecipe}; CrystalAttributes logic deferred.
+ * Extends {@link ConstellationBaseItemRecipe}.
  */
 public class ConstellationItemRecipe extends ConstellationBaseItemRecipe {
 

@@ -24,8 +24,7 @@ import java.util.List;
 
 /**
  * Altar recipe that averages the CrystalAttributes of all input crystal items
- * and applies the result to the output. Full logic deferred until CrystalAttributes
- * is ported.
+ * and applies the result to the output.
  */
 public class ConstellationBaseAverageStatsRecipe extends ConstellationBaseItemRecipe {
 

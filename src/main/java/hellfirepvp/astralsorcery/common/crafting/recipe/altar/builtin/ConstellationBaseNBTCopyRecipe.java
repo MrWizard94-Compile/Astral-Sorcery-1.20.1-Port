@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 /**
  * Combination of {@link ConstellationBaseItemRecipe} and {@link NBTCopyRecipe}:
  * produces a constellation-attuned item while copying NBT from a source slot.
- * CrystalAttributes + NBT copy logic deferred.
  */
 public class ConstellationBaseNBTCopyRecipe extends ConstellationBaseItemRecipe {
 

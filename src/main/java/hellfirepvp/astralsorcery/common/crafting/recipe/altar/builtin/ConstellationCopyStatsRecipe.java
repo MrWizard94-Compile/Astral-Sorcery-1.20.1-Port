@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Altar recipe that copies CrystalAttributes from a source input crystal to the output.
- * Full logic deferred until CrystalAttributes is ported.
+ * Altar recipe that copies the attuned constellation tag from the first matching input crystal to the output.
  */
 public class ConstellationCopyStatsRecipe extends ConstellationBaseItemRecipe {
 

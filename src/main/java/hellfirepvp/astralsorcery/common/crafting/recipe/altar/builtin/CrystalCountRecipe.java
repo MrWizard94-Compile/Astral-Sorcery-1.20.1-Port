@@ -22,9 +22,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Altar recipe that produces multiple output crystals by setting their stack count
- * based on the number of crystal inputs. Full logic deferred until CrystalAttributes
- * is ported.
+ * Altar recipe that produces multiple output crystals, averaging input crystal stats
+ * and setting output count via {@link hellfirepvp.astralsorcery.common.crystal.CrystalCalculations#getSizeCraftingAmount}.
  */
 public class CrystalCountRecipe extends ConstellationBaseAverageStatsRecipe {
 

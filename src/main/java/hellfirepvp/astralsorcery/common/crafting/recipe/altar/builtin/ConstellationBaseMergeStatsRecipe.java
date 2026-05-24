@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Altar recipe that merges the CrystalAttributes of multiple input crystals
- * into a single output crystal. Full logic deferred until CrystalAttributes is ported.
+ * into a single output crystal using a best-of strategy (Math.max per stat).
  */
 public class ConstellationBaseMergeStatsRecipe extends ConstellationBaseItemRecipe {
 

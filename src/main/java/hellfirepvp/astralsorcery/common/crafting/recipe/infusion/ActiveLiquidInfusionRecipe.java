@@ -33,8 +33,7 @@ import java.util.function.Consumer;
  * <p>1.16 → 1.20: CompoundNBT → CompoundTag, ListNBT → ListTag,
  * Constants.NBT.TAG_COMPOUND → Tag.TAG_COMPOUND, World → Level,
  * putUniqueId/getUniqueId → putUUID/getUUID,
- * LogicalSidedProvider → ServerLifecycleHooks.getCurrentServer();
- * chalice multi-fluid and client-side effects deferred (not in port yet).</p>
+ * LogicalSidedProvider → ServerLifecycleHooks.getCurrentServer().</p>
  */
 public class ActiveLiquidInfusionRecipe {
 
