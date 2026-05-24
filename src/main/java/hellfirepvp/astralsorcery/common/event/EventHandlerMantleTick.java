@@ -34,7 +34,7 @@ public class EventHandlerMantleTick {
         if (chest.isEmpty() || !(chest.getItem() instanceof ItemMantle mantle)) return;
 
         MantleEffect effect = MantleEffectRegistry.getEffectForItem(mantle);
-        if (effect == null || !effect.usesTickMethods()) return;
+        if (effect == null || !effect.shouldTick()) return;
 
         effect.onServerTick(player);
     }

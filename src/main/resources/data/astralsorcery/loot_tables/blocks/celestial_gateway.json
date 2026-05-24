@@ -6,7 +6,13 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "astralsorcery:lens"
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            }
+          ],
+          "name": "astralsorcery:celestial_gateway"
         }
       ],
       "conditions": [
@@ -18,7 +24,7 @@
   ],
   "functions": [
     {
-      "function": "astralsorcery:copy_crystal_properties"
+      "function": "astralsorcery:copy_gateway_color"
     }
   ]
 }

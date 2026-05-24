@@ -10,18 +10,28 @@ package hellfirepvp.astralsorcery.common.loot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.lib.EnchantmentsAS;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
+import hellfirepvp.astralsorcery.common.util.RecipeHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.util.RandomSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import net.minecraft.util.RandomSource;
+
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
@@ -51,6 +61,75 @@ public final class GlobalLootModifierAS {
 
     public static final RegistryObject<Codec<AstralLootModifier>> ASTRAL_LOOT =
             LOOT_MODIFIERS.register("astral_loot", () -> AstralLootModifier.CODEC);
+
+    public static final RegistryObject<Codec<ScorchingHeatLootModifier>> SCORCHING_HEAT_LOOT =
+            LOOT_MODIFIERS.register("scorching_heat_loot", () -> ScorchingHeatLootModifier.CODEC);
+
+    /**
+     * Global loot modifier that smelts all block drops when the breaking tool
+     * has the Scorching Heat enchantment. Also spawns XP orbs at the drop origin
+     * for each item that was smelted.
+     */
+    public static class ScorchingHeatLootModifier extends LootModifier {
+
+        public static final Codec<ScorchingHeatLootModifier> CODEC =
+                RecordCodecBuilder.create(instance ->
+                        codecStart(instance).apply(instance, ScorchingHeatLootModifier::new));
+
+        protected ScorchingHeatLootModifier(@Nonnull LootItemCondition[] conditions) {
+            super(conditions);
+        }
+
+        @Override
+        @Nonnull
+        protected ObjectArrayList<ItemStack> doApply(@Nonnull ObjectArrayList<ItemStack> generatedLoot,
+                                                     @Nonnull LootContext context) {
+            ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
+            if (tool == null || tool.isEmpty()) {
+                return generatedLoot;
+            }
+            int enchLevel = EnchantmentHelper.getItemEnchantmentLevel(EnchantmentsAS.SCORCHING_HEAT.get(), tool);
+            if (enchLevel <= 0) {
+                return generatedLoot;
+            }
+
+            ServerLevel serverLevel = context.getLevel();
+
+            Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+
+            ObjectArrayList<ItemStack> result = new ObjectArrayList<>();
+            for (ItemStack stack : generatedLoot) {
+                Optional<Tuple<ItemStack, Float>> smeltOpt = RecipeHelper.findSmeltingResult(serverLevel, stack);
+                if (smeltOpt.isPresent() && !smeltOpt.get().getA().isEmpty()) {
+                    Tuple<ItemStack, Float> smelt = smeltOpt.get();
+                    ItemStack smelted = smelt.getA().copy();
+                    smelted.setCount(stack.getCount());
+                    result.add(smelted);
+
+                    if (origin != null) {
+                        float xp = smelt.getB() * stack.getCount();
+                        int xpInt = (int) xp;
+                        if (context.getRandom().nextFloat() < (xp - xpInt)) {
+                            xpInt++;
+                        }
+                        if (xpInt > 0) {
+                            serverLevel.addFreshEntity(new ExperienceOrb(serverLevel,
+                                    origin.x, origin.y, origin.z, xpInt));
+                        }
+                    }
+                } else {
+                    result.add(stack);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        @Nonnull
+        public Codec<ScorchingHeatLootModifier> codec() {
+            return CODEC;
+        }
+    }
 
     /**
      * Loot modifier that conditionally adds Astral Sorcery items to loot.

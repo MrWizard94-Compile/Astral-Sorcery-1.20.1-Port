@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "astralsorcery:lens"
+          "name": "astralsorcery:spectral_relay"
         }
       ],
       "conditions": [
@@ -14,11 +14,6 @@
           "condition": "minecraft:survives_explosion"
         }
       ]
-    }
-  ],
-  "functions": [
-    {
-      "function": "astralsorcery:copy_crystal_properties"
     }
   ]
 }

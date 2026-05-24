@@ -9,7 +9,7 @@ import hellfirepvp.astralsorcery.common.util.tick.TickTokenMap;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 
@@ -42,9 +42,8 @@ public class EventHelperSpawnDeny {
         eventBus.addListener(EventHelperSpawnDeny::onSpawn);
     }
 
-    private static void onSpawn(LivingSpawnEvent.CheckSpawn event) {
+    private static void onSpawn(MobSpawnEvent.PositionCheck event) {
         if (event.getResult() == Event.Result.DENY
-                || event.getLevel().isClientSide()
                 || event.getSpawner() != null) {
             return;
         }

@@ -4,6 +4,7 @@
 package hellfirepvp.astralsorcery.common.event;
 
 import hellfirepvp.astralsorcery.common.auxiliary.TransmutationHelper;
+import hellfirepvp.astralsorcery.common.event.helper.EventHelperDamageCancelling;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperInvulnerability;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperSpawnDeny;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperTemporaryFlight;
@@ -65,6 +66,7 @@ public class EventHandlerServerTick {
     @SubscribeEvent
     public void onServerStopping(@Nonnull ServerStoppingEvent event) {
         TransmutationHelper.clearAll();
+        EventHelperDamageCancelling.clearServer();
         EventHelperInvulnerability.clearServer();
         EventHelperTemporaryFlight.clearServer();
         EventHelperSpawnDeny.clearServer();
