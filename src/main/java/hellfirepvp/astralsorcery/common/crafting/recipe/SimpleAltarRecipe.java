@@ -202,8 +202,12 @@ public class SimpleAltarRecipe implements Recipe<Container> {
                     ? new ResourceLocation(GsonHelper.getAsString(json, "focus_constellation"))
                     : null;
 
-            return new SimpleAltarRecipe(id, altarType, duration, starlight,
+            SimpleAltarRecipe recipe = new SimpleAltarRecipe(id, altarType, duration, starlight,
                     output, inputs, constellation);
+            if (GsonHelper.getAsBoolean(json, "copy_crystal_properties", false)) {
+                return hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.NBTCopyRecipe.convertToThis(recipe);
+            }
+            return recipe;
         }
 
         @Nullable

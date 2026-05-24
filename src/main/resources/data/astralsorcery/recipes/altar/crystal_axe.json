@@ -1,5 +1,6 @@
 {
   "type": "astralsorcery:altar",
+  "copy_crystal_properties": true,
   "altar_type": "attunement",
   "craft_duration": 200,
   "starlight_required": 600,

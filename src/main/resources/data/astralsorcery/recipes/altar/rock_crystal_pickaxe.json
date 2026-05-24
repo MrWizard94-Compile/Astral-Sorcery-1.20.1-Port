@@ -1,5 +1,6 @@
 {
   "type": "astralsorcery:altar",
+  "copy_crystal_properties": true,
   "altar_type": "discovery",
   "craft_duration": 120,
   "starlight_required": 300,

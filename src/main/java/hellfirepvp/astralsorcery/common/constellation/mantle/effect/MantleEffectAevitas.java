@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.event.entity.living.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -100,7 +100,7 @@ public class MantleEffectAevitas extends MantleEffect {
      * on ground but no solid block beneath their feet.
      */
     public static boolean isFloatingOnAir(@Nonnull Player player) {
-        if (!player.isOnGround()) return false;
+        if (!player.onGround()) return false;
         BlockPos below = player.blockPosition().below();
         return player.level().getBlockState(below).isAir();
     }
@@ -116,7 +116,7 @@ public class MantleEffectAevitas extends MantleEffect {
     public static class PlayerWalkableAir {
 
         @SubscribeEvent
-        public void onLivingUpdate(@Nonnull LivingUpdateEvent event) {
+        public void onLivingUpdate(@Nonnull LivingEvent.LivingTickEvent event) {
             if (!(event.getEntity() instanceof Player player)) return;
             if (player.level().isClientSide()) return;
             if (player.getAbilities().flying) return;
