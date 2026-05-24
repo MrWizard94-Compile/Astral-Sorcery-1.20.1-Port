@@ -20,8 +20,8 @@ import java.util.List;
  * Call {@link #init()} during FMLCommonSetupEvent (after ConstellationsAS.init()).
  *
  * <p>1.16 → 1.20: ForgeRegistry replaced with CrystalPropertyRegistry (plain map).
- * PropertySource / CrystalCalculations / CrystalAttributeGenItem wiring deferred until
- * the collector/ritual tile entity system is ported.</p>
+ * BlockEntityCollector (starlight collector crystal) is not yet ported; collector-specific
+ * crystal attribute generation wiring is blocked on that tile entity.</p>
  */
 public class CrystalPropertiesAS {
 

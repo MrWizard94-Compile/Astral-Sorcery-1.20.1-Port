@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 
 /**
  * Base class for altar recipes that involve constellation-based crystal item crafting.
- * Crystal attribute manipulation deferred until CrystalAttributes is ported.
+ * Subclasses apply CrystalProperties transformations (average, merge, copy stats).
  */
 public class ConstellationBaseItemRecipe extends SimpleAltarRecipe {
 
