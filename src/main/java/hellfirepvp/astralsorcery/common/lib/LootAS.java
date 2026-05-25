@@ -23,22 +23,27 @@ public class LootAS {
     public static final ResourceLocation STARFALL_SHOOTING_STAR_REWARD =
             AstralSorcery.key("gameplay/starfall/shooting_star");
 
-    public static final class Functions {
+    // Registered directly in the outer class so these initializers run when LootAS is loaded,
+    // ensuring the DeferredRegister entries exist before RegisterEvent fires.
+    public static final RegistryObject<LootItemFunctionType> LINEAR_LUCK_BONUS =
+            LOOT_FUNCTION_TYPES.register("linear_luck_bonus",
+                    () -> new LootItemFunctionType(new LinearLuckBonus.Serializer()));
 
-        public static final RegistryObject<LootItemFunctionType> LINEAR_LUCK_BONUS =
-                LOOT_FUNCTION_TYPES.register("linear_luck_bonus",
-                        () -> new LootItemFunctionType(new LinearLuckBonus.Serializer()));
+    // Singular alias — used by rock_crystal_ore.json loot table
+    public static final RegistryObject<LootItemFunctionType> RANDOM_CRYSTAL_PROPERTY =
+            LOOT_FUNCTION_TYPES.register("random_crystal_property",
+                    () -> new LootItemFunctionType(new RandomCrystalProperty.Serializer()));
 
-        public static final RegistryObject<LootItemFunctionType> RANDOM_CRYSTAL_PROPERTIES =
-                LOOT_FUNCTION_TYPES.register("random_crystal_properties",
-                        () -> new LootItemFunctionType(new RandomCrystalProperty.Serializer()));
+    // Plural form — used by shooting_star.json loot table
+    public static final RegistryObject<LootItemFunctionType> RANDOM_CRYSTAL_PROPERTIES =
+            LOOT_FUNCTION_TYPES.register("random_crystal_properties",
+                    () -> new LootItemFunctionType(new RandomCrystalProperty.Serializer()));
 
-        public static final RegistryObject<LootItemFunctionType> COPY_CRYSTAL_PROPERTIES =
-                LOOT_FUNCTION_TYPES.register("copy_crystal_properties",
-                        () -> new LootItemFunctionType(new CopyCrystalProperties.Serializer()));
+    public static final RegistryObject<LootItemFunctionType> COPY_CRYSTAL_PROPERTIES =
+            LOOT_FUNCTION_TYPES.register("copy_crystal_properties",
+                    () -> new LootItemFunctionType(new CopyCrystalProperties.Serializer()));
 
-        public static final RegistryObject<LootItemFunctionType> COPY_CONSTELLATION =
-                LOOT_FUNCTION_TYPES.register("copy_constellation",
-                        () -> new LootItemFunctionType(new CopyConstellation.Serializer()));
-    }
+    public static final RegistryObject<LootItemFunctionType> COPY_CONSTELLATION =
+            LOOT_FUNCTION_TYPES.register("copy_constellation",
+                    () -> new LootItemFunctionType(new CopyConstellation.Serializer()));
 }

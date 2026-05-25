@@ -1,10 +1,6 @@
 {
   "type": "astralsorcery:block_transmutation",
-  "input": {
-    "block": "minecraft:netherrack"
-  },
-  "output": {
-    "block": "minecraft:nether_bricks"
-  },
-  "starlight_required": 80
+  "input": "minecraft:netherrack",
+  "output": "minecraft:nether_bricks",
+  "starlightRequired": 80
 }

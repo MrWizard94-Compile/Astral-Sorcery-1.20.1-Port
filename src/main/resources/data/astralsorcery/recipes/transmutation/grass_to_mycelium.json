@@ -1,10 +1,6 @@
 {
   "type": "astralsorcery:block_transmutation",
-  "input": {
-    "block": "minecraft:grass_block"
-  },
-  "output": {
-    "block": "minecraft:mycelium"
-  },
-  "starlight_required": 120
+  "input": "minecraft:grass_block",
+  "output": "minecraft:mycelium",
+  "starlightRequired": 120
 }

@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.Color;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,13 +57,24 @@ public class ItemColoredLens extends ItemAS {
      * Defines the available lens color types and their associated effects.
      */
     public enum LensColor implements StringRepresentable {
-        FIRE,
-        BREAK,
-        GROWTH,
-        DAMAGE,
-        REGENERATION,
-        PUSH,
-        SPECTRAL;
+        FIRE         (new Color(255,  90,   0)),
+        BREAK        (new Color(160, 160, 160)),
+        GROWTH       (new Color( 60, 200,  80)),
+        DAMAGE       (new Color(200,  30,  30)),
+        REGENERATION (new Color(100, 220,  60)),
+        PUSH         (new Color( 30, 200, 200)),
+        SPECTRAL     (new Color(180,  80, 255));
+
+        @Nonnull private final Color beamColor;
+
+        LensColor(@Nonnull Color beamColor) {
+            this.beamColor = beamColor;
+        }
+
+        @Nonnull
+        public Color getBeamColor() {
+            return beamColor;
+        }
 
         @Override
         @Nonnull

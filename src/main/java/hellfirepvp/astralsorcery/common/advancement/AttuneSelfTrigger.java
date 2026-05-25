@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 public class AttuneSelfTrigger extends SimpleCriterionTrigger<ConstellationInstance> {
 
-    public static final ResourceLocation ID = AstralSorcery.key("attune_self");
+    public static final ResourceLocation ID = AstralSorcery.key("attune_player");
 
     @Override
     @Nonnull

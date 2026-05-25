@@ -26,6 +26,7 @@ import hellfirepvp.astralsorcery.common.block.tile.BlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.block.tile.BlockFlareLight;
 import hellfirepvp.astralsorcery.common.block.tile.BlockFountain;
 import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrimeLiquid;
+import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrimeOre;
 import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrimeVortex;
 import hellfirepvp.astralsorcery.common.block.tile.BlockGateway;
 import hellfirepvp.astralsorcery.common.block.tile.BlockGemCrystalCluster;
@@ -112,6 +113,8 @@ public class BlocksAS {
             BLOCKS.register("infused_wood_engraved", BlockInfusedWood::new);
     public static final RegistryObject<BlockInfusedWood> INFUSED_WOOD_ENRICHED =
             BLOCKS.register("infused_wood_enriched", BlockInfusedWood::new);
+    public static final RegistryObject<BlockInfusedWood> INFUSED_WOOD_INFUSED =
+            BLOCKS.register("infused_wood_infused", BlockInfusedWood::new);
     public static final RegistryObject<BlockInfusedWood> INFUSED_WOOD_PLANKS =
             BLOCKS.register("infused_wood_planks", BlockInfusedWood::new);
     public static final RegistryObject<BlockInfusedWoodSlab> INFUSED_WOOD_SLAB =
@@ -182,6 +185,8 @@ public class BlocksAS {
             BLOCKS.register("fountain", BlockFountain::new);
     public static final RegistryObject<BlockFountainPrimeLiquid> FOUNTAIN_PRIME_LIQUID =
             BLOCKS.register("fountain_prime_liquid", BlockFountainPrimeLiquid::new);
+    public static final RegistryObject<BlockFountainPrimeOre> FOUNTAIN_PRIME_ORE =
+            BLOCKS.register("fountain_prime_ore", BlockFountainPrimeOre::new);
     public static final RegistryObject<BlockFountainPrimeVortex> FOUNTAIN_PRIME_VORTEX =
             BLOCKS.register("fountain_prime_vortex", BlockFountainPrimeVortex::new);
     public static final RegistryObject<BlockObservatory> OBSERVATORY =

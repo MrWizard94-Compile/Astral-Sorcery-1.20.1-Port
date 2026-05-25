@@ -39,4 +39,8 @@ public class ColorsAS {
     public static final Color MANTLE_LUCERNA_INVENTORY = new Color(0x00A903);
     public static final Color CONSTELLATION_LUCERNA    = new Color(0xFFE709);
     public static final Color CONSTELLATION_MINERALIS  = new Color(0xCB7D0A);
+
+    // Alignment charge bar overlay
+    public static final Color OVERLAY_CHARGE_MISSING = new Color(0xA20900);
+    public static final Color OVERLAY_CHARGE_USAGE   = new Color(0x00B903);
 }

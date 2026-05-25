@@ -26,6 +26,11 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', mod_id
+
+            // Mixin refmap configuration (required for 1.20.1)
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', 'astralsorcery.refmap.json'
+
             mods {
                 astralsorcery { source sourceSets.main }
             }
@@ -35,6 +40,10 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', mod_id
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', 'astralsorcery.refmap.json'
+
             mods {
                 astralsorcery { source sourceSets.main }
             }
@@ -48,6 +57,10 @@ minecraft {
                  '--output', file('src/generated/resources/'),
                  '--validate',
                  '--existing', sourceSets.main.resources.srcDirs[0]
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', 'astralsorcery.refmap.json'
+
             mods {
                 astralsorcery { source sourceSets.main }
             }
@@ -57,6 +70,10 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', mod_id
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', 'astralsorcery.refmap.json'
+
             mods {
                 astralsorcery { source sourceSets.main }
             }

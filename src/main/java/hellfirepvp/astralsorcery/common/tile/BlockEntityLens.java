@@ -1,6 +1,7 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.auxiliary.link.LinkableTileEntity;
+import hellfirepvp.astralsorcery.common.item.lens.ItemColoredLens;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightTransmission;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -130,6 +132,22 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     @Nullable
     public ResourceLocation getColorOverlay() {
         return colorOverlay;
+    }
+
+    /**
+     * Returns the visual tint color for the transmitted starlight beam, or
+     * null if no colored lens is installed (use default starlight blue-white).
+     */
+    @Nullable
+    public Color getBeamColor() {
+        if (colorOverlay == null) return null;
+        String path = colorOverlay.getPath();
+        for (ItemColoredLens.LensColor lc : ItemColoredLens.LensColor.values()) {
+            if (lc.getSerializedName().equals(path)) {
+                return lc.getBeamColor();
+            }
+        }
+        return null;
     }
 
     public void setColorOverlay(@Nullable ResourceLocation overlay) {

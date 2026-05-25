@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 public class DiscoverConstellationTrigger extends SimpleCriterionTrigger<ConstellationInstance> {
 
-    public static final ResourceLocation ID = AstralSorcery.key("find_constellation");
+    public static final ResourceLocation ID = AstralSorcery.key("discover_constellation");
 
     @Override
     @Nonnull

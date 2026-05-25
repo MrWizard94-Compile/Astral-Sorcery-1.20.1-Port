@@ -11,6 +11,7 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.common.ForgeMod;
 
 /**
  * Registry constants for all built-in perk attribute types.
@@ -101,10 +102,12 @@ public final class PerkAttributeTypesAS {
                         () -> Attributes.KNOCKBACK_RESISTANCE,
                         false));
 
-        // Custom types (no vanilla attribute backing)
+        // Reach extends entity and block interaction range via Forge's reach attributes
         ATTR_TYPE_REACH = AttributeTypeRegistry.register(
                 new PerkAttributeType(
-                        AstralSorcery.key("perk.attr.reach")));
+                        AstralSorcery.key("perk.attr.reach"),
+                        () -> ForgeMod.ENTITY_REACH.get(),
+                        false));
 
         ATTR_TYPE_CRIT_CHANCE = AttributeTypeRegistry.register(
                 new PerkAttributeType(

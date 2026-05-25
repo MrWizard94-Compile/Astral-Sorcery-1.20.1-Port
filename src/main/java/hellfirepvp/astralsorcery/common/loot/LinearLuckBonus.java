@@ -25,7 +25,7 @@ public class LinearLuckBonus extends LootItemConditionalFunction {
 
     @Override
     public LootItemFunctionType getType() {
-        return LootAS.Functions.LINEAR_LUCK_BONUS.get();
+        return LootAS.LINEAR_LUCK_BONUS.get();
     }
 
     @Override

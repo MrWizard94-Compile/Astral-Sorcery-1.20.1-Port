@@ -6,11 +6,13 @@
     "refmap": "astralsorcery.refmap.json",
     "mixins": [
         "MixinEnchantmentHelper",
+        "MixinItemStack",
         "MixinLivingEntity"
     ],
     "client": [],
     "server": [],
     "injectors": {
         "defaultRequire": 1
-    }
+    },
+    "verbose": true
 }

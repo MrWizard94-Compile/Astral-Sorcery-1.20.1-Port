@@ -10,7 +10,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity {
 
-    @Inject(method = "getWaterSlowDown", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(
+        method = "getWaterSlowDown",
+        at = @At("HEAD"),
+        cancellable = true,
+        remap = false
+    )
     public void preventWaterSlowdown(CallbackInfoReturnable<Float> cir) {
         LivingEntity entity = (LivingEntity)(Object) this;
         if (MantleEffectOctans.shouldPreventWaterSlowdown(entity)) {

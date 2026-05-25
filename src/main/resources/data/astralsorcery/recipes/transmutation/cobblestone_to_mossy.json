@@ -1,10 +1,6 @@
 {
   "type": "astralsorcery:block_transmutation",
-  "input": {
-    "block": "minecraft:cobblestone"
-  },
-  "output": {
-    "block": "minecraft:mossy_cobblestone"
-  },
-  "starlight_required": 50
+  "input": "minecraft:cobblestone",
+  "output": "minecraft:mossy_cobblestone",
+  "starlightRequired": 50
 }

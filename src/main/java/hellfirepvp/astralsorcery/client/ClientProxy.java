@@ -9,8 +9,13 @@ package hellfirepvp.astralsorcery.client;
 
 import hellfirepvp.astralsorcery.client.event.ClientRenderEventHandler;
 import hellfirepvp.astralsorcery.client.event.EventHandlerClientMantleTick;
+import hellfirepvp.astralsorcery.client.event.ItemHeldEffectRenderer;
+import hellfirepvp.astralsorcery.client.event.effect.LightbeamRenderHelper;
 import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityCelestialCrystal;
+import hellfirepvp.astralsorcery.client.render.overlay.OverlayAlignmentCharge;
+import hellfirepvp.astralsorcery.client.render.overlay.OverlayItemEffects;
+import hellfirepvp.astralsorcery.client.render.overlay.OverlayPerkExperience;
 import hellfirepvp.astralsorcery.client.render.overlay.OverlayStarlightGauge;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityFlare;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityGrapplingHook;
@@ -127,6 +132,12 @@ public class ClientProxy extends CommonProxy {
 
         // Client-side mantle effect ticks (VFX, highlighting)
         forgeBus.register(new EventHandlerClientMantleTick());
+
+        // Starlight beam effects between network nodes
+        forgeBus.register(new LightbeamRenderHelper());
+
+        // World-space effects for held items implementing ItemHeldRender
+        forgeBus.register(ItemHeldEffectRenderer.INSTANCE);
     }
 
     // =========================================================================
@@ -189,6 +200,9 @@ public class ClientProxy extends CommonProxy {
     @SuppressWarnings("null")
     private void onRegisterOverlays(@Nonnull RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("starlight_gauge", OverlayStarlightGauge.INSTANCE);
+        event.registerAboveAll("alignment_charge", OverlayAlignmentCharge.INSTANCE);
+        event.registerAboveAll("perk_experience", OverlayPerkExperience.INSTANCE);
+        event.registerAboveAll("item_effects", OverlayItemEffects.INSTANCE);
     }
 
     /**

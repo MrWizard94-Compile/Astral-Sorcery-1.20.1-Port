@@ -15,16 +15,23 @@ import java.util.Map;
 public class MixinEnchantmentHelper {
 
     // Hooks the single-enchantment level lookup used by most gameplay systems
-    // (damage calculations, protection, etc.)
-    @Inject(method = "getTagEnchantmentLevel", at = @At("RETURN"), cancellable = true, remap = false)
+    @Inject(
+        method = "getItemEnchantmentLevel",
+        at = @At("RETURN"),
+        cancellable = true,
+        remap = false
+    )
     private static void getEnhancedEnchantmentLevel(Enchantment enchantment, ItemStack stack,
                                                      CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(DynamicEnchantmentHelper.getNewEnchantmentLevel(cir.getReturnValue(), enchantment, stack, null));
     }
 
-    // Hooks the full enchantment map lookup used by ItemPredicate (advancements),
-    // tooltip rendering, and other systems that inspect all enchantments at once.
-    @Inject(method = "getEnchantments", at = @At("RETURN"), remap = false)
+    // Hooks the full enchantment map lookup
+    @Inject(
+        method = "getEnchantments",
+        at = @At("RETURN"),
+        remap = false
+    )
     private static void applyDeserializedEnhancedEnchantments(ItemStack stack,
                                                                CallbackInfoReturnable<Map<Enchantment, Integer>> cir) {
         DynamicEnchantmentHelper.addNewLevels(cir.getReturnValue(), stack);

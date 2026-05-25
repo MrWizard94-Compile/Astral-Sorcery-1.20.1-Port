@@ -20,7 +20,7 @@ public class RandomCrystalProperty extends LootItemConditionalFunction {
 
     @Override
     public LootItemFunctionType getType() {
-        return LootAS.Functions.RANDOM_CRYSTAL_PROPERTIES.get();
+        return LootAS.RANDOM_CRYSTAL_PROPERTIES.get();
     }
 
     @Override

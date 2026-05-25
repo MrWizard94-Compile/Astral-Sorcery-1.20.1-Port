@@ -280,6 +280,8 @@ public class ItemsAS {
             ITEMS.register("infused_wood_engraved", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_ENGRAVED.get()));
     public static final RegistryObject<BlockItem> INFUSED_WOOD_ENRICHED_ITEM =
             ITEMS.register("infused_wood_enriched", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_ENRICHED.get()));
+    public static final RegistryObject<BlockItem> INFUSED_WOOD_INFUSED_ITEM =
+            ITEMS.register("infused_wood_infused", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_INFUSED.get()));
     public static final RegistryObject<BlockItem> INFUSED_WOOD_PLANKS_ITEM =
             ITEMS.register("infused_wood_planks", () -> new ItemBlockAS(BlocksAS.INFUSED_WOOD_PLANKS.get()));
     public static final RegistryObject<BlockItem> INFUSED_WOOD_SLAB_ITEM =
@@ -350,6 +352,8 @@ public class ItemsAS {
             ITEMS.register("fountain", () -> new ItemBlockAS(BlocksAS.FOUNTAIN.get()));
     public static final RegistryObject<BlockItem> FOUNTAIN_PRIME_LIQUID_ITEM =
             ITEMS.register("fountain_prime_liquid", () -> new ItemBlockAS(BlocksAS.FOUNTAIN_PRIME_LIQUID.get()));
+    public static final RegistryObject<BlockItem> FOUNTAIN_PRIME_ORE_ITEM =
+            ITEMS.register("fountain_prime_ore", () -> new ItemBlockAS(BlocksAS.FOUNTAIN_PRIME_ORE.get()));
     public static final RegistryObject<BlockItem> FOUNTAIN_PRIME_VORTEX_ITEM =
             ITEMS.register("fountain_prime_vortex", () -> new ItemBlockAS(BlocksAS.FOUNTAIN_PRIME_VORTEX.get()));
     public static final RegistryObject<BlockItem> OBSERVATORY_ITEM =
