@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.perk.effect;
 
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
@@ -87,15 +88,22 @@ public final class PerkAttributeHelper {
      */
     public static double applyModifiers(double baseValue,
                                         @Nonnull List<PerkAttributeModifier> modifiers) {
+        double globalFactor;
+        try {
+            globalFactor = CommonConfig.CONFIG.perkEffectMultiplier.get();
+        } catch (IllegalStateException | NullPointerException e) {
+            globalFactor = 1.0;
+        }
         double additionSum = 0;
         double addedMultiplySum = 0;
         List<Double> stackingMultipliers = new ArrayList<>();
 
         for (PerkAttributeModifier mod : modifiers) {
             switch (mod.getModifierType()) {
-                case ADDITION -> additionSum += mod.getValue();
-                case ADDED_MULTIPLY -> addedMultiplySum += mod.getValue();
-                case STACKING_MULTIPLY -> stackingMultipliers.add(mod.getValue());
+                case ADDITION        -> additionSum      += mod.getValue() * globalFactor;
+                case ADDED_MULTIPLY  -> addedMultiplySum += mod.getValue() * globalFactor;
+                // Scale the bonus delta so 1.2× at factor 2 becomes 1.4×, not 2.4×
+                case STACKING_MULTIPLY -> stackingMultipliers.add(1.0 + (mod.getValue() - 1.0) * globalFactor);
             }
         }
 

@@ -112,6 +112,8 @@ public class PktParticleEvent {
     public static final int CONSTELLATION_DISCOVER = 8;
     /** Fountain prime activation */
     public static final int FOUNTAIN_PRIME = 9;
+    /** Liquid starlight field fountain (Resonator FLUID_FIELDS visualization) */
+    public static final int LIQUID_FOUNTAIN = 10;
 
     public static void encode(@Nonnull PktParticleEvent msg, @Nonnull FriendlyByteBuf buf) {
         buf.writeVarInt(msg.eventType);
@@ -177,6 +179,19 @@ public class PktParticleEvent {
                 burst(level, center, ParticleTypes.END_ROD, 16, rand, 0.8);
             }
             case FOUNTAIN_PRIME -> burst(level, center, ParticleTypes.DOLPHIN, 20, rand, 0.6);
+            case LIQUID_FOUNTAIN -> {
+                for (int i = 0; i < 12; i++) {
+                    double angle = rand.nextDouble() * Math.PI * 2;
+                    double spread = rand.nextDouble() * 0.3;
+                    double vx = Math.cos(angle) * spread * 0.08;
+                    double vz = Math.sin(angle) * spread * 0.08;
+                    double vy = 0.10 + rand.nextDouble() * 0.12;
+                    double ox = (rand.nextDouble() - 0.5) * 0.6;
+                    double oz = (rand.nextDouble() - 0.5) * 0.6;
+                    level.addParticle(ParticleTypes.DOLPHIN,
+                            center.x + ox, center.y, center.z + oz, vx, vy, vz);
+                }
+            }
         }
     }
 

@@ -4,8 +4,11 @@
 package hellfirepvp.astralsorcery.common.event;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import hellfirepvp.astralsorcery.common.perk.node.key.*;
@@ -21,9 +24,9 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -53,20 +56,6 @@ public class EventHandlerPerkEffects {
 
     /** UUID → tick timestamp of when a cooldown was last set. */
     private static final Map<UUID, Long> CHEAT_DEATH_COOLDOWN = new WeakHashMap<>();
-
-    // -----------------------------------------------------------------------
-    // Perk tick dispatch
-    // -----------------------------------------------------------------------
-
-    @SubscribeEvent
-    public void onPerkPlayerTick(@Nonnull TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
-        if (player.level().isClientSide()) return;
-        PlayerProgress progress = PlayerProgressHelper.getProgress(player);
-        if (progress == null) return;
-        PerkTree.tickPerks(player, progress.getAllocatedPerks());
-    }
 
     // -----------------------------------------------------------------------
     // Utility
@@ -527,5 +516,26 @@ public class EventHandlerPerkEffects {
                 event.setNewSpeed(Math.max(event.getNewSpeed(), pickaxeSpeed));
             }
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // Perk experience gain — convert vanilla XP pickup to perk exp
+    // -----------------------------------------------------------------------
+
+    @SubscribeEvent
+    public void onXpPickup(@Nonnull PlayerXpEvent.PickupXp event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) return;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
+
+        PlayerProgress progress = PlayerProgressHelper.getProgress(player);
+        if (progress == null) return;
+        if (progress.getAttunedConstellation() == null) return;
+
+        double multiplier = CommonConfig.CONFIG.perkExpMultiplier.get();
+        long perkExpGain = (long) (event.getOrb().getValue() * 10L * multiplier);
+        progress.setPerkExp(progress.getPerkExp() + perkExpGain);
+        AstralAdvancementTriggers.PERK_LEVEL.trigger(serverPlayer);
+        PlayerProgressManager.syncProgress(serverPlayer);
     }
 }

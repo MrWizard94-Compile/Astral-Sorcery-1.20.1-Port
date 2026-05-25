@@ -46,6 +46,14 @@ public class MantleEffectOctans extends MantleEffect {
         super(ConstellationsAS.OCTANS);
     }
 
+    /**
+     * Called by {@code MixinLivingEntity} to check if the water movement slowdown
+     * should be negated for this entity (wearing an Octans mantle).
+     */
+    public static boolean shouldPreventWaterSlowdown(@Nonnull LivingEntity entity) {
+        return ItemMantle.getEffect(entity, ConstellationsAS.OCTANS) != null;
+    }
+
     @Override
     protected void attachEventListeners(@Nonnull IEventBus bus) {
         bus.addListener(this::handleUnderwaterBreakSpeed);

@@ -3,6 +3,9 @@ package hellfirepvp.astralsorcery.common.data.research;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
 import hellfirepvp.astralsorcery.common.crafting.recipe.infusion.ActiveLiquidInfusionRecipe;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityInfuser;
 import net.minecraft.resources.ResourceLocation;
@@ -52,7 +55,10 @@ public final class ResearchManager {
         if (progress == null) return false;
         boolean added = progress.discoverConstellation(constellationKey);
         if (added) {
-            AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(player);
+            IConstellation cst = ConstellationRegistry.getConstellation(constellationKey);
+            if (cst != null) {
+                AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(player, cst);
+            }
             sync(player);
         }
         return added;
@@ -70,7 +76,10 @@ public final class ResearchManager {
         progress.setAttunedConstellation(constellationKey);
         progress.discoverConstellation(constellationKey);
         grantTier(player, ProgressionTier.ATTUNEMENT);
-        AstralAdvancementTriggers.ATTUNE_PLAYER.trigger(player);
+        IConstellation cst = ConstellationRegistry.getConstellation(constellationKey);
+        if (cst instanceof IMajorConstellation major) {
+            AstralAdvancementTriggers.ATTUNE_SELF.trigger(player, major);
+        }
         sync(player);
     }
 

@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
@@ -182,13 +184,23 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
                 catalystStack = ItemStack.EMPTY;
                 recipeDirty = true;
                 markForUpdate();
+                sendCatalystConsumedEffect();
             }
         } else {
             catalystStack.shrink(1);
             if (catalystStack.isEmpty()) {
                 recipeDirty = true;
                 markForUpdate();
+                sendCatalystConsumedEffect();
             }
+        }
+    }
+
+    private void sendCatalystConsumedEffect() {
+        if (getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.WELL_FILL_BURST, worldPosition),
+                    serverLevel, worldPosition);
         }
     }
 

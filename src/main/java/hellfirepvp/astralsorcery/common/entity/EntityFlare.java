@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.entity;
 
+import hellfirepvp.astralsorcery.common.util.DamageSourceAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import net.minecraft.core.BlockPos;
@@ -82,7 +83,7 @@ public class EntityFlare extends ThrowableProjectile {
         if (!level().isClientSide()) {
             Entity target = result.getEntity();
             float damage = this.entityData.get(DATA_DAMAGE);
-            target.hurt(this.damageSources().magic(), damage);
+            target.hurt(DamageSourceAS.stellar(this.level()), damage);
             this.discard();
         }
     }

@@ -15,6 +15,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,6 +66,30 @@ public abstract class MantleEffect {
 
     public final boolean shouldTick() {
         return usesTickMethods();
+    }
+
+    /**
+     * Called once per tick on the client while the player wears this mantle.
+     * Driven by {@link hellfirepvp.astralsorcery.client.event.EventHandlerClientMantleTick}.
+     */
+    @OnlyIn(Dist.CLIENT)
+    protected void tickClient(@Nonnull Player player) {}
+
+    /** Whether this effect uses {@link #tickClient}. Override to return true. */
+    @OnlyIn(Dist.CLIENT)
+    protected boolean usesClientTick() {
+        return false;
+    }
+
+    public final boolean shouldTickClient() {
+        return usesClientTick();
+    }
+
+    /** Dispatch the client tick. Skips disabled configs. */
+    @OnlyIn(Dist.CLIENT)
+    public final void onClientTick(@Nonnull Player player) {
+        if (!getConfig().enabled.get()) return;
+        tickClient(player);
     }
 
     /**

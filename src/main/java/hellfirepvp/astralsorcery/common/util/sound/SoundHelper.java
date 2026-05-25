@@ -1,5 +1,8 @@
 package hellfirepvp.astralsorcery.common.util.sound;
 
+import hellfirepvp.astralsorcery.client.util.sound.FadeLoopSound;
+import hellfirepvp.astralsorcery.client.util.sound.FadeSound;
+import hellfirepvp.astralsorcery.client.util.sound.PositionedLoopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -7,6 +10,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -14,7 +18,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Sound playback utilities for server and client side.
- * Client-side loop/fade sound methods are deferred until client sound classes are ported (Phase 12).
+ * Client-side loop/fade sound factory methods delegate to PositionedLoopSound, FadeLoopSound, FadeSound.
  *
  * <p>1.16 → 1.20 changes:
  * SoundCategory → SoundSource, World → Level, Vector3i → Vec3i,
@@ -56,8 +60,54 @@ public class SoundHelper {
                 position.getX(), position.getY(), position.getZ(), volume, pitch);
     }
 
-    // Client-side loop/fade sound methods deferred — depend on
-    // PositionedLoopSound, FadeLoopSound, FadeSound (Phase 12)
+    @OnlyIn(Dist.CLIENT)
+    public static PositionedLoopSound playSoundLoopClient(@Nonnull CategorizedSoundEvent sound,
+                                                          @Nonnull Vec3 pos,
+                                                          float volume, float pitch,
+                                                          boolean isGlobal,
+                                                          @Nonnull java.util.function.Predicate<PositionedLoopSound> func) {
+        PositionedLoopSound s = new PositionedLoopSound(sound, volume, pitch, pos, isGlobal);
+        s.setRefreshFunction(func);
+        Minecraft.getInstance().getSoundManager().play(s);
+        return s;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static FadeLoopSound playSoundLoopFadeInClient(@Nonnull CategorizedSoundEvent sound,
+                                                          @Nonnull Vec3 pos,
+                                                          float volume, float pitch,
+                                                          boolean isGlobal,
+                                                          @Nonnull java.util.function.Predicate<PositionedLoopSound> func) {
+        FadeLoopSound s = new FadeLoopSound(sound, volume, pitch, pos, isGlobal);
+        s.setRefreshFunction(func);
+        Minecraft.getInstance().getSoundManager().play(s);
+        return s;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static FadeSound playSoundFadeInClient(@Nonnull CategorizedSoundEvent sound,
+                                                  @Nonnull Vec3 pos,
+                                                  float volume, float pitch,
+                                                  boolean isGlobal,
+                                                  @Nonnull java.util.function.Predicate<FadeSound> func) {
+        FadeSound s = new FadeSound(sound, volume, pitch, pos, isGlobal);
+        s.setRefreshFunction(func);
+        Minecraft.getInstance().getSoundManager().play(s);
+        return s;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static FadeLoopSound playSoundLoopFadeInClient(@Nonnull SoundEvent sound,
+                                                          @Nonnull SoundSource source,
+                                                          @Nonnull Vec3 pos,
+                                                          float volume, float pitch,
+                                                          boolean isGlobal,
+                                                          @Nonnull java.util.function.Predicate<PositionedLoopSound> func) {
+        FadeLoopSound s = new FadeLoopSound(sound, source, volume, pitch, pos, isGlobal);
+        s.setRefreshFunction(func);
+        Minecraft.getInstance().getSoundManager().play(s);
+        return s;
+    }
 
     @OnlyIn(Dist.CLIENT)
     public static float getSoundVolume(@Nonnull SoundSource cat) {

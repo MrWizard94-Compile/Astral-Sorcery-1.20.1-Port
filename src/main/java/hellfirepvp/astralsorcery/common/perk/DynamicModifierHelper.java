@@ -4,10 +4,14 @@ import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -23,8 +27,9 @@ import java.util.UUID;
  * {@link #KEY_MODIFIERS} as a list of compound tags, each serialized by
  * {@link PerkAttributeModifier#writeToNBT()}.</p>
  *
- * <p>getDynamicModifiers (queries AttributeModifierProvider / EquipmentAttributeModifierProvider)
- * and addModifierTooltip (client-only) are deferred to Phase 12.</p>
+ * <p>getDynamicModifiers requires AttributeModifierProvider / EquipmentAttributeModifierProvider
+ * interfaces not present in the port and remains unimplemented. addModifierTooltip uses
+ * getStaticModifiers only and is implemented.</p>
  *
  * <p>1.16 → 1.20: DynamicAttributeModifier consolidated into PerkAttributeModifier;
  * CompoundNBT/ListNBT → CompoundTag/ListTag; Constants.NBT.TAG_COMPOUND → Tag.TAG_COMPOUND.</p>
@@ -46,6 +51,13 @@ public final class DynamicModifierHelper {
         ListTag list = data.getList(KEY_MODIFIERS, Tag.TAG_COMPOUND);
         list.add(modifier.writeToNBT());
         data.put(KEY_MODIFIERS, list);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void addModifierTooltip(@Nonnull ItemStack stack, @Nonnull List<Component> tooltip) {
+        for (PerkAttributeModifier mod : getStaticModifiers(stack)) {
+            tooltip.add(mod.getDescription().copy().withStyle(ChatFormatting.ITALIC));
+        }
     }
 
     /**

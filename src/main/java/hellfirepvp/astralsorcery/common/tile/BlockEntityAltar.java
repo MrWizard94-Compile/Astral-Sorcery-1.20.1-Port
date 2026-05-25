@@ -10,12 +10,16 @@ import hellfirepvp.astralsorcery.common.container.ContainerAltarRadiance;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarUpgradeRecipe;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
+import hellfirepvp.astralsorcery.client.util.sound.PositionedLoopSound;
+import hellfirepvp.astralsorcery.common.lib.SoundsAS;
+import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,8 +33,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.List;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -93,6 +101,12 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     @Nullable
     private ResourceLocation activeRecipeId = null;
 
+    // Client-side sound instances typed as Object to avoid server-side class loading
+    @OnlyIn(Dist.CLIENT)
+    private Object clientCraftSound = null;
+    @OnlyIn(Dist.CLIENT)
+    private Object clientWaitSound = null;
+
     public BlockEntityAltar(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.ALTAR.get(), pos, state);
         this.inventory = new TileInventory(this, () -> MAX_SLOTS);
@@ -114,7 +128,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // Client-side: altar animation/particles
+            doCraftSound();
             return;
         }
 
@@ -138,6 +152,40 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         // Gradually dissipate stored starlight if not crafting (small leak)
         if (!isCrafting && storedStarlight > 0) {
             storedStarlight = Math.max(0, storedStarlight - 0.5);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void doCraftSound() {
+        if (SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
+            clientCraftSound = null;
+            clientWaitSound = null;
+            return;
+        }
+        if (isCrafting) {
+            Vec3 center = Vec3.atCenterOf(worldPosition);
+            if (clientCraftSound == null || ((PositionedLoopSound) clientCraftSound).hasStoppedPlaying()) {
+                net.minecraft.sounds.SoundEvent loopSound = switch (getAltarType()) {
+                    case ATTUNEMENT -> SoundsAS.ALTAR_CRAFT_LOOP_T2.get();
+                    case CONSTELLATION -> SoundsAS.ALTAR_CRAFT_LOOP_T3.get();
+                    case RADIANCE -> SoundsAS.ALTAR_CRAFT_LOOP_T4.get();
+                    default -> SoundsAS.ALTAR_CRAFT_LOOP_T1.get();
+                };
+                clientCraftSound = SoundHelper.playSoundLoopFadeInClient(
+                        loopSound, SoundSource.BLOCKS, center, 0.6F, 1F, false,
+                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isCrafting)
+                        .setFadeInTicks(40).setFadeOutTicks(20);
+            }
+            if (getAltarType() == BlockAltar.AltarType.RADIANCE
+                    && (clientWaitSound == null || ((PositionedLoopSound) clientWaitSound).hasStoppedPlaying())) {
+                clientWaitSound = SoundHelper.playSoundLoopFadeInClient(
+                        SoundsAS.ALTAR_CRAFT_LOOP_T4_WAITING.get(), SoundSource.BLOCKS, center, 0.7F, 1F, false,
+                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isCrafting)
+                        .setFadeInTicks(30).setFadeOutTicks(10);
+            }
+        } else {
+            clientCraftSound = null;
+            clientWaitSound = null;
         }
     }
 
@@ -257,9 +305,14 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             spawnCraftResult(result);
         }
 
+        // Capture before clearing for advancement trigger
+        SimpleAltarRecipe completedRecipe = this.activeRecipe;
+        ItemStack primaryOutput = results.isEmpty() ? ItemStack.EMPTY : results.get(0);
+
         // Upgrade recipe post-completion hook (block state change + tier grant)
-        if (activeRecipe instanceof AltarUpgradeRecipe upgradeRecipe) {
-            upgradeRecipe.onRecipeCompletion(this);
+        boolean wasUpgrade = activeRecipe instanceof AltarUpgradeRecipe;
+        if (wasUpgrade) {
+            ((AltarUpgradeRecipe) activeRecipe).onRecipeCompletion(this);
         }
 
         // Reset state
@@ -276,11 +329,17 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
                 worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
                 16.0, null);
         if (nearest instanceof net.minecraft.server.level.ServerPlayer sp) {
-            AstralAdvancementTriggers.ALTAR_CRAFT.trigger(sp);
+            AstralAdvancementTriggers.ALTAR_CRAFT.trigger(sp, completedRecipe, primaryOutput);
+            if (wasUpgrade) {
+                AstralAdvancementTriggers.ALTAR_UPGRADE.trigger(sp);
+            }
         }
 
         PacketChannel.sendToAllTracking(
                 new PktParticleEvent(PktParticleEvent.ALTAR_CRAFT, worldPosition),
+                (net.minecraft.server.level.ServerLevel) level, worldPosition);
+        PacketChannel.sendToAllTracking(
+                new PktPlayEffect(PktPlayEffect.EffectType.ALTAR_CRAFT_COMPLETE, worldPosition),
                 (net.minecraft.server.level.ServerLevel) level, worldPosition);
         level.playSound(null, worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP,
                 SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.2F);

@@ -8,7 +8,9 @@
 package hellfirepvp.astralsorcery.common.starlight;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.auxiliary.TransmutationHelper;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightNetwork;
 import hellfirepvp.astralsorcery.common.starlight.transmission.NodeConnection;
 import hellfirepvp.astralsorcery.common.starlight.transmission.TransmissionLink;
@@ -440,9 +442,10 @@ public class WorldNetworkHandler extends SavedData {
     public void tick(@Nonnull ServerLevel level) {
         rebuildAdjacencyIfNeeded();
 
-        // Reset receiver accumulation for this tick
+        // Reset receiver and transmutation accumulation for this tick
         Map<BlockPos, Double> receiverAccumulation = new HashMap<>();
         Map<BlockPos, ResourceLocation> receiverConstellation = new HashMap<>();
+        Map<BlockPos, Double> transmutationAccumulation = new HashMap<>();
 
         for (Map.Entry<BlockPos, SourceEntry> entry : sources.entrySet()) {
             BlockPos sourcePos = entry.getKey();
@@ -456,7 +459,7 @@ public class WorldNetworkHandler extends SavedData {
 
             // BFS from this source
             distributeFromSource(sourcePos, source.constellation, production,
-                    receiverAccumulation, receiverConstellation);
+                    receiverAccumulation, receiverConstellation, transmutationAccumulation);
         }
 
         // Deliver accumulated starlight to receivers
@@ -475,6 +478,17 @@ public class WorldNetworkHandler extends SavedData {
             deliverStarlight(level, receiverPos, delivered, constellation);
         }
 
+        // Feed accumulated starlight into block transmutation
+        for (Map.Entry<BlockPos, Double> entry : transmutationAccumulation.entrySet()) {
+            BlockPos targetPos = entry.getKey();
+            boolean completed = TransmutationHelper.addStarlight(level, targetPos, entry.getValue());
+            if (completed) {
+                PacketChannel.sendToAllTracking(
+                        new PktPlayEffect(PktPlayEffect.EffectType.TRANSMUTATION_COMPLETE, targetPos),
+                        level, targetPos);
+            }
+        }
+
         // Sync dirty sources to clients
         syncDirtySources(level);
     }
@@ -486,7 +500,8 @@ public class WorldNetworkHandler extends SavedData {
                                       @Nullable ResourceLocation constellation,
                                       double production,
                                       @Nonnull Map<BlockPos, Double> receiverAccumulation,
-                                      @Nonnull Map<BlockPos, ResourceLocation> receiverConstellation) {
+                                      @Nonnull Map<BlockPos, ResourceLocation> receiverConstellation,
+                                      @Nonnull Map<BlockPos, Double> transmutationAccumulation) {
         // BFS queue: (position, remaining starlight at that position)
         Deque<StarlightWave> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
@@ -521,6 +536,7 @@ public class WorldNetworkHandler extends SavedData {
                         arriving *= transmission.efficiency;
                         visited.add(target);
                         queue.add(new StarlightWave(target, arriving));
+                        continue;
                     }
 
                     // Accumulate at receiver
@@ -529,7 +545,12 @@ public class WorldNetworkHandler extends SavedData {
                         // First constellation to reach a receiver wins (source priority)
                         receiverConstellation.putIfAbsent(target, constellation);
                         visited.add(target);
+                        continue;
                     }
+
+                    // Target is neither transmission nor receiver — may be a transmutable block
+                    transmutationAccumulation.merge(target, arriving, Double::sum);
+                    visited.add(target);
                 }
             }
             depth++;

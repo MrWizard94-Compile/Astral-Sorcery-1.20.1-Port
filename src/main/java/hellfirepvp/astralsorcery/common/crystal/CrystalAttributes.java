@@ -7,13 +7,19 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crystal;
 
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +33,7 @@ import java.util.stream.Collectors;
  * <p>1.16 → 1.20: CompoundNBT → CompoundTag, ListNBT → ListTag,
  * Constants.NBT.TAG_COMPOUND → Tag.TAG_COMPOUND,
  * ForgeRegistryEntry removed from CrystalProperty.
- * Tooltip rendering deferred to Phase 12.</p>
+ * Tooltip rendering implemented: addTooltip overloads with canSee/isDiscovered gating.</p>
  */
 public final class CrystalAttributes {
 
@@ -240,6 +246,49 @@ public final class CrystalAttributes {
         return Objects.hash(crystalAttributes);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public TooltipResult addTooltip(List<Component> tooltip) {
+        return addTooltip(tooltip, PlayerProgressManager.getClientProgress(), new CalculationContext.Builder().build());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public TooltipResult addTooltip(List<Component> tooltip, PlayerProgress progress) {
+        return addTooltip(tooltip, progress, new CalculationContext.Builder().build());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public TooltipResult addTooltip(List<Component> tooltip, CalculationContext ctx) {
+        return addTooltip(tooltip, PlayerProgressManager.getClientProgress(), ctx);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private TooltipResult addTooltip(List<Component> tooltip, PlayerProgress progress, CalculationContext ctx) {
+        boolean missing = false, addedAtLeastOne = false;
+        for (Attribute attr : this.getCrystalAttributes()) {
+            if (attr.getTier() > 0) {
+                CrystalProperty prop = attr.getProperty();
+                if (!prop.hasUsageFor(ctx) && !ctx.isEmpty()) continue;
+                if (!prop.canSee(progress) || !attr.isDiscovered()) {
+                    missing = true;
+                } else {
+                    Component enchLevel = Component.translatable("enchantment.level." + attr.getTier())
+                            .withStyle(ChatFormatting.GOLD);
+                    Component propName = prop.getName(attr.getTier())
+                            .copy().withStyle(ChatFormatting.GRAY);
+                    tooltip.add(propName.copy().append(Component.literal(" ")).append(enchLevel));
+                    addedAtLeastOne = true;
+                }
+            }
+        }
+        if (missing) {
+            tooltip.add(Component.translatable("astralsorcery.progress.missing.knowledge")
+                    .withStyle(ChatFormatting.GRAY));
+        }
+        return missing && !addedAtLeastOne ? TooltipResult.ALL_MISSING
+                : missing ? TooltipResult.ADDED_ALL_WITH_MISSING
+                : TooltipResult.ADDED_ALL;
+    }
+
     public enum TooltipResult {
         ADDED_ALL,
         ADDED_ALL_WITH_MISSING,
@@ -327,6 +376,10 @@ public final class CrystalAttributes {
 
         public int getTier() {
             return this.tier;
+        }
+
+        public boolean isDiscovered() {
+            return true;
         }
 
         @Nonnull

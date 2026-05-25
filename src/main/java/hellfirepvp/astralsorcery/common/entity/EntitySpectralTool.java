@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.entity;
 
+import hellfirepvp.astralsorcery.common.util.DamageSourceAS;
 import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectPelotrio;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -178,7 +179,7 @@ public class EntitySpectralTool extends Entity {
             }
         }
         if (nearest != null) {
-            nearest.hurt(damageSources().magic(),
+            nearest.hurt(DamageSourceAS.stellar(level()),
                     MantleEffectPelotrio.CONFIG.swordDamage.get().floatValue());
             // Dart toward target
             Vec3 toTarget = nearest.position().subtract(position()).normalize().scale(0.3);

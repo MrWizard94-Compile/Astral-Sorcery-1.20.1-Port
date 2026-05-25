@@ -19,9 +19,7 @@ import java.util.List;
  * Defines all crystal property and usage singletons, and registers them.
  * Call {@link #init()} during FMLCommonSetupEvent (after ConstellationsAS.init()).
  *
- * <p>1.16 → 1.20: ForgeRegistry replaced with CrystalPropertyRegistry (plain map).
- * BlockEntityCollector (starlight collector crystal) is not yet ported; collector-specific
- * crystal attribute generation wiring is blocked on that tile entity.</p>
+ * <p>1.16 → 1.20: ForgeRegistry replaced with CrystalPropertyRegistry (plain map).</p>
  */
 public class CrystalPropertiesAS {
 

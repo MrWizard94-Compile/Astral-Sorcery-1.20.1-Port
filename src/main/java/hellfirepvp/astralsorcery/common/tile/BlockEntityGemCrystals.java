@@ -4,8 +4,11 @@ import hellfirepvp.astralsorcery.common.block.tile.BlockGemCrystalCluster;
 import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -63,10 +66,16 @@ public class BlockEntityGemCrystals extends BlockEntityTick {
         BlockGemCrystalCluster.GrowthStageType current =
                 getLevel().getBlockState(getBlockPos()).getValue(BlockGemCrystalCluster.STAGE);
         int typeBase = (current.ordinal() / 3) * 3;
-        int targetOrdinal = typeBase + Math.max(0, Math.min(2, level));
+        int clampedLevel = Math.max(0, Math.min(2, level));
+        int targetOrdinal = typeBase + clampedLevel;
         BlockGemCrystalCluster.GrowthStageType[] values = BlockGemCrystalCluster.GrowthStageType.values();
         BlockState next = BlocksAS.GEM_CRYSTAL_CLUSTER.get().defaultBlockState()
                 .setValue(BlockGemCrystalCluster.STAGE, values[targetOrdinal]);
         getLevel().setBlock(getBlockPos(), next, 3);
+        if (clampedLevel == 2 && getLevel() instanceof ServerLevel serverLevel) {
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.CRYSTAL_FORM, getBlockPos()),
+                    serverLevel, getBlockPos());
+        }
     }
 }

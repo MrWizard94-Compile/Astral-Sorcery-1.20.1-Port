@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.common.crystal.property;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.crystal.CrystalProperty;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 
 /**
  * Crystal property for a specific constellation attunement on a crystal.
@@ -32,5 +33,10 @@ public class PropertyConstellation extends CrystalProperty {
     @Override
     public int getMaxTier() {
         return 2;
+    }
+
+    @Override
+    public boolean canSee(PlayerProgress progress) {
+        return super.canSee(progress) && progress.hasDiscovered(cst.getRegistryName());
     }
 }

@@ -1,7 +1,15 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
+import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectProperties;
+import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectProvider;
+import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
@@ -9,33 +17,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * Block entity for the Ritual Pedestal.
  * Holds an attuned crystal to produce constellation-based area effects.
  * The active effect depends on the crystal's attuned constellation.
  *
- * <p>Uses a held crystal ItemStack field rather than TileInventory,
- * since only a single crystal can be placed on the pedestal at a time.</p>
- *
- * <p>Note: Will implement starlight network interfaces in a later phase
- * to receive starlight for powering rituals.</p>
+ * <p>Effects are provided by the {@link ConstellationEffectRegistry} /
+ * {@link ConstellationEffectProvider} system — no effect logic lives here.</p>
  *
  * <p>1.16 -> 1.20 changes:
  * TileEntity -> BlockEntity, tick via BlockEntityTicker,
@@ -118,6 +113,12 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         if (shouldBeActive != ritualActive) {
             ritualActive = shouldBeActive;
             markForUpdate();
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(
+                            ritualActive ? PktPlayEffect.EffectType.RITUAL_ACTIVATE
+                                         : PktPlayEffect.EffectType.RITUAL_DEACTIVATE,
+                            worldPosition),
+                    (ServerLevel) level, worldPosition);
         }
 
         if (!ritualActive) {
@@ -134,173 +135,26 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
     }
 
     /**
-     * Applies the constellation-specific ritual effect to the area.
-     * Each constellation provides a unique beneficial area effect.
+     * Delegates to the {@link ConstellationEffectRegistry} to apply the effect
+     * registered for this pedestal's attuned constellation.
      */
     private void applyConstellationEffect(@Nonnull ServerLevel level) {
         if (attunedConstellation == null) return;
 
-        String path = attunedConstellation.getPath();
-        AABB area = new AABB(worldPosition).inflate(effectRange);
-
-        switch (path) {
-            case "aevitas" -> applyAevitasEffect(level, area);
-            case "discidia" -> applyDiscidiaEffect(level, area);
-            case "armara" -> applyArmaraEffect(level, area);
-            case "vicio" -> applyVicioEffect(level, area);
-            case "evorsio" -> applyEvorsioEffect(level, area);
-            case "lucerna" -> applyLucernaEffect(level, area);
-            case "mineralis" -> applyMineralisEffect(level, area);
-            case "horologium" -> applyHorologiumEffect(level, area);
-            case "octans" -> applyOctansEffect(level, area);
-            case "bootes" -> applyBootesEffect(level, area);
-            case "fornax" -> applyFornaxEffect(level, area);
-            case "pelotrio" -> applyPelotrioEffect(level, area);
-            default -> AstralSorcery.log.debug(
-                    "No ritual effect defined for constellation: {}", path);
-        }
-    }
-
-    // ---- Constellation-specific effects ----
-
-    /** Aevitas: Growth — accelerate crops and heal living entities. */
-    private void applyAevitasEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        // Heal nearby players and animals
-        List<LivingEntity> entities = level.getEntitiesOfClass(
-                LivingEntity.class, area,
-                e -> e instanceof Player || e instanceof Animal);
-        for (LivingEntity entity : entities) {
-            if (entity.getHealth() < entity.getMaxHealth()) {
-                entity.heal(1.0F);
-            }
+        IConstellation cst = ConstellationRegistry.getConstellation(attunedConstellation);
+        if (!(cst instanceof IWeakConstellation weak)) {
+            AstralSorcery.log.debug("Ritual pedestal: no weak constellation for {}", attunedConstellation);
+            return;
         }
 
-        // Grow random crops in range
-        int attempts = 3;
-        for (int i = 0; i < attempts; i++) {
-            BlockPos cropPos = worldPosition.offset(
-                    level.getRandom().nextIntBetweenInclusive(-effectRange, effectRange),
-                    level.getRandom().nextIntBetweenInclusive(-3, 3),
-                    level.getRandom().nextIntBetweenInclusive(-effectRange, effectRange));
-            BlockState state = level.getBlockState(cropPos);
-            if (state.getBlock() instanceof BonemealableBlock growable) {
-                if (growable.isValidBonemealTarget(level, cropPos, state, false)) {
-                    growable.performBonemeal(level, level.getRandom(), cropPos, state);
-                }
-            }
+        ConstellationEffectProvider provider = ConstellationEffectRegistry.getProvider(weak);
+        if (provider == null) {
+            AstralSorcery.log.debug("Ritual pedestal: no effect provider for {}", attunedConstellation);
+            return;
         }
-    }
 
-    /** Discidia: Damage — hurt hostile mobs in the area. */
-    private void applyDiscidiaEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Monster> monsters = level.getEntitiesOfClass(Monster.class, area);
-        for (Monster monster : monsters) {
-            monster.hurt(level.damageSources().magic(), 3.0F);
-        }
-    }
-
-    /** Armara: Protection — give nearby players resistance. */
-    private void applyArmaraEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Player> players = level.getEntitiesOfClass(Player.class, area);
-        for (Player player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 80, 0, true, false));
-        }
-    }
-
-    /** Vicio: Speed — give nearby players speed and jump boost. */
-    private void applyVicioEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Player> players = level.getEntitiesOfClass(Player.class, area);
-        for (Player player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 80, 1, true, false));
-            player.addEffect(new MobEffectInstance(MobEffects.JUMP, 80, 1, true, false));
-        }
-    }
-
-    /** Evorsio: Destruction — break random blocks in the area (mining). */
-    private void applyEvorsioEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        // Break a random weak block in range (like stone)
-        BlockPos target = worldPosition.offset(
-                level.getRandom().nextIntBetweenInclusive(-effectRange, effectRange),
-                level.getRandom().nextIntBetweenInclusive(-3, 3),
-                level.getRandom().nextIntBetweenInclusive(-effectRange, effectRange));
-        BlockState state = level.getBlockState(target);
-        if (!state.isAir() && state.getDestroySpeed(level, target) >= 0
-                && state.getDestroySpeed(level, target) <= 3.0F) {
-            level.destroyBlock(target, true);
-        }
-    }
-
-    /** Lucerna: Light — prevent mob spawning by boosting light. */
-    private void applyLucernaEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Player> players = level.getEntitiesOfClass(Player.class, area);
-        for (Player player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 80, 0, true, false));
-        }
-    }
-
-    /** Mineralis: Ore reveal — give glowing to reveal nearby ores (simplified). */
-    private void applyMineralisEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        // Simplified: give nearby players Luck effect for better drops
-        List<Player> players = level.getEntitiesOfClass(Player.class, area);
-        for (Player player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.LUCK, 80, 1, true, false));
-        }
-    }
-
-    /** Horologium: Time — accelerate nearby block entity ticks. */
-    private void applyHorologiumEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        // Simplified: speed up crops (similar to Aevitas but faster)
-        int attempts = 6;
-        for (int i = 0; i < attempts; i++) {
-            BlockPos cropPos = worldPosition.offset(
-                    level.getRandom().nextIntBetweenInclusive(-effectRange, effectRange),
-                    level.getRandom().nextIntBetweenInclusive(-3, 3),
-                    level.getRandom().nextIntBetweenInclusive(-effectRange, effectRange));
-            BlockState state = level.getBlockState(cropPos);
-            if (state.getBlock() instanceof BonemealableBlock growable) {
-                if (growable.isValidBonemealTarget(level, cropPos, state, false)) {
-                    growable.performBonemeal(level, level.getRandom(), cropPos, state);
-                }
-            }
-        }
-    }
-
-    /** Octans: Water — give water breathing and fishing luck. */
-    private void applyOctansEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Player> players = level.getEntitiesOfClass(Player.class, area);
-        for (Player player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 80, 0, true, false));
-            player.addEffect(new MobEffectInstance(MobEffects.LUCK, 80, 2, true, false));
-        }
-    }
-
-    /** Bootes: Animal — breed and grow nearby animals. */
-    private void applyBootesEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Animal> animals = level.getEntitiesOfClass(Animal.class, area);
-        for (Animal animal : animals) {
-            if (animal.isBaby()) {
-                animal.ageUp(60); // Accelerate growth
-            }
-        }
-    }
-
-    /** Fornax: Fire — smelt items on ground, give fire resistance. */
-    private void applyFornaxEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        List<Player> players = level.getEntitiesOfClass(Player.class, area);
-        for (Player player : players) {
-            player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 80, 0, true, false));
-        }
-    }
-
-    /** Pelotrio: Fertility — spawn passive mobs occasionally. */
-    private void applyPelotrioEffect(@Nonnull ServerLevel level, @Nonnull AABB area) {
-        // Simplified: give regeneration to nearby animals
-        List<Animal> animals = level.getEntitiesOfClass(Animal.class, area);
-        for (Animal animal : animals) {
-            if (animal.getHealth() < animal.getMaxHealth()) {
-                animal.heal(2.0F);
-            }
-        }
+        ConstellationEffectProperties properties = provider.provideProperties().setSize(effectRange);
+        provider.tick(level, worldPosition, properties);
     }
 
     /**

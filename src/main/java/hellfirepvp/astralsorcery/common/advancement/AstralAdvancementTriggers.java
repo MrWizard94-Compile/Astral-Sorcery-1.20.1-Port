@@ -1,9 +1,5 @@
 /*******************************************************************************
  * HellFirePvP / Astral Sorcery 2024
- *
- * All rights reserved.
- * The source code is available on github: https://github.com/HellFirePvP/AstralSorcery
- * For further details, see the License file there.
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.advancement;
 
@@ -20,67 +16,52 @@ import net.minecraft.server.level.ServerPlayer;
 import javax.annotation.Nonnull;
 
 /**
- * Custom advancement criterion triggers for Astral Sorcery progression milestones.
- * Each trigger fires when the player reaches a specific point in the mod's progression.
+ * Custom advancement criterion triggers for Astral Sorcery progression.
  *
- * <p>Triggers are registered via {@link CriteriaTriggers#register(String, net.minecraft.advancements.CriterionTrigger)}
- * during common setup. Datapack advancement JSONs reference them by their
- * {@code astralsorcery:*} IDs.</p>
+ * <p>Typed triggers carry predicate data (which constellation, which recipe, etc.)
+ * so advancement JSONs can match specific events. Generic triggers fire with no
+ * extra conditions and are used where no matching data is needed.</p>
  *
- * <p>1.16 -> 1.20 changes:
- * ICriterionTrigger -> CriterionTrigger,
- * ICriterionInstance -> AbstractCriterionTriggerInstance,
- * EntityPredicate.AndPredicate -> ContextAwarePredicate,
- * CriteriaTriggers.register(CriterionTrigger) signature stable</p>
+ * <p>1.16 → 1.20 changes:
+ * ICriterionTrigger/ListenerCriterionTrigger → SimpleCriterionTrigger (manages
+ * listeners internally); ICriterionInstance → AbstractCriterionTriggerInstance;
+ * EntityPredicate.AndPredicate.ANY_AND → ContextAwarePredicate.ANY;
+ * ConditionArrayParser → DeserializationContext.</p>
  */
 public final class AstralAdvancementTriggers {
 
     private AstralAdvancementTriggers() {}
 
-    /** Triggered when a player attunes to a constellation. */
-    public static final GenericASTrigger ATTUNE_PLAYER =
-            new GenericASTrigger(AstralSorcery.key("attune_player"));
+    // Typed triggers — carry predicate data for fine-grained advancement matching
 
-    /** Triggered when a player discovers a new constellation. */
-    public static final GenericASTrigger DISCOVER_CONSTELLATION =
-            new GenericASTrigger(AstralSorcery.key("discover_constellation"));
+    public static final AltarCraftTrigger            ALTAR_CRAFT            = new AltarCraftTrigger();
+    public static final AttuneCrystalTrigger          ATTUNE_CRYSTAL         = new AttuneCrystalTrigger();
+    public static final AttuneSelfTrigger             ATTUNE_SELF            = new AttuneSelfTrigger();
+    public static final DiscoverConstellationTrigger  DISCOVER_CONSTELLATION = new DiscoverConstellationTrigger();
+    public static final PerkLevelTrigger              PERK_LEVEL             = new PerkLevelTrigger();
 
-    /** Triggered when a player reaches a new progression tier. */
-    public static final GenericASTrigger REACH_TIER =
-            new GenericASTrigger(AstralSorcery.key("reach_tier"));
+    // Generic triggers — fire with no predicate; advancement JSON matches by ID only
 
-    /** Triggered when a player allocates a perk in the tree. */
-    public static final GenericASTrigger ALLOCATE_PERK =
-            new GenericASTrigger(AstralSorcery.key("allocate_perk"));
+    public static final GenericASTrigger REACH_TIER    = new GenericASTrigger(AstralSorcery.key("reach_tier"));
+    public static final GenericASTrigger ALLOCATE_PERK = new GenericASTrigger(AstralSorcery.key("allocate_perk"));
+    public static final GenericASTrigger ALTAR_UPGRADE = new GenericASTrigger(AstralSorcery.key("altar_upgrade"));
+    public static final GenericASTrigger INFUSION_CRAFT = new GenericASTrigger(AstralSorcery.key("infusion_craft"));
 
-    /** Triggered when a player crafts at a starlight altar. */
-    public static final GenericASTrigger ALTAR_CRAFT =
-            new GenericASTrigger(AstralSorcery.key("altar_craft"));
-
-    /**
-     * Registers all triggers. Must be called once during common setup.
-     */
     public static void init() {
-        CriteriaTriggers.register(ATTUNE_PLAYER);
+        CriteriaTriggers.register(ALTAR_CRAFT);
+        CriteriaTriggers.register(ATTUNE_CRYSTAL);
+        CriteriaTriggers.register(ATTUNE_SELF);
         CriteriaTriggers.register(DISCOVER_CONSTELLATION);
+        CriteriaTriggers.register(PERK_LEVEL);
         CriteriaTriggers.register(REACH_TIER);
         CriteriaTriggers.register(ALLOCATE_PERK);
-        CriteriaTriggers.register(ALTAR_CRAFT);
+        CriteriaTriggers.register(ALTAR_UPGRADE);
+        CriteriaTriggers.register(INFUSION_CRAFT);
     }
 
-    /**
-     * A generic criterion trigger that simply fires for a player
-     * with no additional predicate matching. Advancement JSONs can
-     * use these triggers by ID without extra conditions.
-     *
-     * <p>For triggers that need to match specific data (which constellation,
-     * which tier, etc.), extend this class and add predicate fields
-     * to the TriggerInstance.</p>
-     */
     public static class GenericASTrigger extends SimpleCriterionTrigger<GenericASTrigger.Instance> {
 
-        @Nonnull
-        private final ResourceLocation id;
+        @Nonnull private final ResourceLocation id;
 
         public GenericASTrigger(@Nonnull ResourceLocation id) {
             this.id = id;
@@ -95,32 +76,19 @@ public final class AstralAdvancementTriggers {
         @Override
         @Nonnull
         protected Instance createInstance(@Nonnull JsonObject json,
-                                          @Nonnull ContextAwarePredicate playerPredicate,
+                                          @Nonnull ContextAwarePredicate player,
                                           @Nonnull DeserializationContext context) {
-            return new Instance(id, playerPredicate);
+            return new Instance(id, player);
         }
 
-        /**
-         * Fires this trigger for the given player with no extra conditions.
-         */
         public void trigger(@Nonnull ServerPlayer player) {
             super.trigger(player, instance -> true);
         }
 
-        /**
-         * Trigger instance that always matches (no additional predicates).
-         */
         public static class Instance extends AbstractCriterionTriggerInstance {
-
             public Instance(@Nonnull ResourceLocation criterion,
-                            @Nonnull ContextAwarePredicate playerPredicate) {
-                super(criterion, playerPredicate);
-            }
-
-            @Override
-            @Nonnull
-            public JsonObject serializeToJson(@Nonnull net.minecraft.advancements.critereon.SerializationContext context) {
-                return super.serializeToJson(context);
+                            @Nonnull ContextAwarePredicate player) {
+                super(criterion, player);
             }
         }
     }

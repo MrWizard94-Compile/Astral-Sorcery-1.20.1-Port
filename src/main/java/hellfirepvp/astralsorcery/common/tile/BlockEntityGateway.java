@@ -7,6 +7,8 @@ import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -171,6 +173,21 @@ public class BlockEntityGateway extends BlockEntityTick {
 
     public boolean isStructureValid() {
         return structureValid;
+    }
+
+    /**
+     * Stores the given DyeColor in the item's NBT so the placed gateway can read it.
+     * Called by the change_gateway_color crafting recipe.
+     */
+    public static void setItemColor(@Nonnull ItemStack stack, @Nonnull DyeColor color) {
+        stack.getOrCreateTag().putInt("gatewayColor", color.getId());
+    }
+
+    @Nullable
+    public static DyeColor getItemColor(@Nonnull ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag == null || !tag.contains("gatewayColor")) return null;
+        return DyeColor.byId(tag.getInt("gatewayColor"));
     }
 
     @Override

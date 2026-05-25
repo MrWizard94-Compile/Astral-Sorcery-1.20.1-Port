@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.entity;
 
+import hellfirepvp.astralsorcery.common.util.DamageSourceAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -75,7 +76,7 @@ public class EntityNocturnalSpark extends Entity {
 
                 if (dist < 0.5) {
                     // Hit target
-                    target.hurt(this.damageSources().magic(), damage);
+                    target.hurt(DamageSourceAS.stellar(this.level()), damage);
                     this.discard();
                     return;
                 }

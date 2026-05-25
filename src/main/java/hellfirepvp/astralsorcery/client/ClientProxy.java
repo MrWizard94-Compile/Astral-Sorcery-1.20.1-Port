@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.client;
 
 import hellfirepvp.astralsorcery.client.event.ClientRenderEventHandler;
+import hellfirepvp.astralsorcery.client.event.EventHandlerClientMantleTick;
 import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityCelestialCrystal;
 import hellfirepvp.astralsorcery.client.render.overlay.OverlayStarlightGauge;
@@ -32,8 +33,11 @@ import hellfirepvp.astralsorcery.client.render.tile.RenderInfuser;
 import hellfirepvp.astralsorcery.client.render.tile.RenderLens;
 import hellfirepvp.astralsorcery.client.render.tile.RenderObservatory;
 import hellfirepvp.astralsorcery.client.render.tile.RenderPrism;
+import hellfirepvp.astralsorcery.client.render.tile.RenderRefractionTable;
 import hellfirepvp.astralsorcery.client.render.tile.RenderRelay;
 import hellfirepvp.astralsorcery.client.render.tile.RenderRitualPedestal;
+import hellfirepvp.astralsorcery.client.render.tile.RenderSpectralRelay;
+import hellfirepvp.astralsorcery.client.render.tile.RenderTileFakedState;
 import hellfirepvp.astralsorcery.client.render.tile.RenderTelescope;
 import hellfirepvp.astralsorcery.client.render.tile.RenderTreeBeacon;
 import hellfirepvp.astralsorcery.client.render.tile.RenderWell;
@@ -115,6 +119,9 @@ public class ClientProxy extends CommonProxy {
 
         // Custom sky renderer (constellation overlay)
         forgeBus.register(new AstralSkyRenderer());
+
+        // Client-side mantle effect ticks (VFX, highlighting)
+        forgeBus.register(new EventHandlerClientMantleTick());
     }
 
     // =========================================================================
@@ -141,6 +148,9 @@ public class ClientProxy extends CommonProxy {
         event.registerBlockEntityRenderer(BlockEntityTypesAS.FOUNTAIN.get(), RenderFountain::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.OBSERVATORY.get(), RenderObservatory::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.TREE_BEACON.get(), RenderTreeBeacon::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.SPECTRAL_RELAY.get(), RenderSpectralRelay::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.REFRACTION_TABLE.get(), RenderRefractionTable::new);
+        event.registerBlockEntityRenderer(BlockEntityTypesAS.TRANSLUCENT_BLOCK.get(), RenderTileFakedState::new);
 
         // Entity renderers
         event.registerEntityRenderer(EntityTypesAS.SPECTRAL_TOOL.get(), RenderEntitySpectralTool::new);

@@ -4,6 +4,9 @@
 package hellfirepvp.astralsorcery.common.entity;
 
 import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
+import net.minecraft.server.level.ServerLevel;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -73,6 +76,12 @@ public class EntityCelestialCrystal extends Entity {
         if (level().isClientSide()) {
             // Client: bobbing animation handled by renderer
             return;
+        }
+
+        if (ticksAlive == 1 && level() instanceof ServerLevel serverLevel) {
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.CELESTIAL_CRYSTAL_DESCEND, blockPosition()),
+                    serverLevel, blockPosition());
         }
 
         if (ticksAlive < DESCEND_DURATION) {

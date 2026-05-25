@@ -8,9 +8,11 @@
 package hellfirepvp.astralsorcery.common.crystal;
 
 import hellfirepvp.astralsorcery.common.crystal.calc.PropertyUsage;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +29,8 @@ public abstract class CrystalProperty implements Comparable<CrystalProperty> {
     private final int sortingId;
     private final ResourceLocation registryName;
 
+    @Nullable
+    private ResourceLocation requiredResearch = null;
     private final List<CrystalPropertyModifierFunction> modifiers = new ArrayList<>();
     private Predicate<CalculationContext> usageTests = ctx -> false;
 
@@ -37,6 +41,15 @@ public abstract class CrystalProperty implements Comparable<CrystalProperty> {
 
     public final ResourceLocation getRegistryName() {
         return registryName;
+    }
+
+    public CrystalProperty setRequiredResearch(@Nullable ResourceLocation research) {
+        this.requiredResearch = research;
+        return this;
+    }
+
+    public boolean canSee(PlayerProgress progress) {
+        return requiredResearch == null || progress.hasResearch(requiredResearch);
     }
 
     public CrystalProperty addModifier(CrystalPropertyModifierFunction modifierFunction) {

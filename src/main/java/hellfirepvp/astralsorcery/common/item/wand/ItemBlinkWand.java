@@ -1,6 +1,9 @@
 package hellfirepvp.astralsorcery.common.item.wand;
 
 import com.google.common.collect.Iterables;
+import hellfirepvp.astralsorcery.client.effect.EffectManager;
+import hellfirepvp.astralsorcery.client.effect.EffectProperties;
+import hellfirepvp.astralsorcery.client.effect.FXParticle;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperDamageCancelling;
 import hellfirepvp.astralsorcery.common.item.base.AlignmentChargeConsumer;
@@ -22,11 +25,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Blink Wand — teleports the player to a targeted block, or launches them in their
@@ -37,12 +44,13 @@ import java.util.List;
  * getCooldownTracker → getCooldowns, ActionResult → InteractionResultHolder,
  * UseAction → UseAnim, getItemInUseCount → getUseItemRemainingTicks,
  * entity.getLook(1F) → entity.getLookAngle(), isElytraFlying → isFallFlying.
- * Client VFX (onUsingTick particles) deferred to Phase 12.</p>
+ * Client VFX: onUseTick spawns Vicio-purple sparkle particles while charging in LAUNCH mode.</p>
  */
 public class ItemBlinkWand extends ItemAS implements AlignmentChargeConsumer {
 
     private static final float COST_PER_BLINK = 700F;
     private static final float COST_PER_DASH  = 850F;
+    private static final Random RAND = new Random();
 
     public ItemBlinkWand() {
         super(defaultProperties().stacksTo(1));
@@ -143,6 +151,53 @@ public class ItemBlinkWand extends ItemAS implements AlignmentChargeConsumer {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void onUseTick(@Nonnull Level level, @Nonnull LivingEntity entity,
+                          @Nonnull ItemStack stack, int count) {
+        if (!level.isClientSide()) return;
+        float perc = 0.2F + Math.min(1F, Math.min(50, stack.getUseDuration() - count) / 50F) * 0.8F;
+        playUseParticles(stack, entity, perc);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void playUseParticles(@Nonnull ItemStack stack, @Nonnull LivingEntity entity, float usagePercent) {
+        if (!(entity instanceof Player player)) return;
+        if (player.getCooldowns().isOnCooldown(this)) return;
+        if (getBlinkMode(stack) != BlinkMode.LAUNCH) return;
+
+        Vec3 lookVec = entity.getLookAngle();
+        Vector3 look = new Vector3(lookVec.x, lookVec.y, lookVec.z).normalize().multiply(20);
+        Vector3 pos = Vector3.atEntityCorner(entity).addY(entity.getEyeHeight());
+        Vector3 motion = look.clone().normalize().multiply(-0.8F + RAND.nextFloat() * -0.5F);
+        Vector3 perp = look.clone().perpendicular().normalize();
+
+        int particleCount = Math.round(usagePercent * 6);
+        int maxAge = (stack.getUseDuration() - entity.getUseItemRemainingTicks()) + 10;
+        for (int i = 0; i < particleCount; i++) {
+            float dst   = i == 0 ? RAND.nextFloat() * 0.4F : 0.2F + RAND.nextFloat() * 0.4F;
+            float speed = i == 0 ? 0.005F : 0.5F + RAND.nextFloat() * 0.5F;
+            double angleRad = Math.toRadians(RAND.nextFloat() * 360.0);
+
+            Vector3 angle = perp.clone().rotate(angleRad, look).normalize();
+            Vector3 at = pos.clone()
+                    .add(look.clone().multiply(0.7F + RAND.nextFloat() * 0.3F))
+                    .add(angle.clone().multiply(dst));
+            Vector3 mot = motion.clone()
+                    .add(angle.clone().multiply(0.1F + RAND.nextFloat() * 0.15F))
+                    .multiply(speed);
+
+            FXParticle p = new FXParticle(at.getX(), at.getY(), at.getZ());
+            EffectProperties props = EffectProperties.create()
+                    .setColor(new Color(140, 100, 230))
+                    .setScale(0.15F + RAND.nextFloat() * 0.15F)
+                    .setMaxAge(maxAge)
+                    .setMotion(mot.getX(), mot.getY(), mot.getZ())
+                    .setAlphaFadeOut();
+            props.applyTo(p);
+            EffectManager.getInstance().spawn(p);
         }
     }
 

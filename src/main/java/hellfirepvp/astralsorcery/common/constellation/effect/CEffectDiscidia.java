@@ -3,6 +3,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.constellation.effect;
 
+import hellfirepvp.astralsorcery.common.util.DamageSourceAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -62,7 +63,7 @@ public class CEffectDiscidia extends ConstellationEffectProvider {
         float damage = (float) (BASE_DAMAGE * potency);
         List<Monster> monsters = level.getEntitiesOfClass(Monster.class, area);
         for (Monster monster : monsters) {
-            monster.hurt(level.damageSources().magic(), damage);
+            monster.hurt(DamageSourceAS.stellar(level), damage);
         }
     }
 

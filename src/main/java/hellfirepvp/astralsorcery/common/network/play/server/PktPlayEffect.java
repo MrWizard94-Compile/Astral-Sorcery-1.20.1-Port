@@ -3,11 +3,19 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.client.effect.EffectHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.function.Supplier;
 
 /**
@@ -69,11 +77,69 @@ public class PktPlayEffect {
 
     public static void handle(@Nonnull PktPlayEffect pkt,
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            // Client-side: dispatch to the effect renderer
-            // Handled by ClientEffectHandler (Phase 12)
-        });
-        ctx.get().setPacketHandled(true);
+        NetworkEvent.Context context = ctx.get();
+        context.enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt)));
+        context.setPacketHandled(true);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static void handleClient(@Nonnull PktPlayEffect pkt) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return;
+        Vec3 center = Vec3.atCenterOf(pkt.position);
+
+        switch (pkt.effectType) {
+            case ALTAR_CRAFT_COMPLETE -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.burstStarlight(center);
+                EffectHelper.orbitalStarlight(center, 1.2f);
+            }
+            case ATTUNEMENT_COMPLETE -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.orbitalStarlight(center, 1.5f);
+                EffectHelper.orbitalStarlight(center, 2.5f);
+            }
+            case RITUAL_ACTIVATE -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.vortexStarlight(center);
+                EffectHelper.burstStarlight(center);
+            }
+            case RITUAL_DEACTIVATE ->
+                EffectHelper.dustCloud(center, new Color(130, 170, 240), 16, 1.0f);
+            case TRANSMUTATION_COMPLETE -> {
+                EffectHelper.crystalGrowthCluster(center, new Color(160, 200, 255), 12, 0.5f);
+                EffectHelper.sparkleCloud(center, 0.4f, EffectHelper.randomStarlightColor(), 10, 0.12f, 30);
+            }
+            case SHOOTING_STAR_IMPACT -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.burstStarlight(center);
+                EffectHelper.burstStarlight(center);
+            }
+            case GATEWAY_TELEPORT -> {
+                EffectHelper.vortexStarlight(center);
+                EffectHelper.orbitalStarlight(center, 1.0f);
+            }
+            case CELESTIAL_CRYSTAL_DESCEND -> {
+                EffectHelper.crystalGrowthCluster(center, new Color(180, 220, 255), 8, 0.3f);
+                EffectHelper.sparkleCloud(center, 0.5f, EffectHelper.randomStarlightColor(), 8, 0.1f, 40);
+            }
+            case WELL_FILL_BURST ->
+                EffectHelper.sparkleCloud(center, 0.6f, new Color(100, 160, 240), 12, 0.1f, 25);
+            case INFUSION_COMPLETE -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.burstStarlight(center);
+                EffectHelper.orbitalStarlight(center, 0.8f);
+            }
+            case LIQUID_INTERACTION ->
+                EffectHelper.sparkleCloud(center, 0.3f, new Color(80, 140, 220), 6, 0.08f, 20);
+            case PERK_ACTIVATE -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.orbitalStarlight(center, 1.0f);
+            }
+            case CRYSTAL_FORM ->
+                EffectHelper.crystalGrowthCluster(center, new Color(200, 230, 255), 10, 0.4f);
+        }
     }
 
     /**

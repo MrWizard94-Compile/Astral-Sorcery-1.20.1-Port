@@ -33,4 +33,10 @@ public class ColorsAS {
     public static final Color EFFECT_DROP_MODIFIER = new Color(0x00AA66);
 
     public static final Color STARLIGHT = new Color(0xAADDFF);
+
+    // Mantle effect highlight colors
+    public static final Color MANTLE_LUCERNA_SPAWNER   = new Color(0x9C0100);
+    public static final Color MANTLE_LUCERNA_INVENTORY = new Color(0x00A903);
+    public static final Color CONSTELLATION_LUCERNA    = new Color(0xFFE709);
+    public static final Color CONSTELLATION_MINERALIS  = new Color(0xCB7D0A);
 }

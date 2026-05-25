@@ -3,9 +3,12 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.client.effect.EffectHelper;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
@@ -48,7 +51,14 @@ public class PktDiscoveryUpdate {
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktDiscoveryUpdate pkt) {
         PlayerProgressManager.getClientProgress().discoverConstellation(pkt.constellationKey);
-        // Discovery animation deferred — VFX system not yet ported (Phase 12)
+        if (!pkt.showAnimation) return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+        Vec3 center = mc.player.position().add(0, 1, 0);
+        EffectHelper.flareStarlight(center);
+        EffectHelper.orbitalStarlight(center, 1.5f);
+        EffectHelper.sparkleCloud(center, 0.8f, EffectHelper.randomStarlightColor(), 16, 0.12f, 60);
     }
 
     @Nonnull

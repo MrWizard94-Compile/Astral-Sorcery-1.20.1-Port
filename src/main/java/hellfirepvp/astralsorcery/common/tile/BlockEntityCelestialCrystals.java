@@ -7,9 +7,12 @@ import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -83,6 +86,11 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
         BlockState next = BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get().defaultBlockState()
                 .setValue(BlockCelestialCrystalCluster.STAGE, stage);
         getLevel().setBlock(getBlockPos(), next, 3);
+        if (stage == 4 && getLevel() instanceof ServerLevel serverLevel) {
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.CRYSTAL_FORM, getBlockPos()),
+                    serverLevel, getBlockPos());
+        }
     }
 
     @Override

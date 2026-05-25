@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.perk;
 
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 
 import javax.annotation.Nonnull;
@@ -31,11 +32,20 @@ public final class PerkLevelManager {
     /** Linear coefficient for XP curve. */
     private static final long LINEAR_EXP = 100L;
 
-    /** Maximum perk level (and thus maximum perk points from leveling). */
-    public static final int MAX_LEVEL = 40;
-
     /** Starting perk points granted at level 0 (before any XP). */
     private static final int STARTING_POINTS = 1;
+
+    /** Default max perk level; used as fallback when config is not yet loaded (e.g., unit tests). */
+    public static final int DEFAULT_MAX_LEVEL = 40;
+
+    /** Returns the configured maximum perk level. */
+    public static int getMaxLevel() {
+        try {
+            return CommonConfig.CONFIG.maxPerkLevel.get();
+        } catch (IllegalStateException | NullPointerException e) {
+            return DEFAULT_MAX_LEVEL;
+        }
+    }
 
     /**
      * Computes the total experience required to reach a given level.
@@ -45,7 +55,7 @@ public final class PerkLevelManager {
      */
     public static long getTotalExpForLevel(int level) {
         if (level <= 0) return 0;
-        level = Math.min(level, MAX_LEVEL);
+        level = Math.min(level, getMaxLevel());
         long total = 0;
         for (int i = 1; i <= level; i++) {
             total += getExpForLevelUp(i);
@@ -68,13 +78,14 @@ public final class PerkLevelManager {
      * Computes the current level from total accumulated experience.
      *
      * @param totalExp the player's total perk experience
-     * @return the current level (0 to MAX_LEVEL)
+     * @return the current level (0 to maxLevel)
      */
     public static int getLevelFromExp(long totalExp) {
         if (totalExp <= 0) return 0;
+        int maxLevel = getMaxLevel();
         int level = 0;
         long remaining = totalExp;
-        while (level < MAX_LEVEL) {
+        while (level < maxLevel) {
             long needed = getExpForLevelUp(level + 1);
             if (remaining < needed) {
                 break;
@@ -93,7 +104,7 @@ public final class PerkLevelManager {
      */
     public static float getLevelProgress(long totalExp) {
         int level = getLevelFromExp(totalExp);
-        if (level >= MAX_LEVEL) return 1.0f;
+        if (level >= getMaxLevel()) return 1.0f;
 
         long currentLevelExp = getTotalExpForLevel(level);
         long nextLevelExp = getExpForLevelUp(level + 1);
@@ -110,7 +121,7 @@ public final class PerkLevelManager {
      * @return total perk points earned
      */
     public static int getPerkPointsForLevel(int level) {
-        return STARTING_POINTS + Math.min(level, MAX_LEVEL);
+        return STARTING_POINTS + Math.min(level, getMaxLevel());
     }
 
     /**

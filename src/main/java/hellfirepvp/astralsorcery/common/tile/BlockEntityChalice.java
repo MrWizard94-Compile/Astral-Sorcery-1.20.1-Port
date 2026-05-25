@@ -6,6 +6,7 @@ import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import net.minecraft.server.level.ServerLevel;
@@ -205,6 +206,9 @@ public class BlockEntityChalice extends BlockEntityTick {
                 item.setDefaultPickUpDelay();
                 level.addFreshEntity(item);
             }
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.LIQUID_INTERACTION, thisPos),
+                    (ServerLevel) level, thisPos);
             return; // one interaction per trigger
         }
     }

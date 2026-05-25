@@ -6,27 +6,23 @@ import net.minecraft.nbt.CompoundTag;
 import javax.annotation.Nonnull;
 
 /**
- * Manages server→client config synchronization.
- * The server serializes selected config values to NBT in
- * {@link hellfirepvp.astralsorcery.common.network.play.server.PktSyncConfig}
- * and the client applies them here so both sides use identical values.
+ * Config sync entry point — now a no-op because {@code CommonConfig} is registered
+ * as {@link net.minecraftforge.fml.config.ModConfig.Type#SERVER}, so Forge
+ * automatically syncs it from server to client on player join.
  *
- * <p>Currently a stub — concrete value reads/writes are added when
- * server-authoritative config keys are identified.</p>
+ * <p>{@link hellfirepvp.astralsorcery.common.network.play.server.PktSyncConfig}
+ * is still registered for potential future use (e.g., live reload without reconnect),
+ * but is not currently sent.</p>
  */
 public final class ConfigManager {
 
     private ConfigManager() {}
 
     /**
-     * Applies server-provided config overrides to the client's local config state.
-     * Called on the client when a {@code PktSyncConfig} is received.
-     *
-     * @param configData the NBT compound from the server
+     * Called when a {@code PktSyncConfig} packet arrives. Currently unused —
+     * Forge SERVER-type config sync is the primary mechanism.
      */
     public static void applySyncedConfig(@Nonnull CompoundTag configData) {
-        // No server-authoritative overrides defined yet.
-        // Log at debug level so we know the packet arrived.
-        AstralSorcery.log.debug("PktSyncConfig received ({} keys)", configData.size());
+        AstralSorcery.log.debug("PktSyncConfig received ({} keys) — Forge SERVER config sync is active", configData.size());
     }
 }

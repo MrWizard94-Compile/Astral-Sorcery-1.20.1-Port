@@ -4,11 +4,15 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
+import hellfirepvp.astralsorcery.client.util.sound.PositionedLoopSound;
+import hellfirepvp.astralsorcery.common.lib.SoundsAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
+import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
 import hellfirepvp.astralsorcery.common.util.tile.PrecisionSingleFluidTank;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.BlockPos;
@@ -65,6 +69,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     private ResourceLocation activeRecipeId = null;
     private double storedStarlight = 0;
     private boolean registeredInNetwork = false;
+
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    private Object clientCraftSound = null;
 
     public BlockEntityInfuser(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.INFUSER.get(), pos, state);
@@ -125,7 +132,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // Client-side: infusion particles handled by renderer
+            doInfuserSound();
             return;
         }
 
@@ -152,6 +159,28 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
             tryFindInfusionRecipe(level);
         }
     }
+
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    private void doInfuserSound() {
+        boolean crafting = activeRecipeId != null && cachedRecipe != null;
+        if (SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
+            clientCraftSound = null;
+            return;
+        }
+        if (crafting) {
+            if (clientCraftSound == null || ((PositionedLoopSound) clientCraftSound).hasStoppedPlaying()) {
+                net.minecraft.world.phys.Vec3 center = net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+                clientCraftSound = SoundHelper.playSoundLoopFadeInClient(
+                        SoundsAS.INFUSER_CRAFT_LOOP.get(), SoundSource.BLOCKS, center, 0.5F, 1F, false,
+                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0
+                                || activeRecipeId == null || cachedRecipe == null)
+                        .setFadeInTicks(30).setFadeOutTicks(15);
+            }
+        } else {
+            clientCraftSound = null;
+        }
+    }
+
 
     /**
      * Progresses the active infusion.
@@ -251,8 +280,18 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         PacketChannel.sendToAllTracking(
                 new PktParticleEvent(PktParticleEvent.INFUSER_CRAFT, worldPosition),
                 (net.minecraft.server.level.ServerLevel) level, worldPosition);
+        PacketChannel.sendToAllTracking(
+                new PktPlayEffect(PktPlayEffect.EffectType.INFUSION_COMPLETE, worldPosition),
+                (net.minecraft.server.level.ServerLevel) level, worldPosition);
         level.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME,
                 SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
+
+        net.minecraft.world.entity.player.Player nearest = level.getNearestPlayer(
+                worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
+                16.0, null);
+        if (nearest instanceof net.minecraft.server.level.ServerPlayer sp) {
+            hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers.INFUSION_CRAFT.trigger(sp);
+        }
     }
 
     /**

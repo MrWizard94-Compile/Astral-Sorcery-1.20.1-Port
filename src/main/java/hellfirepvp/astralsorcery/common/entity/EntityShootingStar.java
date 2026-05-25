@@ -4,6 +4,8 @@
 package hellfirepvp.astralsorcery.common.entity;
 
 import hellfirepvp.astralsorcery.common.lib.LootAS;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -97,6 +99,9 @@ public class EntityShootingStar extends Entity {
                 ie.setDefaultPickUpDelay();
                 serverLevel.addFreshEntity(ie);
             }
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.SHOOTING_STAR_IMPACT, blockPosition()),
+                    serverLevel, blockPosition());
             discard();
         }
     }

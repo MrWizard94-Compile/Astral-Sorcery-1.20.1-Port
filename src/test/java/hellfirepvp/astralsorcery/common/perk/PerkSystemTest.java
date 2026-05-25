@@ -174,8 +174,8 @@ class PerkSystemTest {
     @Test
     void testLevelCap() {
         long hugeExp = Long.MAX_VALUE / 2;
-        assertEquals(PerkLevelManager.MAX_LEVEL, PerkLevelManager.getLevelFromExp(hugeExp),
-                "Should cap at MAX_LEVEL");
+        assertEquals(PerkLevelManager.DEFAULT_MAX_LEVEL, PerkLevelManager.getLevelFromExp(hugeExp),
+                "Should cap at DEFAULT_MAX_LEVEL");
     }
 
     @Test
@@ -193,7 +193,7 @@ class PerkSystemTest {
         float progressAtZero = PerkLevelManager.getLevelProgress(0);
         assertEquals(0f, progressAtZero, 0.001f, "Progress at 0 exp should be 0");
 
-        long maxExp = PerkLevelManager.getTotalExpForLevel(PerkLevelManager.MAX_LEVEL);
+        long maxExp = PerkLevelManager.getTotalExpForLevel(PerkLevelManager.DEFAULT_MAX_LEVEL);
         float progressAtMax = PerkLevelManager.getLevelProgress(maxExp);
         assertEquals(1.0f, progressAtMax, 0.001f, "Progress at max should be 1.0");
     }
@@ -201,7 +201,7 @@ class PerkSystemTest {
     @Test
     void testExpCurveIsMonotonicallyIncreasing() {
         long prev = 0;
-        for (int i = 1; i <= PerkLevelManager.MAX_LEVEL; i++) {
+        for (int i = 1; i <= PerkLevelManager.DEFAULT_MAX_LEVEL; i++) {
             long needed = PerkLevelManager.getExpForLevelUp(i);
             assertTrue(needed > prev,
                     "Exp for level " + i + " (" + needed + ") should exceed level " + (i - 1) + " (" + prev + ")");

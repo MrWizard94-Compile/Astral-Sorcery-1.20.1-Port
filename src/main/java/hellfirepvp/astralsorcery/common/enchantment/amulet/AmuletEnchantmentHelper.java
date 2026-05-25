@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.enchantment.amulet;
 
+import hellfirepvp.astralsorcery.common.base.Mods;
 import hellfirepvp.astralsorcery.common.enchantment.dynamic.DynamicEnchantmentHelper;
 import hellfirepvp.astralsorcery.common.item.ItemEnchantmentAmulet;
 import hellfirepvp.astralsorcery.common.util.item.ItemComparator;
@@ -115,10 +116,17 @@ public class AmuletEnchantmentHelper {
         Player player = getPlayerHavingTool(anyTool);
         if (player == null) return Optional.empty();
 
-        // Curios integration stub — scan curio slots when Curios is present.
-        // For now, fall back to checking offhand.
-        Inventory inv = player.getInventory();
-        for (ItemStack offhand : inv.offhand) {
+        // Curios integration: search all curio slots (necklace, charm, etc.)
+        if (Mods.CURIOS.isPresent()) {
+            Optional<ItemStack> curiosResult = Mods.CURIOS.getIfPresent(
+                    () -> () -> CuriosAmuletHelper.findAmulet(player));
+            if (curiosResult != null && curiosResult.isPresent()) {
+                return curiosResult;
+            }
+        }
+
+        // Fallback: offhand slot when Curios is absent
+        for (ItemStack offhand : player.getInventory().offhand) {
             if (!offhand.isEmpty() && offhand.getItem() instanceof ItemEnchantmentAmulet) {
                 return Optional.of(offhand);
             }

@@ -3,14 +3,19 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
+import hellfirepvp.astralsorcery.client.effect.EffectHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.function.Supplier;
 
 /**
@@ -73,12 +78,23 @@ public class PktAltarCraftingUpdate {
 
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktAltarCraftingUpdate pkt) {
-        // Phase 12: dispatch VFX by state
-        // - STARTED: begin crafting animation, particles
-        // - PROGRESS: particle stream update
-        // - COMPLETED: burst effect, item pop animation
-        // - FAILED: fizzle particle effect
-        // GUI progress bar reads isCrafting/recipeTick directly from BlockEntityAltar via normal BE sync.
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return;
+        Vec3 center = Vec3.atCenterOf(pkt.altarPos).add(0, 1, 0);
+
+        switch (pkt.state) {
+            case STARTED -> {
+                EffectHelper.vortexStarlight(center);
+                EffectHelper.sparkleCloud(center, 0.5f, new Color(140, 180, 255), 8, 0.1f, 30);
+            }
+            case PROGRESS -> EffectHelper.sparkleCloud(center, 0.3f, EffectHelper.randomStarlightColor(), 3, 0.08f, 20);
+            case COMPLETED -> {
+                EffectHelper.flareStarlight(center);
+                EffectHelper.burstStarlight(center);
+                EffectHelper.orbitalStarlight(center, 1.2f);
+            }
+            case FAILED -> EffectHelper.dustCloud(center, new Color(130, 170, 240), 12, 0.8f);
+        }
     }
 
     @Nonnull

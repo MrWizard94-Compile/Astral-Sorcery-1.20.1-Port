@@ -7,6 +7,7 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.data.world.GatewayHandler;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -130,6 +131,12 @@ public class PktGatewayTeleport {
                 sourceLevel, sourcePos);
         PacketChannel.sendToAllTracking(
                 new PktParticleEvent(PktParticleEvent.GATEWAY_ACTIVATE, targetPos),
+                targetLevel, targetPos);
+        PacketChannel.sendToAllTracking(
+                new PktPlayEffect(PktPlayEffect.EffectType.GATEWAY_TELEPORT, sourcePos),
+                sourceLevel, sourcePos);
+        PacketChannel.sendToAllTracking(
+                new PktPlayEffect(PktPlayEffect.EffectType.GATEWAY_TELEPORT, targetPos),
                 targetLevel, targetPos);
         sourceLevel.playSound(null, sourcePos,
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);

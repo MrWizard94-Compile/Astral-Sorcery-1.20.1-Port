@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crafting.nojson.attunement.active;
 
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationItem;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
@@ -21,8 +22,10 @@ import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -38,8 +41,9 @@ import javax.annotation.Nullable;
  * On completion, the crystal item is swapped to its attuned variant (if needed)
  * and the constellation is written into the item's NBT.</p>
  *
- * <p>Client-side visual effects (FXOrbitalCrystalAttunement, orbital particles,
- * loop sound) are deferred to Phase 12 (client rendering).</p>
+ * <p>Client-side visual effects (FXOrbitalCrystalAttunement, orbital particles)
+ * require unported rendering infrastructure and remain deferred. Loop sounds are
+ * managed by BlockEntityAttunementAltar.tickActiveSound().</p>
  *
  * <p>1.16 → 1.20: world.getEntityByID() → level.getEntity(),
  * entity.prevPosX/Y/Z → entity.xo/yo/zo (protected — use setPos only),
@@ -131,6 +135,14 @@ public class ActiveCrystalAttunementRecipe extends AttunementRecipe.Active<Attun
             IMinorConstellation trait = ci.getTraitConstellation(stack);
             if (attuned == null && cst instanceof IWeakConstellation weak) {
                 ci.setAttunedConstellation(stack, weak);
+                Player nearest = level.getNearestPlayer(
+                        altar.getBlockPos().getX() + 0.5,
+                        altar.getBlockPos().getY() + 0.5,
+                        altar.getBlockPos().getZ() + 0.5,
+                        16.0, null);
+                if (nearest instanceof ServerPlayer sp) {
+                    AstralAdvancementTriggers.ATTUNE_CRYSTAL.trigger(sp, weak);
+                }
             } else if (trait == null && cst instanceof IMinorConstellation minor) {
                 ci.setTraitConstellation(stack, minor);
             }

@@ -7,12 +7,16 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.perk;
 
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
@@ -221,7 +225,14 @@ public abstract class AbstractPerk {
      *
      * @param player the player allocating the perk
      */
-    public void onAllocate(@Nonnull Player player) {}
+    public void onAllocate(@Nonnull Player player) {
+        if (player instanceof ServerPlayer serverPlayer
+                && serverPlayer.level() instanceof ServerLevel serverLevel) {
+            PacketChannel.sendToAllTracking(
+                    new PktPlayEffect(PktPlayEffect.EffectType.PERK_ACTIVATE, serverPlayer.blockPosition()),
+                    serverLevel, serverPlayer.blockPosition());
+        }
+    }
 
     /**
      * Called when a player deallocates (refunds) this perk.

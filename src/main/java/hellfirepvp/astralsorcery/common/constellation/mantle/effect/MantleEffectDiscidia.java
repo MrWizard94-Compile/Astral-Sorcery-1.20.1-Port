@@ -11,6 +11,7 @@ import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffect;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
+import hellfirepvp.astralsorcery.common.util.DamageSourceAS;
 import hellfirepvp.astralsorcery.common.util.DamageUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,7 +33,7 @@ import javax.annotation.Nonnull;
  * A ThreadLocal flag prevents recursive re-entry from the echo attack itself.</p>
  *
  * <p>1.16 → 1.20: DamageSource.causePlayerDamage(player) → damageSources().playerAttack(player),
- * DAMAGE_SOURCE_STELLAR → damageSources().magic() (stellar source not yet ported),
+ * DAMAGE_SOURCE_STELLAR → DamageSourceAS.stellar() (data-driven damage type),
  * EventFlags replaced by ThreadLocal re-entry guard,
  * getEntityLiving() → getEntity(), getTrueSource() → getSource().getEntity().</p>
  */
@@ -72,7 +73,7 @@ public class MantleEffectDiscidia extends MantleEffect {
             ECHO_IN_PROGRESS.set(true);
             try {
                 DamageUtil.shotgunAttack(attacked, e -> DamageUtil.attackEntityFrom(e,
-                        player.damageSources().magic(), added / 2F));
+                        DamageSourceAS.stellar(attacked.level()), added / 2F));
                 DamageUtil.shotgunAttack(attacked, e -> DamageUtil.attackEntityFrom(e,
                         player.damageSources().playerAttack(player), added / 2F));
             } finally {

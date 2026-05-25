@@ -4,6 +4,7 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crafting.recipe.BlockTransmutation;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInfusion;
 import hellfirepvp.astralsorcery.common.crafting.recipe.LiquidInteraction;
+import hellfirepvp.astralsorcery.common.crafting.recipe.RecipeDyeableChangeColor;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.crafting.recipe.WellLiquefaction;
 import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.AltarUpgradeRecipeSerializer;
@@ -53,4 +54,12 @@ public class RecipeSerializersAS {
     public static final RegistryObject<RecipeSerializer<SimpleAltarRecipe>> RESONATOR_UPGRADE =
             RECIPE_SERIALIZERS.register("resonator_upgrade",
                     ResonatorUpgradeRecipeSerializer::new);
+
+    public static final RegistryObject<RecipeSerializer<RecipeDyeableChangeColor>> CHANGE_WAND_COLOR =
+            RECIPE_SERIALIZERS.register("change_wand_color",
+                    RecipeDyeableChangeColor.IlluminationWandColorSerializer::new);
+
+    public static final RegistryObject<RecipeSerializer<RecipeDyeableChangeColor>> CHANGE_GATEWAY_COLOR =
+            RECIPE_SERIALIZERS.register("change_gateway_color",
+                    RecipeDyeableChangeColor.GatewayColorSerializer::new);
 }

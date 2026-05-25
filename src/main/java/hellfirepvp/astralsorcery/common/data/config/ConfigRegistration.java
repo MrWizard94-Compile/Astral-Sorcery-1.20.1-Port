@@ -17,13 +17,14 @@ import net.minecraftforge.fml.config.ModConfig;
  *
  * <p>Config types:
  * <ul>
- *   <li>{@link ModConfig.Type#COMMON} — gameplay balance, synced server → client</li>
+ *   <li>{@link ModConfig.Type#SERVER} — gameplay balance, per-world; Forge auto-syncs
+ *       from server → client on join, so both sides always use identical values.</li>
  *   <li>{@link ModConfig.Type#CLIENT} — visual/audio preferences, client-only</li>
  * </ul></p>
  *
- * <p>Config files are generated at:
+ * <p>Config files:
  * <ul>
- *   <li>{@code config/astralsorcery-common.toml}</li>
+ *   <li>{@code saves/<world>/serverconfig/astralsorcery-server.toml}</li>
  *   <li>{@code config/astralsorcery-client.toml}</li>
  * </ul></p>
  */
@@ -38,9 +39,10 @@ public final class ConfigRegistration {
     public static void register() {
         ModLoadingContext ctx = ModLoadingContext.get();
 
-        ctx.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC, AstralSorcery.MODID + "-common.toml");
+        // SERVER type: config lives in world's serverconfig/ dir; Forge handles server→client sync
+        ctx.registerConfig(ModConfig.Type.SERVER, CommonConfig.SPEC, AstralSorcery.MODID + "-server.toml");
         ctx.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC, AstralSorcery.MODID + "-client.toml");
 
-        AstralSorcery.log.info("Registered config files: astralsorcery-common.toml, astralsorcery-client.toml");
+        AstralSorcery.log.info("Registered config files: astralsorcery-server.toml, astralsorcery-client.toml");
     }
 }
