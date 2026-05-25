@@ -73,6 +73,7 @@ public class PktSyncPlayerProgress {
         ctx.setPacketHandled(true);
     }
 
+    @net.minecraftforge.api.distmarker.OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktSyncPlayerProgress msg) {
         Player player = Minecraft.getInstance().player;
         if (player == null) {

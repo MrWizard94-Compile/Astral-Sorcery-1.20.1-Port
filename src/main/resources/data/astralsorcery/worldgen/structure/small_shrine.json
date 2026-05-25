@@ -6,7 +6,7 @@
   "start_pool": "astralsorcery:small_shrine/starts",
   "start_height": {
     "type": "minecraft:constant",
-    "value": 0
+    "value": {"absolute": 0}
   },
   "project_start_to_heightmap": "WORLD_SURFACE_WG"
 }

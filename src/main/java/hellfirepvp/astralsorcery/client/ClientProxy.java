@@ -62,7 +62,9 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import hellfirepvp.astralsorcery.client.resource.AssetLibrary;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -108,6 +110,9 @@ public class ClientProxy extends CommonProxy {
 
         // Client setup (menu screens, etc.)
         modBus.addListener(this::onClientSetup);
+
+        // Texture reload listener — invalidates AssetLibrary on resource pack reload
+        modBus.addListener(this::onRegisterReloadListeners);
     }
 
     @Override
@@ -208,5 +213,9 @@ public class ClientProxy extends CommonProxy {
                                 / (float) ItemResonator.ResonatorUpgrade.values().length;
                     });
         });
+    }
+
+    private void onRegisterReloadListeners(@Nonnull RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(AssetLibrary.INSTANCE);
     }
 }

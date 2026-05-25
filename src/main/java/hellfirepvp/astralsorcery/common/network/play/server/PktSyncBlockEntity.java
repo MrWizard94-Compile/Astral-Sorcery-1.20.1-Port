@@ -79,6 +79,7 @@ public class PktSyncBlockEntity {
         ctx.setPacketHandled(true);
     }
 
+    @net.minecraftforge.api.distmarker.OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktSyncBlockEntity msg) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) {

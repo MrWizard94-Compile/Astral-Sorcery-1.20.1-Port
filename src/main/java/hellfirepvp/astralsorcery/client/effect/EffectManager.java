@@ -39,6 +39,9 @@ public final class EffectManager {
 
     private static final EffectManager INSTANCE = new EffectManager();
 
+    /** Monotonically-increasing client tick counter. Used by sprite-sheet animation. */
+    private static long clientTick = 0;
+
     /** Effects grouped by render type for batched rendering. */
     private final Map<RenderType, List<EntityVisualFX>> effectsByType = new HashMap<>();
 
@@ -46,6 +49,10 @@ public final class EffectManager {
     private final List<EntityVisualFX> pendingAdd = new ArrayList<>();
 
     private EffectManager() {}
+
+    public static long getClientTick() {
+        return clientTick;
+    }
 
     @Nonnull
     public static EffectManager getInstance() {
@@ -92,6 +99,7 @@ public final class EffectManager {
      * and removes dead ones.
      */
     public void tick() {
+        clientTick++;
         // Integrate pending additions
         synchronized (pendingAdd) {
             for (EntityVisualFX fx : pendingAdd) {

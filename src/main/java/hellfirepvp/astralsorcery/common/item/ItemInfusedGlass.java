@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class ItemInfusedGlass extends ItemAS {
 
     public ItemInfusedGlass() {
-        super(defaultProperties().durability(5).stacksTo(1));
+        super(defaultProperties().durability(5));
     }
 
     @Nullable

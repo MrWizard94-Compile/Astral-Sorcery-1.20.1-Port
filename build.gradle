@@ -52,6 +52,15 @@ minecraft {
                 astralsorcery { source sourceSets.main }
             }
         }
+        gameTestServer {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', mod_id
+            mods {
+                astralsorcery { source sourceSets.main }
+            }
+        }
     }
 }
 
@@ -81,8 +90,9 @@ dependencies {
     runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:15.3.0.4"))
 
     // Curios API — optional equipment-slot integration (enchantment amulet)
+    // runtimeOnly omitted: Curios 5.14.1 mixin crashes on Forge 47.3.0 (AccessorEntity f_19803_ not found).
+    // Curios is optional; AmuletEnchantmentHelper guards all call sites via Mods.CURIOS.getIfPresent().
     compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.14.1+1.20.1:api"))
-    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.14.1+1.20.1"))
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'

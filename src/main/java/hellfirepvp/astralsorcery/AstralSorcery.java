@@ -48,7 +48,7 @@ public class AstralSorcery {
         // Register config files (must be before lifecycle events)
         ConfigRegistration.register();
 
-        this.proxy = DistExecutor.safeRunForDist(
+        this.proxy = DistExecutor.unsafeRunForDist(
             () -> ClientProxy::new,
             () -> CommonProxy::new
         );

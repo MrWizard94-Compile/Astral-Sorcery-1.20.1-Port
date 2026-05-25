@@ -77,6 +77,7 @@ public class PktSyncConstellation {
         ctx.setPacketHandled(true);
     }
 
+    @net.minecraftforge.api.distmarker.OnlyIn(Dist.CLIENT)
     private static void handleClient(@Nonnull PktSyncConstellation msg) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
