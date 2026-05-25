@@ -161,7 +161,7 @@ public class EventHandlerPerkEffects {
 
         if (player.getRandom().nextFloat() < KeyBleed.BLEED_CHANCE) {
             event.getEntity().addEffect(new MobEffectInstance(
-                    Objects.requireNonNull(MobEffects.WEAKNESS),
+                    hellfirepvp.astralsorcery.common.lib.EffectsAS.EFFECT_BLEED.get(),
                     KeyBleed.BLEED_DURATION, 0, false, true));
         }
     }

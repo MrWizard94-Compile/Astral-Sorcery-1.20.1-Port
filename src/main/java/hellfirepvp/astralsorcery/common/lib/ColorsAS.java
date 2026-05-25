@@ -27,5 +27,10 @@ public class ColorsAS {
     public static final Color EFFECT_BLUE_LIGHT = new Color(0x5555FF);
     public static final Color EFFECT_BLUE_DARK = new Color(0x0000AA);
 
+    // Mob effect colors
+    public static final Color EFFECT_BLEED        = new Color(0xAA0000);
+    public static final Color EFFECT_CHEAT_DEATH  = new Color(0xFFDD88);
+    public static final Color EFFECT_DROP_MODIFIER = new Color(0x00AA66);
+
     public static final Color STARLIGHT = new Color(0xAADDFF);
 }
