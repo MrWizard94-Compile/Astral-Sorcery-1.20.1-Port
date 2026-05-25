@@ -157,6 +157,12 @@ public final class CommonConfig {
     // Celestial & Starlight
     // ========================================================================
 
+    /**
+     * Length of one Astral Sorcery "day" in ticks. Normally 24000 (standard MC).
+     * Change only when using a mod that also changes the actual MC day length.
+     */
+    public final ForgeConfigSpec.IntValue dayLength;
+
     /** Day-time starlight collection fraction (0.0 = none, 0.2 = default). */
     public final ForgeConfigSpec.DoubleValue daytimeStarlightFraction;
 
@@ -322,6 +328,9 @@ public final class CommonConfig {
 
         // --- Celestial & Starlight ---
         builder.push("celestial");
+        dayLength = builder
+                .comment("Length of one Astral Sorcery day in ticks. Set this to match any mod that changes the actual MC day length (default 24000).")
+                .defineInRange("dayLength", 24000, 1000, 400_000);
         daytimeStarlightFraction = builder
                 .comment("Fraction of starlight available during daytime (0 = none)")
                 .defineInRange("daytimeFraction", 0.2, 0.0, 1.0);

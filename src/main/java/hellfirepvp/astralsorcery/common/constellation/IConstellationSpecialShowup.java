@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.constellation;
 
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
@@ -9,7 +10,7 @@ import javax.annotation.Nonnull;
  * beyond simple moon phase (e.g., Vorux requiring blood moon).
  *
  * <p>1.16 → 1.20 changes: World → Level,
- * GeneralConfig day length reference deferred</p>
+ * GeneralConfig.CONFIG.dayLength → CommonConfig.CONFIG.dayLength</p>
  */
 public interface IConstellationSpecialShowup extends IConstellation {
 
@@ -18,8 +19,6 @@ public interface IConstellationSpecialShowup extends IConstellation {
     float getDistribution(@Nonnull Level level, long day, boolean showingUp);
 
     default long dayToWorldTime(long day) {
-        // Default: 24000 ticks per day (standard MC day length)
-        // Will be replaced with GeneralConfig.CONFIG.dayLength.get() when config is ported
-        return day * 24000L;
+        return day * CommonConfig.CONFIG.dayLength.get();
     }
 }
