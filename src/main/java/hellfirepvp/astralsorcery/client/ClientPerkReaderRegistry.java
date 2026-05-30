@@ -3,20 +3,17 @@ package hellfirepvp.astralsorcery.client;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.reader.ReaderAddedPercentage;
 import hellfirepvp.astralsorcery.common.perk.reader.ReaderBreakSpeed;
-import hellfirepvp.astralsorcery.common.perk.reader.ReaderFlatAttribute;
 import hellfirepvp.astralsorcery.common.perk.reader.ReaderVanillaAttribute;
 import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Client-side reader registrations for the perk attribute display system.
  * Called once from {@link ClientProxy#onClientSetup}.
- *
- * <p>Each attribute type gets a matching {@link hellfirepvp.astralsorcery.common.perk.reader.PerkAttributeReader}
- * so the perk tree UI can display formatted stat values.</p>
  */
 @OnlyIn(Dist.CLIENT)
 public final class ClientPerkReaderRegistry {
@@ -46,6 +43,9 @@ public final class ClientPerkReaderRegistry {
         AttributeTypeRegistry.registerReader(new ReaderVanillaAttribute(
                 PerkAttributeTypesAS.ATTR_TYPE_KNOCKBACK_RESIST,
                 ForgeRegistries.ATTRIBUTES.getDelegateOrThrow(Attributes.KNOCKBACK_RESISTANCE)).formatAsDecimal());
+        AttributeTypeRegistry.registerReader(new ReaderVanillaAttribute(
+                PerkAttributeTypesAS.ATTR_TYPE_REACH,
+                ForgeMod.ENTITY_REACH).formatAsDecimal());
 
         // Custom percentage types — display as signed percentages
         AttributeTypeRegistry.registerReader(
