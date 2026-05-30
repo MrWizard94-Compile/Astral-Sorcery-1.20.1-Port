@@ -67,7 +67,15 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import hellfirepvp.astralsorcery.client.lib.TexturesAS;
 import hellfirepvp.astralsorcery.client.resource.AssetLibrary;
+import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournal;
+import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournalConstellationOverview;
+import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournalPerkTree;
+import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournalProgression;
+import hellfirepvp.astralsorcery.client.screen.journal.bookmark.BookmarkProvider;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
+import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -212,6 +220,22 @@ public class ClientProxy extends CommonProxy {
     @SuppressWarnings("null")
     private void onClientSetup(@Nonnull FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            TexturesAS.init();
+
+            // Journal bookmarks: progression (10), constellations (20), perks (30)
+            ScreenJournal.addBookmark(new BookmarkProvider(
+                    "screen.astralsorcery.tome.progression", 10,
+                    ScreenJournalProgression::getJournalInstance,
+                    () -> true));
+            ScreenJournal.addBookmark(new BookmarkProvider(
+                    "screen.astralsorcery.tome.constellations", 20,
+                    ScreenJournalConstellationOverview::getConstellationScreen,
+                    () -> PlayerProgressManager.getClientProgress().isAtLeast(ProgressionTier.DISCOVERY)));
+            ScreenJournal.addBookmark(new BookmarkProvider(
+                    "screen.astralsorcery.tome.perks", 30,
+                    ScreenJournalPerkTree::new,
+                    () -> PlayerProgressManager.getClientProgress().isAtLeast(ProgressionTier.ATTUNEMENT)));
+
             // Register menu screens — all 4 altar tiers
             MenuScreens.register(MenuTypesAS.ALTAR_DISCOVERY.get(), ScreenAltarDiscovery::new);
             MenuScreens.register(MenuTypesAS.ALTAR_ATTUNEMENT.get(), ScreenAltarAttunement::new);

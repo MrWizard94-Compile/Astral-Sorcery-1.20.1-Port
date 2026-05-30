@@ -261,8 +261,27 @@ public class PlayerProgress {
         return unlockedResearch.contains(key);
     }
 
+    public boolean hasResearch(@Nonnull ResearchProgression progression) {
+        return unlockedResearch.contains(progression.getRegistryKey());
+    }
+
+    @Nonnull
+    public Set<ResearchProgression> getResearchProgression() {
+        Set<ResearchProgression> result = new HashSet<>();
+        for (ResearchProgression prog : ResearchProgression.values()) {
+            if (prog != null && hasResearch(prog)) {
+                result.add(prog);
+            }
+        }
+        return result;
+    }
+
     public void unlockResearch(@Nonnull ResourceLocation key) {
         unlockedResearch.add(key);
+    }
+
+    public void forceGainResearch(@Nonnull ResearchProgression progression) {
+        unlockedResearch.add(progression.getRegistryKey());
     }
 
     public void setUnlockedResearch(@Nonnull Collection<ResourceLocation> keys) {

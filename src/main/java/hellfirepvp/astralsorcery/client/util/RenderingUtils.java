@@ -9,14 +9,17 @@ package hellfirepvp.astralsorcery.client.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,6 +28,7 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.util.function.Consumer;
 
 /**
  * Core rendering utilities: vertex submission helpers, coordinate transforms,
@@ -265,4 +269,86 @@ public final class RenderingUtils {
      * Full-bright packed lightmap value (skyLight=15, blockLight=15).
      */
     public static final int FULL_BRIGHT_LIGHT = 0xF000F0;
+
+    // =========================================================================
+    // Immediate-mode quad drawing (journal / GUI)
+    // =========================================================================
+
+    /**
+     * Draw a textured, colored quad using the currently bound texture.
+     * Caller is responsible for blend state and shader setup.
+     *
+     * @param matrix  the pose matrix
+     * @param x       left edge
+     * @param y       top edge
+     * @param w       width
+     * @param h       height
+     * @param r       red 0-1
+     * @param g       green 0-1
+     * @param b       blue 0-1
+     * @param a       alpha 0-1
+     */
+    public static void drawColorTex(@Nonnull Matrix4f matrix,
+                                     float x, float y, float w, float h,
+                                     float r, float g, float b, float a) {
+        drawColorTex(matrix, x, y, w, h, r, g, b, a, 0, 0, 1, 1);
+    }
+
+    @SuppressWarnings("null")
+    public static void drawColorTex(@Nonnull Matrix4f matrix,
+                                     float x, float y, float w, float h,
+                                     float r, float g, float b, float a,
+                                     float u0, float v0, float u1, float v1) {
+        BufferBuilder buf = Tesselator.getInstance().getBuilder();
+        buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        buf.vertex(matrix, x,     y + h, 0).color(r, g, b, a).uv(u0, v1).endVertex();
+        buf.vertex(matrix, x + w, y + h, 0).color(r, g, b, a).uv(u1, v1).endVertex();
+        buf.vertex(matrix, x + w, y,     0).color(r, g, b, a).uv(u1, v0).endVertex();
+        buf.vertex(matrix, x,     y,     0).color(r, g, b, a).uv(u0, v0).endVertex();
+        BufferUploader.drawWithShader(buf.end());
+    }
+
+    /**
+     * Draw a textured quad, binding the given texture and setting the position+color+tex shader.
+     */
+    @SuppressWarnings("null")
+    public static void drawTexturedQuad(@Nonnull ResourceLocation texture,
+                                         @Nonnull Matrix4f matrix,
+                                         float x, float y, float w, float h,
+                                         float r, float g, float b, float a) {
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        RenderSystem.setShaderTexture(0, texture);
+        drawColorTex(matrix, x, y, w, h, r, g, b, a);
+    }
+
+    /**
+     * Draw a colored (no texture) quad using the position+color shader.
+     */
+    @SuppressWarnings("null")
+    public static void drawColorQuad(@Nonnull Matrix4f matrix,
+                                      float x, float y, float w, float h,
+                                      float r, float g, float b, float a) {
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        BufferBuilder buf = Tesselator.getInstance().getBuilder();
+        buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buf.vertex(matrix, x,     y + h, 0).color(r, g, b, a).endVertex();
+        buf.vertex(matrix, x + w, y + h, 0).color(r, g, b, a).endVertex();
+        buf.vertex(matrix, x + w, y,     0).color(r, g, b, a).endVertex();
+        buf.vertex(matrix, x,     y,     0).color(r, g, b, a).endVertex();
+        BufferUploader.drawWithShader(buf.end());
+    }
+
+    /**
+     * Execute {@code filler} inside a QUADS + POSITION_COLOR_TEX buffer.
+     * Sets the position+color+tex shader; caller must bind the texture first.
+     */
+    @SuppressWarnings("null")
+    public static void drawTexQuads(@Nonnull Matrix4f matrix,
+                                     @Nonnull Consumer<BufferBuilder> filler) {
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        BufferBuilder buf = Tesselator.getInstance().getBuilder();
+        buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        filler.accept(buf);
+        BufferUploader.drawWithShader(buf.end());
+    }
 }

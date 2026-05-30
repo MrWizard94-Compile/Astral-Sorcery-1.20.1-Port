@@ -9,15 +9,13 @@ package hellfirepvp.astralsorcery.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import hellfirepvp.astralsorcery.AstralSorcery;
-import hellfirepvp.astralsorcery.client.screen.ScreenJournal;
 import hellfirepvp.astralsorcery.client.screen.ScreenPerkTree;
+import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournalProgression;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
@@ -83,7 +81,7 @@ public final class KeyBindingsAS {
         if (mc.player == null || mc.screen != null) return;
 
         while (KEY_JOURNAL.consumeClick()) {
-            mc.setScreen(new ScreenJournal());
+            mc.setScreen(ScreenJournalProgression.getJournalInstance());
         }
 
         while (KEY_PERK_TREE.consumeClick()) {

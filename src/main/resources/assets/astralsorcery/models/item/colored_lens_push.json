@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "astralsorcery:item/colored_lens_push"
+    "layer0": "astralsorcery:item/glass_lens_coloured"
   }
 }

@@ -24,6 +24,7 @@ import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.enchantment.amulet.PlayerAmuletHandler;
 import hellfirepvp.astralsorcery.common.event.DynamicEnchantmentEvent;
+import hellfirepvp.astralsorcery.common.constellation.SkyHandler;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
 import hellfirepvp.astralsorcery.common.event.EventHandlerEffects;
 import hellfirepvp.astralsorcery.common.event.EventHandlerEnchantmentTick;
@@ -131,6 +132,9 @@ public class CommonProxy {
 
         // Mob effect event hooks (EffectCheatDeath death cancel, EffectDropModifier loot)
         forgeBus.register(new EventHandlerEffects());
+
+        // Sky handler: manages per-dim WorldContext for constellation phase tracking
+        forgeBus.register(SkyHandler.getInstance());
 
         // Celestial events (shooting stars, starlight distribution)
         forgeBus.register(new EventHandlerCelestial());

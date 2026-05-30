@@ -1,5 +1,7 @@
 package hellfirepvp.astralsorcery.common.util;
 
+import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.lib.RecipeTypesAS;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -40,6 +42,19 @@ import java.util.Optional;
  * Minecraft.getInstance().getConnection() unchanged</p>
  */
 public class RecipeHelper {
+
+    @Nullable
+    public static SimpleAltarRecipe findAltarRecipeResult(java.util.function.Predicate<ItemStack> match) {
+        RecipeManager mgr = getRecipeManager();
+        if (mgr == null) return null;
+        java.util.List<SimpleAltarRecipe> recipes = mgr.getAllRecipesFor(RecipeTypesAS.ALTAR.get());
+        for (SimpleAltarRecipe recipe : recipes) {
+            if (match.test(recipe.getOutput())) {
+                return recipe;
+            }
+        }
+        return null;
+    }
 
     @Nonnull
     public static Optional<Tuple<ItemStack, Float>> findSmeltingResult(@Nonnull Level level,

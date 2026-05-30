@@ -15,6 +15,14 @@ public enum ProgressionTier {
     TRAIT_CRAFT,
     BRILLIANCE;
 
+    public boolean hasNextTier() {
+        return ordinal() < values().length - 1;
+    }
+
+    public ProgressionTier next() {
+        return values()[Math.min(values().length - 1, ordinal() + 1)];
+    }
+
     public boolean isThisLaterOrEqual(ProgressionTier other) {
         return this.ordinal() >= other.ordinal();
     }

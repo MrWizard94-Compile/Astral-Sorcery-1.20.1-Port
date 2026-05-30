@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "astralsorcery:item/starmetal_dust"
+    "layer0": "astralsorcery:item/stardust"
   }
 }

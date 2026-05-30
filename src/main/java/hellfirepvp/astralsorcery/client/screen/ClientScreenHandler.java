@@ -3,6 +3,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.screen;
 
+import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournalProgression;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,7 +47,7 @@ public final class ClientScreenHandler {
      * Called from the journal item or key binding.
      */
     public static void openJournalScreen() {
-        Minecraft.getInstance().setScreen(new ScreenJournal());
+        Minecraft.getInstance().setScreen(ScreenJournalProgression.getJournalInstance());
     }
 
     /**

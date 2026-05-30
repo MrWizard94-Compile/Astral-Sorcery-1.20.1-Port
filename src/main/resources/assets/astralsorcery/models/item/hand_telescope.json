@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "astralsorcery:item/hand_telescope"
+    "layer0": "astralsorcery:item/looking_glass"
   }
 }

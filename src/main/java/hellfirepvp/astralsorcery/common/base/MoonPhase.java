@@ -1,6 +1,10 @@
 package hellfirepvp.astralsorcery.common.base;
 
+import hellfirepvp.astralsorcery.client.resource.AssetLoader;
+import hellfirepvp.astralsorcery.client.resource.BindableResource;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
@@ -33,6 +37,19 @@ public enum MoonPhase {
         return VALUES[phase];
     }
 
-    // Client-side texture method will be added in Phase 12 (rendering)
-    // when AssetLibrary and AbstractRenderableTexture are ported.
+    @OnlyIn(Dist.CLIENT)
+    @Nonnull
+    public BindableResource getTexture() {
+        String name = switch (this) {
+            case FULL        -> "moon_full";
+            case NEW         -> "moon_new";
+            case WANING_3_4  -> "moon_waning_3_4";
+            case WANING_1_2  -> "moon_waning_1_2";
+            case WANING_1_4  -> "moon_waning_1_4";
+            case WAXING_1_4  -> "moon_waxing_1_4";
+            case WAXING_1_2  -> "moon_waxing_1_2";
+            case WAXING_3_4  -> "moon_waxing_3_4";
+        };
+        return AssetLoader.loadTexture(AssetLoader.TextureLocation.MISC, name);
+    }
 }
