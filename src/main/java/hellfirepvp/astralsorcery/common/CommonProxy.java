@@ -38,6 +38,7 @@ import hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS;
 import hellfirepvp.astralsorcery.common.lib.EngravingEffectsAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.lib.StructuresAS;
+import hellfirepvp.astralsorcery.common.registry.RegistryResearch;
 import hellfirepvp.astralsorcery.common.perk.PerkTreeData;
 import hellfirepvp.astralsorcery.common.lib.LootAS;
 import hellfirepvp.astralsorcery.common.loot.GlobalLootModifierAS;
@@ -188,6 +189,7 @@ public class CommonProxy {
             MantleEffectRegistry.init();
             AstralAdvancementTriggers.init();
             StructuresAS.init();
+            RegistryResearch.init();
             PerkTreeData.buildTree();
             LiquidStarlightCraftingRegistry.INSTANCE.init();
             AttunementCraftingRegistry.INSTANCE.init();
