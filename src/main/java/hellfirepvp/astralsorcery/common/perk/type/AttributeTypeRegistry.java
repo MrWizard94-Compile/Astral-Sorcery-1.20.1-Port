@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.common.perk.type;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.perk.reader.PerkAttributeReader;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -31,6 +32,7 @@ public final class AttributeTypeRegistry {
     private AttributeTypeRegistry() {}
 
     private static final Map<ResourceLocation, PerkAttributeType> REGISTRY = new HashMap<>();
+    private static final Map<ResourceLocation, PerkAttributeReader> READERS = new HashMap<>();
 
     /**
      * Registers an attribute type. Duplicate keys are rejected with a warning.
@@ -98,9 +100,25 @@ public final class AttributeTypeRegistry {
     }
 
     /**
+     * Registers a reader for a specific attribute type, enabling stat display in the perk tree UI.
+     */
+    public static void registerReader(@Nonnull PerkAttributeReader reader) {
+        READERS.put(reader.getType().getKey(), reader);
+    }
+
+    /**
+     * Returns the registered reader for the given type, or null if none is registered.
+     */
+    @Nullable
+    public static PerkAttributeReader getReader(@Nonnull PerkAttributeType type) {
+        return READERS.get(type.getKey());
+    }
+
+    /**
      * Clears the registry. Only for testing purposes.
      */
     public static void clearForTesting() {
         REGISTRY.clear();
+        READERS.clear();
     }
 }

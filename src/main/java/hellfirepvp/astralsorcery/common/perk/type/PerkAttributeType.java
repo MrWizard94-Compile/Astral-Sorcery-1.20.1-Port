@@ -122,6 +122,15 @@ public class PerkAttributeType {
         };
     }
 
+    /**
+     * Returns the unlocalized (i18n translation key) name for this attribute type.
+     * Format: {@code "perk.attribute.astralsorcery.<path>"}.
+     */
+    @Nonnull
+    public String getUnlocalizedName() {
+        return "perk.attribute." + key.getNamespace() + "." + key.getPath().replace('/', '.');
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
