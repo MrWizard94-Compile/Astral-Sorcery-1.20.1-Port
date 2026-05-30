@@ -333,6 +333,11 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             if (wasUpgrade) {
                 AstralAdvancementTriggers.ALTAR_UPGRADE.trigger(sp);
             }
+            // Grant BASIC_CRAFT progression on any altar craft (upgrade recipes grant their own tiers)
+            if (!wasUpgrade) {
+                hellfirepvp.astralsorcery.common.data.research.ResearchManager
+                        .informCraftedAltar(sp, hellfirepvp.astralsorcery.common.block.tile.BlockAltar.AltarType.DISCOVERY);
+            }
         }
 
         PacketChannel.sendToAllTracking(

@@ -85,6 +85,8 @@ public class PktSyncPlayerProgress {
         }
         player.getCapability(PlayerCapabilityProvider.CAPABILITY).ifPresent(progress -> {
             progress.readFromNBT(msg.progressData);
+            // Mirror to the static client cache so journal + perk screens can read it without capability
+            hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager.setClientProgress(progress);
             AstralSorcery.log.debug("Synced player progress from server");
         });
     }
