@@ -163,6 +163,9 @@ public class CommonProxy {
         forgeBus.register(PlayerAmuletHandler.INSTANCE);
         forgeBus.addListener(PlayerAmuletHandler::onEnchantmentAdd);
 
+        // Server-side scheduled task queue
+        forgeBus.register(CommonScheduler.INSTANCE);
+
         // Commands (registered via RegisterCommandsEvent)
         forgeBus.register(new CommandAstralSorcery());
 

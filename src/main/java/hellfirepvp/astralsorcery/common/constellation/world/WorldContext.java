@@ -15,10 +15,14 @@ public class WorldContext {
 
     private final long seed;
     private final ConstellationHandler constellationHandler;
+    private final CelestialEventHandler celestialEventHandler;
+    private final DistributionHandler distributionHandler;
 
     public WorldContext(long seed) {
         this.seed = seed;
         this.constellationHandler = new ConstellationHandler(this);
+        this.celestialEventHandler = new CelestialEventHandler(this);
+        this.distributionHandler = new DistributionHandler(this);
     }
 
     public long getSeed() {
@@ -40,7 +44,19 @@ public class WorldContext {
         return constellationHandler;
     }
 
+    @Nonnull
+    public CelestialEventHandler getCelestialEventHandler() {
+        return celestialEventHandler;
+    }
+
+    @Nonnull
+    public DistributionHandler getDistributionHandler() {
+        return distributionHandler;
+    }
+
     public void tick(Level level) {
         constellationHandler.tick(level);
+        celestialEventHandler.tick(level);
+        distributionHandler.tick(level);
     }
 }
