@@ -9,26 +9,26 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Reader for perk attributes that directly mirror a vanilla {@link Attribute}.
  * Reads the current value from the player's attribute map for display.
  *
- * <p>1.16 → 1.20: ModifiableAttributeInstance → AttributeInstance;
- * PlayerEntity → Player; RegistryObject API unchanged.</p>
+ * <p>1.16 → 1.20: RegistryObject replaced by Supplier; Player replaces PlayerEntity;
+ * ModifiableAttributeInstance → AttributeInstance.</p>
  */
 public class ReaderVanillaAttribute extends PerkAttributeReader {
 
-    protected final RegistryObject<Attribute> attribute;
+    protected final Supplier<Attribute> attribute;
     protected boolean formatAsDecimal = false;
 
     public ReaderVanillaAttribute(@Nonnull PerkAttributeType type,
-                                   @Nonnull RegistryObject<Attribute> reference) {
+                                   @Nonnull Supplier<Attribute> reference) {
         super(type);
         this.attribute = reference;
     }

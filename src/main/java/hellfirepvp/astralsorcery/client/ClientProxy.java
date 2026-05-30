@@ -225,6 +225,7 @@ public class ClientProxy extends CommonProxy {
     private void onClientSetup(@Nonnull FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             TexturesAS.init();
+            hellfirepvp.astralsorcery.client.ClientPerkReaderRegistry.init();
 
             // Journal bookmarks: progression (10), constellations (20), perks (30)
             ScreenJournal.addBookmark(new BookmarkProvider(
