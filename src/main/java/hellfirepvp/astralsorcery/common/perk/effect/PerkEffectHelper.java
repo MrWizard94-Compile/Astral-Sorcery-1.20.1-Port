@@ -69,6 +69,7 @@ public class PerkEffectHelper {
     @SubscribeEvent
     public void onPlayerLogin(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            hellfirepvp.astralsorcery.common.data.research.ResearchManager.onPlayerLogin(serverPlayer);
             refreshModifiers(serverPlayer);
         }
     }

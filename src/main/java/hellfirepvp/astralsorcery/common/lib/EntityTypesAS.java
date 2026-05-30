@@ -2,9 +2,12 @@ package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.entity.EntityCelestialCrystal;
+import hellfirepvp.astralsorcery.common.entity.EntityCrystal;
+import hellfirepvp.astralsorcery.common.entity.EntityDazzlingGem;
 import hellfirepvp.astralsorcery.common.entity.EntityFlare;
 import hellfirepvp.astralsorcery.common.entity.EntityGrapplingHook;
 import hellfirepvp.astralsorcery.common.entity.EntityIlluminationSpark;
+import hellfirepvp.astralsorcery.common.entity.EntityItemExplosionResistant;
 import hellfirepvp.astralsorcery.common.entity.EntityItemHighlighted;
 import hellfirepvp.astralsorcery.common.entity.EntityLiquidSpark;
 import hellfirepvp.astralsorcery.common.entity.EntityNocturnalSpark;
@@ -12,6 +15,7 @@ import hellfirepvp.astralsorcery.common.entity.EntityObservatoryHelper;
 import hellfirepvp.astralsorcery.common.entity.EntityShootingStar;
 import hellfirepvp.astralsorcery.common.entity.EntitySpectralTool;
 import hellfirepvp.astralsorcery.common.entity.EntityStarling;
+import hellfirepvp.astralsorcery.common.entity.EntityStarmetal;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -166,4 +170,52 @@ public final class EntityTypesAS {
                             .updateInterval(3)
                             .fireImmune()
                             .build(AstralSorcery.MODID + ":starling"));
+
+    /**
+     * Explosion-resistant item entity — base for crystals and gems.
+     */
+    public static final RegistryObject<EntityType<EntityItemExplosionResistant>> ITEM_EXPLOSION_RESISTANT =
+            ENTITY_TYPES.register("item_explosion_resistant", () ->
+                    EntityType.Builder.<EntityItemExplosionResistant>of(EntityItemExplosionResistant::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(64)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":item_explosion_resistant"));
+
+    /**
+     * Crystal item entity — explosion-resistant, can be chiseled to split crystal properties.
+     */
+    public static final RegistryObject<EntityType<EntityCrystal>> ITEM_CRYSTAL =
+            ENTITY_TYPES.register("item_crystal", () ->
+                    EntityType.Builder.<EntityCrystal>of(EntityCrystal::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(64)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":item_crystal"));
+
+    /**
+     * Dazzling gem item entity — explosion-resistant, never despawns.
+     */
+    public static final RegistryObject<EntityType<EntityDazzlingGem>> ITEM_DAZZLING_GEM =
+            ENTITY_TYPES.register("item_dazzling_gem", () ->
+                    EntityType.Builder.<EntityDazzlingGem>of(EntityDazzlingGem::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(64)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":item_dazzling_gem"));
+
+    /**
+     * Starmetal ingot item entity — can be chiseled to produce stardust.
+     */
+    public static final RegistryObject<EntityType<EntityStarmetal>> ITEM_STARMETAL_INGOT =
+            ENTITY_TYPES.register("item_starmetal_ingot", () ->
+                    EntityType.Builder.<EntityStarmetal>of(EntityStarmetal::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(64)
+                            .updateInterval(20)
+                            .fireImmune()
+                            .build(AstralSorcery.MODID + ":item_starmetal_ingot"));
 }

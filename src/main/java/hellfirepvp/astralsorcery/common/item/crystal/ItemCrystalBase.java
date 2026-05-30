@@ -10,7 +10,9 @@ package hellfirepvp.astralsorcery.common.item.crystal;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeGenItem;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalGenerator;
+import hellfirepvp.astralsorcery.common.entity.EntityCrystal;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
+import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -74,5 +76,23 @@ public abstract class ItemCrystalBase extends ItemAS implements CrystalAttribute
     @Nullable
     public Item getTunedItemVariant() {
         return null;
+    }
+
+    /**
+     * Drop crystals as {@link EntityCrystal} so they are explosion-resistant,
+     * never despawn, and can be chiseled by a player holding a chisel.
+     */
+    @Override
+    @Nullable
+    public Entity createEntity(Level level, Entity location, ItemStack stack) {
+        EntityCrystal crystal = new EntityCrystal(EntityTypesAS.ITEM_CRYSTAL.get(), level,
+                location.getX(), location.getY(), location.getZ(), stack);
+        crystal.setPickUpDelay(10);
+        return crystal;
+    }
+
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return true;
     }
 }

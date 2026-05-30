@@ -31,6 +31,7 @@ public final class ResearchManager {
 
     /**
      * Advances the player's tier if {@code tier} is higher than their current tier.
+     * Also grants any {@link ResearchProgression} entries that become eligible at the new tier.
      * Does NOT sync — callers must call {@link PlayerProgressManager#syncProgress} when done.
      *
      * @return true if the tier was actually advanced
@@ -38,10 +39,49 @@ public final class ResearchManager {
     public static boolean grantTier(@Nonnull ServerPlayer player, @Nonnull ProgressionTier tier) {
         PlayerProgress progress = PlayerProgressManager.getProgress(player);
         if (progress == null) return false;
-        if (progress.isAtLeast(tier)) return false;
+        if (progress.isAtLeast(tier)) {
+            grantEligibleProgressions(progress);
+            return false;
+        }
         progress.setTierReached(tier);
         AstralAdvancementTriggers.REACH_TIER.trigger(player);
+        grantEligibleProgressions(progress);
         return true;
+    }
+
+    /**
+     * Grants all {@link ResearchProgression} entries the player is now eligible for
+     * based on their current tier and already-unlocked progressions.
+     * Called automatically by {@link #grantTier} and on player login.
+     */
+    public static void grantEligibleProgressions(@Nonnull PlayerProgress progress) {
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (ResearchProgression prog : ResearchProgression.values()) {
+                if (progress.hasResearch(prog)) continue;
+                if (!progress.isAtLeast(prog.getRequiredProgress())) continue;
+                boolean preMet = prog.getPreConditions().stream()
+                        .allMatch(progress::hasResearch);
+                if (preMet) {
+                    progress.forceGainResearch(prog);
+                    changed = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Called on player login to ensure they have DISCOVERY research and any
+     * progressions they have already earned through their tier.
+     */
+    public static void onPlayerLogin(@Nonnull ServerPlayer player) {
+        PlayerProgress progress = PlayerProgressManager.getProgress(player);
+        if (progress == null) return;
+        // Always grant DISCOVERY — every player starts here
+        progress.forceGainResearch(ResearchProgression.DISCOVERY);
+        grantEligibleProgressions(progress);
+        sync(player);
     }
 
     /**

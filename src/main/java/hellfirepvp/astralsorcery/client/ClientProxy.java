@@ -188,6 +188,10 @@ public class ClientProxy extends CommonProxy {
         event.registerEntityRenderer(EntityTypesAS.LIQUID_SPARK.get(), RenderEntityLiquidSpark::new);
         event.registerEntityRenderer(EntityTypesAS.GRAPPLING_HOOK.get(), RenderEntityGrapplingHook::new);
         event.registerEntityRenderer(EntityTypesAS.ITEM_HIGHLIGHTED.get(), RenderEntityItemHighlighted::new);
+        event.registerEntityRenderer(EntityTypesAS.ITEM_EXPLOSION_RESISTANT.get(), RenderEntityItemHighlighted::new);
+        event.registerEntityRenderer(EntityTypesAS.ITEM_CRYSTAL.get(), RenderEntityItemHighlighted::new);
+        event.registerEntityRenderer(EntityTypesAS.ITEM_DAZZLING_GEM.get(), RenderEntityItemHighlighted::new);
+        event.registerEntityRenderer(EntityTypesAS.ITEM_STARMETAL_INGOT.get(), RenderEntityItemHighlighted::new);
     }
 
     /**
