@@ -8,6 +8,8 @@
 package hellfirepvp.astralsorcery.common.starlight;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktSyncSeed;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.TickEvent;
@@ -65,7 +67,11 @@ public class StarlightNetworkRegistry {
             ServerLevel level = serverPlayer.serverLevel();
             WorldNetworkHandler handler = WorldNetworkHandler.getOrCreate(level);
             handler.syncAllToPlayer(serverPlayer, level);
-            AstralSorcery.log.debug("Synced starlight network to player {} on login",
+            // Send world seed so client-side SkyHandler can build WorldContext
+            PacketChannel.sendToPlayer(
+                    new PktSyncSeed(0, level.dimension(), level.getSeed()),
+                    serverPlayer);
+            AstralSorcery.log.debug("Synced starlight network + seed to player {} on login",
                     serverPlayer.getName().getString());
         }
     }
@@ -79,7 +85,10 @@ public class StarlightNetworkRegistry {
             ServerLevel level = serverPlayer.serverLevel();
             WorldNetworkHandler handler = WorldNetworkHandler.getOrCreate(level);
             handler.syncAllToPlayer(serverPlayer, level);
-            AstralSorcery.log.debug("Synced starlight network to player {} after dimension change to {}",
+            PacketChannel.sendToPlayer(
+                    new PktSyncSeed(0, level.dimension(), level.getSeed()),
+                    serverPlayer);
+            AstralSorcery.log.debug("Synced starlight network + seed to player {} after dimension change to {}",
                     serverPlayer.getName().getString(), event.getTo().location());
         }
     }
