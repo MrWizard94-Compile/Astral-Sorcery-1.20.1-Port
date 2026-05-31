@@ -1,8 +1,10 @@
 {
   "variants": {
-    "facing=north": { "model": "astralsorcery:block/prism_all" },
-    "facing=east":  { "model": "astralsorcery:block/prism_all", "y": 90 },
-    "facing=south": { "model": "astralsorcery:block/prism_all", "y": 180 },
-    "facing=west":  { "model": "astralsorcery:block/prism_all", "y": 270 }
+    "facing=up":    { "model": "astralsorcery:block/prism_all" },
+    "facing=down":  { "model": "astralsorcery:block/prism_all", "x": 180 },
+    "facing=north": { "model": "astralsorcery:block/prism_all", "x": 90 },
+    "facing=south": { "model": "astralsorcery:block/prism_all", "x": 90, "y": 180 },
+    "facing=east":  { "model": "astralsorcery:block/prism_all", "x": 90, "y": 90 },
+    "facing=west":  { "model": "astralsorcery:block/prism_all", "x": 90, "y": 270 }
   }
 }
