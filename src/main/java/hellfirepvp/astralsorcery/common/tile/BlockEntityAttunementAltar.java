@@ -57,11 +57,11 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     private ResourceLocation attunedConstellation = null;
 
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    private Object idleSound = null;
+    private Object idleSound;
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    private Object activeSound = null;
+    private Object activeSound;
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    private boolean prevAttuning = false;
+    private boolean prevAttuning;
 
     public BlockEntityAttunementAltar(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.ATTUNEMENT_ALTAR.get(), pos, state);

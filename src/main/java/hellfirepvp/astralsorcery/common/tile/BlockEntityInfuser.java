@@ -71,7 +71,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     private boolean registeredInNetwork = false;
 
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    private Object clientCraftSound = null;
+    private Object clientCraftSound;
 
     public BlockEntityInfuser(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.INFUSER.get(), pos, state);
