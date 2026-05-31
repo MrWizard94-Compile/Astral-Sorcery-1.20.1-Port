@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "astralsorcery:block/multilayer/celestial_gateway"
+      "model": "astralsorcery:block/celestial_gateway_all"
     }
   }
 }

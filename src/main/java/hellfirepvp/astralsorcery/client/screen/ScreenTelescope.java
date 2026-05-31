@@ -41,7 +41,7 @@ import java.util.Set;
 public class ScreenTelescope extends ScreenBaseAS {
 
     private static final ResourceLocation TEXTURE_BG =
-            AstralSorcery.key("textures/gui/telescope/telescope_bg.png");
+            AstralSorcery.key("textures/gui/telescope_frame.png");
 
     /** Background dimensions. */
     private static final int GUI_WIDTH = 280;

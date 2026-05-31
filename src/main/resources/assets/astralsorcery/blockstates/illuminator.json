@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/illuminator" }
+    "": { "model": "astralsorcery:block/illuminator_all" }
   }
 }
