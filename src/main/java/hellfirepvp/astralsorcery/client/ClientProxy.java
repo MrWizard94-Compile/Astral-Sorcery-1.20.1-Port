@@ -28,6 +28,8 @@ import hellfirepvp.astralsorcery.client.render.entity.RenderEntityShootingStar;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntitySpectralTool;
 import hellfirepvp.astralsorcery.client.render.entity.RenderEntityStarling;
 import hellfirepvp.astralsorcery.client.render.layer.LayerStarryGlow;
+import hellfirepvp.astralsorcery.client.model.builtin.ModelAttunementAltar;
+import hellfirepvp.astralsorcery.client.model.builtin.ModelObservatory;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAltar;
 import hellfirepvp.astralsorcery.client.render.tile.RenderAttunementAltar;
 import hellfirepvp.astralsorcery.client.render.tile.RenderChalice;
@@ -110,6 +112,9 @@ public class ClientProxy extends CommonProxy {
         // Block entity renderer registration (mod bus event)
         modBus.addListener(this::onRegisterRenderers);
 
+        // Model layer definitions for BER java models
+        modBus.addListener(this::onRegisterLayerDefinitions);
+
         // Player layer registration
         modBus.addListener(this::onAddLayers);
 
@@ -190,6 +195,14 @@ public class ClientProxy extends CommonProxy {
         event.registerEntityRenderer(EntityTypesAS.ITEM_CRYSTAL.get(), RenderEntityItemHighlighted::new);
         event.registerEntityRenderer(EntityTypesAS.ITEM_DAZZLING_GEM.get(), RenderEntityItemHighlighted::new);
         event.registerEntityRenderer(EntityTypesAS.ITEM_STARMETAL_INGOT.get(), RenderEntityItemHighlighted::new);
+    }
+
+    /**
+     * Register model layer definitions for BER Java models (attunement altar, observatory).
+     */
+    private void onRegisterLayerDefinitions(@Nonnull EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(ModelAttunementAltar.LAYER, ModelAttunementAltar::createLayerDefinition);
+        event.registerLayerDefinition(ModelObservatory.LAYER, ModelObservatory::createLayerDefinition);
     }
 
     /**

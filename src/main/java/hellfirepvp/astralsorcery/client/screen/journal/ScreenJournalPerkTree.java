@@ -109,18 +109,14 @@ public class ScreenJournalPerkTree extends ScreenJournal {
 
         thisFramePerks.clear();
 
-        // Scissor to inner book area
-        double scale = Minecraft.getInstance().getWindow().getGuiScale();
-        int sx = (int) Math.floor((guiLeft + 39) * scale);
-        int sy = (int) Math.floor((guiTop  + 44) * scale);
-        int sw = (int) Math.floor((guiWidth  - 76) * scale);
-        int sh = (int) Math.floor((guiHeight - 71) * scale);
-        RenderSystem.enableScissor(sx, sy, sw, sh);
+        // Scissor to inner book area.
+        // GuiGraphics.enableScissor takes two corners in GUI space and handles y-flip internally.
+        graphics.enableScissor(guiLeft + 39, guiTop + 44, guiLeft + guiWidth - 37, guiTop + guiHeight - 27);
 
         drawBackground(graphics);
         drawPerkNodes(graphics, pTicks);
 
-        RenderSystem.disableScissor();
+        graphics.disableScissor();
 
         drawDefault(graphics, TexturesAS.TEX_GUI_BOOK_FRAME_FULL, mouseX, mouseY);
         drawSearchBox(graphics);

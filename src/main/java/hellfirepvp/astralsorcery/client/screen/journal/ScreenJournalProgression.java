@@ -1,6 +1,5 @@
 package hellfirepvp.astralsorcery.client.screen.journal;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import hellfirepvp.astralsorcery.client.ClientScheduler;
 import hellfirepvp.astralsorcery.client.lib.TexturesAS;
 import hellfirepvp.astralsorcery.client.screen.journal.progression.ScreenJournalProgressionRenderer;
@@ -138,15 +137,11 @@ public class ScreenJournalProgression extends ScreenJournal {
     }
 
     private void renderProgressView(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
-        // Scissor to the book's inner area
-        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        int sx = (int) Math.floor((guiLeft + 27) * guiScale);
-        int sy = (int) Math.floor((guiTop  + 27) * guiScale);
-        int sw = (int) Math.floor((guiWidth  - 54) * guiScale);
-        int sh = (int) Math.floor((guiHeight - 54) * guiScale);
-        RenderSystem.enableScissor(sx, sy, sw, sh);
+        // Scissor to the book's inner area.
+        // GuiGraphics.enableScissor takes two corners in GUI space and handles y-flip internally.
+        graphics.enableScissor(guiLeft + 27, guiTop + 27, guiLeft + guiWidth - 27, guiTop + guiHeight - 27);
         progressionRenderer.drawProgressionPart(graphics, mouseX, mouseY);
-        RenderSystem.disableScissor();
+        graphics.disableScissor();
 
         // Draw the book frame on top (clears outside)
         drawDefault(graphics, TexturesAS.TEX_GUI_BOOK_FRAME_FULL, mouseX, mouseY);
