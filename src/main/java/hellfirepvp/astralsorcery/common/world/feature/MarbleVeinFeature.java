@@ -46,6 +46,10 @@ public class MarbleVeinFeature extends Feature<NoneFeatureConfiguration> {
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
         RandomSource random = context.random();
+        // Only write within the generating chunk's 16x16 column to avoid the
+        // "setBlock in far chunk" error introduced in 1.20.
+        int chunkMinX = (origin.getX() >> 4) << 4;
+        int chunkMinZ = (origin.getZ() >> 4) << 4;
 
         BlockState marbleState = BlocksAS.MARBLE_RAW.get().defaultBlockState();
 
@@ -74,6 +78,11 @@ public class MarbleVeinFeature extends Feature<NoneFeatureConfiguration> {
                     }
 
                     BlockPos target = origin.offset(dx, dy, dz);
+
+                    if (target.getX() < chunkMinX || target.getX() > chunkMinX + 15
+                            || target.getZ() < chunkMinZ || target.getZ() > chunkMinZ + 15) {
+                        continue;
+                    }
 
                     if (canReplace(level, target)) {
                         level.setBlock(target, marbleState, 2);

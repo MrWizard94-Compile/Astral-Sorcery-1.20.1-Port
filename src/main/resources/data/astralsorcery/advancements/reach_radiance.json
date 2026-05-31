@@ -13,7 +13,7 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "astralsorcery:altar_craft",
+  "parent": "astralsorcery:upgrade_altar_radiance",
   "criteria": {
     "radiance": {
       "trigger": "astralsorcery:reach_tier",
