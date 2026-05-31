@@ -1073,5 +1073,19 @@
   "astralsorcery.link.selected.lens": "Lens selected for linking",
   "astralsorcery.refraction_table.no_parchment": "No parchment — insert parchment to begin engraving",
   "astralsorcery.refraction_table.already_engraved": "Glass already engraved",
-  "astralsorcery.refraction_table.needs_night": "Engraving requires nighttime sky visibility"
+  "astralsorcery.refraction_table.needs_night": "Engraving requires nighttime sky visibility",
+  "block.astralsorcery.altar": "Luminous Crafting Table",
+  "block.astralsorcery.collector_crystal": "Collector Crystal",
+  "block.astralsorcery.relay": "Transmission Relay",
+  "block.astralsorcery.gateway": "Celestial Gateway",
+  "block.astralsorcery.flare_light": "Flare Light",
+  "block.astralsorcery.structural": "Structural Block",
+  "block.astralsorcery.translucent_block": "Translucent Block",
+  "block.astralsorcery.tree_beacon_component": "Tree Beacon Component",
+  "block.astralsorcery.vanishing": "Vanishing Block",
+  "item.astralsorcery.formation_stone": "Formation Stone",
+  "item.astralsorcery.knowledge_fragment": "Knowledge Fragment",
+  "item.astralsorcery.shifting_stone": "Shifting Stone",
+  "item.astralsorcery.starmetal_dust": "Starmetal Dust",
+  "item.astralsorcery.infused_glass_engraved": "Engraved Infused Glass"
 }

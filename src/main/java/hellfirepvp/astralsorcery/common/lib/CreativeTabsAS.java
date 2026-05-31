@@ -125,6 +125,7 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.CHALICE_ITEM.get());
         output.accept(ItemsAS.FOUNTAIN_ITEM.get());
         output.accept(ItemsAS.FOUNTAIN_PRIME_LIQUID_ITEM.get());
+        output.accept(ItemsAS.FOUNTAIN_PRIME_ORE_ITEM.get());
         output.accept(ItemsAS.FOUNTAIN_PRIME_VORTEX_ITEM.get());
         output.accept(ItemsAS.GATEWAY_ITEM.get());
         output.accept(ItemsAS.TELESCOPE_ITEM.get());
