@@ -26,7 +26,7 @@ public final class PlayerProgressManager {
 
     /** Client-side cached progress, updated by sync packets. */
     @OnlyIn(Dist.CLIENT)
-    private static PlayerProgress clientProgress = new PlayerProgress();
+    private static PlayerProgress clientProgress;
 
     /**
      * Gets the progress for a server player via their capability.
@@ -49,6 +49,9 @@ public final class PlayerProgressManager {
     @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static PlayerProgress getClientProgress() {
+        if (clientProgress == null) {
+            clientProgress = new PlayerProgress();
+        }
         return clientProgress;
     }
 

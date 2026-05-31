@@ -103,9 +103,9 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
 
     // Client-side sound instances typed as Object to avoid server-side class loading
     @OnlyIn(Dist.CLIENT)
-    private Object clientCraftSound = null;
+    private Object clientCraftSound;
     @OnlyIn(Dist.CLIENT)
-    private Object clientWaitSound = null;
+    private Object clientWaitSound;
 
     public BlockEntityAltar(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.ALTAR.get(), pos, state);

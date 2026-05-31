@@ -21,7 +21,6 @@ public final class KnowledgeFragmentManager {
 
     private KnowledgeFragmentManager() {}
 
-    @OnlyIn(Dist.CLIENT)
     private static final Set<ResourceLocation> clientFragments = new HashSet<>();
 
     /**
