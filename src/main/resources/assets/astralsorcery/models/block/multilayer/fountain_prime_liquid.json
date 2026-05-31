@@ -1,0 +1,12 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "solid": {
+      "parent": "astralsorcery:block/fountain_prime_liquid_solid"
+    },
+    "translucent": {
+      "parent": "astralsorcery:block/fountain_prime_liquid_translucent",
+      "render_type": "minecraft:translucent"
+    }
+  }
+}

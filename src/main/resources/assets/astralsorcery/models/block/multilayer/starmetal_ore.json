@@ -1,0 +1,14 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "solid": {
+      "parent": "block/cube_all",
+      "textures": { "all": "block/stone" }
+    },
+    "translucent": {
+      "parent": "block/cube_all",
+      "textures": { "all": "astralsorcery:block/ore_starmetal" },
+      "render_type": "minecraft:translucent"
+    }
+  }
+}

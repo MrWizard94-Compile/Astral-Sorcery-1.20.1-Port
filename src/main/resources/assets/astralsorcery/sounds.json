@@ -1,5 +1,5 @@
 {
-	"attunement_altar_idle_loop": {
+	"attunement.altar.idle": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.attunement_altar_idle_loop",
 		"sounds": [
@@ -9,7 +9,7 @@
 			}
 		]
 	},
-	"attunement_altar_item_finish": {
+	"attunement.altar.item.finish": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.attunement_altar_item_finish",
 		"sounds": [
@@ -23,7 +23,7 @@
 			}
 		]
 	},
-	"attunement_altar_item_loop": {
+	"attunement.altar.item.loop": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.attunement_altar_item_loop",
 		"sounds": [
@@ -33,7 +33,7 @@
 			}
 		]
 	},
-	"attunement_altar_item_start": {
+	"attunement.altar.item.start": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.attunement_altar_item_start",
 		"sounds": [
@@ -47,7 +47,7 @@
 			}
 		]
 	},
-	"attunement_altar_player_attune": {
+	"attunement.altar.player.attune": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.attunement_altar_player_attune",
 		"sounds": [
@@ -57,7 +57,7 @@
 			}
 		]
 	},
-	"infuser_craft_start": {
+	"infuser.craft.start": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.infuser_craft_start",
 		"sounds": [
@@ -71,7 +71,7 @@
 			}
 		]
 	},
-	"infuser_craft_loop": {
+	"infuser.craft.loop": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.infuser_craft_loop",
 		"sounds": [
@@ -85,7 +85,7 @@
 			}
 		]
 	},
-	"infuser_craft_finish": {
+	"infuser.craft.finish": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.infuser_craft_finish",
 		"sounds": [
@@ -99,7 +99,7 @@
 			}
 		]
 	},
-	"perk_seal": {
+	"perk.seal": {
 		"category": "player",
 		"subtitle": "astralsorcery.subtitles.perk_seal",
 		"sounds": [
@@ -113,7 +113,7 @@
 			}
 		]
 	},
-	"perk_unseal": {
+	"perk.unseal": {
 		"category": "player",
 		"subtitle": "astralsorcery.subtitles.perk_unseal",
 		"sounds": [
@@ -127,7 +127,7 @@
 			}
 		]
 	},
-	"perk_unlock": {
+	"perk.unlock": {
 		"category": "player",
 		"subtitle": "astralsorcery.subtitles.perk_unlock",
 		"sounds": [
@@ -141,7 +141,7 @@
 			}
 		]
 	},
-	"illumination_wand_highlight": {
+	"illumination.wand.highlight": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.illumination_wand_highlight",
 		"sounds": [
@@ -155,7 +155,7 @@
 			}
 		]
 	},
-	"illumination_wand_unhighlight": {
+	"illumination.wand.unhighlight": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.illumination_wand_unhighlight",
 		"sounds": [
@@ -169,7 +169,7 @@
 			}
 		]
 	},
-	"illumination_wand_light": {
+	"illumination.wand.light": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.illumination_wand_light",
 		"sounds": [
@@ -183,7 +183,7 @@
 			}
 		]
 	},
-	"altar_craft_start": {
+	"altar.craft.start": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_start",
 		"sounds": [
@@ -197,7 +197,7 @@
 			}
 		]
 	},
-	"altar_craft_finish": {
+	"altar.craft.finish": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_finish",
 		"sounds": [
@@ -211,7 +211,7 @@
 			}
 		]
 	},
-	"altar_craft_loop_t1": {
+	"altar.craft.loop.t1": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_loop_t1",
 		"sounds": [
@@ -221,7 +221,7 @@
 			}
 		]
 	},
-	"altar_craft_loop_t2": {
+	"altar.craft.loop.t2": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_loop_t2",
 		"sounds": [
@@ -231,7 +231,7 @@
 			}
 		]
 	},
-	"altar_craft_loop_t3": {
+	"altar.craft.loop.t3": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_loop_t3",
 		"sounds": [
@@ -241,7 +241,7 @@
 			}
 		]
 	},
-	"altar_craft_loop_t4": {
+	"altar.craft.loop.t4": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_loop_t4",
 		"sounds": [
@@ -251,7 +251,7 @@
 			}
 		]
 	},
-	"altar_craft_loop_t4_waiting": {
+	"altar.craft.loop.t4.waiting": {
 		"category": "block",
 		"subtitle": "astralsorcery.subtitles.altar_craft_loop_t4_waiting",
 		"sounds": [
@@ -261,58 +261,40 @@
 			}
 		]
 	},
-    "craft_attunement": {
-        "category": "master",
-        "sounds": [
-            {
-                "name": "astralsorcery:craft_attunement",
-                "stream": false
-            }
-        ]
-    },
-    "block_coloredlens_attach": {
-        "category": "master",
+	"block.coloredlens.attach": {
+		"category": "master",
 		"subtitle": "astralsorcery.subtitles.block_coloredlens_attach",
-        "sounds": [
-            {
-                "name": "astralsorcery:block_coloredlens_attach",
-                "stream": false
-            }
-        ]
-    },
-	"craft_finish": {
-	    "category": "master",
-	    "sounds": [
-	        {
-	            "name": "astralsorcery:craft_finish",
-	            "stream": false
-	        }
-	    ]
+		"sounds": [
+			{
+				"name": "astralsorcery:block_coloredlens_attach",
+				"stream": false
+			}
+		]
 	},
-	"gui_journal_close": {
-	    "category": "master",
+	"gui.journal.close": {
+		"category": "master",
 		"subtitle": "astralsorcery.subtitles.gui_journal_close",
-	    "sounds": [
-	        {
-	            "name": "astralsorcery:gui_journal_close",
-	            "stream": false
-	        }
-	    ]
+		"sounds": [
+			{
+				"name": "astralsorcery:gui_journal_close",
+				"stream": false
+			}
+		]
 	},
-	"gui_journal_page": {
-	    "category": "master",
+	"gui.journal.page": {
+		"category": "master",
 		"subtitle": "astralsorcery.subtitles.gui_journal_page",
-	    "sounds": [
-	        {
-	            "name": "astralsorcery:gui_journal_page_1",
-	            "weight": 1,
-	            "stream": false
-	        },
-	        {
-	            "name": "astralsorcery:gui_journal_page_2",
-	            "weight": 3,
-	            "stream": false
-	        }
-	    ]
+		"sounds": [
+			{
+				"name": "astralsorcery:gui_journal_page_1",
+				"weight": 1,
+				"stream": false
+			},
+			{
+				"name": "astralsorcery:gui_journal_page_2",
+				"weight": 3,
+				"stream": false
+			}
+		]
 	}
 }

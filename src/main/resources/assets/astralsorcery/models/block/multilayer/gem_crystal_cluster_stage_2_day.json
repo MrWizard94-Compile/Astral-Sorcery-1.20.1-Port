@@ -1,0 +1,12 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "solid": {
+      "parent": "astralsorcery:block/gem_crystal_cluster_stage_2_day_solid"
+    },
+    "translucent": {
+      "parent": "astralsorcery:block/gem_crystal_cluster_stage_2_day_translucent",
+      "render_type": "minecraft:translucent"
+    }
+  }
+}

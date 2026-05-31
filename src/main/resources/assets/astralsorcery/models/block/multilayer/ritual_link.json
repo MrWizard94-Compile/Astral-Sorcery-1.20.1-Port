@@ -1,0 +1,12 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "solid": {
+      "parent": "astralsorcery:block/ritual_link_solid"
+    },
+    "translucent": {
+      "parent": "astralsorcery:block/ritual_link_translucent",
+      "render_type": "minecraft:translucent"
+    }
+  }
+}
