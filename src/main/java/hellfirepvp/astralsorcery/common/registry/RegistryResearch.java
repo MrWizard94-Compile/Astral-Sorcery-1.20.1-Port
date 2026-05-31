@@ -20,6 +20,8 @@ import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -484,8 +486,11 @@ public class RegistryResearch {
                 .addPage(text("PED_ACCEL.4"))
                 .register(ResearchProgression.ATTUNEMENT);
 
-        ResearchNode resAlignmentCharge = new ResearchNode(new SpriteQuery(AssetLoader.TextureLocation.EFFECT, 6, 8, "relay_flare"),
-                "QUICK_CHARGE", 0.75F, 4.5F)
+        ResearchNode resAlignmentCharge = DistExecutor.unsafeRunForDist(
+                () -> () -> new ResearchNode(new SpriteQuery(AssetLoader.TextureLocation.EFFECT, 6, 8, "relay_flare"),
+                        "QUICK_CHARGE", 0.75F, 4.5F),
+                () -> () -> new ResearchNode(BlocksAS.SPECTRAL_RELAY.get(), "QUICK_CHARGE", 0.75F, 4.5F))
+
                 .addPage(text("QUICK_CHARGE.1"))
                 .addPage(text("QUICK_CHARGE.2"))
                 .register(ResearchProgression.ATTUNEMENT);
