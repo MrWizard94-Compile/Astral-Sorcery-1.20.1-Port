@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MAM",
+    "AEA",
+    "MAM"
+  ],
+  "key": {
+    "M": { "item": "astralsorcery:marble_raw" },
+    "A": { "item": "astralsorcery:aquamarine" },
+    "E": { "tag": "forge:ender_pearls" }
+  },
+  "result": {
+    "item": "astralsorcery:altar",
+    "count": 1
+  }
+}
