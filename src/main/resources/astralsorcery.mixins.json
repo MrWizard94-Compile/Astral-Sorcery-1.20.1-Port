@@ -11,7 +11,8 @@
         "MixinItemStack",
         "MixinLivingEntity",
         "MixinWorld",
-        "accessor.ServerItemCooldownsAccessor"
+        "accessor.ServerItemCooldownsAccessor",
+        "accessor.LevelSkyDarkenAccessor"
     ],
     "client": [
         "client.MixinClientWorld"

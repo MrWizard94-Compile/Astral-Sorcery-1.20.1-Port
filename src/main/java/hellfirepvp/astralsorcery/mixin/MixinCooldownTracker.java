@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(ItemCooldowns.class)
 public class MixinCooldownTracker {
 
-    @ModifyVariable(method = "addCooldown", at = @At("HEAD"), ordinal = 0, argsOnly = true, remap = false)
+    @ModifyVariable(method = "addCooldown", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int fireCooldownEvent(int cooldownTicks) {
         ItemCooldowns tracker = (ItemCooldowns)(Object) this;
         if (tracker instanceof ServerItemCooldowns serverCooldowns) {

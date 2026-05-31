@@ -83,6 +83,10 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+processResources {
+    exclude 'astralsorcery.refmap.json'
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -150,4 +154,14 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-Xlint:unchecked' << '-Xlint:rawtypes'
+}
+
+tasks.named('compileJava', JavaCompile).configure {
+    dependsOn 'createMcpToSrg'
+    options.compilerArgs.addAll([
+        "-AreobfTsrgFile=${project.buildDir.canonicalPath}/createMcpToSrg/output.tsrg",
+        "-AdefaultObfuscationEnv=searge",
+        "-AmappingTypes=tsrg",
+        "-AoutRefMapFile=${project.buildDir.canonicalPath}/classes/java/main/astralsorcery.refmap.json"
+    ])
 }

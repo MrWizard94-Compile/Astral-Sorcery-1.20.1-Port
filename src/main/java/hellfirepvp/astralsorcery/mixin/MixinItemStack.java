@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public class MixinItemStack {
 
-    @Inject(method = "isEnchanted", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "isEnchanted", at = @At("HEAD"), cancellable = true)
     public void addDynamicEnchantmentGlint(CallbackInfoReturnable<Boolean> cir) {
         ItemStack stack = (ItemStack)(Object) this;
         if (!EnchantmentHelper.getEnchantments(stack).isEmpty()) {

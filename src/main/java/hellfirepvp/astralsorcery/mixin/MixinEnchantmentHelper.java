@@ -18,8 +18,7 @@ public class MixinEnchantmentHelper {
     @Inject(
         method = "getItemEnchantmentLevel",
         at = @At("RETURN"),
-        cancellable = true,
-        remap = false
+        cancellable = true
     )
     private static void getEnhancedEnchantmentLevel(Enchantment enchantment, ItemStack stack,
                                                      CallbackInfoReturnable<Integer> cir) {
@@ -29,8 +28,7 @@ public class MixinEnchantmentHelper {
     // Hooks the full enchantment map lookup
     @Inject(
         method = "getEnchantments",
-        at = @At("RETURN"),
-        remap = false
+        at = @At("RETURN")
     )
     private static void applyDeserializedEnhancedEnchantments(ItemStack stack,
                                                                CallbackInfoReturnable<Map<Enchantment, Integer>> cir) {

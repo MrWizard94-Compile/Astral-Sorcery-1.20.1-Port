@@ -28,8 +28,7 @@ public class MixinEntity {
     @Inject(
             method = "collideBoundingBox",
             at = @At("RETURN"),
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private static void addCustomCollision(
             @Nullable Entity entity,

@@ -14,6 +14,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ServerItemCooldowns.class)
 public interface ServerItemCooldownsAccessor {
 
-    @Accessor(value = "player", remap = false)
+    @Accessor(value = "player")
     ServerPlayer astralsorcery$getPlayer();
 }

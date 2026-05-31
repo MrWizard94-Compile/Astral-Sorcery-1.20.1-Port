@@ -13,8 +13,7 @@ public class MixinLivingEntity {
     @Inject(
         method = "getWaterSlowDown",
         at = @At("HEAD"),
-        cancellable = true,
-        remap = false
+        cancellable = true
     )
     public void preventWaterSlowdown(CallbackInfoReturnable<Float> cir) {
         LivingEntity entity = (LivingEntity)(Object) this;
