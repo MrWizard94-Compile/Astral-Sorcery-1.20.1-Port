@@ -7,12 +7,6 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.effect;
 
-import hellfirepvp.astralsorcery.client.effect.FXConstellationLine;
-import hellfirepvp.astralsorcery.client.effect.FXCrystalGrowth;
-import hellfirepvp.astralsorcery.client.effect.FXDust;
-import hellfirepvp.astralsorcery.client.effect.FXFlare;
-import hellfirepvp.astralsorcery.client.effect.FXOrbital;
-import hellfirepvp.astralsorcery.client.effect.FXVortex;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

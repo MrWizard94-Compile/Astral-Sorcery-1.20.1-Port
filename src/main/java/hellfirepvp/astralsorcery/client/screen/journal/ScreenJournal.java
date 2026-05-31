@@ -104,8 +104,6 @@ public class ScreenJournal extends WidthHeightScreen {
                 Mth.floor(offsetX), Mth.floor(offsetY), width, height);
 
         float scale = 0.7f;
-        int textX = Mth.floor(offsetX + 2 + 2 / scale);
-        int textY = Mth.floor(offsetY + 4 + 4 / scale);
         graphics.pose().pushPose();
         graphics.pose().translate(offsetX + 2, offsetY + 4, 50);
         graphics.pose().scale(scale, scale, 1f);
@@ -115,11 +113,13 @@ public class ScreenJournal extends WidthHeightScreen {
         return r;
     }
 
+    protected void onBookmarkNavigate() {}
+
     protected boolean handleBookmarkClick(double mouseX, double mouseY) {
         for (Map.Entry<Rectangle, BookmarkProvider> entry : drawnBookmarks.entrySet()) {
             BookmarkProvider provider = entry.getValue();
             if (bookmarkIndex != provider.getIndex() && entry.getKey().contains((int) mouseX, (int) mouseY)) {
-                ScreenJournalProgression.resetJournal();
+                onBookmarkNavigate();
                 Minecraft.getInstance().setScreen(provider.getGuiScreen());
                 return true;
             }

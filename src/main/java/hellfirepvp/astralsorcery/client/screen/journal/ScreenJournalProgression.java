@@ -17,6 +17,8 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -73,6 +75,11 @@ public class ScreenJournalProgression extends ScreenJournal {
     }
 
     @Override
+    protected void onBookmarkNavigate() {
+        resetJournal();
+    }
+
+    @Override
     public void onClose() {
         super.onClose();
         rescaleAndRefresh = false;
@@ -108,7 +115,7 @@ public class ScreenJournalProgression extends ScreenJournal {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
+    public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
         super.render(graphics, mouseX, mouseY, pTicks);
 
         this.searchPrevRct = null;
