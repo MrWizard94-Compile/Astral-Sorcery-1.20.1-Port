@@ -5,11 +5,17 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "astralsorcery.refmap.json",
     "mixins": [
+        "MixinCooldownTracker",
         "MixinEnchantmentHelper",
+        "MixinEntity",
         "MixinItemStack",
-        "MixinLivingEntity"
+        "MixinLivingEntity",
+        "MixinWorld",
+        "accessor.ServerItemCooldownsAccessor"
     ],
-    "client": [],
+    "client": [
+        "client.MixinClientWorld"
+    ],
     "server": [],
     "injectors": {
         "defaultRequire": 1
