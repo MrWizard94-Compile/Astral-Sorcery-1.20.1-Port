@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/gateway" }
+    "": { "model": "astralsorcery:block/celestial_gateway_all" }
   }
 }

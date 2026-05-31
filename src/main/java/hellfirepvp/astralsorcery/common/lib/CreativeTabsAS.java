@@ -175,6 +175,7 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.INFUSED_WOOD_COLUMN_ITEM.get());
         output.accept(ItemsAS.INFUSED_WOOD_ENGRAVED_ITEM.get());
         output.accept(ItemsAS.INFUSED_WOOD_ENRICHED_ITEM.get());
+        output.accept(ItemsAS.INFUSED_WOOD_INFUSED_ITEM.get());
         output.accept(ItemsAS.INFUSED_WOOD_SLAB_ITEM.get());
         output.accept(ItemsAS.INFUSED_WOOD_STAIRS_ITEM.get());
 

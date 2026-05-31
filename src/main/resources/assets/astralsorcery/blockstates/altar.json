@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/altar" }
+    "altar_type=discovery":     { "model": "astralsorcery:block/altar" },
+    "altar_type=attunement":    { "model": "astralsorcery:block/altar_attunement" },
+    "altar_type=constellation": { "model": "astralsorcery:block/altar_constellation" },
+    "altar_type=radiance":      { "model": "astralsorcery:block/altar_radiance" }
   }
 }

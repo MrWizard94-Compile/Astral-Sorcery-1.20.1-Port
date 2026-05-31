@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/collector_crystal" }
+    "": { "model": "astralsorcery:block/rock_collector_crystal_all" }
   }
 }

@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/prism" }
+    "facing=north": { "model": "astralsorcery:block/prism_all" },
+    "facing=east":  { "model": "astralsorcery:block/prism_all", "y": 90 },
+    "facing=south": { "model": "astralsorcery:block/prism_all", "y": 180 },
+    "facing=west":  { "model": "astralsorcery:block/prism_all", "y": 270 }
   }
 }

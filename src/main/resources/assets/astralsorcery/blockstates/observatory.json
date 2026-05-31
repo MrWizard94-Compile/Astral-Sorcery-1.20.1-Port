@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/observatory" }
+    "facing=north": { "model": "astralsorcery:block/observatory" },
+    "facing=east":  { "model": "astralsorcery:block/observatory", "y": 90 },
+    "facing=south": { "model": "astralsorcery:block/observatory", "y": 180 },
+    "facing=west":  { "model": "astralsorcery:block/observatory", "y": 270 }
   }
 }

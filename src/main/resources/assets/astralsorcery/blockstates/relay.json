@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/relay" }
+    "": { "model": "astralsorcery:block/spectral_relay_all" }
   }
 }

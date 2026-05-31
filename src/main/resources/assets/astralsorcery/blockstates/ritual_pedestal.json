@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "astralsorcery:block/ritual_pedestal" }
+    "": { "model": "astralsorcery:block/ritual_pedestal_all" }
   }
 }
