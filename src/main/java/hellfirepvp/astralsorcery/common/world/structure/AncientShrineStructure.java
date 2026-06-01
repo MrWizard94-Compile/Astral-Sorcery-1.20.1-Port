@@ -15,14 +15,16 @@ import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.StructureBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
@@ -35,10 +37,9 @@ import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -52,7 +53,10 @@ import java.util.Optional;
  * <p>1.16 -> 1.20 changes:
  * Complete rewrite — Structure registration is now codec-based.
  * Template structures use StructureTemplatePool + JigsawPlacement.
- * Structure placement is data-driven via structure_set JSONs.</p>
+ * Structure placement is data-driven via structure_set JSONs.
+ * DATA-mode structure blocks in templates are placed as actual structure
+ * blocks (no BlockIgnoreStructureProcessor). afterPlace() scans for
+ * them and calls the appropriate handler per marker metadata string.</p>
  */
 public class AncientShrineStructure extends Structure {
 
@@ -90,7 +94,6 @@ public class AncientShrineStructure extends Structure {
     @Override
     @Nonnull
     public Optional<GenerationStub> findGenerationPoint(@Nonnull GenerationContext context) {
-        // Use jigsaw placement to find a valid generation point
         BlockPos blockPos = new BlockPos(
                 context.chunkPos().getMinBlockX(),
                 startHeight.sample(context.random(),
@@ -106,7 +109,7 @@ public class AncientShrineStructure extends Structure {
                 blockPos,
                 false,
                 projectStartToHeightmap,
-                80 // max distance from center
+                80
         );
     }
 
@@ -121,27 +124,11 @@ public class AncientShrineStructure extends Structure {
                            @Nonnull ChunkGenerator chunkGenerator, @Nonnull RandomSource random,
                            @Nonnull BoundingBox boundingBox, @Nonnull ChunkPos chunkPos,
                            @Nonnull PiecesContainer pieces) {
-        // Scan the placed structure for the DATA-mode structure_block named "crystal"
-        // that the 1.16 template embedded as a marker.  Replace it with a live collector crystal.
-        for (int x = boundingBox.minX(); x <= boundingBox.maxX(); x++) {
-            for (int y = boundingBox.minY(); y <= boundingBox.maxY(); y++) {
-                for (int z = boundingBox.minZ(); z <= boundingBox.maxZ(); z++) {
-                    BlockPos pos = new BlockPos(x, y, z);
-                    if (world.getBlockState(pos).is(Blocks.STRUCTURE_BLOCK)) {
-                        BlockEntity be = world.getBlockEntity(pos);
-                        if (be instanceof StructureBlockEntity sbe
-                                && "crystal".equals(sbe.getStructureName())) {
-                            placeCrystal(world, pos, random);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
+        ShrineMarkers.processMarkers(world, boundingBox, random);
     }
 
-    private void placeCrystal(@Nonnull WorldGenLevel world, @Nonnull BlockPos pos,
-                               @Nonnull RandomSource random) {
+    static void placeCrystal(@Nonnull WorldGenLevel world, @Nonnull BlockPos pos,
+                              @Nonnull RandomSource random) {
         world.setBlock(pos, BlocksAS.COLLECTOR_CRYSTAL.get().defaultBlockState(), 3);
         BlockEntity be = world.getBlockEntity(pos);
         if (be instanceof BlockEntityCollectorCrystal crystal) {
@@ -151,5 +138,21 @@ public class AncientShrineStructure extends Structure {
                 crystal.setAttunedConstellation(majors.get(random.nextInt(majors.size())));
             }
         }
+    }
+
+    static void placeChest(@Nonnull WorldGenLevel world, @Nonnull BlockPos pos,
+                            @Nonnull RandomSource random, boolean brickFallback) {
+        if (brickFallback && random.nextBoolean()) {
+            world.setBlock(pos, BlocksAS.MARBLE_BRICKS.get().defaultBlockState(), 3);
+            return;
+        }
+        if (!brickFallback && random.nextBoolean()) {
+            world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            return;
+        }
+        world.setBlock(pos, Blocks.CHEST.defaultBlockState()
+                .setValue(ChestBlock.FACING, Direction.NORTH), 3);
+        RandomizableContainerBlockEntity.setLootTable(world, random, pos,
+                new ResourceLocation(AstralSorcery.MODID, "shrine_chest"));
     }
 }

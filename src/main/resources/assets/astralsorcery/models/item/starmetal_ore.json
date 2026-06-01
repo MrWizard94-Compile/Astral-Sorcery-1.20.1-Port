@@ -1,3 +1,7 @@
 {
-  "parent": "astralsorcery:block/multilayer/starmetal_ore"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:block/stone",
+    "layer1": "astralsorcery:block/ore_starmetal"
+  }
 }

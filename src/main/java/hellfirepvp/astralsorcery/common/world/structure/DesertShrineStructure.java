@@ -11,13 +11,20 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -98,5 +105,13 @@ public class DesertShrineStructure extends Structure {
     @Nonnull
     public StructureType<?> type() {
         return StructureTypesAS.DESERT_SHRINE.get();
+    }
+
+    @Override
+    public void afterPlace(@Nonnull WorldGenLevel world, @Nonnull StructureManager structureManager,
+                           @Nonnull ChunkGenerator chunkGenerator, @Nonnull RandomSource random,
+                           @Nonnull BoundingBox boundingBox, @Nonnull ChunkPos chunkPos,
+                           @Nonnull PiecesContainer pieces) {
+        ShrineMarkers.processMarkers(world, boundingBox, random);
     }
 }

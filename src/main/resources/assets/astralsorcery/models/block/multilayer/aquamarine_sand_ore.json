@@ -1,0 +1,14 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "solid": {
+      "parent": "block/cube_all",
+      "textures": { "all": "block/sand" }
+    },
+    "translucent": {
+      "parent": "block/cube_all",
+      "textures": { "all": "astralsorcery:block/ore_aquamarine" },
+      "render_type": "minecraft:translucent"
+    }
+  }
+}

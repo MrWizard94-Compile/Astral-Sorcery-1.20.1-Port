@@ -79,16 +79,20 @@ public class BlockObservatory extends BlockEntityBlock {
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         if (level.isClientSide()) {
+            openObservatoryClient();
             return InteractionResult.SUCCESS;
         }
 
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof BlockEntityObservatory observatory && player instanceof ServerPlayer serverPlayer) {
-            if (observatory.tryStartUsing(serverPlayer)) {
-                return InteractionResult.CONSUME;
-            }
+            observatory.tryStartUsing(serverPlayer);
         }
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
+    }
+
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    private static void openObservatoryClient() {
+        hellfirepvp.astralsorcery.client.screen.ClientScreenHandler.openObservatoryScreen();
     }
 
     @Nullable

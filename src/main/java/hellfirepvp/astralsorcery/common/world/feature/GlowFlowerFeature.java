@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -66,7 +67,7 @@ public class GlowFlowerFeature extends Feature<NoneFeatureConfiguration> {
                 continue;
             }
 
-            level.setBlock(surface, Blocks.TORCHFLOWER.defaultBlockState(), 2);
+            level.setBlock(surface, BlocksAS.GLOW_FLOWER.get().defaultBlockState(), 2);
             placed++;
         }
 

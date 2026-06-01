@@ -35,6 +35,14 @@ public final class ClientScreenHandler {
     }
 
     /**
+     * Opens the observatory full-screen sky view.
+     * Called from BlockObservatory on client side after the server mounts the player.
+     */
+    public static void openObservatoryScreen() {
+        Minecraft.getInstance().setScreen(new ScreenObservatory());
+    }
+
+    /**
      * Opens the perk tree screen.
      * Called when the player opens the perk allocation UI.
      */
