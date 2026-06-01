@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common.network;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.network.play.client.PktAttunePlayer;
+import hellfirepvp.astralsorcery.common.network.play.client.PktClearBlockStorageStack;
 import hellfirepvp.astralsorcery.common.network.play.client.PktDiscoverConstellation;
 import hellfirepvp.astralsorcery.common.network.play.client.PktEngraveGlass;
 import hellfirepvp.astralsorcery.common.network.play.client.PktGatewayTeleport;
@@ -213,6 +214,11 @@ public class PacketChannel {
                 PktEngraveGlass::encode,
                 PktEngraveGlass::decode,
                 PktEngraveGlass::handle);
+
+        register(PktClearBlockStorageStack.class,
+                PktClearBlockStorageStack::encode,
+                PktClearBlockStorageStack::decode,
+                PktClearBlockStorageStack::handle);
 
         register(PktRequestSeed.class,
                 PktRequestSeed::encode,

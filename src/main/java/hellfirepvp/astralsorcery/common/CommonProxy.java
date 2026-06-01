@@ -9,6 +9,9 @@ package hellfirepvp.astralsorcery.common;
 
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.capability.CapabilitySetup;
+import hellfirepvp.astralsorcery.common.event.EventHandlerBlockStorage;
+import hellfirepvp.astralsorcery.common.event.EventHandlerInteract;
+import hellfirepvp.astralsorcery.common.event.EventHandlerMisc;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperDamageCancelling;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperInvulnerability;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperSpawnDeny;
@@ -175,6 +178,16 @@ public class CommonProxy {
 
         // Commands (registered via RegisterCommandsEvent)
         forgeBus.register(new CommandAstralSorcery());
+
+        // Item interaction dispatch: OverrideInteractItem (wands, linking tools)
+        forgeBus.register(EventHandlerInteract.class);
+
+        // Block-storage wand clear on left-click (architect wand, exchange wand)
+        forgeBus.register(EventHandlerBlockStorage.class);
+
+        // Misc: lectern+tome journal open, crystal toss tracking, effect cloud cancel,
+        //       BlockChangeNotifier dispatch for starlight network auto-link
+        forgeBus.register(EventHandlerMisc.class);
 
         // Event helpers: register event listeners and tick handlers
         EventHelperDamageCancelling.attachListeners(forgeBus);
