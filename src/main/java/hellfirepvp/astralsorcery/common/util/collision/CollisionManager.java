@@ -26,8 +26,8 @@ public class CollisionManager {
     private static final List<CustomCollisionHandler> customHandlers = new ArrayList<>();
 
     public static void init() {
-        // In 1.16: register(new MantleEffectAevitas.PlayerWalkableAir());
-        // Deferred until Phase 13 mixin rewrites the BlockCollisions hook for 1.20.
+        // Aevitas walkable-air is handled via LivingEvent.LivingTickEvent in
+        // MantleEffectAevitas.PlayerWalkableAir — no collision injection needed.
     }
 
     public static void register(@Nonnull CustomCollisionHandler handler) {

@@ -30,7 +30,7 @@ public class LiquidInteractionRecipeCategory implements IRecipeCategory<LiquidIn
             RecipeType.create(AstralSorcery.MODID, "liquid_interaction", LiquidInteraction.class);
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(AstralSorcery.MODID, "textures/gui/jei/liquid_interaction.png");
+            new ResourceLocation(AstralSorcery.MODID, "textures/gui/jei/interaction.png");
 
     private final IDrawable background;
     private final IDrawable icon;

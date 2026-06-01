@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityLiquidSpark extends EntityRenderer<EntityLiquidSpark> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/liquid_spark.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     public RenderEntityLiquidSpark(@Nonnull EntityRendererProvider.Context context) {
         super(context);

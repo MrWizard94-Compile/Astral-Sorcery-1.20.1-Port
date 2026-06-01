@@ -50,6 +50,7 @@ public class ScreenJournalPerkTree extends ScreenJournal {
 
     private final Map<AbstractPerk, Rectangle.Float> thisFramePerks = new HashMap<>();
     private final ScreenTextEntry searchTextEntry = new ScreenTextEntry();
+    private final java.util.Set<AbstractPerk> searchHighlighted = new java.util.HashSet<>();
 
     private int guiOffsetX, guiOffsetY;
 
@@ -147,16 +148,19 @@ public class ScreenJournalPerkTree extends ScreenJournal {
             if (!guiBox.isInBox(x - guiLeft, y - guiTop)) continue;
 
             boolean allocated = progress.hasPerkAllocated(perk.getKey());
+            boolean searching = !searchTextEntry.getText().trim().isEmpty();
+            boolean matched = !searching || searchHighlighted.contains(perk);
 
-            float r, g, b;
+            float r, g, b, a;
             if (allocated) {
                 r = 0.6f; g = 0.8f; b = 1.0f;
             } else {
                 r = 0.4f; g = 0.4f; b = 0.5f;
             }
+            a = matched ? 0.8f : 0.15f;
 
             RenderingDrawUtils.drawRect(graphics, (int) x, (int) y, (int) sz, (int) sz,
-                    new Color(r, g, b, 0.8f));
+                    new Color(r, g, b, a));
             thisFramePerks.put(perk, new Rectangle.Float(x, y, sz, sz));
         }
     }
@@ -184,7 +188,22 @@ public class ScreenJournalPerkTree extends ScreenJournal {
     }
 
     private void updateSearchHighlight() {
-        // Search highlight placeholder — full implementation deferred
+        searchHighlighted.clear();
+        String query = searchTextEntry.getText().trim().toLowerCase(java.util.Locale.ROOT);
+        if (query.isEmpty()) return;
+        for (AbstractPerk perk : PerkTree.getAllPerks()) {
+            if (!perk.isEnabled()) continue;
+            if (perk.getName().getString().toLowerCase(java.util.Locale.ROOT).contains(query)) {
+                searchHighlighted.add(perk);
+                continue;
+            }
+            for (net.minecraft.network.chat.Component line : perk.getTooltipDescription()) {
+                if (line.getString().toLowerCase(java.util.Locale.ROOT).contains(query)) {
+                    searchHighlighted.add(perk);
+                    break;
+                }
+            }
+        }
     }
 
     private void moveMouse(float x, float y) {

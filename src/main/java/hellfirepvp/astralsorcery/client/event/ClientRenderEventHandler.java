@@ -55,6 +55,7 @@ public class ClientRenderEventHandler {
         KeyBindingsAS.handleInput();
         OverlayAlignmentCharge.INSTANCE.tick();
         OverlayPerkExperience.INSTANCE.tick();
+        hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect.INSTANCE.tick();
     }
 
     @SubscribeEvent

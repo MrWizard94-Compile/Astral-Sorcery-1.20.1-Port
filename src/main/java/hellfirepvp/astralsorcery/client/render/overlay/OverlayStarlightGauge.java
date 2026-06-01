@@ -7,13 +7,10 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.render.overlay;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.ClientStarlightCache;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -22,31 +19,22 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import javax.annotation.Nonnull;
 
 /**
- * HUD overlay rendering the player's current starlight charge level.
- * Displayed as a small crescent/star gauge in the top-left area
- * when the player is attuned and has starlight exposure.
- *
- * <p>1.16 → 1.20: Forge overlay system completely changed.
- * Old: {@code RenderGameOverlayEvent} + manual rendering.
- * New: {@code IGuiOverlay} registered via {@code RegisterGuiOverlaysEvent}.</p>
+ * HUD overlay rendering the player's current starlight charge level as a
+ * simple color-fill gauge in the top-left corner when the player is attuned.
  */
 @OnlyIn(Dist.CLIENT)
 public class OverlayStarlightGauge implements IGuiOverlay {
 
     public static final OverlayStarlightGauge INSTANCE = new OverlayStarlightGauge();
 
-    private static final ResourceLocation TEX_GAUGE_BG =
-            AstralSorcery.key("textures/gui/overlay/starlight_gauge_bg.png");
-    private static final ResourceLocation TEX_GAUGE_FILL =
-            AstralSorcery.key("textures/gui/overlay/starlight_gauge_fill.png");
+    private static final int GAUGE_WIDTH  = 6;
+    private static final int GAUGE_HEIGHT = 48;
+    private static final int OFFSET_X     = 4;
+    private static final int OFFSET_Y     = 4;
 
-    /** Gauge dimensions in screen pixels. */
-    private static final int GAUGE_WIDTH = 22;
-    private static final int GAUGE_HEIGHT = 64;
-
-    /** Screen position offset from top-left. */
-    private static final int OFFSET_X = 4;
-    private static final int OFFSET_Y = 4;
+    // ARGB colors
+    private static final int COLOR_BG   = 0x55223344; // dim blue-black background
+    private static final int COLOR_FILL = 0xCC99CCFF; // light blue fill
 
     private OverlayStarlightGauge() {}
 
@@ -55,35 +43,23 @@ public class OverlayStarlightGauge implements IGuiOverlay {
                         float partialTick, int screenWidth, int screenHeight) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-
         if (!shouldRender()) return;
 
-        float starlightFill = getStarlightFillLevel();
-        if (starlightFill <= 0.0f) return;
+        float fill = getStarlightFillLevel();
+        if (fill <= 0.0f) return;
 
         int x = OFFSET_X;
         int y = OFFSET_Y;
 
-        // Background
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.7f);
-        graphics.blit(TEX_GAUGE_BG, x, y, 0, 0, GAUGE_WIDTH, GAUGE_HEIGHT, GAUGE_WIDTH, GAUGE_HEIGHT);
+        // Background track
+        graphics.fill(x, y, x + GAUGE_WIDTH, y + GAUGE_HEIGHT, COLOR_BG);
 
-        // Fill (bottom to top)
-        int fillHeight = (int) (GAUGE_HEIGHT * starlightFill);
+        // Fill bar (bottom to top)
+        int fillHeight = (int) (GAUGE_HEIGHT * fill);
         int fillY = y + GAUGE_HEIGHT - fillHeight;
-        int fillVOffset = GAUGE_HEIGHT - fillHeight;
-
-        RenderSystem.setShaderColor(0.6f, 0.8f, 1.0f, 0.9f);
-        graphics.blit(TEX_GAUGE_FILL, x, fillY, 0, fillVOffset,
-                GAUGE_WIDTH, fillHeight, GAUGE_WIDTH, GAUGE_HEIGHT);
-
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        graphics.fill(x, fillY, x + GAUGE_WIDTH, y + GAUGE_HEIGHT, COLOR_FILL);
     }
 
-    /**
-     * Whether to show the starlight gauge.
-     * Only shown when the player is attuned.
-     */
     private boolean shouldRender() {
         return PlayerProgressManager.getClientProgress().getAttunedConstellation() != null;
     }

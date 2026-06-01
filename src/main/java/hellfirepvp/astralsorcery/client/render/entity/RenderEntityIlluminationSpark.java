@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityIlluminationSpark extends EntityRenderer<EntityIlluminationSpark> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/illumination_spark.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     public RenderEntityIlluminationSpark(@Nonnull EntityRendererProvider.Context context) {
         super(context);

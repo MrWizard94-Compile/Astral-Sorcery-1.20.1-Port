@@ -17,10 +17,11 @@ import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingConstellationUtils;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
-import net.minecraft.client.Camera;
+import hellfirepvp.astralsorcery.common.data.config.ClientConfig;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.ResearchHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,7 +31,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.List;
 import java.util.Random;
@@ -72,6 +72,7 @@ public class AstralSkyRenderer {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_SKY) {
             return;
         }
+        if (!ClientConfig.CONFIG.customSkyRenderer.get()) return;
 
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
@@ -101,7 +102,10 @@ public class AstralSkyRenderer {
                                            @Nonnull ClientLevel level,
                                            float alpha,
                                            float partialTick) {
-        List<IConstellation> allConstellations = new java.util.ArrayList<>(ConstellationRegistry.getAllConstellations());
+        PlayerProgress progress = ResearchHelper.getClientProgress();
+        List<IConstellation> allConstellations = ConstellationRegistry.getAllConstellations().stream()
+                .filter(c -> progress.hasDiscovered(c.getRegistryName()))
+                .collect(java.util.stream.Collectors.toList());
         if (allConstellations.isEmpty()) return;
 
         // Determine which constellations are visible based on time/day

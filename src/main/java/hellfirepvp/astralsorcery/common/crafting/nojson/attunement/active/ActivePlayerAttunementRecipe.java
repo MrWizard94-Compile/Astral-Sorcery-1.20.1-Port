@@ -7,6 +7,7 @@ import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunePlayerR
 import hellfirepvp.astralsorcery.common.crafting.nojson.attunement.AttunementRecipe;
 import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktAttunementActive;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +26,6 @@ import java.util.UUID;
 
 /**
  * Server-side active state for player attunement in the attunement altar.
- * Client-side camera flight, visual effects, and sound are deferred to Phase 12.
  */
 public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<AttunePlayerRecipe> {
 
@@ -51,10 +51,34 @@ public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<Attune
     }
 
     @Override
-    public void startCrafting(@Nonnull BlockEntityAttunementAltar altar) {}
+    public void startCrafting(@Nonnull BlockEntityAttunementAltar altar) {
+        UUID uuid = playerUUID;
+        if (uuid == null) return;
+        MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
+        if (srv == null) return;
+        Player player = srv.getPlayerList().getPlayer(uuid);
+        if (player instanceof ServerPlayer sp && player.isAlive()) {
+            double x = altar.getBlockPos().getX() + 0.5;
+            double y = altar.getBlockPos().getY() + 1.2;
+            double z = altar.getBlockPos().getZ() + 0.5;
+            sp.connection.teleport(x, y, z, 0f, 0f);
+            sp.setInvulnerable(true);
+            PacketChannel.sendToPlayer(new PktAttunementActive(true, altar.getBlockPos()), sp);
+        }
+    }
 
     @Override
-    public void stopCrafting(@Nonnull BlockEntityAttunementAltar altar) {}
+    public void stopCrafting(@Nonnull BlockEntityAttunementAltar altar) {
+        UUID uuid = playerUUID;
+        if (uuid == null) return;
+        MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
+        if (srv == null) return;
+        Player player = srv.getPlayerList().getPlayer(uuid);
+        if (player instanceof ServerPlayer sp) {
+            sp.setInvulnerable(false);
+            PacketChannel.sendToPlayer(new PktAttunementActive(false, altar.getBlockPos()), sp);
+        }
+    }
 
     @Override
     public boolean isFinished(@Nonnull BlockEntityAttunementAltar altar) {
@@ -84,6 +108,18 @@ public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<Attune
         if (side.isClient()) return;
         Level level = altar.getLevel();
         if (level == null) return;
+
+        UUID uuid = playerUUID;
+        if (uuid != null) {
+            MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
+            if (srv != null) {
+                Player player = srv.getPlayerList().getPlayer(uuid);
+                if (player != null && player.isAlive()) {
+                    player.setInvulnerable(true);
+                }
+            }
+        }
+
         if (getTick() % 10 == 0) {
             PacketChannel.sendToAllTracking(
                     new PktParticleEvent(PktParticleEvent.ATTUNEMENT_BEAM, altar.getBlockPos()),

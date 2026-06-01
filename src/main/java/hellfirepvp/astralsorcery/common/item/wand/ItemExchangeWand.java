@@ -12,7 +12,12 @@ import hellfirepvp.astralsorcery.common.util.MiscUtils;
 import hellfirepvp.astralsorcery.common.util.block.BlockDiscoverer;
 import hellfirepvp.astralsorcery.common.util.block.BlockUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
+import hellfirepvp.astralsorcery.common.item.base.client.ItemHeldRender;
+import hellfirepvp.astralsorcery.common.item.base.client.ItemOverlayRender;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -29,6 +34,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nonnull;
@@ -42,10 +49,10 @@ import java.util.stream.Collectors;
  * <p>1.16 → 1.20: ItemUseContext → UseOnContext, ActionResultType → InteractionResult,
  * ToolType → removed (canHarvestBlock uses tags in 1.20), getBlockHardness → getDestroySpeed,
  * ServerPlayerEntity.interactionManager.tryHarvestBlock → ServerPlayer.gameMode.destroyBlock,
- * WandsConfig.exchangeWandMaxHardness → hardcoded default (50F).
- * Client render deferred to Phase 12.</p>
+ * WandsConfig.exchangeWandMaxHardness → hardcoded default (50F).</p>
  */
-public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, AlignmentChargeConsumer {
+public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, AlignmentChargeConsumer,
+        ItemHeldRender, ItemOverlayRender {
 
     private static final float COST_PER_EXCHANGE = 5F;
     /** 1.16 used WandsConfig.CONFIG.exchangeWandMaxHardness; hardcoded default here. */
@@ -171,6 +178,28 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
             placeables.put(pos, toPlace);
         }
         return placeables;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean renderInHand(ItemStack stack, PoseStack poseStack, float partialTick) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return true;
+        BlockHitResult hit = MiscUtils.rayTraceLookBlock(player, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE);
+        if (hit == null) return true;
+        Map<BlockPos, BlockState> preview = getPlaceStates(player, player.level(), hit.getBlockPos(), stack);
+        if (preview.isEmpty()) return true;
+        hellfirepvp.astralsorcery.client.util.WandRenderHelper.renderGhostBlocks(preview, poseStack);
+        return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean renderOverlay(@Nonnull GuiGraphics graphics, @Nonnull ItemStack stack, float partialTick) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return false;
+        return hellfirepvp.astralsorcery.client.util.WandRenderHelper.renderStoredBlocksOverlay(
+                graphics, ItemBlockStorage.getInventoryMatchingItemStacks(player, stack));
     }
 
     public static void setSizeMode(@Nonnull ItemStack stack, @Nonnull SizeMode mode) {

@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityFlare extends EntityRenderer<EntityFlare> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/flare.png");
+            AstralSorcery.key("textures/effect/entity_flare.png");
 
     public RenderEntityFlare(@Nonnull EntityRendererProvider.Context context) {
         super(context);

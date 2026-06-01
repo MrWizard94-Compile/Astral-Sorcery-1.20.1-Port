@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityShootingStar extends EntityRenderer<EntityShootingStar> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/shooting_star.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     public RenderEntityShootingStar(@Nonnull EntityRendererProvider.Context context) {
         super(context);

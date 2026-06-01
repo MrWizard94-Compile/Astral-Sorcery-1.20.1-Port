@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.constellation.mantle.effect;
 
+import hellfirepvp.astralsorcery.common.auxiliary.TimeStopController;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffect;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
@@ -14,8 +15,6 @@ import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -36,8 +35,6 @@ import java.util.List;
  * within {@code effectRange} blocks for {@code effectDuration} ticks.
  * A cooldown prevents re-triggering during that window.</p>
  *
- * <p>Full TimeStopController (entity-tick freeze) is deferred until the time-stop
- * system is ported. Slowness is used as a functional substitute.</p>
  *
  * <p>1.16 → 1.20: player.getCooldownTracker() → player.getCooldowns(),
  * hasCooldown/setCooldown → isOnCooldown/addCooldown,
@@ -83,9 +80,7 @@ public class MantleEffectHorologium extends MantleEffect {
         AABB box = new AABB(center).inflate(range);
         List<LivingEntity> nearby = level.getEntitiesOfClass(LivingEntity.class, box,
                 e -> e != player && e.isAlive());
-        for (LivingEntity target : nearby) {
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 4, false, false));
-        }
+        TimeStopController.INSTANCE.freezeEntities(nearby, duration);
 
         player.getCooldowns().addCooldown(mantleStack.getItem(), CONFIG.cooldown.get());
         AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, CONFIG.chargeCostPerFreeze.get(), false);

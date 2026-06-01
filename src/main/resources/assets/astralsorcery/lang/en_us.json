@@ -1087,5 +1087,19 @@
   "item.astralsorcery.knowledge_fragment": "Knowledge Fragment",
   "item.astralsorcery.shifting_stone": "Shifting Stone",
   "item.astralsorcery.starmetal_dust": "Starmetal Dust",
-  "item.astralsorcery.infused_glass_engraved": "Engraved Infused Glass"
+  "item.astralsorcery.infused_glass_engraved": "Engraved Infused Glass",
+
+  "astralsorcery.tooltip.colored_lens.type": "Type: %s",
+  "astralsorcery.lens.color.fire": "Fire",
+  "astralsorcery.lens.color.break": "Breaking",
+  "astralsorcery.lens.color.growth": "Growth",
+  "astralsorcery.lens.color.damage": "Damage",
+  "astralsorcery.lens.color.regeneration": "Regeneration",
+  "astralsorcery.lens.color.push": "Push",
+  "astralsorcery.lens.color.spectral": "Spectral",
+
+  "astralsorcery.journal.recipe.infusion.fluid": "Liquid Starlight",
+
+  "astralsorcery.journal.structure.header": "Multiblock Structure",
+  "astralsorcery.journal.structure.body": "Place the blocks as shown by a Structure Resonator or refer to the wiki for the full schematic."
 }

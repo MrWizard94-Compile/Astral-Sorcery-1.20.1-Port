@@ -12,6 +12,7 @@ import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.common.ForgeMod;
+import javax.annotation.Nonnull;
 
 /**
  * Registry constants for all built-in perk attribute types.
@@ -23,36 +24,37 @@ import net.minecraftforge.common.ForgeMod;
  *
  * <p>Call {@link #init()} during common setup to register all types.</p>
  */
+@SuppressWarnings("null")
 public final class PerkAttributeTypesAS {
 
     private PerkAttributeTypesAS() {}
 
     // ---- Vanilla-backed attribute types ----
 
-    public static PerkAttributeType ATTR_TYPE_ARMOR;
-    public static PerkAttributeType ATTR_TYPE_ARMOR_TOUGHNESS;
-    public static PerkAttributeType ATTR_TYPE_ATTACK_DAMAGE;
-    public static PerkAttributeType ATTR_TYPE_ATTACK_SPEED;
-    public static PerkAttributeType ATTR_TYPE_MAX_HEALTH;
-    public static PerkAttributeType ATTR_TYPE_MOVEMENT_SPEED;
-    public static PerkAttributeType ATTR_TYPE_KNOCKBACK_RESIST;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ARMOR;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ARMOR_TOUGHNESS;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ATTACK_DAMAGE;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ATTACK_SPEED;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_MAX_HEALTH;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_MOVEMENT_SPEED;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_KNOCKBACK_RESIST;
 
     // ---- Custom attribute types (no vanilla backing) ----
 
-    public static PerkAttributeType ATTR_TYPE_REACH;
-    public static PerkAttributeType ATTR_TYPE_CRIT_CHANCE;
-    public static PerkAttributeType ATTR_TYPE_CRIT_MULTIPLIER;
-    public static PerkAttributeType ATTR_TYPE_ALL_ELEMENTAL_RESIST;
-    public static PerkAttributeType ATTR_TYPE_MINING_SPEED;
-    public static PerkAttributeType ATTR_TYPE_EXPERIENCE;
-    public static PerkAttributeType ATTR_TYPE_LIFE_STEAL;
-    public static PerkAttributeType ATTR_TYPE_STARLIGHT_COLLECTION;
-    public static PerkAttributeType ATTR_TYPE_PERK_EFFECT;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_REACH;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_CRIT_CHANCE;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_CRIT_MULTIPLIER;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ALL_ELEMENTAL_RESIST;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_MINING_SPEED;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_EXPERIENCE;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_LIFE_STEAL;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_STARLIGHT_COLLECTION;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_PERK_EFFECT;
 
     // ---- Alignment charge types ----
 
-    public static PerkAttributeType ATTR_TYPE_ALIGNMENT_CHARGE_MAX;
-    public static PerkAttributeType ATTR_TYPE_ALIGNMENT_CHARGE_REGEN;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ALIGNMENT_CHARGE_MAX;
+    @Nonnull public static PerkAttributeType ATTR_TYPE_ALIGNMENT_CHARGE_REGEN;
 
     /**
      * Registers all built-in perk attribute types.

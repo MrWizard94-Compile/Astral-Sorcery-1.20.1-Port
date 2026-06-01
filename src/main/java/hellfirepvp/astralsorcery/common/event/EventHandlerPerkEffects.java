@@ -446,9 +446,7 @@ public class EventHandlerPerkEffects {
         if (!(player.level() instanceof ServerLevel level)) return;
 
         ItemStack tool = player.getMainHandItem();
-        if (!net.minecraftforge.common.ToolActions.AXE_DIG.equals(
-                tool.canPerformAction(net.minecraftforge.common.ToolActions.AXE_DIG)
-                        ? net.minecraftforge.common.ToolActions.AXE_DIG : null)) return;
+        if (!tool.canPerformAction(net.minecraftforge.common.ToolActions.AXE_DIG)) return;
 
         BlockState state = event.getState();
         if (!isLogBlock(state)) return;
@@ -537,5 +535,14 @@ public class EventHandlerPerkEffects {
         progress.setPerkExp(progress.getPerkExp() + perkExpGain);
         AstralAdvancementTriggers.PERK_LEVEL.trigger(serverPlayer);
         PlayerProgressManager.syncProgress(serverPlayer);
+    }
+
+    @SubscribeEvent
+    public void onDynamicEnchantmentAdd(@Nonnull DynamicEnchantmentEvent.Add event) {
+        for (AbstractPerk perk : PerkTree.getAllPerks()) {
+            if (perk instanceof KeyAddEnchantment keyEnch) {
+                keyEnch.applyEnchantments(event);
+            }
+        }
     }
 }

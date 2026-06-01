@@ -50,25 +50,25 @@ public final class RenderTypesAS {
     public static final ResourceLocation TEX_PARTICLE_LARGE =
             AstralSorcery.key("textures/effect/particle_large.png");
     public static final ResourceLocation TEX_STAR =
-            AstralSorcery.key("textures/effect/star.png");
+            AstralSorcery.key("textures/environment/star_1.png");
     public static final ResourceLocation TEX_LIGHTBEAM =
             AstralSorcery.key("textures/effect/lightbeam.png");
     public static final ResourceLocation TEX_LIGHTNING =
-            AstralSorcery.key("textures/effect/lightning.png");
+            AstralSorcery.key("textures/effect/lightning_part.png");
     public static final ResourceLocation TEX_BURST =
-            AstralSorcery.key("textures/effect/burst.png");
+            AstralSorcery.key("textures/effect/craft_burst.png");
     public static final ResourceLocation TEX_HALO =
-            AstralSorcery.key("textures/effect/halo.png");
+            AstralSorcery.key("textures/effect/halo_ritual.png");
     public static final ResourceLocation TEX_CUBE =
-            AstralSorcery.key("textures/effect/cube.png");
+            AstralSorcery.key("textures/effect/area_of_effect_cube.png");
     public static final ResourceLocation TEX_CONSTELLATION_STAR =
-            AstralSorcery.key("textures/gui/constellation_star.png");
+            AstralSorcery.key("textures/environment/star_1.png");
     public static final ResourceLocation TEX_CONSTELLATION_CONNECTION =
-            AstralSorcery.key("textures/gui/constellation_connection.png");
+            AstralSorcery.key("textures/gui/line_connection.png");
     public static final ResourceLocation TEX_SKY_CONSTELLATION =
-            AstralSorcery.key("textures/environment/sky_constellation.png");
+            AstralSorcery.key("textures/environment/line.png");
     public static final ResourceLocation TEX_BLANK =
-            AstralSorcery.key("textures/effect/blank.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     // =========================================================================
     // Shared render state shards

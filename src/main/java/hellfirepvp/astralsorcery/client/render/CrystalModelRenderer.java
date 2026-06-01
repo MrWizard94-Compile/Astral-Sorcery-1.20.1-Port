@@ -10,12 +10,10 @@ package hellfirepvp.astralsorcery.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
@@ -40,9 +38,6 @@ import java.awt.Color;
 public final class CrystalModelRenderer {
 
     private CrystalModelRenderer() {}
-
-    private static final ResourceLocation TEX_CRYSTAL =
-            AstralSorcery.key("textures/block/crystal.png");
 
     /** Number of sides in the crystal cross-section. */
     private static final int SIDES = 6;

@@ -1,10 +1,16 @@
 package hellfirepvp.astralsorcery.common.base.patreon;
 
+import hellfirepvp.astralsorcery.client.resource.AssetLoader;
+import hellfirepvp.astralsorcery.client.resource.query.SpriteQuery;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import java.awt.*;
+import java.util.Locale;
 
 /**
- * Patreon flare particle colors. Pure data enum with two Color values
- * used for gradient rendering of supporter flare effects.
+ * Patreon flare particle colors. Each entry has two gradient Color values and a
+ * sprite sheet animation used for the supporter flare particle effect.
  */
 public enum FlareColor {
 
@@ -33,6 +39,9 @@ public enum FlareColor {
         this.color2 = new Color(c2);
     }
 
-    // Client-side SpriteQuery method will be added in Phase 12 (rendering)
-    // when AssetLoader and SpriteQuery are ported.
+    @OnlyIn(Dist.CLIENT)
+    public SpriteQuery getSpriteQuery() {
+        return new SpriteQuery(AssetLoader.TextureLocation.EFFECT, 1, 48,
+                "patreonflares", name().toLowerCase(Locale.ROOT));
+    }
 }

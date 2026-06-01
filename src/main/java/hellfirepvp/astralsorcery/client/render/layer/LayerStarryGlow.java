@@ -9,7 +9,6 @@ package hellfirepvp.astralsorcery.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingUtils;
 import hellfirepvp.astralsorcery.common.capability.PlayerCapabilityProvider;
@@ -50,9 +49,6 @@ import java.util.Random;
  */
 @OnlyIn(Dist.CLIENT)
 public class LayerStarryGlow extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
-
-    private static final ResourceLocation TEX_STAR =
-            AstralSorcery.key("textures/effect/star.png");
 
     /** Number of star particles rendered around the player. */
     private static final int STAR_COUNT = 8;

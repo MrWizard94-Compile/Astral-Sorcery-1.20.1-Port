@@ -149,6 +149,9 @@ public class ClientProxy extends CommonProxy {
 
         // World-space effects for held items implementing ItemHeldRender
         forgeBus.register(ItemHeldEffectRenderer.INSTANCE);
+
+        // Attunement camera orbit effect
+        forgeBus.register(hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect.INSTANCE);
     }
 
     // =========================================================================
@@ -159,6 +162,7 @@ public class ClientProxy extends CommonProxy {
      * Register block entity renderers.
      * Fired on the mod event bus during client setup.
      */
+    @SuppressWarnings("null")
     private void onRegisterRenderers(@Nonnull EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityTypesAS.ALTAR.get(), RenderAltar::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.ATTUNEMENT_ALTAR.get(), RenderAttunementAltar::new);
@@ -200,6 +204,7 @@ public class ClientProxy extends CommonProxy {
     /**
      * Register model layer definitions for BER Java models (attunement altar, observatory).
      */
+    @SuppressWarnings("null")
     private void onRegisterLayerDefinitions(@Nonnull EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModelAttunementAltar.LAYER, ModelAttunementAltar::createLayerDefinition);
         event.registerLayerDefinition(ModelObservatory.LAYER, ModelObservatory::createLayerDefinition);
@@ -208,7 +213,7 @@ public class ClientProxy extends CommonProxy {
     /**
      * Register player render layers (starry glow effect for attuned players).
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "null"})
     private void onAddLayers(@Nonnull EntityRenderersEvent.AddLayers event) {
         for (String skin : event.getSkins()) {
             LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer =
@@ -269,6 +274,7 @@ public class ClientProxy extends CommonProxy {
         });
     }
 
+    @SuppressWarnings("null")
     private void onRegisterReloadListeners(@Nonnull RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(AssetLibrary.INSTANCE);
     }

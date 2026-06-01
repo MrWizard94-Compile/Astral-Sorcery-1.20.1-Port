@@ -36,12 +36,21 @@ public class KeyStepAssist extends KeyPerk {
     @Override
     public void onPlayerTick(@Nonnull Player player) {
         if (player.level().isClientSide()) return;
-        // Only re-apply if not already present (avoids log spam from repeated adds)
         AttributeInstance attr = player.getAttribute(
                 Objects.requireNonNull(ForgeMod.STEP_HEIGHT_ADDITION.get()));
         if (attr != null && attr.getModifier(STEP_UUID) == null) {
             attr.addTransientModifier(new AttributeModifier(
                     STEP_UUID, "KeyStepAssist", STEP_ADD, AttributeModifier.Operation.ADDITION));
+        }
+    }
+
+    @Override
+    public void onDeallocate(@Nonnull Player player) {
+        if (player.level().isClientSide()) return;
+        AttributeInstance attr = player.getAttribute(
+                Objects.requireNonNull(ForgeMod.STEP_HEIGHT_ADDITION.get()));
+        if (attr != null) {
+            attr.removeModifier(STEP_UUID);
         }
     }
 }

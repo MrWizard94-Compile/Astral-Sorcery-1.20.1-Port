@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 public class ScreenAltarAttunement extends ScreenContainerBaseAS<ContainerAltarAttunement> {
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(AstralSorcery.MODID, "textures/gui/altar_attunement.png");
+            new ResourceLocation(AstralSorcery.MODID, "textures/gui/container_altar_attunement.png");
 
     private static final int BG_WIDTH = 176;
     private static final int BG_HEIGHT = 166;

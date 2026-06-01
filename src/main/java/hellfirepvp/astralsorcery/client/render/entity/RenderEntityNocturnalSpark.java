@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityNocturnalSpark extends EntityRenderer<EntityNocturnalSpark> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/nocturnal_spark.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     public RenderEntityNocturnalSpark(@Nonnull EntityRendererProvider.Context context) {
         super(context);

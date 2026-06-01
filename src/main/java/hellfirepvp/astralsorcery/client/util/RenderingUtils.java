@@ -43,6 +43,7 @@ import java.util.function.Consumer;
  * {@code RenderSystem.pushMatrix()} / {@code popMatrix()} removed — use PoseStack.</p>
  */
 @OnlyIn(Dist.CLIENT)
+@SuppressWarnings("null")
 public final class RenderingUtils {
 
     private RenderingUtils() {}
@@ -55,7 +56,7 @@ public final class RenderingUtils {
      * Submit a position+color vertex.
      */
     public static void vertex(@Nonnull VertexConsumer buffer,
-                               @Nonnull Matrix4f matrix,
+                               Matrix4f matrix,
                                float x, float y, float z,
                                float r, float g, float b, float a) {
         buffer.vertex(matrix, x, y, z).color(r, g, b, a).endVertex();
@@ -65,7 +66,7 @@ public final class RenderingUtils {
      * Submit a position+color+texture vertex.
      */
     public static void vertex(@Nonnull VertexConsumer buffer,
-                               @Nonnull Matrix4f matrix,
+                               Matrix4f matrix,
                                float x, float y, float z,
                                float r, float g, float b, float a,
                                float u, float v) {
@@ -76,7 +77,7 @@ public final class RenderingUtils {
      * Submit a position+color+texture+lightmap vertex.
      */
     public static void vertex(@Nonnull VertexConsumer buffer,
-                               @Nonnull Matrix4f matrix,
+                               Matrix4f matrix,
                                float x, float y, float z,
                                float r, float g, float b, float a,
                                float u, float v,
@@ -92,7 +93,7 @@ public final class RenderingUtils {
      * Submit a full BLOCK format vertex (position, color, uv, uv2/light, normal).
      */
     public static void vertexBlock(@Nonnull VertexConsumer buffer,
-                                    @Nonnull Matrix4f matrix,
+                                    Matrix4f matrix,
                                     float x, float y, float z,
                                     float r, float g, float b, float a,
                                     float u, float v,
@@ -153,7 +154,7 @@ public final class RenderingUtils {
      * Render a flat textured quad in the XZ plane (horizontal).
      */
     public static void renderHorizontalQuad(@Nonnull VertexConsumer buffer,
-                                             @Nonnull Matrix4f matrix,
+                                             Matrix4f matrix,
                                              float x, float z,
                                              float scale,
                                              float y,
@@ -288,14 +289,13 @@ public final class RenderingUtils {
      * @param b       blue 0-1
      * @param a       alpha 0-1
      */
-    public static void drawColorTex(@Nonnull Matrix4f matrix,
+    public static void drawColorTex(Matrix4f matrix,
                                      float x, float y, float w, float h,
                                      float r, float g, float b, float a) {
         drawColorTex(matrix, x, y, w, h, r, g, b, a, 0, 0, 1, 1);
     }
 
-    @SuppressWarnings("null")
-    public static void drawColorTex(@Nonnull Matrix4f matrix,
+    public static void drawColorTex(Matrix4f matrix,
                                      float x, float y, float w, float h,
                                      float r, float g, float b, float a,
                                      float u0, float v0, float u1, float v1) {
@@ -311,9 +311,8 @@ public final class RenderingUtils {
     /**
      * Draw a textured quad, binding the given texture and setting the position+color+tex shader.
      */
-    @SuppressWarnings("null")
     public static void drawTexturedQuad(@Nonnull ResourceLocation texture,
-                                         @Nonnull Matrix4f matrix,
+                                         Matrix4f matrix,
                                          float x, float y, float w, float h,
                                          float r, float g, float b, float a) {
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
@@ -324,8 +323,7 @@ public final class RenderingUtils {
     /**
      * Draw a colored (no texture) quad using the position+color shader.
      */
-    @SuppressWarnings("null")
-    public static void drawColorQuad(@Nonnull Matrix4f matrix,
+    public static void drawColorQuad(Matrix4f matrix,
                                       float x, float y, float w, float h,
                                       float r, float g, float b, float a) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -342,8 +340,7 @@ public final class RenderingUtils {
      * Execute {@code filler} inside a QUADS + POSITION_COLOR_TEX buffer.
      * Sets the position+color+tex shader; caller must bind the texture first.
      */
-    @SuppressWarnings("null")
-    public static void drawTexQuads(@Nonnull Matrix4f matrix,
+    public static void drawTexQuads(Matrix4f matrix,
                                      @Nonnull Consumer<BufferBuilder> filler) {
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         BufferBuilder buf = Tesselator.getInstance().getBuilder();

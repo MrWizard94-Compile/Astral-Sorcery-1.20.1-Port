@@ -13,6 +13,7 @@ import hellfirepvp.astralsorcery.common.perk.node.MajorPerk;
 import hellfirepvp.astralsorcery.common.perk.node.RootPerk;
 import hellfirepvp.astralsorcery.common.perk.node.SmallPerk;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAddEnchantment;
+import net.minecraft.resources.ResourceLocation;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAevitas;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAlcara;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAreaOfEffect;
@@ -763,7 +764,8 @@ public final class PerkTreeData {
 
         // --- Utility off KeyAlcara (enchantment/starlight theme) ---
         SmallPerk alcaExt1 = smallPerk("alca_ext1", 60, -52, PerkAttributeTypesAS.ATTR_TYPE_PERK_EFFECT, 0.05f);
-        KeyAddEnchantment keyAddEnch = new KeyAddEnchantment(64, -58);
+        KeyAddEnchantment keyAddEnch = new KeyAddEnchantment(64, -58)
+                .addEnchantment(new ResourceLocation("minecraft", "fortune"), 1);
         PerkTree.register(alcaExt1); PerkTree.register(keyAddEnch);
         connect(keyAlcara, alcaExt1); connect(alcaExt1, keyAddEnch);
 

@@ -38,9 +38,9 @@ public class OverlayAlignmentCharge implements IGuiOverlay {
     public static final OverlayAlignmentCharge INSTANCE = new OverlayAlignmentCharge();
 
     private static final ResourceLocation TEX_CHARGE =
-            AstralSorcery.key("textures/gui/charge.png");
+            AstralSorcery.key("textures/gui/overlay/charge.png");
     private static final ResourceLocation TEX_CHARGE_COLORLESS =
-            AstralSorcery.key("textures/gui/charge_colorless.png");
+            AstralSorcery.key("textures/gui/overlay/charge_colorless.png");
 
     private static final int BAR_WIDTH   = 194;
     private static final int BAR_HEIGHT  = 54;

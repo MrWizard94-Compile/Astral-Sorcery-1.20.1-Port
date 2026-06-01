@@ -11,9 +11,9 @@ import java.util.function.Consumer;
 public class FluidTypeLiquidStarlight extends FluidType {
 
     private static final ResourceLocation STILL =
-            AstralSorcery.key("fluid/liquid_starlight_still");
+            AstralSorcery.key("block/liquid_starlight_still");
     private static final ResourceLocation FLOWING =
-            AstralSorcery.key("fluid/liquid_starlight_flowing");
+            AstralSorcery.key("block/liquid_starlight_flowing");
 
     public FluidTypeLiquidStarlight() {
         super(FluidType.Properties.create()

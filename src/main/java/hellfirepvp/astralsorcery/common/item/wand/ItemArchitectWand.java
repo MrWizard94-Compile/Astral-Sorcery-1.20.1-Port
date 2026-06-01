@@ -3,10 +3,17 @@ package hellfirepvp.astralsorcery.common.item.wand;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.item.base.AlignmentChargeConsumer;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockStorage;
+import hellfirepvp.astralsorcery.common.item.base.client.ItemHeldRender;
+import hellfirepvp.astralsorcery.common.item.base.client.ItemOverlayRender;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import hellfirepvp.astralsorcery.common.util.MapStream;
 import hellfirepvp.astralsorcery.common.util.MiscUtils;
 import hellfirepvp.astralsorcery.common.util.RaytraceAssist;
@@ -49,9 +56,9 @@ import java.util.stream.Collectors;
  * player.isSneaking() → player.isCrouching(), world.setBlockState → level.setBlock,
  * player.sendStatusMessage → player.displayClientMessage,
  * player.getHeldItem → player.getItemInHand.
- * Client render (renderInHand, renderOverlay) deferred to Phase 12.</p>
  */
-public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, AlignmentChargeConsumer {
+public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, AlignmentChargeConsumer,
+        ItemHeldRender, ItemOverlayRender {
 
     private static final float COST_PER_PLACEMENT = 8F;
 
@@ -217,6 +224,26 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
         }
         return MiscUtils.getEnumEntry(PlaceMode.class,
                 NBTHelper.getPersistentData(stack).getInt("placeMode"));
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean renderInHand(ItemStack stack, PoseStack poseStack, float partialTick) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return true;
+        Map<BlockPos, BlockState> preview = getPlayerPlaceableStates(player, stack);
+        if (preview.isEmpty()) return true;
+        hellfirepvp.astralsorcery.client.util.WandRenderHelper.renderGhostBlocks(preview, poseStack);
+        return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean renderOverlay(@Nonnull GuiGraphics graphics, @Nonnull ItemStack stack, float partialTick) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return false;
+        return hellfirepvp.astralsorcery.client.util.WandRenderHelper.renderStoredBlocksOverlay(
+                graphics, ItemBlockStorage.getInventoryMatchingItemStacks(player, stack));
     }
 
     public enum PlaceMode {

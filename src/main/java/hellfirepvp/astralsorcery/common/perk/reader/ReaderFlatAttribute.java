@@ -18,7 +18,7 @@ import java.util.Set;
  * Displays the total value with a sign prefix.
  *
  * <p>1.16 → 1.20: PerkAttributeMap replaced by {@link PerkAttributeHelper};
- * PerkAttributeLimiter deferred; I18n replaced by Component.</p>
+ * I18n replaced by Component.</p>
  */
 public class ReaderFlatAttribute extends PerkAttributeReader {
 

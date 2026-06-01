@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 public class ScreenAltarRadiance extends ScreenContainerBaseAS<ContainerAltarRadiance> {
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(AstralSorcery.MODID, "textures/gui/altar_radiance.png");
+            new ResourceLocation(AstralSorcery.MODID, "textures/gui/container_altar_radiance.png");
 
     private static final int BG_WIDTH = 176;
     private static final int BG_HEIGHT = 166;

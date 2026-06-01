@@ -159,6 +159,13 @@ public class CommonProxy {
         forgeBus.register(new EventHandlerMantleTick());
         forgeBus.register(AlignmentChargeHandler.INSTANCE);
 
+        // Horologium time-stop freeze tick handler + clear on world unload
+        forgeBus.register(hellfirepvp.astralsorcery.common.auxiliary.TimeStopController.INSTANCE);
+        forgeBus.addListener((net.minecraftforge.event.level.LevelEvent.Unload e) -> {
+            if (!e.getLevel().isClientSide())
+                hellfirepvp.astralsorcery.common.auxiliary.TimeStopController.INSTANCE.clear();
+        });
+
         // Amulet enchantment tick + DynamicEnchantmentEvent.Add wiring
         forgeBus.register(PlayerAmuletHandler.INSTANCE);
         forgeBus.addListener(PlayerAmuletHandler::onEnchantmentAdd);

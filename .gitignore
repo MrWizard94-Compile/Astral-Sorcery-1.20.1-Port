@@ -2,6 +2,7 @@
 bin
 *.launch
 .settings
+!.settings/org.eclipse.jdt.core.prefs
 .metadata
 .classpath
 .project

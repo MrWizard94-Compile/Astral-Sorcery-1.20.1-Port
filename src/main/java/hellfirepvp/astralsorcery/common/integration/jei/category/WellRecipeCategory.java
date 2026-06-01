@@ -30,7 +30,7 @@ public class WellRecipeCategory implements IRecipeCategory<WellLiquefaction> {
             RecipeType.create(AstralSorcery.MODID, "well", WellLiquefaction.class);
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(AstralSorcery.MODID, "textures/gui/jei/well.png");
+            new ResourceLocation(AstralSorcery.MODID, "textures/gui/jei/lightwell.png");
 
     private final IDrawable background;
     private final IDrawable icon;

@@ -18,7 +18,7 @@ import java.util.Set;
  * Displays the modifier as a signed percentage relative to the default.
  *
  * <p>1.16 → 1.20: PerkAttributeMap replaced by {@link PerkAttributeHelper} calls;
- * I18n.format replaced by Component translation; PerkAttributeLimiter deferred.</p>
+ * I18n.format replaced by Component translation.</p>
  */
 public class ReaderAddedPercentage extends PerkAttributeReader {
 

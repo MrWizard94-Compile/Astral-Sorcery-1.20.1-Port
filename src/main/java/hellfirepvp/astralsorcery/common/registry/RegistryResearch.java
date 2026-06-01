@@ -222,7 +222,6 @@ public class RegistryResearch {
                 .addPage(text("ILLUMINATION_WAND.3"))
                 .register(ResearchProgression.CONSTELLATION);
 
-        // INFUSED_CRYSTAL tools not ported; use CRYSTAL tools as placeholders for icon/lookup.
         ResearchNode resInfusedTools = new ResearchNode(new ItemLike[] {
                 ItemsAS.CRYSTAL_SWORD.get(),
                 ItemsAS.CRYSTAL_PICKAXE.get(),

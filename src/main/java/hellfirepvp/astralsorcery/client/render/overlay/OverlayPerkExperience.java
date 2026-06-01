@@ -36,9 +36,9 @@ public class OverlayPerkExperience implements IGuiOverlay {
     public static final OverlayPerkExperience INSTANCE = new OverlayPerkExperience();
 
     private static final ResourceLocation TEX_FRAME =
-            AstralSorcery.key("textures/gui/exp_frame.png");
+            AstralSorcery.key("textures/gui/overlay/exp_frame.png");
     private static final ResourceLocation TEX_BAR =
-            AstralSorcery.key("textures/gui/exp_bar.png");
+            AstralSorcery.key("textures/gui/overlay/exp_bar.png");
 
     // Layout constants matching the 1.16 design
     private static final int FRAME_X      =  0;

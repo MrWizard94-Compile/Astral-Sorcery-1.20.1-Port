@@ -39,7 +39,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityCelestialCrystal extends EntityRenderer<EntityCelestialCrystal> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/celestial_crystal.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     public RenderEntityCelestialCrystal(@Nonnull EntityRendererProvider.Context context) {
         super(context);

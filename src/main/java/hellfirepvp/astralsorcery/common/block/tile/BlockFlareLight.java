@@ -13,11 +13,18 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+
 import javax.annotation.Nonnull;
+import java.awt.Color;
 
 /**
  * Flare light — an air-like decorative light block with a DyeColor state.
- * Placed by rituals and effects; not craftable. Full particle tick deferred to Phase 12.
+ * Placed by rituals and effects; not craftable.
  */
 public class BlockFlareLight extends BlockAS {
 
@@ -46,5 +53,17 @@ public class BlockFlareLight extends BlockAS {
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos,
                                @Nonnull CollisionContext context) {
         return SHAPE;
+    }
+
+    @Override
+    public void animateTick(@Nonnull BlockState state, @Nonnull Level level,
+                            @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        if (FMLEnvironment.dist != Dist.CLIENT) return;
+        if (random.nextInt(4) != 0) return;
+        DyeColor dye = state.getValue(COLOR);
+        float[] rgb = dye.getTextureDiffuseColors();
+        Color color = new Color(rgb[0], rgb[1], rgb[2]);
+        Vec3 center = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        hellfirepvp.astralsorcery.client.effect.EffectHelper.flare(center, color, 0.15f);
     }
 }

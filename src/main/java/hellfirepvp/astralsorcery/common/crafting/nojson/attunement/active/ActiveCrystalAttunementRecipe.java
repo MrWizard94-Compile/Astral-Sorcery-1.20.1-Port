@@ -41,9 +41,6 @@ import javax.annotation.Nullable;
  * On completion, the crystal item is swapped to its attuned variant (if needed)
  * and the constellation is written into the item's NBT.</p>
  *
- * <p>Client-side visual effects (FXOrbitalCrystalAttunement, orbital particles)
- * require unported rendering infrastructure and remain deferred. Loop sounds are
- * managed by BlockEntityAttunementAltar.tickActiveSound().</p>
  *
  * <p>1.16 → 1.20: world.getEntityByID() → level.getEntity(),
  * entity.prevPosX/Y/Z → entity.xo/yo/zo (protected — use setPos only),

@@ -36,7 +36,7 @@ public class AltarRecipeCategory implements IRecipeCategory<SimpleAltarRecipe> {
             RecipeType.create(AstralSorcery.MODID, "altar", SimpleAltarRecipe.class);
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(AstralSorcery.MODID, "textures/gui/jei/altar.png");
+            new ResourceLocation(AstralSorcery.MODID, "textures/gui/jei/altar_discovery.png");
 
     private static final int BG_WIDTH = 116;
     private static final int BG_HEIGHT = 54;

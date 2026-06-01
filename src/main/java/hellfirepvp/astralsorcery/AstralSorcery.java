@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
  * Ported to 1.20.1 by Rob & Corwin
  */
 @Mod(AstralSorcery.MODID)
+@SuppressWarnings("null")
 public class AstralSorcery {
 
     public static final String MODID = "astralsorcery";

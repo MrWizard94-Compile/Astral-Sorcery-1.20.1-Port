@@ -21,6 +21,7 @@ import hellfirepvp.astralsorcery.common.network.play.client.PktRequestProgress;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestSeed;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncSeed;
 import hellfirepvp.astralsorcery.common.network.play.server.PktAltarCraftingUpdate;
+import hellfirepvp.astralsorcery.common.network.play.server.PktAttunementActive;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
@@ -125,6 +126,11 @@ public class PacketChannel {
                 PktSyncStarlightCharge::encode,
                 PktSyncStarlightCharge::decode,
                 PktSyncStarlightCharge::handle);
+
+        register(PktAttunementActive.class,
+                PktAttunementActive::encode,
+                PktAttunementActive::decode,
+                PktAttunementActive::handle);
 
         // Client -> Server packets
         register(PktRequestProgress.class,

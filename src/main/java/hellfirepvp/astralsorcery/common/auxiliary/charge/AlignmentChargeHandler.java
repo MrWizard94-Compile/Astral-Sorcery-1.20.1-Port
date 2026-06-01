@@ -7,11 +7,14 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.auxiliary.charge;
 
+import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
+import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncStarlightCharge;
 import hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -142,6 +145,12 @@ public class AlignmentChargeHandler {
                         PerkAttributeTypesAS.ATTR_TYPE_ALIGNMENT_CHARGE_REGEN.getKey(),
                         regenPerTick);
                 regenPerTick = Math.max(regenPerTick, 0F);
+
+                // KeyChargeBalancing: +25% regen (equalises sources in the single-pool model)
+                AbstractPerk balancePerk = PerkTree.getPerk(AstralSorcery.key("key_charge_balancing"));
+                if (balancePerk != null && progress.hasPerkAllocated(balancePerk)) {
+                    regenPerTick *= 1.25F;
+                }
             }
         }
 

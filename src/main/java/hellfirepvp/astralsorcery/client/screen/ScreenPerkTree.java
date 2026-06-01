@@ -68,19 +68,19 @@ public class ScreenPerkTree extends Screen {
     // =========================================================================
 
     private static final ResourceLocation TEX_BACKGROUND =
-            AstralSorcery.key("textures/gui/perk_tree/background.png");
+            AstralSorcery.key("textures/gui/book/background_perks.png");
     private static final ResourceLocation TEX_PERK_INACTIVE =
-            AstralSorcery.key("textures/gui/perk_tree/perk_inactive.png");
+            AstralSorcery.key("textures/gui/perk/inactive.png");
     private static final ResourceLocation TEX_PERK_ACTIVE =
-            AstralSorcery.key("textures/gui/perk_tree/perk_active.png");
+            AstralSorcery.key("textures/gui/perk/active.png");
     private static final ResourceLocation TEX_PERK_ROOT =
-            AstralSorcery.key("textures/gui/perk_tree/perk_root.png");
+            AstralSorcery.key("textures/gui/perk/halo_active.png");
     private static final ResourceLocation TEX_PERK_MAJOR =
-            AstralSorcery.key("textures/gui/perk_tree/perk_major.png");
+            AstralSorcery.key("textures/gui/perk/halo_active.png");
     private static final ResourceLocation TEX_PERK_FOCUS =
-            AstralSorcery.key("textures/gui/perk_tree/perk_focus.png");
+            AstralSorcery.key("textures/gui/perk/activateable.png");
     private static final ResourceLocation TEX_CONNECTION =
-            AstralSorcery.key("textures/gui/perk_tree/connection.png");
+            AstralSorcery.key("textures/gui/line_connection.png");
 
     /** Node sizes in screen pixels (before zoom). */
     private static final int NODE_SIZE_SMALL = 10;

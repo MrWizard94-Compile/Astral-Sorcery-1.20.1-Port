@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityGrapplingHook extends EntityRenderer<EntityGrapplingHook> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/grappling_hook.png");
+            AstralSorcery.key("textures/effect/grappling_hook.png");
 
     public RenderEntityGrapplingHook(@Nonnull EntityRendererProvider.Context context) {
         super(context);

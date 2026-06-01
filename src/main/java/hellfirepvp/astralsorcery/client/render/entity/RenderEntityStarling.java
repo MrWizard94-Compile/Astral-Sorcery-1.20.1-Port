@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 public class RenderEntityStarling extends EntityRenderer<EntityStarling> {
 
     private static final ResourceLocation TEXTURE =
-            AstralSorcery.key("textures/entity/starling.png");
+            AstralSorcery.key("textures/effect/particle_small.png");
 
     public RenderEntityStarling(@Nonnull EntityRendererProvider.Context context) {
         super(context);
