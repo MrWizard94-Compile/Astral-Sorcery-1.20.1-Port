@@ -1,6 +1,12 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -64,9 +70,25 @@ public class CreativeTabsAS {
 
         // === Crystals & Materials ===
         output.accept(ItemsAS.ROCK_CRYSTAL.get());
-        output.accept(ItemsAS.ATTUNED_ROCK_CRYSTAL.get());
+        // Attuned rock crystals — one per major constellation
+        output.accept(ItemsAS.ATTUNED_ROCK_CRYSTAL.get()); // blank
+        for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
+            if (cst instanceof IMajorConstellation major) {
+                ItemStack stack = new ItemStack(ItemsAS.ATTUNED_ROCK_CRYSTAL.get());
+                ((ItemAttunedRockCrystal) stack.getItem()).setAttunedConstellation(stack, major);
+                output.accept(stack);
+            }
+        }
         output.accept(ItemsAS.CELESTIAL_CRYSTAL.get());
-        output.accept(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get());
+        // Attuned celestial crystals — one per major constellation
+        output.accept(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get()); // blank
+        for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
+            if (cst instanceof IMajorConstellation major) {
+                ItemStack stack = new ItemStack(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get());
+                ((ItemAttunedCelestialCrystal) stack.getItem()).setAttunedConstellation(stack, major);
+                output.accept(stack);
+            }
+        }
         output.accept(ItemsAS.AQUAMARINE.get());
         output.accept(ItemsAS.STARDUST.get());
         output.accept(ItemsAS.STARMETAL_INGOT.get());
@@ -80,7 +102,13 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.BUCKET_LIQUID_STARLIGHT.get());
 
         // === Constellation Items ===
-        output.accept(ItemsAS.CONSTELLATION_PAPER.get());
+        output.accept(ItemsAS.CONSTELLATION_PAPER.get()); // blank
+        // One filled constellation paper per constellation
+        for (IConstellation cst : ConstellationRegistry.getAllConstellations()) {
+            ItemStack paper = new ItemStack(ItemsAS.CONSTELLATION_PAPER.get());
+            ItemConstellationPaper.setConstellation(paper, cst.getRegistryName());
+            output.accept(paper);
+        }
         output.accept(ItemsAS.KNOWLEDGE_FRAGMENT.get());
 
         // === Perk Items ===
