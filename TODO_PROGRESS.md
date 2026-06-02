@@ -431,3 +431,13 @@ Q (integrations) — after core
 - [x] **BF15** `BlockSpectralRelay` and `BlockRelay` had no `use()` method → glass lens could only be inserted via hopper, making both relay types effectively unusable without automation ✅
 - [x] **BF16** `BlockEntityLens/Prism.addLinkedTarget()` added positions to `linkedTargets` unconditionally before checking the network; when used as the 2nd link target, wasted a slot by pointing back at the source (collector crystal) ✅
 - [x] **BF17** `ScreenGateway` did not exist — gateway block had no `use()` method; entire gateway teleportation system was inaccessible despite complete server-side backend ✅
+
+## SESSION 4 ADDITIONS (2026-06-02)
+
+- [x] **BF18** Shrine worldgen: `AncientShrineStructure.placeCrystal()` never set crystal attributes → all shrine collector crystals spawned at 0.1× collection rate (null `crystalAttributes` fallback); now sets SIZE/SHAPE/PURITY/COLLECTION_RATE at tier 2 matching 1.16 `WORLDGEN_SHRINE_COLLECTOR_ATTRIBUTES` ✅
+- [x] **BF19** `ShrineMarkers` handled `"random_top"` but NBT files use `"random_top_block"` (both 1.16 and ported templates) → 53 structure blocks left embedded in desert shrine terrain ✅
+- [x] **BF20** `ItemConstellationPaper.inventoryTick()` missing entirely — blank shrine chest papers never auto-filled with a constellation; papers with a constellation never granted discovery to the player → constellation progression gate completely broken ✅
+- [x] **BF21** Tier advancement (`checkTierAdvancement`) only ran through the telescope path (`PktDiscoverConstellation`); paper-based discoveries did not trigger tier-ups; moved into `ConstellationDiscoveryHandler.grantDiscovery()` shared by all discovery vectors ✅
+- [x] **BF22** `BlockWell` had no shift-click catalyst retrieval → players could not reclaim a partially-degraded crystal without breaking the well ✅
+- [x] **BF23** `BlockEntityAltar.starlightCapacity` not updated after mid-session altar tier upgrade — stayed at 1000 mB until world reload; `updateCapacityFromTier()` now called after `AltarUpgradeRecipe.onRecipeCompletion()` ✅
+- [x] **BF24** `BlockEntityInfuser.completeInfusion()` never called `ResearchManager.informCraftedInfuser()` — `ActiveLiquidInfusionRecipe` unused dead code; infusion never granted `BASIC_CRAFT` tier; now grants it directly via nearest-player fallback ✅
