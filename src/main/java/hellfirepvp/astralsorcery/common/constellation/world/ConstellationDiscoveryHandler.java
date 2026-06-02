@@ -11,10 +11,13 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -92,17 +95,9 @@ public final class ConstellationDiscoveryHandler {
         int index = (int) (Math.abs(seed) % discoverable.size());
         IConstellation discovered = discoverable.get(index);
 
-        // Grant the discovery
-        progress.discoverConstellation(discovered.getRegistryName());
-
-        // Sync to client if server player
-        if (player instanceof ServerPlayer serverPlayer) {
-            AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(serverPlayer, discovered);
-            PacketChannel.sendToPlayer(
-                    new PktDiscoveryUpdate(discovered.getRegistryName(), true), serverPlayer);
-            AstralSorcery.log.info("Player {} discovered constellation: {}",
-                    serverPlayer.getName().getString(), discovered.getRegistryName());
-        }
+        grantDiscovery(player, progress, discovered);
+        AstralSorcery.log.info("Player {} discovered constellation via telescope: {}",
+                player.getName().getString(), discovered.getRegistryName());
 
         return discovered;
     }
@@ -120,16 +115,43 @@ public final class ConstellationDiscoveryHandler {
                                           @Nonnull IConstellation constellation) {
         ResourceLocation key = constellation.getRegistryName();
         if (progress.hasDiscovered(key)) {
-            return false; // Already known
+            return false;
         }
 
         progress.discoverConstellation(key);
 
         if (player instanceof ServerPlayer serverPlayer) {
             AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(serverPlayer, constellation);
-            PacketChannel.sendToPlayer(new PktDiscoveryUpdate(key, true), serverPlayer);
+            boolean tiered = checkTierAdvancement(serverPlayer, progress);
+            if (tiered) {
+                PlayerProgressManager.syncProgress(serverPlayer);
+            } else {
+                PacketChannel.sendToPlayer(new PktDiscoveryUpdate(key, true), serverPlayer);
+            }
         }
         return true;
+    }
+
+    private static boolean checkTierAdvancement(@Nonnull ServerPlayer player,
+                                                 @Nonnull PlayerProgress progress) {
+        int discovered = progress.getDiscoveredConstellations().size();
+        boolean advanced = false;
+        if (discovered >= 1 && ResearchManager.grantTier(player, ProgressionTier.BASIC_CRAFT)) {
+            player.displayClientMessage(
+                    Component.translatable("astralsorcery.progress.tier_basic_craft"), false);
+            advanced = true;
+        }
+        if (discovered >= 5 && ResearchManager.grantTier(player, ProgressionTier.ATTUNEMENT)) {
+            player.displayClientMessage(
+                    Component.translatable("astralsorcery.progress.tier_attunement"), false);
+            advanced = true;
+        }
+        if (discovered >= 12 && ResearchManager.grantTier(player, ProgressionTier.CONSTELLATION_CRAFT)) {
+            player.displayClientMessage(
+                    Component.translatable("astralsorcery.progress.tier_constellation"), false);
+            advanced = true;
+        }
+        return advanced;
     }
 
     /**

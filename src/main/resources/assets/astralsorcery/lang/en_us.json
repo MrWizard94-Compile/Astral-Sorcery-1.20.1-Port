@@ -1064,6 +1064,7 @@
   "astralsorcery.amulet.enchantment.level.2": "+2 Levels",
   "astralsorcery.tooltip.colored_lens.type": "Type: %s",
   "astralsorcery.tooltip.constellation_paper.constellation": "Constellation: %s",
+  "astralsorcery.constellation_paper.learned": "Learned constellation: %s",
   "astralsorcery.tooltip.knowledge_fragment.count": "Fragments: %d",
   "astralsorcery.lens.color.white": "White",
   "astralsorcery.lens.color.red": "Red",

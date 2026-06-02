@@ -1,13 +1,18 @@
 package hellfirepvp.astralsorcery.common.item;
 
+import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.world.ConstellationDiscoveryHandler;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,6 +22,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -100,6 +106,48 @@ public class ItemConstellationPaper extends ItemAS {
     @OnlyIn(Dist.CLIENT)
     private static void openScreenClient(@Nonnull IConstellation cst) {
         hellfirepvp.astralsorcery.client.screen.ClientScreenHandler.openConstellationPaperScreen(cst);
+    }
+
+    @Override
+    public void inventoryTick(@Nonnull ItemStack stack, @Nonnull Level level,
+                               @Nonnull Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, level, entity, slot, selected);
+        if (level.isClientSide() || !(entity instanceof ServerPlayer serverPlayer)) return;
+
+        PlayerProgress progress = PlayerProgressHelper.getProgress(serverPlayer);
+        if (progress == null) return;
+
+        ResourceLocation key = getConstellation(stack);
+
+        // Auto-fill blank papers with a random constellation the player can discover but hasn't yet
+        if (key == null) {
+            List<IConstellation> eligible = new ArrayList<>();
+            for (IConstellation c : ConstellationRegistry.getAllConstellations()) {
+                if (c.canDiscover(serverPlayer, progress)
+                        && !progress.hasDiscovered(c.getRegistryName())) {
+                    eligible.add(c);
+                }
+            }
+            if (!eligible.isEmpty()) {
+                IConstellation chosen = eligible.get(level.random.nextInt(eligible.size()));
+                setConstellation(stack, chosen.getRegistryName());
+            }
+            return;
+        }
+
+        // If the paper has a constellation the player hasn't discovered, grant it
+        if (!progress.hasDiscovered(key)) {
+            IConstellation constellation = ConstellationRegistry.getConstellation(key);
+            if (constellation != null && constellation.canDiscover(serverPlayer, progress)) {
+                boolean granted = ConstellationDiscoveryHandler.grantDiscovery(
+                        serverPlayer, progress, constellation);
+                if (granted) {
+                    serverPlayer.displayClientMessage(
+                            Component.translatable("astralsorcery.constellation_paper.learned",
+                                    constellation.getConstellationName()), true);
+                }
+            }
+        }
     }
 
     @Override
