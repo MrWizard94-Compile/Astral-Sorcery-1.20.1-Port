@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.client.render.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import hellfirepvp.astralsorcery.client.render.CrystalModelRenderer;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingUtils;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
@@ -20,29 +21,24 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
+import java.awt.Color;
 
 /**
  * Block entity renderer for collector crystals (rock crystal and celestial).
  *
  * <p>Renders:
  * <ul>
- *   <li>Rotating crystal model with translucent texture</li>
- *   <li>Inner glow effect that pulses with starlight collection</li>
+ *   <li>Rotating crystal model via {@link CrystalModelRenderer} (proper tapered tips)</li>
+ *   <li>Inner glow pulsing in the crystal's constellation color</li>
  *   <li>Vertical starlight beam when actively collecting</li>
- *   <li>Halo ring at the crystal base</li>
  * </ul></p>
  */
 @OnlyIn(Dist.CLIENT)
 public class RenderCollectorCrystal implements BlockEntityRenderer<BlockEntityCollectorCrystal> {
 
-    /** Crystal rotation speed in degrees per tick. */
     private static final float ROTATION_SPEED = 0.5f;
 
-    private final BlockEntityRendererProvider.Context context;
-
-    public RenderCollectorCrystal(@Nonnull BlockEntityRendererProvider.Context context) {
-        this.context = context;
-    }
+    public RenderCollectorCrystal(@Nonnull BlockEntityRendererProvider.Context context) {}
 
     @Override
     public void render(@Nonnull BlockEntityCollectorCrystal crystal,
@@ -51,100 +47,59 @@ public class RenderCollectorCrystal implements BlockEntityRenderer<BlockEntityCo
                         @Nonnull MultiBufferSource bufferSource,
                         int packedLight,
                         int packedOverlay) {
+        float tickCount = crystal.getTicksExisted() + partialTick;
+        float rotation = tickCount * ROTATION_SPEED;
+
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
 
-        // Slow rotation
-        float tickCount = crystal.getTicksExisted() + partialTick;
-        float rotation = tickCount * ROTATION_SPEED;
-        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(rotation));
+        // Crystal body via shared model renderer (has proper tapered tips)
+        if (crystal.isCelestial()) {
+            CrystalModelRenderer.renderCelestialCrystal(poseStack, bufferSource, rotation, packedLight);
+        } else {
+            CrystalModelRenderer.renderCollectorCrystal(poseStack, bufferSource, rotation, packedLight);
+        }
 
-        renderCrystalBody(crystal, partialTick, poseStack, bufferSource, packedLight);
-        renderInnerGlow(crystal, partialTick, poseStack, bufferSource);
+        renderInnerGlow(crystal, tickCount, poseStack, bufferSource);
 
         poseStack.popPose();
 
-        // Starlight beam (rendered without rotation)
-        renderStarlightBeam(crystal, partialTick, poseStack, bufferSource);
+        renderStarlightBeam(crystal, poseStack, bufferSource);
     }
 
-    /**
-     * Render the crystal body as a translucent hexagonal prism.
-     */
-    private void renderCrystalBody(@Nonnull BlockEntityCollectorCrystal crystal,
-                                    float partialTick,
-                                    @Nonnull PoseStack poseStack,
-                                    @Nonnull MultiBufferSource bufferSource,
-                                    int packedLight) {
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypesAS.EFFECT_FX_CRYSTAL);
-        Matrix4f matrix = poseStack.last().pose();
-
-        boolean isCelestial = crystal.isCelestial();
-        float r = isCelestial ? 0.4f : 0.6f;
-        float g = isCelestial ? 0.5f : 0.7f;
-        float b = isCelestial ? 0.9f : 1.0f;
-        float a = 0.7f;
-
-        // Simplified hexagonal prism (6 sides)
-        float radius = 0.25f;
-        float halfHeight = 0.35f;
-        int sides = 6;
-
-        for (int i = 0; i < sides; i++) {
-            float angle1 = (float) (i * Math.PI * 2.0 / sides);
-            float angle2 = (float) ((i + 1) * Math.PI * 2.0 / sides);
-
-            float x1 = (float) Math.cos(angle1) * radius;
-            float z1 = (float) Math.sin(angle1) * radius;
-            float x2 = (float) Math.cos(angle2) * radius;
-            float z2 = (float) Math.sin(angle2) * radius;
-
-            float u1 = (float) i / sides;
-            float u2 = (float) (i + 1) / sides;
-
-            // Side face
-            RenderingUtils.vertex(buffer, matrix, x1, -halfHeight, z1,
-                    r, g, b, a, u1, 0, packedLight);
-            RenderingUtils.vertex(buffer, matrix, x2, -halfHeight, z2,
-                    r, g, b, a, u2, 0, packedLight);
-            RenderingUtils.vertex(buffer, matrix, x2, halfHeight, z2,
-                    r, g, b, a, u2, 1, packedLight);
-            RenderingUtils.vertex(buffer, matrix, x1, halfHeight, z1,
-                    r, g, b, a, u1, 1, packedLight);
-        }
-    }
-
-    /**
-     * Render the inner glow: a pulsing additive quad.
-     */
+    /** Pulsing glow in the crystal's constellation color (or default blue-white). */
     private void renderInnerGlow(@Nonnull BlockEntityCollectorCrystal crystal,
-                                  float partialTick,
+                                  float tickCount,
                                   @Nonnull PoseStack poseStack,
                                   @Nonnull MultiBufferSource bufferSource) {
-        float tickCount = crystal.getTicksExisted() + partialTick;
         float pulse = 0.5f + 0.5f * (float) Math.sin(tickCount * 0.05);
         float glowAlpha = 0.2f + pulse * 0.3f;
+        float size = 0.3f + pulse * 0.1f;
+
+        int rgb = crystal.getConstellationColor();
+        float r = ((rgb >> 16) & 0xFF) / 255f;
+        float g = ((rgb >> 8)  & 0xFF) / 255f;
+        float b = (rgb         & 0xFF) / 255f;
 
         VertexConsumer buffer = bufferSource.getBuffer(RenderTypesAS.EFFECT_FX_HALO);
         Matrix4f matrix = poseStack.last().pose();
 
-        float size = 0.3f + pulse * 0.1f;
-
-        // Camera-facing glow quad (static axes since crystal already rotates)
-        RenderingUtils.vertex(buffer, matrix, -size, -size, 0, 0.6f, 0.8f, 1.0f, glowAlpha, 0, 0);
-        RenderingUtils.vertex(buffer, matrix, size, -size, 0, 0.6f, 0.8f, 1.0f, glowAlpha, 1, 0);
-        RenderingUtils.vertex(buffer, matrix, size, size, 0, 0.6f, 0.8f, 1.0f, glowAlpha, 1, 1);
-        RenderingUtils.vertex(buffer, matrix, -size, size, 0, 0.6f, 0.8f, 1.0f, glowAlpha, 0, 1);
+        RenderingUtils.vertex(buffer, matrix, -size, -size, 0, r, g, b, glowAlpha, 0, 0);
+        RenderingUtils.vertex(buffer, matrix,  size, -size, 0, r, g, b, glowAlpha, 1, 0);
+        RenderingUtils.vertex(buffer, matrix,  size,  size, 0, r, g, b, glowAlpha, 1, 1);
+        RenderingUtils.vertex(buffer, matrix, -size,  size, 0, r, g, b, glowAlpha, 0, 1);
     }
 
-    /**
-     * Render vertical starlight beam above the crystal.
-     */
+    /** Thin vertical beam skyward, visible only while the crystal is collecting. */
     private void renderStarlightBeam(@Nonnull BlockEntityCollectorCrystal crystal,
-                                      float partialTick,
                                       @Nonnull PoseStack poseStack,
                                       @Nonnull MultiBufferSource bufferSource) {
         if (!crystal.isCollecting()) return;
+
+        int rgb = crystal.getConstellationColor();
+        float r = ((rgb >> 16) & 0xFF) / 255f;
+        float g = ((rgb >> 8)  & 0xFF) / 255f;
+        float b = (rgb         & 0xFF) / 255f;
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.85, 0.5);
@@ -156,18 +111,16 @@ public class RenderCollectorCrystal implements BlockEntityRenderer<BlockEntityCo
         float width = 0.08f;
         float height = 4.0f;
 
-        // Four faces of a thin vertical beam
-        // Front
-        RenderingUtils.vertex(buffer, matrix, -width, 0, -width, 0.5f, 0.7f, 1.0f, beamAlpha, 0, 0);
-        RenderingUtils.vertex(buffer, matrix, -width, height, -width, 0.5f, 0.7f, 1.0f, 0, 0, 1);
-        RenderingUtils.vertex(buffer, matrix, width, height, -width, 0.5f, 0.7f, 1.0f, 0, 1, 1);
-        RenderingUtils.vertex(buffer, matrix, width, 0, -width, 0.5f, 0.7f, 1.0f, beamAlpha, 1, 0);
-
-        // Back
-        RenderingUtils.vertex(buffer, matrix, width, 0, width, 0.5f, 0.7f, 1.0f, beamAlpha, 0, 0);
-        RenderingUtils.vertex(buffer, matrix, width, height, width, 0.5f, 0.7f, 1.0f, 0, 0, 1);
-        RenderingUtils.vertex(buffer, matrix, -width, height, width, 0.5f, 0.7f, 1.0f, 0, 1, 1);
-        RenderingUtils.vertex(buffer, matrix, -width, 0, width, 0.5f, 0.7f, 1.0f, beamAlpha, 1, 0);
+        // Front face
+        RenderingUtils.vertex(buffer, matrix, -width, 0,      -width, r, g, b, beamAlpha, 0, 0);
+        RenderingUtils.vertex(buffer, matrix, -width, height, -width, r, g, b, 0,         0, 1);
+        RenderingUtils.vertex(buffer, matrix,  width, height, -width, r, g, b, 0,         1, 1);
+        RenderingUtils.vertex(buffer, matrix,  width, 0,      -width, r, g, b, beamAlpha, 1, 0);
+        // Back face
+        RenderingUtils.vertex(buffer, matrix,  width, 0,       width, r, g, b, beamAlpha, 0, 0);
+        RenderingUtils.vertex(buffer, matrix,  width, height,  width, r, g, b, 0,         0, 1);
+        RenderingUtils.vertex(buffer, matrix, -width, height,  width, r, g, b, 0,         1, 1);
+        RenderingUtils.vertex(buffer, matrix, -width, 0,       width, r, g, b, beamAlpha, 1, 0);
 
         poseStack.popPose();
     }

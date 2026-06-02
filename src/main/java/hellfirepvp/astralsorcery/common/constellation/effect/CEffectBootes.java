@@ -4,6 +4,7 @@
 package hellfirepvp.astralsorcery.common.constellation.effect;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
@@ -11,7 +12,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -92,14 +96,17 @@ public class CEffectBootes extends ConstellationEffectProvider {
      */
     private void shearSheep(@Nonnull ServerLevel level, @Nonnull Sheep sheep) {
         sheep.setSheared(true);
+        // Drop wool matching the sheep's dye color (white_wool, orange_wool, etc.)
+        String woolName = sheep.getColor().getName() + "_wool";
+        Block woolBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("minecraft", woolName));
+        if (woolBlock == null) woolBlock = Blocks.WHITE_WOOL;
+
         int woolCount = 1 + level.getRandom().nextInt(3);
-        for (int i = 0; i < woolCount; i++) {
-            ItemEntity item = new ItemEntity(level,
-                    sheep.getX(), sheep.getY() + 1.0, sheep.getZ(),
-                    new ItemStack(Items.WHITE_WOOL));
-            item.setDefaultPickUpDelay();
-            level.addFreshEntity(item);
-        }
+        ItemEntity item = new ItemEntity(level,
+                sheep.getX(), sheep.getY() + 1.0, sheep.getZ(),
+                new ItemStack(woolBlock, woolCount));
+        item.setDefaultPickUpDelay();
+        level.addFreshEntity(item);
     }
 
     @Nonnull
