@@ -14,10 +14,15 @@ import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IMinorConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -84,6 +89,24 @@ public class ItemAttunedCelestialCrystal extends ItemCelestialCrystal implements
         }
         stack.getOrCreateTag().putString(TAG_TRAIT, cst.getRegistryName().toString());
         return true;
+    }
+
+    @Override
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level,
+                                @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        IWeakConstellation cst = getAttunedConstellation(stack);
+        if (cst != null) {
+            tooltip.add(Component.translatable(
+                    "item.astralsorcery.rock_crystal.constellation",
+                    cst.getConstellationName()));
+        }
+        IMinorConstellation trait = getTraitConstellation(stack);
+        if (trait != null) {
+            tooltip.add(Component.translatable(
+                    "item.astralsorcery.rock_crystal.trait",
+                    trait.getConstellationName()));
+        }
     }
 
     @Override
