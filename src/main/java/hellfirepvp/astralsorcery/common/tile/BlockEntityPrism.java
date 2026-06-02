@@ -165,10 +165,11 @@ public class BlockEntityPrism extends BlockEntityTick implements IStarlightTrans
             return false;
         }
         if (!linkedTargets.contains(target)) {
-            linkedTargets.add(target.immutable());
             if (!isClientSide()) {
-                StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
+                boolean accepted = StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
+                if (!accepted) return false;
             }
+            linkedTargets.add(target.immutable());
             markForUpdate();
         }
         return true;

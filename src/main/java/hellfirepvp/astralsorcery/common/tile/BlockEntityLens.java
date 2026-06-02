@@ -261,11 +261,12 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
             return false;
         }
         if (!linkedTargets.contains(target)) {
-            linkedTargets.add(target.immutable());
-            // Register the link in the network
+            // Validate with the network first — sources can't be output targets
             if (!isClientSide()) {
-                StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
+                boolean accepted = StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
+                if (!accepted) return false;
             }
+            linkedTargets.add(target.immutable());
             markForUpdate();
         }
         return true;
