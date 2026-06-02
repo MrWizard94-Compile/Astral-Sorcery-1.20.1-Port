@@ -274,7 +274,7 @@ All worldgen data-driven in 1.20. Placement and config classes not needed.
 
 ## PHASE M — Commands ✅ COMPLETE
 
-- [x] **M1.1** `ArgumentTypeConstellation` — typed brigadier argument with tab-complete (weak/major/minor/any filters) ✅
+- [x] **M1.1** ~~`ArgumentTypeConstellation`~~ → replaced with `ResourceLocationArgument.id()` + `.suggests()` in both commands; custom argument types require `RegisterCommandArgumentTypeEvent` registration or they crash login (`ClientboundCommandsPacket` can't serialize them) ✅
 - [x] **M1.2** `/as attune <constellation> [player]` — in CommandAstralSorcery.buildAttune() ✅
 - [x] **M1.3** `/as constellation memorize|discover <constellation> [player]` — CommandConstellation.register() ✅
 - [x] **M1.4** `/as perkexp <amount> [player]` — in CommandAstralSorcery.buildPerkExp(); CommandExp.java for standalone use ✅
@@ -398,9 +398,23 @@ Q (integrations) — after core
 
 ## QUICK REFERENCE: What will crash on first runClient
 
-1. **NullPointerException on registry** — most lib constants missing → fix A1 first
-2. **Missing entity registration** — entity types not registered → A2.3
-3. **Starlight network NPE** — WorldNetworkHandler references missing node interfaces → C1-C3
-4. **GUI open crash** — PktOpenGui missing, container factories missing → D3.1, G2
-5. **Perk allocation freeze** — PktUnlockPerk missing → D2.1
-6. **Login crash** — no login packet infrastructure → D1.1
+1. ~~NullPointerException on registry~~ → A1 done ✅
+2. ~~Missing entity registration~~ → A2.3 done ✅
+3. ~~Starlight network NPE~~ → C1-C3 done ✅
+4. ~~GUI open crash~~ → D3.1, G done ✅
+5. ~~Perk allocation freeze~~ → D2.1 done ✅
+6. ~~Login crash (no packet infra)~~ → D1 done ✅
+
+---
+
+## IN-GAME BUG FIXES (discovered from runClient logs 2026-06-01/02)
+
+- [x] **BF1** `ItemOverlayRender` class-level `@OnlyIn(Dist.CLIENT)` → moved to method level; caused BootstrapMethodError on server startup (`ItemsAS.<clinit>` could not resolve stripped superinterface) ✅
+- [x] **BF2** `ArgumentTypeConstellation` not registered → `ClientboundCommandsPacket` couldn't serialize; crashed every player login with "Invalid player data"; replaced with `ResourceLocationArgument.id()` ✅
+- [x] **BF3** Three advancement JSON files (`upgrade_altar_constellation`, `upgrade_altar_radiance`, `reach_radiance`) used `astralsorcery:altar` item name (now per-tier items) ✅
+- [x] **BF4** `BlockEntityAttunementAltar.heldCrystal` had no placement mechanism — `BlockAttunementAltar.use()` now handles right-click crystal placement/retrieval; crystal attunement was completely non-functional ✅
+- [x] **BF5** `CrystalIngredient(Stream)` constructor mismatch — `Ingredient(Value[])` → `Ingredient(Arrays.stream(Value[]))` ✅
+- [x] **BF6** `ScreenConstellationPaper` passed `RegistryObject<SoundEvent>` where `SoundEvent` was needed — added `.get()` ✅
+- [x] **BF7** `EventHandlerMisc.onLecternInteract` — early-returned on client side, preventing journal screen from opening when tome placed in lectern ✅
+- [x] **BF8** `onRemove()` missing on attunement altar, ritual pedestal, lightwell, spectral relay, infuser — held items lost on block break ✅
+- [x] **BF9** Incomplete player attunement in `BlockEntityAttunementAltar` — tick only ran crystal path; added player-standing-on-altar path with invulnerability + camera packet + UUID persistence ✅
