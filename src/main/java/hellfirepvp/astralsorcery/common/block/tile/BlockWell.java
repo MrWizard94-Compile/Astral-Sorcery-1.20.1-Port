@@ -133,6 +133,22 @@ public class BlockWell extends BlockEntityBlock implements LiquidStarlightOwned 
         return InteractionResult.PASS;
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(@Nonnull BlockState state, @Nonnull Level level,
+                         @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof BlockEntityWell well) {
+                ItemStack catalyst = well.getCatalystStack();
+                if (!catalyst.isEmpty()) {
+                    Block.popResource(level, pos, catalyst);
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
