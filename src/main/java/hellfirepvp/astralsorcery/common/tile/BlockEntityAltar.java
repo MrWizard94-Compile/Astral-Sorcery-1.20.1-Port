@@ -268,7 +268,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
      * If found and sufficient starlight is available, starts crafting.
      */
     private void tryFindRecipe(@Nonnull Level level) {
-        if (!structureValid) return;
+        // Port has no multiblock structure requirement — structureValid removed
 
         BlockAltar.AltarType currentTier = getAltarType();
         Optional<SimpleAltarRecipe> match = level.getRecipeManager()
