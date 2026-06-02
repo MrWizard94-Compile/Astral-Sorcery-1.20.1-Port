@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "astralsorcery:altar"
+      "item": "astralsorcery:altar_radiance"
     },
     "title": {
       "translate": "adv.astralsorcery.reach_radiance.title"
