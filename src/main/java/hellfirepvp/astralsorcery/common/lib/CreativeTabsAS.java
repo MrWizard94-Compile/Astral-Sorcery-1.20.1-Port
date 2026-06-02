@@ -4,6 +4,7 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
 import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
@@ -58,15 +59,15 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.ENCHANTMENT_AMULET.get());
         output.accept(ItemsAS.KNOWLEDGE_SHARE.get());
 
-        // === Crystal Tools ===
-        output.accept(ItemsAS.CRYSTAL_PICKAXE.get());
-        output.accept(ItemsAS.CRYSTAL_AXE.get());
-        output.accept(ItemsAS.CRYSTAL_SHOVEL.get());
-        output.accept(ItemsAS.CRYSTAL_SWORD.get());
-        output.accept(ItemsAS.INFUSED_CRYSTAL_PICKAXE.get());
-        output.accept(ItemsAS.INFUSED_CRYSTAL_AXE.get());
-        output.accept(ItemsAS.INFUSED_CRYSTAL_SHOVEL.get());
-        output.accept(ItemsAS.INFUSED_CRYSTAL_SWORD.get());
+        // === Crystal Tools — shown with max-quality properties pre-applied ===
+        output.accept(maxToolStack(ItemsAS.CRYSTAL_PICKAXE.get()));
+        output.accept(maxToolStack(ItemsAS.CRYSTAL_AXE.get()));
+        output.accept(maxToolStack(ItemsAS.CRYSTAL_SHOVEL.get()));
+        output.accept(maxToolStack(ItemsAS.CRYSTAL_SWORD.get()));
+        output.accept(maxToolStack(ItemsAS.INFUSED_CRYSTAL_PICKAXE.get()));
+        output.accept(maxToolStack(ItemsAS.INFUSED_CRYSTAL_AXE.get()));
+        output.accept(maxToolStack(ItemsAS.INFUSED_CRYSTAL_SHOVEL.get()));
+        output.accept(maxToolStack(ItemsAS.INFUSED_CRYSTAL_SWORD.get()));
 
         // === Crystals & Materials ===
         output.accept(ItemsAS.ROCK_CRYSTAL.get());
@@ -223,5 +224,13 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.STARMETAL_ITEM.get());
         output.accept(ItemsAS.GLOW_FLOWER_ITEM.get());
         output.accept(ItemsAS.ILLUMINATOR_ITEM.get());
+    }
+
+    /** Create an ItemStack with maximum crystal properties pre-applied (for creative tab display). */
+    @Nonnull
+    private static ItemStack maxToolStack(@Nonnull net.minecraft.world.item.Item item) {
+        ItemStack stack = new ItemStack(item);
+        CrystalProperties.setOnStack(stack, CrystalProperties.createMaximum());
+        return stack;
     }
 }
