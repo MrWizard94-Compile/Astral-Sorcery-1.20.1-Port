@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "tag": "forge:glass_panes"
+  },
+  "output": {
+    "item": "astralsorcery:glass_lens",
+    "count": 1
+  },
+  "fluidMbRequired": 500,
+  "craftDuration": 100
+}

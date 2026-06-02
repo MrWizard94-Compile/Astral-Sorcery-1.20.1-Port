@@ -11,7 +11,7 @@
     "E": { "tag": "forge:ender_pearls" }
   },
   "result": {
-    "item": "astralsorcery:altar",
+    "item": "astralsorcery:altar_discovery",
     "count": 1
   }
 }

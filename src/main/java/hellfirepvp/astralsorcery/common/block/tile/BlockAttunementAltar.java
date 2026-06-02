@@ -1,12 +1,19 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -60,8 +67,36 @@ public class BlockAttunementAltar extends BlockEntityBlock {
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
-        // Attunement is passive — triggered by standing on the altar during
-        // the right celestial conditions. No direct player interaction needed.
+        ItemStack held = player.getItemInHand(hand);
+        if (held.getItem() instanceof ItemConstellationPaper) {
+            ResourceLocation cstKey = ItemConstellationPaper.getConstellation(held);
+            if (cstKey == null) {
+                if (!level.isClientSide()) {
+                    player.displayClientMessage(
+                            Component.translatable("astralsorcery.attunement_altar.no_constellation"), true);
+                }
+                return InteractionResult.FAIL;
+            }
+            IConstellation cst = ConstellationRegistry.getConstellation(cstKey);
+            if (!(cst instanceof IMajorConstellation)) {
+                if (!level.isClientSide()) {
+                    player.displayClientMessage(
+                            Component.translatable("astralsorcery.attunement_altar.not_major"), true);
+                }
+                return InteractionResult.FAIL;
+            }
+            if (!level.isClientSide()) {
+                BlockEntity be = level.getBlockEntity(pos);
+                if (be instanceof BlockEntityAttunementAltar altar) {
+                    altar.setAttunedConstellation(cstKey);
+                    altar.setChanged();
+                    player.displayClientMessage(
+                            Component.translatable("astralsorcery.attunement_altar.set_constellation",
+                                    cst.getConstellationName()), true);
+                }
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide());
+        }
         return InteractionResult.PASS;
     }
 

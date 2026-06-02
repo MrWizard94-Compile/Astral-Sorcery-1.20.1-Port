@@ -1,0 +1,21 @@
+{
+  "type": "astralsorcery:altar",
+  "altar_type": "discovery",
+  "craft_duration": 150,
+  "starlight_required": 300,
+  "output": {
+    "item": "astralsorcery:spectral_relay",
+    "count": 1
+  },
+  "inputs": [
+    {"item": "minecraft:gold_nugget"},
+    {"item": "astralsorcery:glass_lens"},
+    {"item": "minecraft:gold_nugget"},
+    {"item": "astralsorcery:marble_arch"},
+    {"item": "astralsorcery:marble_chiseled"},
+    {"item": "astralsorcery:marble_arch"},
+    {},
+    {"item": "astralsorcery:black_marble_raw"},
+    {}
+  ]
+}

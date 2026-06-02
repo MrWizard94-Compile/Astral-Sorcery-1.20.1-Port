@@ -55,13 +55,12 @@ public final class EventHandlerMisc {
      */
     @SubscribeEvent
     public static void onLecternInteract(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        if (event.getLevel().isClientSide()) return;
         BlockPos pos = event.getPos();
         BlockEntity be = event.getLevel().getBlockEntity(pos);
         if (!(be instanceof LecternBlockEntity lectern)) return;
-        ItemStack contained = lectern.getBook();
-        if (contained.getItem() instanceof ItemTome) {
-            event.setCanceled(true);
+        if (!(lectern.getBook().getItem() instanceof ItemTome)) return;
+        event.setCanceled(true);
+        if (event.getLevel().isClientSide()) {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
                     () -> hellfirepvp.astralsorcery.client.screen.ClientScreenHandler::openJournalScreen);
         }

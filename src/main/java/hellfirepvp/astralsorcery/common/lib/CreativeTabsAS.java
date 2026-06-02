@@ -57,6 +57,10 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.CRYSTAL_AXE.get());
         output.accept(ItemsAS.CRYSTAL_SHOVEL.get());
         output.accept(ItemsAS.CRYSTAL_SWORD.get());
+        output.accept(ItemsAS.INFUSED_CRYSTAL_PICKAXE.get());
+        output.accept(ItemsAS.INFUSED_CRYSTAL_AXE.get());
+        output.accept(ItemsAS.INFUSED_CRYSTAL_SHOVEL.get());
+        output.accept(ItemsAS.INFUSED_CRYSTAL_SWORD.get());
 
         // === Crystals & Materials ===
         output.accept(ItemsAS.ROCK_CRYSTAL.get());
@@ -80,6 +84,8 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.KNOWLEDGE_FRAGMENT.get());
 
         // === Perk Items ===
+        output.accept(ItemsAS.DAZZLING_GEM.get());
+        output.accept(ItemsAS.DAZZLING_FRAME.get());
         output.accept(ItemsAS.PERK_GEM_DAY.get());
         output.accept(ItemsAS.PERK_GEM_NIGHT.get());
         output.accept(ItemsAS.PERK_GEM_SKY.get());
@@ -117,7 +123,10 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.COLORED_LENS_SPECTRAL.get());
 
         // === Functional Blocks ===
-        output.accept(ItemsAS.ALTAR_ITEM.get());
+        output.accept(ItemsAS.ALTAR_DISCOVERY_ITEM.get());
+        output.accept(ItemsAS.ALTAR_ATTUNEMENT_ITEM.get());
+        output.accept(ItemsAS.ALTAR_CONSTELLATION_ITEM.get());
+        output.accept(ItemsAS.ALTAR_RADIANCE_ITEM.get());
         output.accept(ItemsAS.ATTUNEMENT_ALTAR_ITEM.get());
         output.accept(ItemsAS.INFUSER_ITEM.get());
         output.accept(ItemsAS.WELL_ITEM.get());

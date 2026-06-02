@@ -1,0 +1,12 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "astralsorcery:infused_wood"
+  },
+  "output": {
+    "item": "astralsorcery:infused_wood_infused",
+    "count": 1
+  },
+  "fluidMbRequired": 500,
+  "craftDuration": 100
+}

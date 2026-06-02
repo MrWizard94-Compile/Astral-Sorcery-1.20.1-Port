@@ -1,7 +1,13 @@
 package hellfirepvp.astralsorcery.common.tile;
 
+import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.server.PktAttunementActive;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
@@ -16,14 +22,21 @@ import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Block entity for the Attunement Altar.
@@ -39,8 +52,8 @@ import javax.annotation.Nullable;
  */
 public class BlockEntityAttunementAltar extends BlockEntityTick {
 
-    /** Total ticks required to complete attunement. */
-    private static final int ATTUNEMENT_DURATION = 200; // 10 seconds
+    private static final int CRYSTAL_ATTUNEMENT_DURATION = 200;  // 10 seconds
+    private static final int PLAYER_ATTUNEMENT_DURATION  = 800;  // 40 seconds
 
     /** How often to re-check multiblock structure validity. */
     private static final int STRUCTURE_CHECK_INTERVAL = 40; // Every 2 seconds
@@ -55,6 +68,8 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
 
     @Nullable
     private ResourceLocation attunedConstellation = null;
+    @Nullable
+    private UUID attunedPlayerUUID = null;
 
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
     private Object idleSound;
@@ -85,48 +100,45 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
             structureValid = validateStructure();
         }
 
-        // Attunement requires: valid structure, crystal present, target constellation set
-        if (!structureValid || heldCrystal.isEmpty() || attunedConstellation == null) {
-            if (isAttuning) {
-                abortAttunement();
-            }
+        // Attunement requires: valid structure and target constellation set
+        if (!structureValid || attunedConstellation == null) {
+            if (isAttuning) abortAttunement();
             return;
         }
 
+        ResourceLocation cstKey = java.util.Objects.requireNonNull(attunedConstellation);
         // Must be nighttime and the target constellation must be visible
-        if (!DayTimeHelper.isNight(level)) {
-            if (isAttuning) {
-                abortAttunement();
-            }
+        if (!DayTimeHelper.isNight(level) || !isConstellationVisible(level, cstKey)
+                || !level.canSeeSky(worldPosition.above())) {
+            if (isAttuning) abortAttunement();
             return;
         }
 
-        // Check if target constellation is currently visible in sky
-        if (!isConstellationVisible(level, attunedConstellation)) {
-            if (isAttuning) {
-                abortAttunement();
+        if (!heldCrystal.isEmpty()) {
+            // ── Crystal attunement path ──
+            if (!isAttuning) {
+                isAttuning = true;
+                markForUpdate();
             }
-            return;
-        }
-
-        // Must be able to see the sky
-        if (!level.canSeeSky(worldPosition.above())) {
-            if (isAttuning) {
-                abortAttunement();
+            attunementTick++;
+            if (attunementTick >= CRYSTAL_ATTUNEMENT_DURATION) completeAttunement();
+        } else {
+            // ── Player attunement path ──
+            ServerPlayer target = findEligiblePlayer(level);
+            if (target == null) {
+                if (isAttuning) abortAttunement();
+                return;
             }
-            return;
-        }
-
-        // Begin or continue attunement
-        if (!isAttuning) {
-            isAttuning = true;
-            markForUpdate();
-        }
-
-        attunementTick++;
-
-        if (attunementTick >= ATTUNEMENT_DURATION) {
-            completeAttunement();
+            if (!isAttuning || !target.getUUID().equals(attunedPlayerUUID)) {
+                isAttuning = true;
+                attunedPlayerUUID = target.getUUID();
+                attunementTick = 0;
+                target.setInvulnerable(true);
+                PacketChannel.sendToPlayer(new PktAttunementActive(true, worldPosition), target);
+                markForUpdate();
+            }
+            attunementTick++;
+            if (attunementTick >= PLAYER_ATTUNEMENT_DURATION) completePlayerAttunement(level);
         }
     }
 
@@ -217,6 +229,59 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
      * Abort an in-progress attunement (conditions no longer met).
      */
     private void abortAttunement() {
+        if (attunedPlayerUUID != null) {
+            UUID pid = attunedPlayerUUID;
+            MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
+            if (srv != null) {
+                ServerPlayer p = srv.getPlayerList().getPlayer(pid);
+                if (p != null) {
+                    p.setInvulnerable(false);
+                    PacketChannel.sendToPlayer(new PktAttunementActive(false, worldPosition), p);
+                }
+            }
+            attunedPlayerUUID = null;
+        }
+        isAttuning = false;
+        attunementTick = 0;
+        markForUpdate();
+    }
+
+    @Nullable
+    private ServerPlayer findEligiblePlayer(@Nonnull Level level) {
+        if (attunedConstellation == null) return null;
+        IConstellation cst = ConstellationRegistry.getConstellation(attunedConstellation);
+        if (!(cst instanceof IMajorConstellation)) return null;
+        AABB box = new AABB(worldPosition).inflate(3.0);
+        List<ServerPlayer> nearby = level.getEntitiesOfClass(ServerPlayer.class, box);
+        for (ServerPlayer candidate : nearby) {
+            PlayerProgress progress = PlayerProgressHelper.getProgress(candidate);
+            if (progress != null && progress.isAtLeast(ProgressionTier.ATTUNEMENT)
+                    && progress.getAttunedConstellation() == null) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private void completePlayerAttunement(@Nonnull Level level) {
+        UUID uuid = attunedPlayerUUID;
+        ResourceLocation cst = attunedConstellation;
+        if (uuid == null || cst == null) { abortAttunement(); return; }
+        MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
+        if (srv != null) {
+            ServerPlayer sp = srv.getPlayerList().getPlayer(uuid);
+            if (sp != null) {
+                sp.setInvulnerable(false);
+                PacketChannel.sendToPlayer(new PktAttunementActive(false, worldPosition), sp);
+                ResearchManager.attuneTo(sp, cst);
+            }
+        }
+        if (level instanceof ServerLevel sl) {
+            PacketChannel.sendToAllTracking(
+                    new PktParticleEvent(PktParticleEvent.CONSTELLATION_DISCOVER, worldPosition),
+                    sl, worldPosition);
+        }
+        attunedPlayerUUID = null;
         isAttuning = false;
         attunementTick = 0;
         markForUpdate();
@@ -344,6 +409,11 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         this.attunementTick = compound.getInt("attunementTick");
         this.structureValid = compound.getBoolean("structureValid");
         this.isAttuning = compound.getBoolean("isAttuning");
+        if (compound.hasUUID("attunedPlayerUUID")) {
+            this.attunedPlayerUUID = compound.getUUID("attunedPlayerUUID");
+        } else {
+            this.attunedPlayerUUID = null;
+        }
     }
 
     @Override
@@ -352,5 +422,8 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         compound.putInt("attunementTick", attunementTick);
         compound.putBoolean("structureValid", structureValid);
         compound.putBoolean("isAttuning", isAttuning);
+        if (attunedPlayerUUID != null) {
+            compound.putUUID("attunedPlayerUUID", attunedPlayerUUID);
+        }
     }
 }

@@ -33,7 +33,9 @@ import hellfirepvp.astralsorcery.common.item.armor.ItemMantleMineralis;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleOctans;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantlePelotrio;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantleVicio;
+import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockAS;
+import hellfirepvp.astralsorcery.common.item.block.ItemBlockAltar;
 import hellfirepvp.astralsorcery.common.item.block.ItemBlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
@@ -41,11 +43,17 @@ import hellfirepvp.astralsorcery.common.item.crystal.ItemCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemRockCrystalSimple;
 import hellfirepvp.astralsorcery.common.item.gem.ItemAquamarine;
 import hellfirepvp.astralsorcery.common.item.gem.ItemPerkGem;
+import hellfirepvp.astralsorcery.common.item.quality.ItemDazzlingFrame;
+import hellfirepvp.astralsorcery.common.item.quality.ItemDazzlingGem;
 import hellfirepvp.astralsorcery.common.item.lens.ItemColoredLens;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalAxe;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalPickaxe;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalShovel;
 import hellfirepvp.astralsorcery.common.item.tool.ItemCrystalSword;
+import hellfirepvp.astralsorcery.common.item.tool.ItemInfusedCrystalAxe;
+import hellfirepvp.astralsorcery.common.item.tool.ItemInfusedCrystalPickaxe;
+import hellfirepvp.astralsorcery.common.item.tool.ItemInfusedCrystalShovel;
+import hellfirepvp.astralsorcery.common.item.tool.ItemInfusedCrystalSword;
 import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStar;
 import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarAevitas;
 import hellfirepvp.astralsorcery.common.item.useeffect.ItemShiftingStarArmara;
@@ -128,6 +136,12 @@ public class ItemsAS {
     public static final RegistryObject<ItemPerkSeal> PERK_SEAL =
             ITEMS.register("perk_seal", ItemPerkSeal::new);
 
+    // ---- Quality Gems ----
+    public static final RegistryObject<ItemDazzlingGem> DAZZLING_GEM =
+            ITEMS.register("dazzling_gem", ItemDazzlingGem::new);
+    public static final RegistryObject<ItemDazzlingFrame> DAZZLING_FRAME =
+            ITEMS.register("dazzling_frame", ItemDazzlingFrame::new);
+
     // ---- Perk Gems ----
     public static final RegistryObject<ItemPerkGem> PERK_GEM_DAY =
             ITEMS.register("perk_gem_day", () -> new ItemPerkGem(ItemPerkGem.GemType.DAY));
@@ -145,6 +159,16 @@ public class ItemsAS {
             ITEMS.register("crystal_shovel", ItemCrystalShovel::new);
     public static final RegistryObject<ItemCrystalSword> CRYSTAL_SWORD =
             ITEMS.register("crystal_sword", ItemCrystalSword::new);
+
+    // ---- Infused Crystal Tools ----
+    public static final RegistryObject<ItemInfusedCrystalPickaxe> INFUSED_CRYSTAL_PICKAXE =
+            ITEMS.register("infused_crystal_pickaxe", ItemInfusedCrystalPickaxe::new);
+    public static final RegistryObject<ItemInfusedCrystalAxe> INFUSED_CRYSTAL_AXE =
+            ITEMS.register("infused_crystal_axe", ItemInfusedCrystalAxe::new);
+    public static final RegistryObject<ItemInfusedCrystalShovel> INFUSED_CRYSTAL_SHOVEL =
+            ITEMS.register("infused_crystal_shovel", ItemInfusedCrystalShovel::new);
+    public static final RegistryObject<ItemInfusedCrystalSword> INFUSED_CRYSTAL_SWORD =
+            ITEMS.register("infused_crystal_sword", ItemInfusedCrystalSword::new);
 
     // ---- Constellation Items ----
     public static final RegistryObject<ItemConstellationPaper> CONSTELLATION_PAPER =
@@ -322,8 +346,15 @@ public class ItemsAS {
             ITEMS.register("illuminator", () -> new ItemBlockAS(BlocksAS.ILLUMINATOR.get()));
 
     // Tile entity blocks
-    public static final RegistryObject<BlockItem> ALTAR_ITEM =
-            ITEMS.register("altar", () -> new ItemBlockAS(BlocksAS.ALTAR.get()));
+    // Altar tiers — all backed by the single BlockAltar with AltarType blockstate
+    public static final RegistryObject<ItemBlockAltar> ALTAR_DISCOVERY_ITEM =
+            ITEMS.register("altar_discovery", () -> new ItemBlockAltar(BlockAltar.AltarType.DISCOVERY));
+    public static final RegistryObject<ItemBlockAltar> ALTAR_ATTUNEMENT_ITEM =
+            ITEMS.register("altar_attunement", () -> new ItemBlockAltar(BlockAltar.AltarType.ATTUNEMENT));
+    public static final RegistryObject<ItemBlockAltar> ALTAR_CONSTELLATION_ITEM =
+            ITEMS.register("altar_constellation", () -> new ItemBlockAltar(BlockAltar.AltarType.CONSTELLATION));
+    public static final RegistryObject<ItemBlockAltar> ALTAR_RADIANCE_ITEM =
+            ITEMS.register("altar_radiance", () -> new ItemBlockAltar(BlockAltar.AltarType.RADIANCE));
     public static final RegistryObject<BlockItem> ATTUNEMENT_ALTAR_ITEM =
             ITEMS.register("attunement_altar", () -> new ItemBlockAS(BlocksAS.ATTUNEMENT_ALTAR.get()));
     public static final RegistryObject<ItemBlockCollectorCrystal> COLLECTOR_CRYSTAL_ITEM =

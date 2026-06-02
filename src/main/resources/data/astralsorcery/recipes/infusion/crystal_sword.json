@@ -1,0 +1,14 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "astralsorcery:crystal_sword"
+  },
+  "output": {
+    "item": "astralsorcery:infused_crystal_sword",
+    "count": 1
+  },
+  "fluidMbRequired": 2000,
+  "craftDuration": 200,
+  "consumeMultiple": true,
+  "copyNBTToOutputs": true
+}

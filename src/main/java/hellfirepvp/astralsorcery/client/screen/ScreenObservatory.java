@@ -3,7 +3,10 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.screen;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import hellfirepvp.astralsorcery.client.ClientScheduler;
+import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingConstellationUtils;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
@@ -11,12 +14,15 @@ import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.client.PktDiscoverConstellation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,7 +94,7 @@ public class ScreenObservatory extends Screen {
             backgroundStars.add(new StarEntry(
                     FRAME_SIZE + seedRand.nextFloat() * (width  - FRAME_SIZE * 2),
                     FRAME_SIZE + seedRand.nextFloat() * (height - FRAME_SIZE * 2),
-                    2 + seedRand.nextFloat() * 2f,
+                    2.5f + seedRand.nextFloat() * 3f,
                     i % 40
             ));
         }
@@ -97,7 +103,7 @@ public class ScreenObservatory extends Screen {
     @Override
     public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         // Night sky gradient
-        graphics.fillGradient(0, 0, width, height, 0xFF050510, 0xFF0A0A20);
+        graphics.fillGradient(0, 0, width, height, 0xFF060612, 0xFF0C0C22);
 
         @Nullable Level level = minecraft != null ? minecraft.level : null;
         boolean isNight = level != null && DayTimeHelper.isNight(level);
@@ -105,15 +111,22 @@ public class ScreenObservatory extends Screen {
         if (isNight) {
             int tick = (int) ClientScheduler.getClientTick();
 
-            // Background stars
+            // Background stars — textured quads with additive blending for galaxy glow
+            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance()
+                    .renderBuffers().bufferSource();
+            PoseStack poseStack = graphics.pose();
+            Matrix4f matrix = poseStack.last().pose();
+            VertexConsumer starBuf = bufferSource.getBuffer(RenderTypesAS.CONSTELLATION_STAR);
+
             for (StarEntry star : backgroundStars) {
-                float flicker = RenderingConstellationUtils.getTwinkleBrightness(
+                float brightness = RenderingConstellationUtils.getTwinkleBrightness(
                         star.flickerOffset, tick, partialTick);
-                int alpha = (int) (flicker * 180);
-                int color = (alpha << 24) | 0x99BBDD;
-                graphics.fill((int) star.x, (int) star.y,
-                        (int) (star.x + star.size), (int) (star.y + star.size), color);
+                // Blue-white tint; alpha drives the glow intensity
+                RenderingConstellationUtils.renderStar(starBuf, matrix,
+                        star.x, star.y, star.size,
+                        0.6f, 0.75f, 1.0f, brightness * 0.85f);
             }
+            bufferSource.endBatch();
 
             // Update hover state
             selectedIndex = -1;

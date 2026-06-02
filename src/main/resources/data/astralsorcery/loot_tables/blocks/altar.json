@@ -4,16 +4,37 @@
     {
       "rolls": 1,
       "bonus_rolls": 0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "astralsorcery:altar"
-        }
-      ],
+      "entries": [{"type": "minecraft:item", "name": "astralsorcery:altar_discovery"}],
       "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
+        {"condition": "minecraft:survives_explosion"},
+        {"condition": "minecraft:block_state_property", "block": "astralsorcery:altar", "properties": {"altar_type": "discovery"}}
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [{"type": "minecraft:item", "name": "astralsorcery:altar_attunement"}],
+      "conditions": [
+        {"condition": "minecraft:survives_explosion"},
+        {"condition": "minecraft:block_state_property", "block": "astralsorcery:altar", "properties": {"altar_type": "attunement"}}
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [{"type": "minecraft:item", "name": "astralsorcery:altar_constellation"}],
+      "conditions": [
+        {"condition": "minecraft:survives_explosion"},
+        {"condition": "minecraft:block_state_property", "block": "astralsorcery:altar", "properties": {"altar_type": "constellation"}}
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [{"type": "minecraft:item", "name": "astralsorcery:altar_radiance"}],
+      "conditions": [
+        {"condition": "minecraft:survives_explosion"},
+        {"condition": "minecraft:block_state_property", "block": "astralsorcery:altar", "properties": {"altar_type": "radiance"}}
       ]
     }
   ]

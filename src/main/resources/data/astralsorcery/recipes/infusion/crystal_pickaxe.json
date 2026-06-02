@@ -1,0 +1,14 @@
+{
+  "type": "astralsorcery:liquid_infusion",
+  "input": {
+    "item": "astralsorcery:crystal_pickaxe"
+  },
+  "output": {
+    "item": "astralsorcery:infused_crystal_pickaxe",
+    "count": 1
+  },
+  "fluidMbRequired": 2000,
+  "craftDuration": 200,
+  "consumeMultiple": true,
+  "copyNBTToOutputs": true
+}
