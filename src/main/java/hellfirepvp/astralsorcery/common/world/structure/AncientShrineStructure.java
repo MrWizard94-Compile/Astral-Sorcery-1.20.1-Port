@@ -12,7 +12,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -137,6 +139,13 @@ public class AncientShrineStructure extends Structure {
             if (!majors.isEmpty()) {
                 crystal.setAttunedConstellation(majors.get(random.nextInt(majors.size())));
             }
+            CrystalAttributes attrs = CrystalAttributes.Builder.newBuilder(false)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_SIZE, 2)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_SHAPE, 2)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_PURITY, 2)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_COLLECTOR_COLLECTION_RATE, 2)
+                    .build();
+            crystal.setAttributes(attrs);
         }
     }
 
