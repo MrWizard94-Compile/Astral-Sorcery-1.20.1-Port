@@ -7,7 +7,9 @@ import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
 import hellfirepvp.astralsorcery.common.util.world.SkyCollectionHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import org.joml.Vector3f;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -133,6 +135,9 @@ public class ItemResonator extends ItemAS {
         }
     }
 
+    // Blue starfield color matching 1.16 ColorsAS.RESONATOR_STARFIELD (~0x607AFE)
+    private static final Vector3f RESONATOR_BLUE = new Vector3f(0.376f, 0.478f, 0.996f);
+
     @OnlyIn(Dist.CLIENT)
     private static void tickStarlightClient(@Nonnull Level level, @Nonnull Player player) {
         float nightProgress = DayTimeHelper.getNightProgress(level);
@@ -147,14 +152,29 @@ public class ItemResonator extends ItemAS {
             BlockPos samplePos = origin.offset(dx, 0, dz);
 
             SkyCollectionHelper.getSkyNoiseDistributionClient(dim, samplePos).ifPresent(noise -> {
-                if (noise > 0.1f && RAND.nextFloat() < noise * nightProgress * 0.4f) {
-                    int dy = RAND.nextInt(64) - 32;
-                    Vec3 pos = Vec3.atCenterOf(samplePos.offset(0, dy, 0));
-                    level.addParticle(ParticleTypes.END_ROD,
-                            pos.x, pos.y, pos.z,
-                            (RAND.nextDouble() - 0.5) * 0.02,
-                            RAND.nextDouble() * 0.01,
-                            (RAND.nextDouble() - 0.5) * 0.02);
+                float fPerc = (float) Math.pow(Math.max(0f, (noise - 0.4f) * 1.65f), 2);
+                if (noise >= 0.4f && RAND.nextFloat() <= fPerc) {
+                    if (RAND.nextInt(6) == 0) {
+                        int dy = RAND.nextInt(64) - 32;
+                        Vec3 pos = Vec3.atCenterOf(samplePos.offset(0, dy, 0));
+
+                        // Large blue dust particle — the "fog" visual
+                        float size = 1.5f + fPerc * 3.0f;
+                        level.addParticle(new DustParticleOptions(RESONATOR_BLUE, size),
+                                pos.x + RAND.nextFloat(),
+                                pos.y + 0.15,
+                                pos.z + RAND.nextFloat(),
+                                0, 0.001 * nightProgress, 0);
+
+                        // Tiny white rising sparkle at very high noise
+                        if (noise >= 0.8f && RAND.nextInt(3) == 0) {
+                            level.addParticle(ParticleTypes.END_ROD,
+                                    pos.x, pos.y, pos.z,
+                                    (RAND.nextDouble() - 0.5) * 0.01,
+                                    RAND.nextDouble() * 0.005 * nightProgress,
+                                    (RAND.nextDouble() - 0.5) * 0.01);
+                        }
+                    }
                 }
             });
         }

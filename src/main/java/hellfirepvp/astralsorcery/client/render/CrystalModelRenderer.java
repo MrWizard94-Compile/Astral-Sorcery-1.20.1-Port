@@ -101,16 +101,15 @@ public final class CrystalModelRenderer {
             float x2 = RING_X[next][0];
             float z2 = RING_Z[next][0];
 
-            // Side quad
             float u1 = (float) i / SIDES;
             float u2 = (float) (i + 1) / SIDES;
-            RenderingUtils.vertex(buffer, matrix, x1, bodyBottom, z1, r, g, b, alpha, u1, 1);
-            RenderingUtils.vertex(buffer, matrix, x2, bodyBottom, z2, r, g, b, alpha, u2, 1);
-            RenderingUtils.vertex(buffer, matrix, x2, bodyTop, z2, r, g, b, alpha, u2, 0.3f);
-            RenderingUtils.vertex(buffer, matrix, x1, bodyTop, z1, r, g, b, alpha, u1, 0.3f);
+            RenderingUtils.vertex(buffer, matrix, x1, bodyBottom, z1, r, g, b, alpha, u1, 1,    packedLight);
+            RenderingUtils.vertex(buffer, matrix, x2, bodyBottom, z2, r, g, b, alpha, u2, 1,    packedLight);
+            RenderingUtils.vertex(buffer, matrix, x2, bodyTop,    z2, r, g, b, alpha, u2, 0.3f, packedLight);
+            RenderingUtils.vertex(buffer, matrix, x1, bodyTop,    z1, r, g, b, alpha, u1, 0.3f, packedLight);
         }
 
-        // Render top tip (triangular faces meeting at a point)
+        // Top tip (degenerate quad)
         for (int i = 0; i < SIDES; i++) {
             int next = (i + 1) % SIDES;
             float x1 = RING_X[i][0];
@@ -118,14 +117,13 @@ public final class CrystalModelRenderer {
             float x2 = RING_X[next][0];
             float z2 = RING_Z[next][0];
 
-            // Triangle as a degenerate quad (two vertices at tip)
-            RenderingUtils.vertex(buffer, matrix, x1, bodyTop, z1, r, g, b, alpha, 0, 0.3f);
-            RenderingUtils.vertex(buffer, matrix, x2, bodyTop, z2, r, g, b, alpha, 1, 0.3f);
-            RenderingUtils.vertex(buffer, matrix, 0, tipTop, 0, r, g, b, alpha, 0.5f, 0);
-            RenderingUtils.vertex(buffer, matrix, 0, tipTop, 0, r, g, b, alpha, 0.5f, 0);
+            RenderingUtils.vertex(buffer, matrix, x1, bodyTop, z1, r, g, b, alpha, 0,    0.3f, packedLight);
+            RenderingUtils.vertex(buffer, matrix, x2, bodyTop, z2, r, g, b, alpha, 1,    0.3f, packedLight);
+            RenderingUtils.vertex(buffer, matrix, 0,  tipTop,  0,  r, g, b, alpha, 0.5f, 0,    packedLight);
+            RenderingUtils.vertex(buffer, matrix, 0,  tipTop,  0,  r, g, b, alpha, 0.5f, 0,    packedLight);
         }
 
-        // Render bottom tip (triangular faces meeting at a point)
+        // Bottom tip (degenerate quad)
         for (int i = 0; i < SIDES; i++) {
             int next = (i + 1) % SIDES;
             float x1 = RING_X[i][0];
@@ -133,11 +131,10 @@ public final class CrystalModelRenderer {
             float x2 = RING_X[next][0];
             float z2 = RING_Z[next][0];
 
-            // Triangle as a degenerate quad
-            RenderingUtils.vertex(buffer, matrix, 0, tipBottom, 0, r, g, b, alpha, 0.5f, 1);
-            RenderingUtils.vertex(buffer, matrix, 0, tipBottom, 0, r, g, b, alpha, 0.5f, 1);
-            RenderingUtils.vertex(buffer, matrix, x2, bodyBottom, z2, r, g, b, alpha, 1, 0.7f);
-            RenderingUtils.vertex(buffer, matrix, x1, bodyBottom, z1, r, g, b, alpha, 0, 0.7f);
+            RenderingUtils.vertex(buffer, matrix, 0,  tipBottom,  0,  r, g, b, alpha, 0.5f, 1,    packedLight);
+            RenderingUtils.vertex(buffer, matrix, 0,  tipBottom,  0,  r, g, b, alpha, 0.5f, 1,    packedLight);
+            RenderingUtils.vertex(buffer, matrix, x2, bodyBottom, z2, r, g, b, alpha, 1,    0.7f, packedLight);
+            RenderingUtils.vertex(buffer, matrix, x1, bodyBottom, z1, r, g, b, alpha, 0,    0.7f, packedLight);
         }
 
         poseStack.popPose();
