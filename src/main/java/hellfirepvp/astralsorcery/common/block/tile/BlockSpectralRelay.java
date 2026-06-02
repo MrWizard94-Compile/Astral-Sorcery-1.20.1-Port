@@ -1,21 +1,26 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
+import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntitySpectralRelay;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,5 +81,35 @@ public class BlockSpectralRelay extends BlockEntityBlock {
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
         return createTicker(type, BlockEntityTypesAS.SPECTRAL_RELAY.get());
+    }
+
+    @Nonnull
+    @Override
+    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
+                                 @Nonnull Player player, @Nonnull InteractionHand hand,
+                                 @Nonnull BlockHitResult hit) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlockEntitySpectralRelay relay)) return InteractionResult.PASS;
+
+        ItemStack inHand = player.getItemInHand(hand);
+        ItemStack inSlot = relay.getInventory().getStackInSlot(0);
+
+        if (player.isShiftKeyDown()) {
+            if (!inSlot.isEmpty()) {
+                relay.getInventory().setStackInSlot(0, ItemStack.EMPTY);
+                if (!player.addItem(inSlot)) Block.popResource(level, pos, inSlot);
+                return InteractionResult.CONSUME;
+            }
+        } else if (inHand.getItem() instanceof ItemGlassLens && inSlot.isEmpty()) {
+            relay.getInventory().setStackInSlot(0, inHand.copyWithCount(1));
+            if (!player.isCreative()) inHand.shrink(1);
+            return InteractionResult.CONSUME;
+        } else if (inHand.isEmpty() && !inSlot.isEmpty()) {
+            relay.getInventory().setStackInSlot(0, ItemStack.EMPTY);
+            player.setItemInHand(hand, inSlot);
+            return InteractionResult.CONSUME;
+        }
+        return InteractionResult.PASS;
     }
 }
