@@ -50,6 +50,9 @@ import net.minecraft.world.effect.MobEffects;
  */
 public class EventHandlerPerkEffects {
 
+    /** Re-entry guard: prevents recursive tree/chain-break events when we break extra blocks. */
+    public static final ThreadLocal<Boolean> IS_CHAIN_BREAKING = ThreadLocal.withInitial(() -> false);
+
     // -----------------------------------------------------------------------
     // Cooldown tracking (in-memory; clears on restart, acceptable for now)
     // -----------------------------------------------------------------------
@@ -441,6 +444,7 @@ public class EventHandlerPerkEffects {
 
     @SubscribeEvent
     public void onTreeConnector(@Nonnull BlockEvent.BreakEvent event) {
+        if (IS_CHAIN_BREAKING.get()) return;
         if (!(event.getPlayer() instanceof ServerPlayer player)) return;
         if (!hasPerk(player, AstralSorcery.key("key_tree_connector"))) return;
         if (!(player.level() instanceof ServerLevel level)) return;
@@ -454,13 +458,19 @@ public class EventHandlerPerkEffects {
         // Flood-fill connected logs
         Set<BlockPos> logs = new LinkedHashSet<>();
         floodFillLogs(level, event.getPos(), logs, state.getBlock());
+        if (logs.size() <= 1) return;
 
-        for (BlockPos logPos : logs) {
-            if (logPos.equals(event.getPos())) continue; // the original break handles this one
-            BlockState logState = level.getBlockState(logPos);
-            level.destroyBlock(logPos, true, player);
-            logState.getBlock().playerDestroy(level, player, logPos, logState,
-                    level.getBlockEntity(logPos), tool);
+        IS_CHAIN_BREAKING.set(true);
+        try {
+            for (BlockPos logPos : logs) {
+                if (logPos.equals(event.getPos())) continue;
+                BlockState logState = level.getBlockState(logPos);
+                level.destroyBlock(logPos, true, player);
+                logState.getBlock().playerDestroy(level, player, logPos, logState,
+                        level.getBlockEntity(logPos), tool);
+            }
+        } finally {
+            IS_CHAIN_BREAKING.set(false);
         }
     }
 

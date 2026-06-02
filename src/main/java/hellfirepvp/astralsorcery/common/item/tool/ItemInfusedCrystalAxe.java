@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.item.tool;
 
+import hellfirepvp.astralsorcery.common.event.EventHandlerPerkEffects;
 import hellfirepvp.astralsorcery.common.util.block.TreeDiscoverer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +17,6 @@ import java.util.List;
 public class ItemInfusedCrystalAxe extends ItemCrystalAxe {
 
     private static final int COOLDOWN_TICKS = 120;
-    private static final ThreadLocal<Boolean> CHAIN_BREAKING = ThreadLocal.withInitial(() -> false);
 
     public ItemInfusedCrystalAxe() {
         super();
@@ -24,7 +24,7 @@ public class ItemInfusedCrystalAxe extends ItemCrystalAxe {
 
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
-        if (CHAIN_BREAKING.get()) return super.onBlockStartBreak(stack, pos, player);
+        if (EventHandlerPerkEffects.IS_CHAIN_BREAKING.get()) return super.onBlockStartBreak(stack, pos, player);
         if (player.isShiftKeyDown()) return super.onBlockStartBreak(stack, pos, player);
         if (!(player instanceof ServerPlayer serverPlayer)) return super.onBlockStartBreak(stack, pos, player);
         if (serverPlayer.getCooldowns().isOnCooldown(this)) return super.onBlockStartBreak(stack, pos, player);
@@ -32,14 +32,14 @@ public class ItemInfusedCrystalAxe extends ItemCrystalAxe {
         List<BlockPos> logs = TreeDiscoverer.findConnectedLogs(serverPlayer.level(), pos);
         if (logs.size() <= 1) return super.onBlockStartBreak(stack, pos, player);
 
-        CHAIN_BREAKING.set(true);
+        EventHandlerPerkEffects.IS_CHAIN_BREAKING.set(true);
         try {
             for (BlockPos logPos : logs) {
                 if (logPos.equals(pos)) continue;
                 serverPlayer.gameMode.destroyBlock(logPos);
             }
         } finally {
-            CHAIN_BREAKING.set(false);
+            EventHandlerPerkEffects.IS_CHAIN_BREAKING.set(false);
         }
         serverPlayer.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
         return super.onBlockStartBreak(stack, pos, player);
