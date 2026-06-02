@@ -319,6 +319,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
                 16.0, null);
         if (nearest instanceof net.minecraft.server.level.ServerPlayer sp) {
             hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers.INFUSION_CRAFT.trigger(sp);
+            hellfirepvp.astralsorcery.common.data.research.ResearchManager.grantTier(
+                    sp, hellfirepvp.astralsorcery.common.data.research.ProgressionTier.BASIC_CRAFT);
+            hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager.syncProgress(sp);
         }
     }
 
