@@ -213,7 +213,7 @@ Focus constellation comes from linked collector crystal (no physical focus item 
 - [ ] **H5.1** Port `client/util/draw/` (BufferBatchHelper, BufferContext, RenderInfo)
 - [ ] **H5.2** Port `client/util/image/` (ImageTemplate, ImageTemplates, SkyImageGenerator) — for sky rendering
 - [ ] **H5.3** Port `client/util/color/` (ColorThief, ColorUtil, MMCQ) — color extraction
-- [ ] **H5.4** Port `client/util/word/` (RandomWordGenerator, WordGeneratorEnglish, WordGeneratorChinese) — for journal random text
+- [x] **H5.4** NOT NEEDED — `RandomWordGenerator` is not referenced anywhere in the port; journal pages use lang file translations, not generated random text ✅
 - [ ] **H5.5** Port `GatewayUI` + `AreaOfInfluencePreview` client utility helpers
 
 ---
