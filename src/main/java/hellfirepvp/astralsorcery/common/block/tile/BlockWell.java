@@ -91,6 +91,14 @@ public class BlockWell extends BlockEntityBlock implements LiquidStarlightOwned 
         if (!(be instanceof BlockEntityWell well)) {
             return InteractionResult.PASS;
         }
+        // Shift-click: retrieve catalyst
+        if (player.isShiftKeyDown() && well.hasCatalyst()) {
+            ItemStack catalyst = well.getCatalystStack().copy();
+            well.setCatalystStack(ItemStack.EMPTY);
+            if (!player.addItem(catalyst)) Block.popResource(level, pos, catalyst);
+            return InteractionResult.CONSUME;
+        }
+
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.isEmpty()) {
             return InteractionResult.PASS;

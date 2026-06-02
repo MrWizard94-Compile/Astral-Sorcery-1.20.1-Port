@@ -352,6 +352,8 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         boolean wasUpgrade = activeRecipe instanceof AltarUpgradeRecipe;
         if (wasUpgrade) {
             ((AltarUpgradeRecipe) activeRecipe).onRecipeCompletion(this);
+            // setBlockState() was called synchronously inside onRecipeCompletion → update cached capacity
+            updateCapacityFromTier();
         }
 
         // Reset state
