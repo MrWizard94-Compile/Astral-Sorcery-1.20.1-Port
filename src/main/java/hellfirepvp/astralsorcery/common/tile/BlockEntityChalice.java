@@ -151,6 +151,7 @@ public class BlockEntityChalice extends BlockEntityTick {
                     FluidStack toMove = new FluidStack(available.getFluid(), Math.min(fillable, available.getAmount()));
                     well.getTank().drain(toMove, IFluidHandler.FluidAction.EXECUTE);
                     tank.fill(toMove, IFluidHandler.FluidAction.EXECUTE);
+                    well.markForUpdate();
                     markForUpdate();
                     return; // one well per tick
                 }
