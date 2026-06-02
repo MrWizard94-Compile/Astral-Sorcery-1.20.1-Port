@@ -91,7 +91,7 @@ Port uses a simplified but functional graph-based network (no TransmissionChain)
 - [x] **C4** `BlockEntityAltar` — registers as receiver via `StarlightNetworkHelper.registerReceiver()` ✅
 - [x] **C4** BlockEntityLens, BlockEntityPrism — registerTransmission + addLink/removeLink ✅
 - [x] **C4** BlockEntityInfuser, BlockEntityRitualPedestal, BlockEntityWell, BlockEntityTreeBeacon — registerReceiver ✅
-- [ ] **C5** Crystal property-driven throughput scaling — currently constant efficiency; improve when crystal properties system is more complete
+- [x] **C5** Crystal property-driven throughput scaling — `BlockEntityLens` now accepts a crystal; `CrystalCalculations.getTransmissionEfficiency()` drives efficiency instead of hardcoded 95% ✅
 - [ ] **C4.4** Port `BlockEntityTransmissionBase` — base for lens/prism tiles `[depends: C4.1]`
 - [ ] **C4.5** Port `TileAreaOfInfluence` — base for area-effect tiles
 - [ ] **C4.6** Port `TileOwned` — ownership (player UUID) tracking
@@ -418,3 +418,11 @@ Q (integrations) — after core
 - [x] **BF7** `EventHandlerMisc.onLecternInteract` — early-returned on client side, preventing journal screen from opening when tome placed in lectern ✅
 - [x] **BF8** `onRemove()` missing on attunement altar, ritual pedestal, lightwell, spectral relay, infuser — held items lost on block break ✅
 - [x] **BF9** Incomplete player attunement in `BlockEntityAttunementAltar` — tick only ran crystal path; added player-standing-on-altar path with invulnerability + camera packet + UUID persistence ✅
+- [x] **BF10** `BlockEntityAltar` had no passive sky starlight collection — discovery-tier altar could never fill without a collector crystal, blocking all early-game altar crafting (chicken-and-egg); added `gatherSkyStarlight()` mirroring 1.16 `TileAltar.gatherStarlight()` ✅
+- [x] **BF11** `EventHandlerPerkEffects.onTreeConnector` had no re-entry guard — `destroyBlock()` calls during tree felling fired `BlockEvent.BreakEvent`, re-triggering the handler recursively; added `IS_CHAIN_BREAKING` ThreadLocal shared with `ItemInfusedCrystalAxe` ✅
+- [x] **BF12** Duplicate `SoundSource` import in `BlockEntityAltar` cleaned up ✅
+
+## SESSION 3 ADDITIONS (2026-06-02)
+
+- [x] **C5** Crystal property-driven lens efficiency: `BlockEntityLens` now accepts a crystal via right-click; `CrystalCalculations.getTransmissionEfficiency()` (cutting×0.7 + purity×0.2) replaces hardcoded 95%. Crystal persists in NBT; drops on block break ✅
+- [x] **L1.7** Infused crystal tool special abilities: pickaxe right-click ore scan (END_ROD particles at ores, 120t CD); sword on-hit Celestial Strike (lightning bolt + area damage, radius 5, 120t CD); axe tree felling (up to 128 logs, 120t CD); shovel same-state chain mining (up to 200 blocks, 120t CD) ✅
