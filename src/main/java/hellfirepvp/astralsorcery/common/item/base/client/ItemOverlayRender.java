@@ -15,8 +15,8 @@ import javax.annotation.Nonnull;
  * The overlay is rendered once per frame for the first matching equipment slot.
  * 1.16 → 1.20: MatrixStack → GuiGraphics.
  */
-@OnlyIn(Dist.CLIENT)
 public interface ItemOverlayRender {
 
+    @OnlyIn(Dist.CLIENT)
     boolean renderOverlay(@Nonnull GuiGraphics graphics, @Nonnull ItemStack stack, float partialTick);
 }

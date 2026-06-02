@@ -5,8 +5,10 @@ import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
 import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAttunementAltar;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -97,6 +99,42 @@ public class BlockAttunementAltar extends BlockEntityBlock {
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
+
+        // Crystal placement / retrieval
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof BlockEntityAttunementAltar altar) {
+                ItemStack inHand = player.getItemInHand(hand);
+                ItemStack onAltar = altar.getHeldCrystal();
+
+                if (player.isShiftKeyDown()) {
+                    // Sneak-click: eject crystal
+                    if (!onAltar.isEmpty()) {
+                        altar.setHeldCrystal(ItemStack.EMPTY);
+                        if (inHand.isEmpty()) {
+                            player.setItemInHand(hand, onAltar);
+                        } else if (!player.addItem(onAltar)) {
+                            Block.popResource(level, pos, onAltar);
+                        }
+                        return InteractionResult.CONSUME;
+                    }
+                } else if (inHand.getItem() instanceof ItemCrystalBase && onAltar.isEmpty()) {
+                    // Place crystal on altar
+                    altar.setHeldCrystal(inHand.copyWithCount(1));
+                    if (!player.isCreative()) inHand.shrink(1);
+                    return InteractionResult.CONSUME;
+                } else if (inHand.isEmpty() && !onAltar.isEmpty()) {
+                    // Retrieve crystal
+                    altar.setHeldCrystal(ItemStack.EMPTY);
+                    player.setItemInHand(hand, onAltar);
+                    return InteractionResult.CONSUME;
+                }
+            }
+        } else if (player.getItemInHand(hand).getItem() instanceof ItemCrystalBase
+                || player.isShiftKeyDown()) {
+            return InteractionResult.SUCCESS; // optimistic client feedback
+        }
+
         return InteractionResult.PASS;
     }
 
