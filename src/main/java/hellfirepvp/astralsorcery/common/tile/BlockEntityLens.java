@@ -6,6 +6,7 @@ import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightTransmission;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
+import hellfirepvp.astralsorcery.common.util.PartialEffectExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -17,6 +18,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,11 +88,75 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
         super.tick();
         ticksExisted++;
         if (isClientSide()) {
-            // Client-side: beam rendering particles handled by TESR
             return;
         }
-        // Server-side: The actual transmission is handled by WorldNetworkHandler.tick()
-        // via the graph traversal — this BE just registers itself.
+        if (colorOverlay != null && !linkedTargets.isEmpty()) {
+            applyBeamEffects();
+        }
+    }
+
+    private void applyBeamEffects() {
+        Level level = getLevel();
+        if (level == null) return;
+
+        ItemColoredLens.LensColor color = resolveLensColor();
+        if (color == null || color.getTargetType() == ItemColoredLens.TargetType.NONE) return;
+
+        Vec3 from = Vec3.atCenterOf(getBlockPos());
+        for (BlockPos targetPos : linkedTargets) {
+            Vec3 to = Vec3.atCenterOf(targetPos);
+            PartialEffectExecutor exec = new PartialEffectExecutor(1.0F);
+
+            if (color.getTargetType().doBlockInteraction()) {
+                collectBlocksAlongBeam(level, from, to, exec, color);
+            }
+            if (color.getTargetType().doEntityInteraction()) {
+                collectEntitiesAlongBeam(level, from, to, exec, color);
+            }
+        }
+    }
+
+    private void collectBlocksAlongBeam(Level level, Vec3 from, Vec3 to,
+                                         PartialEffectExecutor exec, ItemColoredLens.LensColor color) {
+        Vec3 dir = to.subtract(from);
+        double length = dir.length();
+        if (length < 0.5) return;
+        Vec3 step = dir.normalize().scale(0.5);
+        int steps = (int) (length / 0.5) + 1;
+        java.util.Set<BlockPos> visited = new java.util.HashSet<>();
+        Vec3 cur = from;
+        for (int i = 0; i < steps; i++) {
+            BlockPos pos = BlockPos.containing(cur.x, cur.y, cur.z);
+            if (visited.add(pos)) {
+                BlockState state = level.getBlockState(pos);
+                if (!state.isAir()) {
+                    color.blockInBeam(level, pos, state, exec);
+                }
+            }
+            cur = cur.add(step);
+        }
+    }
+
+    private void collectEntitiesAlongBeam(Level level, Vec3 from, Vec3 to,
+                                            PartialEffectExecutor exec, ItemColoredLens.LensColor color) {
+        AABB box = new AABB(from.x, from.y, from.z, to.x, to.y, to.z).inflate(0.75);
+        Vec3 dir = to.subtract(from);
+        double lenSq = dir.lengthSqr();
+        for (Entity entity : level.getEntities((Entity) null, box,
+                e -> !(e instanceof Player) || !((Player) e).isSpectator())) {
+            if (lenSq > 0) {
+                Vec3 toEntity = entity.position().subtract(from);
+                double t = Math.max(0, Math.min(1, toEntity.dot(dir) / lenSq));
+                Vec3 closest = from.add(dir.scale(t));
+                if (entity.position().distanceToSqr(closest) > 0.75 * 0.75) continue;
+            }
+            color.entityInBeam(level, from, to, entity, exec);
+        }
+    }
+
+    @Nullable
+    private ItemColoredLens.LensColor resolveLensColor() {
+        return ItemColoredLens.fromOverlay(colorOverlay);
     }
 
     // ========================================================================
@@ -140,14 +207,8 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
      */
     @Nullable
     public Color getBeamColor() {
-        if (colorOverlay == null) return null;
-        String path = colorOverlay.getPath();
-        for (ItemColoredLens.LensColor lc : ItemColoredLens.LensColor.values()) {
-            if (lc.getSerializedName().equals(path)) {
-                return lc.getBeamColor();
-            }
-        }
-        return null;
+        ItemColoredLens.LensColor color = ItemColoredLens.fromOverlay(colorOverlay);
+        return color != null ? color.getBeamColor() : null;
     }
 
     public void setColorOverlay(@Nullable ResourceLocation overlay) {

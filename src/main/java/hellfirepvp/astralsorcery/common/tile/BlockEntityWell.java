@@ -77,12 +77,20 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
         super.onFirstTick();
         if (!isClientSide()) {
             StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.attemptAutoLinkTo(getBlockPos());
         }
     }
 
     @Override
     public void setRemoved() {
         super.setRemoved();
+        if (!isClientSide()) {
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.removeAutoLinkTo(getBlockPos());
+        }
         StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
     }
 

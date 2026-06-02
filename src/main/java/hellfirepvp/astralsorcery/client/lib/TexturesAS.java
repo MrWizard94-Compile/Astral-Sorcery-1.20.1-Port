@@ -68,6 +68,9 @@ public final class TexturesAS {
     public static AbstractRenderableTexture TEX_GUI_PERK_INACTIVE;
     public static AbstractRenderableTexture TEX_GUI_PERK_ACTIVE;
     public static AbstractRenderableTexture TEX_GUI_PERK_ACTIVATEABLE;
+    public static AbstractRenderableTexture TEX_GUI_PERK_HALO_INACTIVE;
+    public static AbstractRenderableTexture TEX_GUI_PERK_HALO_ACTIVE;
+    public static AbstractRenderableTexture TEX_GUI_PERK_HALO_ACTIVATEABLE;
 
     // ---- Research frame ----
 
@@ -121,6 +124,9 @@ public final class TexturesAS {
         TEX_GUI_PERK_INACTIVE               = loadPerk("inactive");
         TEX_GUI_PERK_ACTIVE                 = loadPerk("active");
         TEX_GUI_PERK_ACTIVATEABLE           = loadPerk("activateable");
+        TEX_GUI_PERK_HALO_INACTIVE          = loadPerk("halo_inactive");
+        TEX_GUI_PERK_HALO_ACTIVE            = loadPerk("halo_active");
+        TEX_GUI_PERK_HALO_ACTIVATEABLE      = loadPerk("halo_activateable");
 
         TEX_GUI_RESEARCH_FRAME_WOOD         = load("research_frame_wood");
 

@@ -11,8 +11,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
+import hellfirepvp.astralsorcery.common.cmd.sub.CommandConstellation;
+import hellfirepvp.astralsorcery.common.cmd.sub.CommandMaximizeAll;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
-import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPlayerProgress;
 import hellfirepvp.astralsorcery.common.perk.PerkLevelManager;
@@ -51,7 +52,9 @@ public class CommandAstralSorcery {
                 .then(buildReset())
                 .then(buildAttune())
                 .then(buildPerkExp())
-                .then(buildNetwork());
+                .then(buildNetwork())
+                .then(CommandConstellation.register())
+                .then(CommandMaximizeAll.register());
 
         dispatcher.register(root);
         dispatcher.register(Commands.literal("as").redirect(dispatcher.register(root)));
@@ -94,92 +97,75 @@ public class CommandAstralSorcery {
                 });
     }
 
-    // ---- /astralsorcery reset ----
+    // ---- /astralsorcery reset [player] ----
 
     @Nonnull
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> buildReset() {
         return Commands.literal("reset")
                 .requires(src -> src.hasPermission(2))
-                .executes(ctx -> {
-                    ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    PlayerProgress progress = PlayerProgressHelper.getProgress(player);
-                    if (progress == null) {
-                        ctx.getSource().sendFailure(Component.literal("No progress data found."));
-                        return 0;
-                    }
-
-                    PlayerProgress fresh = new PlayerProgress();
-                    progress.copyFrom(fresh);
-                    PacketChannel.sendToPlayer(new PktSyncPlayerProgress(progress), player);
-
-                    ctx.getSource().sendSuccess(
-                            () -> Component.literal("Reset all Astral Sorcery progress."), true);
-                    return 1;
-                });
+                .executes(ctx -> doReset(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+                .then(Commands.argument("player", net.minecraft.commands.arguments.EntityArgument.player())
+                        .executes(ctx -> doReset(ctx.getSource(),
+                                net.minecraft.commands.arguments.EntityArgument.getPlayer(ctx, "player"))));
     }
 
-    // ---- /astralsorcery attune <constellation> ----
+    private static int doReset(CommandSourceStack src, ServerPlayer target) {
+        hellfirepvp.astralsorcery.common.data.research.ResearchManager.wipeProgress(target);
+        src.sendSuccess(() -> Component.literal("Wiped " + target.getGameProfile().getName() + "'s Astral Sorcery progress."), true);
+        return 1;
+    }
+
+    // ---- /astralsorcery attune <constellation> [player] ----
 
     @Nonnull
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> buildAttune() {
         return Commands.literal("attune")
                 .requires(src -> src.hasPermission(2))
                 .then(Commands.argument("constellation", ResourceLocationArgument.id())
-                        .executes(ctx -> {
-                            ServerPlayer player = ctx.getSource().getPlayerOrException();
-                            ResourceLocation constellation = ResourceLocationArgument.getId(ctx,
-                                    "constellation");
-
-                            PlayerProgress progress = PlayerProgressHelper.getProgress(player);
-                            if (progress == null) {
-                                ctx.getSource().sendFailure(
-                                        Component.literal("No progress data found."));
-                                return 0;
-                            }
-
-                            progress.setAttunedConstellation(constellation);
-                            if (!progress.isAtLeast(ProgressionTier.ATTUNEMENT)) {
-                                progress.setTierReached(ProgressionTier.ATTUNEMENT);
-                            }
-                            PacketChannel.sendToPlayer(
-                                    new PktSyncPlayerProgress(progress), player);
-
-                            ctx.getSource().sendSuccess(
-                                    () -> Component.literal("Attuned to " + constellation), true);
-                            return 1;
-                        }));
+                        .executes(ctx -> doAttune(ctx.getSource(),
+                                ctx.getSource().getPlayerOrException(),
+                                ResourceLocationArgument.getId(ctx, "constellation")))
+                        .then(Commands.argument("player", net.minecraft.commands.arguments.EntityArgument.player())
+                                .executes(ctx -> doAttune(ctx.getSource(),
+                                        net.minecraft.commands.arguments.EntityArgument.getPlayer(ctx, "player"),
+                                        ResourceLocationArgument.getId(ctx, "constellation")))));
     }
 
-    // ---- /astralsorcery perkexp <amount> ----
+    private static int doAttune(CommandSourceStack src, ServerPlayer target, ResourceLocation constellation) {
+        hellfirepvp.astralsorcery.common.data.research.ResearchManager.attuneTo(target, constellation);
+        src.sendSuccess(() -> Component.literal("Attuned " + target.getGameProfile().getName() + " to " + constellation), true);
+        return 1;
+    }
+
+    // ---- /astralsorcery perkexp <amount> [player] ----
 
     @Nonnull
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> buildPerkExp() {
         return Commands.literal("perkexp")
                 .requires(src -> src.hasPermission(2))
                 .then(Commands.argument("amount", IntegerArgumentType.integer(0))
-                        .executes(ctx -> {
-                            ServerPlayer player = ctx.getSource().getPlayerOrException();
-                            int amount = IntegerArgumentType.getInteger(ctx, "amount");
+                        .executes(ctx -> doPerkExp(ctx.getSource(),
+                                ctx.getSource().getPlayerOrException(),
+                                IntegerArgumentType.getInteger(ctx, "amount")))
+                        .then(Commands.argument("player", net.minecraft.commands.arguments.EntityArgument.player())
+                                .executes(ctx -> doPerkExp(ctx.getSource(),
+                                        net.minecraft.commands.arguments.EntityArgument.getPlayer(ctx, "player"),
+                                        IntegerArgumentType.getInteger(ctx, "amount")))));
+    }
 
-                            PlayerProgress progress = PlayerProgressHelper.getProgress(player);
-                            if (progress == null) {
-                                ctx.getSource().sendFailure(
-                                        Component.literal("No progress data found."));
-                                return 0;
-                            }
-
-                            long newExp = progress.getPerkExp() + amount;
-                            progress.setPerkExp(newExp);
-                            int newLevel = PerkLevelManager.getLevelFromExp(newExp);
-                            PacketChannel.sendToPlayer(
-                                    new PktSyncPlayerProgress(progress), player);
-
-                            ctx.getSource().sendSuccess(
-                                    () -> Component.literal("Added " + amount + " perk exp. "
-                                            + "Now level " + newLevel + " (total: " + newExp + ")"),
-                                    true);
-                            return 1;
-                        }));
+    private static int doPerkExp(CommandSourceStack src, ServerPlayer target, int amount) {
+        PlayerProgress progress = PlayerProgressHelper.getProgress(target);
+        if (progress == null) {
+            src.sendFailure(Component.literal("No progress data found."));
+            return 0;
+        }
+        long newExp = progress.getPerkExp() + amount;
+        progress.setPerkExp(newExp);
+        int newLevel = PerkLevelManager.getLevelFromExp(newExp);
+        PacketChannel.sendToPlayer(new PktSyncPlayerProgress(progress), target);
+        src.sendSuccess(() -> Component.literal("Added " + amount + " perk exp to " + target.getGameProfile().getName()
+                + ". Now level " + newLevel + " (total: " + newExp + ")"), true);
+        return 1;
     }
 
     // ---- /astralsorcery network ----

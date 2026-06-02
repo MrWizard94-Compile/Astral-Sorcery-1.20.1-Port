@@ -759,6 +759,59 @@ public class WorldNetworkHandler extends SavedData {
         return activeLinks.size();
     }
 
+    /**
+     * Scans for receivers within range of a newly-placed auto-linking source and
+     * creates links from the source to any receivers that are below it and in range.
+     *
+     * @param sourcePos the newly-registered source position (collector crystal)
+     */
+    public void attemptAutoLinkFrom(@Nonnull BlockPos sourcePos) {
+        for (BlockPos receiverPos : receivers.keySet()) {
+            if (sourcePos.getY() <= receiverPos.getY()) continue;
+            double distSq = sourcePos.distSqr(receiverPos);
+            if (distSq > MAX_LINK_DISTANCE * MAX_LINK_DISTANCE) continue;
+            addLink(sourcePos, receiverPos);
+        }
+    }
+
+    /**
+     * Scans for auto-linking sources (collector crystals) within range of the given
+     * receiver position and creates links for any source that is above the receiver
+     * and within {@link #MAX_LINK_DISTANCE} blocks.
+     *
+     * <p>Call this after registering a new receiver (e.g., altar placed) so collector
+     * crystals in the area automatically link without requiring manual wand use.</p>
+     *
+     * @param receiverPos the newly-registered receiver position
+     */
+    public void attemptAutoLinkTo(@Nonnull BlockPos receiverPos) {
+        for (Map.Entry<BlockPos, SourceEntry> entry : sources.entrySet()) {
+            BlockPos sourcePos = entry.getKey();
+            SourceEntry source = entry.getValue();
+            if (!source.autoLink) continue;
+            if (sourcePos.getY() <= receiverPos.getY()) continue;
+            double distSq = sourcePos.distSqr(receiverPos);
+            if (distSq > MAX_LINK_DISTANCE * MAX_LINK_DISTANCE) continue;
+            // Try to add the link; addLink() validates both are registered nodes
+            addLink(sourcePos, receiverPos);
+        }
+    }
+
+    /**
+     * Removes all links from auto-linking sources to the given position.
+     * Call before or just after removing a receiver block.
+     *
+     * @param receiverPos the position being removed
+     */
+    public void removeAutoLinkTo(@Nonnull BlockPos receiverPos) {
+        for (BlockPos sourcePos : new ArrayList<>(sources.keySet())) {
+            SourceEntry source = sources.get(sourcePos);
+            if (source != null && source.autoLink) {
+                removeLink(sourcePos, receiverPos);
+            }
+        }
+    }
+
     // ========================================================================
     // NBT serialization
     // ========================================================================

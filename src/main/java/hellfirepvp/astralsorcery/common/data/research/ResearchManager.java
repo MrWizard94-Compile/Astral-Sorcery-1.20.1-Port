@@ -168,6 +168,47 @@ public final class ResearchManager {
         sync(player);
     }
 
+    public static boolean memorizeConstellation(@Nonnull ServerPlayer player,
+                                                @Nonnull ResourceLocation constellationKey) {
+        return discoverConstellation(player, constellationKey);
+    }
+
+    public static boolean setExp(@Nonnull ServerPlayer player, long exp) {
+        PlayerProgress progress = PlayerProgressManager.getProgress(player);
+        if (progress == null) return false;
+        progress.setPerkExp(Math.max(0, exp));
+        sync(player);
+        return true;
+    }
+
+    public static void wipeProgress(@Nonnull ServerPlayer player) {
+        PlayerProgress progress = PlayerProgressManager.getProgress(player);
+        if (progress == null) return;
+        hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper.removeAllVanillaModifiers(player);
+        progress.setTierReached(ProgressionTier.DISCOVERY);
+        progress.setAttunedConstellation(null);
+        progress.setOnceAttuned(false);
+        progress.clearDiscoveredConstellations();
+        progress.clearAllocatedPerks();
+        progress.setPerkExp(0);
+        progress.setPerkPoints(0);
+        progress.setUnlockedResearch(java.util.Collections.emptyList());
+        progress.forceGainResearch(ResearchProgression.DISCOVERY);
+        sync(player);
+    }
+
+    public static boolean forceMaximizeAll(@Nonnull ServerPlayer player) {
+        PlayerProgress progress = PlayerProgressManager.getProgress(player);
+        if (progress == null) return false;
+        progress.setTierReached(ProgressionTier.TRAIT_CRAFT);
+        for (IConstellation cst : ConstellationRegistry.getAllConstellations()) {
+            progress.discoverConstellation(cst.getRegistryName());
+        }
+        grantEligibleProgressions(progress);
+        sync(player);
+        return true;
+    }
+
     private static void sync(@Nonnull ServerPlayer player) {
         PlayerProgressManager.syncProgress(player);
     }

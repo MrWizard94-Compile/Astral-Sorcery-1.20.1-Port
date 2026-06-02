@@ -11,6 +11,9 @@ import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import net.minecraft.core.BlockPos;
@@ -110,14 +113,20 @@ public class PktDiscoverConstellation {
             return;
         }
 
-        // Record discovery
+        // Record discovery and fire advancement trigger
         progress.discoverConstellation(constellationKey);
+        AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(player, constellation);
 
-        // Check for progression tier advancement
-        checkTierAdvancement(player, progress);
+        // Check for progression tier advancement (may change tier — must sync full progress)
+        boolean tiered = checkTierAdvancement(player, progress);
 
-        // Sync to client
+        // Send targeted discovery update for the constellation panel
         PacketChannel.sendToPlayer(new PktDiscoveryUpdate(constellationKey, true), player);
+
+        // Full sync needed if tier changed (client needs updated tier to unlock new UI)
+        if (tiered) {
+            PlayerProgressManager.syncProgress(player);
+        }
 
         // Display discovery message
         player.displayClientMessage(
@@ -132,29 +141,29 @@ public class PktDiscoverConstellation {
      * Checks if the player should advance to the next progression tier
      * based on discovery milestones.
      */
-    private static void checkTierAdvancement(@Nonnull ServerPlayer player,
-                                              @Nonnull PlayerProgress progress) {
+    private static boolean checkTierAdvancement(@Nonnull ServerPlayer player,
+                                                 @Nonnull PlayerProgress progress) {
         int discovered = progress.getDiscoveredConstellations().size();
+        boolean advanced = false;
 
-        // Discovery tier unlocked at 1 constellation
-        if (discovered >= 1 && !progress.isAtLeast(ProgressionTier.BASIC_CRAFT)) {
-            progress.setTierReached(ProgressionTier.BASIC_CRAFT);
+        if (discovered >= 1 && ResearchManager.grantTier(player, ProgressionTier.BASIC_CRAFT)) {
             player.displayClientMessage(
                     Component.translatable("astralsorcery.progress.tier_basic_craft"), false);
+            advanced = true;
         }
 
-        // Attunement tier unlocked at 5 constellations
-        if (discovered >= 5 && !progress.isAtLeast(ProgressionTier.ATTUNEMENT)) {
-            progress.setTierReached(ProgressionTier.ATTUNEMENT);
+        if (discovered >= 5 && ResearchManager.grantTier(player, ProgressionTier.ATTUNEMENT)) {
             player.displayClientMessage(
                     Component.translatable("astralsorcery.progress.tier_attunement"), false);
+            advanced = true;
         }
 
-        // Constellation tier unlocked at 12 constellations
-        if (discovered >= 12 && !progress.isAtLeast(ProgressionTier.CONSTELLATION_CRAFT)) {
-            progress.setTierReached(ProgressionTier.CONSTELLATION_CRAFT);
+        if (discovered >= 12 && ResearchManager.grantTier(player, ProgressionTier.CONSTELLATION_CRAFT)) {
             player.displayClientMessage(
                     Component.translatable("astralsorcery.progress.tier_constellation"), false);
+            advanced = true;
         }
+
+        return advanced;
     }
 }

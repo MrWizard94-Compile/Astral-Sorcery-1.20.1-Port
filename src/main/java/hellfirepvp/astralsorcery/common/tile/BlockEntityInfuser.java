@@ -87,6 +87,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         if (!isClientSide() && !registeredInNetwork) {
             StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
             registeredInNetwork = true;
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.attemptAutoLinkTo(getBlockPos());
         }
     }
 
@@ -256,7 +259,11 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     private void completeInfusion(@Nonnull Level level) {
         if (cachedRecipe == null) return;
 
+        ItemStack input = inventory.getStackInSlot(0);
         ItemStack result = cachedRecipe.getOutput().copy();
+        if (cachedRecipe.doesCopyNBTToOutputs() && !input.isEmpty() && input.hasTag()) {
+            result.setTag(input.getOrCreateTag().copy());
+        }
         inventory.setStackInSlot(0, result);
 
         // Consume the required fluid amount beyond what was drained per-tick
@@ -418,6 +425,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     public void setRemoved() {
         super.setRemoved();
         if (!isClientSide()) {
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.removeAutoLinkTo(getBlockPos());
             StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
         }
     }

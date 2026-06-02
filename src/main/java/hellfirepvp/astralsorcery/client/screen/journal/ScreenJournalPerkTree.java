@@ -11,6 +11,9 @@ import hellfirepvp.astralsorcery.client.util.RenderingUtils;
 import hellfirepvp.astralsorcery.client.util.ScreenTextEntry;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ResearchHelper;
+import hellfirepvp.astralsorcery.common.network.PacketChannel;
+import hellfirepvp.astralsorcery.common.network.play.client.PktPerkAllocate;
+import hellfirepvp.astralsorcery.common.network.play.client.PktPerkDeallocate;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
 import net.minecraft.client.Minecraft;
@@ -136,31 +139,81 @@ public class ScreenJournalPerkTree extends ScreenJournal {
     private void drawPerkNodes(GuiGraphics graphics, float pTicks) {
         PlayerProgress progress = ResearchHelper.getClientProgress();
 
+        // Compute screen positions first so connections can be drawn between them
+        Map<AbstractPerk, Point.Float> screenPositions = new HashMap<>();
         for (AbstractPerk perk : PerkTree.getAllPerks()) {
             if (!perk.isEnabled()) continue;
-
             Point.Float offset = sizeHandler.scalePointToGui(this, mousePosition,
                     new Point.Float(perk.getX(), perk.getY()));
-            float sz = sizeHandler.getZoomedWHNode();
+            screenPositions.put(perk, offset);
+        }
+
+        float sz = sizeHandler.getZoomedWHNode();
+
+        // 1. Draw connections (lines) between linked perks
+        boolean isSearching = !searchTextEntry.getText().trim().isEmpty();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        for (PerkTree.Connection conn : PerkTree.getConnections()) {
+            AbstractPerk a = conn.from();
+            AbstractPerk b = conn.to();
+            if (!a.isEnabled() || !b.isEnabled()) continue;
+            Point.Float from = screenPositions.get(a);
+            Point.Float to = screenPositions.get(b);
+            if (from == null || to == null) continue;
+
+            boolean matchAny = !isSearching || searchHighlighted.contains(a) || searchHighlighted.contains(b);
+            float alpha = matchAny ? 0.4f : 0.08f;
+            RenderingDrawUtils.drawLine(graphics, graphics.pose(),
+                    from.x, from.y, to.x, to.y, 1.5f,
+                    new Color(0.5f, 0.6f, 0.8f, alpha));
+        }
+        RenderSystem.disableBlend();
+
+        // 2. Draw halo behind active perks
+        for (Map.Entry<AbstractPerk, Point.Float> entry : screenPositions.entrySet()) {
+            AbstractPerk perk = entry.getKey();
+            Point.Float offset = entry.getValue();
+            boolean allocated = progress.hasPerkAllocated(perk.getKey());
+            if (!allocated) continue;
+
+            float haloSz = sz * 2.0f;
+            float hx = offset.x - haloSz / 2f;
+            float hy = offset.y - haloSz / 2f;
+            if (!guiBox.isInBox(hx - guiLeft, hy - guiTop)) continue;
+
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderingDrawUtils.drawTexturedRect(graphics, TexturesAS.TEX_GUI_PERK_HALO_ACTIVE.getKey(),
+                    (int) hx, (int) hy, (int) haloSz, (int) haloSz);
+            RenderSystem.disableBlend();
+        }
+
+        // 3. Draw perk node icons
+        for (Map.Entry<AbstractPerk, Point.Float> entry : screenPositions.entrySet()) {
+            AbstractPerk perk = entry.getKey();
+            Point.Float offset = entry.getValue();
+
             float x = offset.x - sz / 2f;
             float y = offset.y - sz / 2f;
-
             if (!guiBox.isInBox(x - guiLeft, y - guiTop)) continue;
 
             boolean allocated = progress.hasPerkAllocated(perk.getKey());
-            boolean searching = !searchTextEntry.getText().trim().isEmpty();
-            boolean matched = !searching || searchHighlighted.contains(perk);
+            boolean matched = !isSearching || searchHighlighted.contains(perk);
 
-            float r, g, b, a;
-            if (allocated) {
-                r = 0.6f; g = 0.8f; b = 1.0f;
-            } else {
-                r = 0.4f; g = 0.4f; b = 0.5f;
-            }
-            a = matched ? 0.8f : 0.15f;
+            ResourceLocation nodeTex = allocated
+                    ? TexturesAS.TEX_GUI_PERK_ACTIVE.getKey()
+                    : TexturesAS.TEX_GUI_PERK_INACTIVE.getKey();
 
-            RenderingDrawUtils.drawRect(graphics, (int) x, (int) y, (int) sz, (int) sz,
-                    new Color(r, g, b, a));
+            float alpha = matched ? 1.0f : 0.2f;
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+            RenderingDrawUtils.drawTexturedRect(graphics, nodeTex,
+                    (int) x, (int) y, (int) sz, (int) sz);
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.disableBlend();
+
             thisFramePerks.put(perk, new Rectangle.Float(x, y, sz, sz));
         }
     }
@@ -253,6 +306,24 @@ public class ScreenJournalPerkTree extends ScreenJournal {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (super.mouseClicked(mouseX, mouseY, button)) return true;
         if (button == 0 && handleBookmarkClick(mouseX, mouseY)) return true;
+
+        // Perk allocation (left-click) / deallocation (right-click)
+        if (button == 0 || button == 1) {
+            PlayerProgress progress = ResearchHelper.getClientProgress();
+            for (Map.Entry<AbstractPerk, Rectangle.Float> entry : thisFramePerks.entrySet()) {
+                if (entry.getValue().contains(mouseX, mouseY)) {
+                    AbstractPerk perk = entry.getKey();
+                    if (button == 0 && !progress.hasPerkAllocated(perk.getKey())) {
+                        PacketChannel.sendToServer(new PktPerkAllocate(perk.getKey()));
+                        return true;
+                    }
+                    if (button == 1 && progress.hasPerkAllocated(perk.getKey())) {
+                        PacketChannel.sendToServer(new PktPerkDeallocate(perk.getKey()));
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 

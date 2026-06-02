@@ -120,6 +120,12 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         if (!isClientSide() && !registeredInNetwork) {
             StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
             registeredInNetwork = true;
+            // Auto-link any collector crystals above and within range
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) {
+                handler.attemptAutoLinkTo(getBlockPos());
+            }
         }
     }
 
@@ -567,6 +573,11 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     public void setRemoved() {
         super.setRemoved();
         if (!isClientSide()) {
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) {
+                handler.removeAutoLinkTo(getBlockPos());
+            }
             StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
         }
     }

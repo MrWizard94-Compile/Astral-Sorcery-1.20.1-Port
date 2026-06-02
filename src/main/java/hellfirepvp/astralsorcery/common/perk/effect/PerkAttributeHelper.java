@@ -7,10 +7,12 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.perk.effect;
 
+import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
+import hellfirepvp.astralsorcery.common.perk.PerkAttributeLimiter;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
-import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
@@ -52,7 +54,7 @@ public final class PerkAttributeHelper {
                                       @Nonnull ResourceLocation typeKey,
                                       double baseValue) {
         List<PerkAttributeModifier> modifiers = collectModifiers(player, allocated, typeKey);
-        return applyModifiers(baseValue, modifiers);
+        return PerkAttributeLimiter.clamp(typeKey, applyModifiers(baseValue, modifiers));
     }
 
     /**
@@ -62,8 +64,10 @@ public final class PerkAttributeHelper {
     public static List<PerkAttributeModifier> collectModifiers(@Nonnull Player player,
                                                                 @Nonnull Set<ResourceLocation> allocated,
                                                                 @Nonnull ResourceLocation typeKey) {
+        PlayerProgress progress = PlayerProgressHelper.getProgress(player);
         List<PerkAttributeModifier> result = new ArrayList<>();
         for (ResourceLocation perkKey : allocated) {
+            if (progress != null && progress.isPerkSealed(perkKey)) continue;
             AbstractPerk perk = PerkTree.getPerk(perkKey);
             if (perk == null || !perk.isEnabled()) continue;
 

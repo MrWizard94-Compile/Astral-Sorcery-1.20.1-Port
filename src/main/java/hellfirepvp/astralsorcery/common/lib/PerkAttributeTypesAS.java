@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.perk.PerkAttributeLimiter;
 import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -150,5 +151,17 @@ public final class PerkAttributeTypesAS {
         ATTR_TYPE_ALIGNMENT_CHARGE_REGEN = AttributeTypeRegistry.register(
                 new PerkAttributeType(
                         AstralSorcery.key("perk.attr.alignment_charge_regen")));
+
+        // Register value caps for dangerous custom attributes
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_CRIT_CHANCE.getKey(),             0.0, 0.75);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_CRIT_MULTIPLIER.getKey(),         1.0, 4.0);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_ALL_ELEMENTAL_RESIST.getKey(),    0.0, 0.60);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_LIFE_STEAL.getKey(),              0.0, 0.20);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_MINING_SPEED.getKey(),            0.0, 5.0);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_EXPERIENCE.getKey(),              0.0, 3.0);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_STARLIGHT_COLLECTION.getKey(),    0.0, 3.0);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_PERK_EFFECT.getKey(),             0.1, 3.0);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_ALIGNMENT_CHARGE_MAX.getKey(),    0.0, 10.0);
+        PerkAttributeLimiter.registerLimit(ATTR_TYPE_ALIGNMENT_CHARGE_REGEN.getKey(), 0.0, 5.0);
     }
 }

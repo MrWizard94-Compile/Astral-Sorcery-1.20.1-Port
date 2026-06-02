@@ -73,6 +73,9 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
     public void setRemoved() {
         super.setRemoved();
         if (!isClientSide() && registeredInNetwork) {
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.removeAutoLinkTo(getBlockPos());
             StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
             registeredInNetwork = false;
         }
@@ -84,6 +87,9 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         if (!isClientSide() && !registeredInNetwork) {
             StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
             registeredInNetwork = true;
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.attemptAutoLinkTo(getBlockPos());
         }
     }
 

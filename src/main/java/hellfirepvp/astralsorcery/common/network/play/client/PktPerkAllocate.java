@@ -8,6 +8,7 @@ import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.perk.AllocationStatus;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
+import hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -54,6 +55,7 @@ public class PktPerkAllocate {
 
             AllocationStatus status = PerkTree.allocate(player, progress, pkt.perkKey);
             if (status == AllocationStatus.SUCCESS) {
+                PerkAttributeHelper.applyVanillaModifiers(player, progress.getAllocatedPerks());
                 PlayerProgressManager.syncProgress(player);
             } else {
                 AstralSorcery.log.debug("Perk allocate denied for {} ({}): {}",

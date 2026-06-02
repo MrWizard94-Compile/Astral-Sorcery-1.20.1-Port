@@ -92,6 +92,9 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         if (!isClientSide() && !registeredInNetwork) {
             StarlightNetworkHelper.registerSource(getLevel(), getBlockPos(), this);
             registeredInNetwork = true;
+            hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
+                    StarlightNetworkHelper.getHandler(getLevel());
+            if (handler != null) handler.attemptAutoLinkFrom(getBlockPos());
         }
     }
 

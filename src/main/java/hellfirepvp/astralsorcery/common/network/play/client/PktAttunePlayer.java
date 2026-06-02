@@ -13,8 +13,7 @@ import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
-import hellfirepvp.astralsorcery.common.network.PacketChannel;
-import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPlayerProgress;
+import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -92,13 +91,10 @@ public class PktAttunePlayer {
                 return;
             }
 
-            // Apply attunement
-            progress.setAttunedConstellation(msg.constellation);
+            // Apply attunement (discovers constellation, grants tier, fires advancement trigger, syncs)
+            ResearchManager.attuneTo(sender, msg.constellation);
             AstralSorcery.log.info("Player {} attuned to constellation {}",
                     sender.getName().getString(), msg.constellation);
-
-            // Sync updated progress back to client
-            PacketChannel.sendToPlayer(new PktSyncPlayerProgress(progress), sender);
         });
         ctx.setPacketHandled(true);
     }

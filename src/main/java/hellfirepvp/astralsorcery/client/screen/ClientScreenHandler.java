@@ -4,6 +4,7 @@
 package hellfirepvp.astralsorcery.client.screen;
 
 import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournalProgression;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -56,6 +57,14 @@ public final class ClientScreenHandler {
      */
     public static void openJournalScreen() {
         Minecraft.getInstance().setScreen(ScreenJournalProgression.getJournalInstance());
+    }
+
+    /**
+     * Opens the constellation paper reading screen.
+     * Called from ItemConstellationPaper.use() on the client side.
+     */
+    public static void openConstellationPaperScreen(@Nonnull IConstellation constellation) {
+        Minecraft.getInstance().setScreen(new ScreenConstellationPaper(constellation));
     }
 
     /**

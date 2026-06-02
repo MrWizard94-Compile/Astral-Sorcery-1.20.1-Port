@@ -12,6 +12,7 @@ import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
+import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktDiscoveryUpdate;
 import net.minecraft.resources.ResourceLocation;
@@ -96,13 +97,11 @@ public final class ConstellationDiscoveryHandler {
 
         // Sync to client if server player
         if (player instanceof ServerPlayer serverPlayer) {
-            PktDiscoveryUpdate pkt = new PktDiscoveryUpdate(
-                    discovered.getRegistryName(), true);
-            PacketChannel.sendToPlayer(pkt, serverPlayer);
-
+            AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(serverPlayer, discovered);
+            PacketChannel.sendToPlayer(
+                    new PktDiscoveryUpdate(discovered.getRegistryName(), true), serverPlayer);
             AstralSorcery.log.info("Player {} discovered constellation: {}",
-                    serverPlayer.getName().getString(),
-                    discovered.getRegistryName());
+                    serverPlayer.getName().getString(), discovered.getRegistryName());
         }
 
         return discovered;
@@ -127,8 +126,8 @@ public final class ConstellationDiscoveryHandler {
         progress.discoverConstellation(key);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            PktDiscoveryUpdate pkt = new PktDiscoveryUpdate(key, true);
-            PacketChannel.sendToPlayer(pkt, serverPlayer);
+            AstralAdvancementTriggers.DISCOVER_CONSTELLATION.trigger(serverPlayer, constellation);
+            PacketChannel.sendToPlayer(new PktDiscoveryUpdate(key, true), serverPlayer);
         }
         return true;
     }

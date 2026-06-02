@@ -26,7 +26,6 @@ import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.enchantment.amulet.PlayerAmuletHandler;
-import hellfirepvp.astralsorcery.common.event.DynamicEnchantmentEvent;
 import hellfirepvp.astralsorcery.common.constellation.SkyHandler;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
 import hellfirepvp.astralsorcery.common.event.EventHandlerEffects;
@@ -38,9 +37,15 @@ import hellfirepvp.astralsorcery.common.event.EventHandlerPerkEffects;
 import hellfirepvp.astralsorcery.common.event.EventHandlerServerTick;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS;
+import hellfirepvp.astralsorcery.common.lib.DataAS;
+import hellfirepvp.astralsorcery.common.lib.DataSerializersAS;
 import hellfirepvp.astralsorcery.common.lib.EngravingEffectsAS;
+import hellfirepvp.astralsorcery.common.lib.GameRulesAS;
+import hellfirepvp.astralsorcery.common.lib.IngredientSerializersAS;
 import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
+import hellfirepvp.astralsorcery.common.lib.PerkCustomModifiersAS;
 import hellfirepvp.astralsorcery.common.lib.StructuresAS;
+import net.minecraft.world.level.GameRules;
 import hellfirepvp.astralsorcery.common.registry.RegistryResearch;
 import hellfirepvp.astralsorcery.common.perk.PerkTreeData;
 import hellfirepvp.astralsorcery.common.lib.LootAS;
@@ -204,7 +209,20 @@ public class CommonProxy {
         // Use event.enqueueWork(() -> { ... }) for thread-unsafe operations.
         event.enqueueWork(() -> {
             PacketChannel.init();
+            DataAS.init();
+            DataSerializersAS.init();
+            GameRulesAS.IGNORE_SKYLIGHT_CHECK_RULE = GameRules.register(
+                    "asIgnoreSkylightCheck",
+                    GameRules.Category.MISC,
+                    GameRules.BooleanValue.create(false));
+            net.minecraftforge.common.crafting.CraftingHelper.register(
+                    hellfirepvp.astralsorcery.AstralSorcery.key("crystal"),
+                    IngredientSerializersAS.CRYSTAL_SERIALIZER);
+            net.minecraftforge.common.crafting.CraftingHelper.register(
+                    hellfirepvp.astralsorcery.AstralSorcery.key("fluid_ingredient"),
+                    IngredientSerializersAS.FLUID_SERIALIZER);
             PerkAttributeTypesAS.init();
+            PerkCustomModifiersAS.init();
             ConstellationsAS.init();
             CrystalPropertiesAS.init();
             EngravingEffectsAS.init();

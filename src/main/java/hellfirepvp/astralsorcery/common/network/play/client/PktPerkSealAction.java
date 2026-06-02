@@ -8,6 +8,7 @@ import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
+import hellfirepvp.astralsorcery.common.perk.effect.PerkAttributeHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,6 +83,7 @@ public class PktPerkSealAction {
                 }
             }
 
+            PerkAttributeHelper.applyVanillaModifiers(player, progress.getAllocatedPerks());
             PlayerProgressManager.syncProgress(player);
         });
         ctx.get().setPacketHandled(true);
