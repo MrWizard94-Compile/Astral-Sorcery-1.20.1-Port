@@ -4,6 +4,9 @@ import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -13,8 +16,11 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,5 +65,23 @@ public class BlockGateway extends BlockEntityBlock {
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
         return createTicker(type, BlockEntityTypesAS.GATEWAY.get());
+    }
+
+    @Nonnull
+    @Override
+    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
+                                 @Nonnull Player player, @Nonnull InteractionHand hand,
+                                 @Nonnull BlockHitResult hit) {
+        if (level.isClientSide()) {
+            openScreenClient();
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.CONSUME;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static void openScreenClient() {
+        net.minecraft.client.Minecraft.getInstance().setScreen(
+                new hellfirepvp.astralsorcery.client.screen.ScreenGateway());
     }
 }

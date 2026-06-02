@@ -1049,6 +1049,8 @@
   "astralsorcery.progress.tier_attunement": "You have unlocked the Attunement tier!",
   "astralsorcery.progress.tier_constellation": "You have unlocked the Constellation Craft tier!",
   "astralsorcery.screen.telescope": "Telescope",
+  "astralsorcery.screen.gateway.title": "Celestial Gateway",
+  "astralsorcery.screen.gateway.none": "No other gateways registered",
   "astralsorcery.telescope.observing": "Observing %s...",
   "astralsorcery.misc.architect.mode.copy": "Copy",
   "astralsorcery.misc.architect.mode.paste": "Paste",
