@@ -7,6 +7,7 @@ import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectProperties;
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectProvider;
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationItem;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktPlayEffect;
@@ -227,7 +228,14 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
     }
 
     public void setHeldCrystal(@Nonnull ItemStack stack) {
-        this.heldCrystal = stack;
+        this.heldCrystal = stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
+        // Extract attuned constellation from the crystal when placed
+        if (!stack.isEmpty() && stack.getItem() instanceof ConstellationItem cItem) {
+            IWeakConstellation cst = cItem.getAttunedConstellation(stack);
+            this.attunedConstellation = cst != null ? cst.getRegistryName() : null;
+        } else {
+            this.attunedConstellation = null;
+        }
         markForUpdate();
     }
 
