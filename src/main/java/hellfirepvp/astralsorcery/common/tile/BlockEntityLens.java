@@ -1,12 +1,16 @@
 package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.auxiliary.link.LinkableTileEntity;
+import hellfirepvp.astralsorcery.common.crystal.CrystalCalculations;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
 import hellfirepvp.astralsorcery.common.item.lens.ItemColoredLens;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IStarlightTransmission;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.common.util.PartialEffectExecutor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -66,6 +70,8 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     @Nonnull
     private final List<BlockPos> linkedTargets = new ArrayList<>();
 
+    @Nonnull
+    private ItemStack heldCrystal = ItemStack.EMPTY;
     private double transmissionEfficiency = DEFAULT_EFFICIENCY;
     private int ticksExisted = 0;
     private boolean registeredInNetwork = false;
@@ -214,6 +220,28 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     public void setColorOverlay(@Nullable ResourceLocation overlay) {
         this.colorOverlay = overlay;
         markForUpdate();
+    }
+
+    @Nonnull
+    public ItemStack getHeldCrystal() {
+        return heldCrystal;
+    }
+
+    public void setHeldCrystal(@Nonnull ItemStack crystal) {
+        this.heldCrystal = crystal.isEmpty() ? ItemStack.EMPTY : crystal.copy();
+        recalculateEfficiency();
+        markForUpdate();
+    }
+
+    private void recalculateEfficiency() {
+        if (heldCrystal.isEmpty() || !(heldCrystal.getItem() instanceof ItemCrystalBase)) {
+            this.transmissionEfficiency = DEFAULT_EFFICIENCY;
+            return;
+        }
+        CrystalProperties props = CrystalProperties.getFromStack(heldCrystal);
+        this.transmissionEfficiency = props != null
+                ? CrystalCalculations.getTransmissionEfficiency(props)
+                : DEFAULT_EFFICIENCY;
     }
 
     @Nonnull
@@ -386,6 +414,12 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
                 linkedTargets.add(NbtUtils.readBlockPos(list.getCompound(i)));
             }
         }
+
+        if (compound.contains("heldCrystal")) {
+            this.heldCrystal = ItemStack.of(compound.getCompound("heldCrystal"));
+        } else {
+            this.heldCrystal = ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -400,18 +434,28 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
             list.add(NbtUtils.writeBlockPos(pos));
         }
         compound.put("linkedTargets", list);
+
+        if (!heldCrystal.isEmpty()) {
+            compound.put("heldCrystal", heldCrystal.save(new CompoundTag()));
+        }
     }
 
     @Override
     public void readSaveNBT(@Nonnull CompoundTag compound) {
         super.readSaveNBT(compound);
-        this.transmissionEfficiency = compound.contains("transmissionEfficiency")
-                ? compound.getDouble("transmissionEfficiency") : DEFAULT_EFFICIENCY;
+        if (compound.contains("heldCrystal")) {
+            this.heldCrystal = ItemStack.of(compound.getCompound("heldCrystal"));
+        } else {
+            this.heldCrystal = ItemStack.EMPTY;
+        }
+        recalculateEfficiency();
     }
 
     @Override
     public void writeSaveNBT(@Nonnull CompoundTag compound) {
         super.writeSaveNBT(compound);
-        compound.putDouble("transmissionEfficiency", transmissionEfficiency);
+        if (!heldCrystal.isEmpty()) {
+            compound.put("heldCrystal", heldCrystal.save(new CompoundTag()));
+        }
     }
 }
