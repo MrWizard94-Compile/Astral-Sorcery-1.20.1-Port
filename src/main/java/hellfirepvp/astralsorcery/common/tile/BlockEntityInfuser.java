@@ -23,6 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -154,12 +155,32 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
             return;
         }
 
+        // Pull liquid starlight from adjacent chalice when tank is below 50%
+        if (tank.getFluidAmount() < tank.getCapacity() / 2 && ticksExisted % 20 == 0) {
+            pullFromAdjacentChalice(level);
+        }
+
         // Active infusion in progress
         if (activeRecipeId != null && cachedRecipe != null) {
             tickInfusion(level);
         } else if (ticksExisted % RECIPE_SCAN_INTERVAL == 0) {
             // Scan for matching recipe
             tryFindInfusionRecipe(level);
+        }
+    }
+
+    private void pullFromAdjacentChalice(@Nonnull Level level) {
+        for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
+            BlockEntity adj = level.getBlockEntity(worldPosition.relative(dir));
+            if (!(adj instanceof BlockEntityChalice chalice)) continue;
+            FluidStack available = chalice.getTank().drain(500, IFluidHandler.FluidAction.SIMULATE);
+            if (available.isEmpty()) continue;
+            int fillable = tank.fill(available, IFluidHandler.FluidAction.SIMULATE);
+            if (fillable <= 0) continue;
+            FluidStack toMove = new FluidStack(available.getFluid(), Math.min(fillable, available.getAmount()));
+            chalice.getTank().drain(toMove, IFluidHandler.FluidAction.EXECUTE);
+            tank.fill(toMove, IFluidHandler.FluidAction.EXECUTE);
+            return;
         }
     }
 

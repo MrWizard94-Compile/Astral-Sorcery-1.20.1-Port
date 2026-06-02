@@ -203,10 +203,10 @@ Focus constellation comes from linked collector crystal (no physical focus item 
 - [x] **H3.4** `RenderHandEvent` suppresses arm rendering during the ceremony ✅
 - [x] **H3.5-H3.6** `ClientCameraManager`/`CameraPath`/`EntityCameraRenderView` NOT NEEDED — `ViewportEvent` approach is simpler and sufficient for 1.20 ✅
 
-### H4 — OBJ Model System 🟡 (needed for telescope, refraction table custom 3D models)
+### H4 — OBJ Model System ✅ NOT NEEDED
 
-- [ ] **H4.1** Port `WavefrontObject` OBJ parser + helper classes (Face, Vertex, GroupObject, TextureCoordinate, ModelFormatException)
-- [ ] **H4.2** Wire OBJ parser into custom model rendering for telescope, refraction table
+- [x] **H4.1** NOT NEEDED — telescope uses JSON element model (`models/block/telescope.json`); observatory uses `ModelObservatory` (238-line Java `ModelPart` class, proper 1.20 entity-model approach); refraction table uses JSON element model ✅
+- [x] **H4.2** NOT NEEDED — all three BERs registered in ClientProxy; `RenderObservatory` uses `ModelObservatory`, `RenderTelescope` renders glow effect, `RenderRefractionTable` renders particle animations ✅
 
 ### H5 — Remaining Client Utilities 🟡
 

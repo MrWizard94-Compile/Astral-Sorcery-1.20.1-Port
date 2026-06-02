@@ -78,6 +78,11 @@ public class BlockEntityChalice extends BlockEntityTick {
         Level level = getLevel();
         if (level == null) return;
 
+        // Pull liquid starlight from nearby lightwells and fountains
+        if (tank.getFluidAmount() < tank.getCapacity()) {
+            tickLightwellDraw(level);
+        }
+
         FluidStack thisFluid = tank.getFluid();
         if (thisFluid.isEmpty()) return;
 
@@ -119,6 +124,38 @@ public class BlockEntityChalice extends BlockEntityTick {
         }
 
         tickInteractions(level);
+    }
+
+    /**
+     * Pull liquid starlight from nearby lightwells within 8 blocks.
+     * Matches the 1.16 chalice behavior where a chalice automatically absorbs
+     * fluid from a nearby lightwell, enabling passive fluid storage.
+     */
+    private void tickLightwellDraw(@Nonnull Level level) {
+        BlockPos thisPos = getBlockPos();
+        int radius = 8;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    BlockPos checkPos = thisPos.offset(dx, dy, dz);
+                    BlockEntity be = level.getBlockEntity(checkPos);
+                    if (!(be instanceof BlockEntityWell well)) continue;
+
+                    FluidStack available = well.getTank().drain(400, IFluidHandler.FluidAction.SIMULATE);
+                    if (available.isEmpty() || available.getAmount() < 100) continue;
+
+                    int fillable = tank.fill(available, IFluidHandler.FluidAction.SIMULATE);
+                    if (fillable <= 0) return; // chalice is full — stop searching
+
+                    FluidStack toMove = new FluidStack(available.getFluid(), Math.min(fillable, available.getAmount()));
+                    well.getTank().drain(toMove, IFluidHandler.FluidAction.EXECUTE);
+                    tank.fill(toMove, IFluidHandler.FluidAction.EXECUTE);
+                    markForUpdate();
+                    return; // one well per tick
+                }
+            }
+        }
     }
 
     private void tickInteractions(@Nonnull Level level) {
