@@ -426,3 +426,8 @@ Q (integrations) — after core
 
 - [x] **C5** Crystal property-driven lens efficiency: `BlockEntityLens` now accepts a crystal via right-click; `CrystalCalculations.getTransmissionEfficiency()` (cutting×0.7 + purity×0.2) replaces hardcoded 95%. Crystal persists in NBT; drops on block break ✅
 - [x] **L1.7** Infused crystal tool special abilities: pickaxe right-click ore scan (END_ROD particles at ores, 120t CD); sword on-hit Celestial Strike (lightning bolt + area damage, radius 5, 120t CD); axe tree felling (up to 128 logs, 120t CD); shovel same-state chain mining (up to 200 blocks, 120t CD) ✅
+- [x] **BF13** `BlockEntityAltar.tryFindRecipe()` blocked by `structureValid == false` (never set to true — no validation method called in tick); ALL altar tiers were completely non-functional for crafting ✅
+- [x] **BF14** `BlockEntityRitualPedestal.setHeldCrystal()` stored the item but never extracted `attunedConstellation` → `shouldBeActive` always false → rituals never activated regardless of what crystal was placed ✅
+- [x] **BF15** `BlockSpectralRelay` and `BlockRelay` had no `use()` method → glass lens could only be inserted via hopper, making both relay types effectively unusable without automation ✅
+- [x] **BF16** `BlockEntityLens/Prism.addLinkedTarget()` added positions to `linkedTargets` unconditionally before checking the network; when used as the 2nd link target, wasted a slot by pointing back at the source (collector crystal) ✅
+- [x] **BF17** `ScreenGateway` did not exist — gateway block had no `use()` method; entire gateway teleportation system was inaccessible despite complete server-side backend ✅
