@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 import javax.annotation.Nonnull;
@@ -45,6 +46,22 @@ public class BlockSpectralRelay extends BlockEntityBlock {
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos,
                                @Nonnull CollisionContext context) {
         return SHAPE;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(@Nonnull BlockState state, @Nonnull Level level,
+                         @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof BlockEntitySpectralRelay relay) {
+                ItemStack lens = relay.getInventory().getStackInSlot(0);
+                if (!lens.isEmpty()) {
+                    Block.popResource(level, pos, lens);
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Nullable
