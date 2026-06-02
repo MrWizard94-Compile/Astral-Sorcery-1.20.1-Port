@@ -3,6 +3,7 @@ package hellfirepvp.astralsorcery.common.tile;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
+import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarAttunement;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarConstellation;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarDiscovery;
@@ -154,9 +155,42 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             tryFindRecipe(level);
         }
 
+        // Passive sky collection every second — critical for early-game bootstrap
+        // before any collector crystal is set up (mirrors 1.16 TileAltar.gatherStarlight)
+        if (ticksExisted % 20 == 0) {
+            gatherSkyStarlight(level);
+        }
+
         // Gradually dissipate stored starlight if not crafting (small leak)
         if (!isCrafting && storedStarlight > 0) {
             storedStarlight = Math.max(0, storedStarlight - 0.5);
+        }
+    }
+
+    /**
+     * Passively collects starlight from the open sky each second.
+     * Mirrors 1.16 TileAltar.gatherStarlight(): height + position distribution factors,
+     * scaled by tier. Without this, players cannot power the discovery altar before
+     * having a collector crystal — a chicken-and-egg blocker for early game.
+     */
+    private void gatherSkyStarlight(@Nonnull Level level) {
+        if (!doesSeeSky()) return;
+
+        float distribution = CelestialHandler.getStarlightDistributionFactor(level);
+        if (distribution <= 0) return;
+
+        int tier = getAltarType().ordinal() + 1;
+        // Height factor: higher altars collect more (matches 1.16 formula)
+        float heightFactor = net.minecraft.util.Mth.clamp(
+                (float) Math.pow(getBlockPos().getY() / 7.0, 1.5) / 65.0F, 0F, 1F);
+
+        double collected = (heightFactor * tier * 2.0) * distribution;
+        if (collected > 0) {
+            double space = starlightCapacity - storedStarlight;
+            if (space > 0) {
+                storedStarlight += Math.min(collected, space);
+                setChanged();
+            }
         }
     }
 
