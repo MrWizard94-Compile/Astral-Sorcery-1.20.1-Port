@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "astralsorcery:marble_slab"
+    "astralsorcery:marble_slab",
+    "astralsorcery:black_marble_slab",
+    "astralsorcery:infused_wood_slab"
   ]
 }
