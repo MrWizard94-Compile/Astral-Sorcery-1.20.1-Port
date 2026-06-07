@@ -9,12 +9,15 @@ package hellfirepvp.astralsorcery.common.world;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.world.feature.AquamarineFeature;
+import hellfirepvp.astralsorcery.common.world.feature.AstralConfigCountPlacement;
+import hellfirepvp.astralsorcery.common.world.feature.AstralConfigHeightPlacement;
 import hellfirepvp.astralsorcery.common.world.feature.GlowFlowerFeature;
 import hellfirepvp.astralsorcery.common.world.feature.MarbleVeinFeature;
 import hellfirepvp.astralsorcery.common.world.feature.RockCrystalFeature;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -43,6 +46,25 @@ public final class WorldGenerationAS {
 
     public static final DeferredRegister<Feature<?>> FEATURES =
             DeferredRegister.create(Registries.FEATURE, AstralSorcery.MODID);
+
+    public static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIERS =
+            DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, AstralSorcery.MODID);
+
+    /**
+     * Config-driven count modifier: reads rockCrystalAttemptsPerChunk or aquamarineFrequency.
+     * Used in placed_feature JSONs for rock_crystal_ore and aquamarine_ore.
+     */
+    public static final RegistryObject<PlacementModifierType<AstralConfigCountPlacement>> CONFIG_COUNT =
+            PLACEMENT_MODIFIERS.register("config_count",
+                    () -> () -> AstralConfigCountPlacement.CODEC);
+
+    /**
+     * Config-driven height modifier: reads rockCrystalMinY and rockCrystalMaxY.
+     * Used in the rock_crystal_ore placed_feature JSON.
+     */
+    public static final RegistryObject<PlacementModifierType<AstralConfigHeightPlacement>> ROCK_CRYSTAL_HEIGHT =
+            PLACEMENT_MODIFIERS.register("rock_crystal_height",
+                    () -> () -> AstralConfigHeightPlacement.CODEC);
 
     // ---- Feature types ----
 

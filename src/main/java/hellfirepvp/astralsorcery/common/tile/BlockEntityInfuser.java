@@ -219,13 +219,18 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
             return;
         }
 
-        // Drain liquid starlight from tank
-        FluidStack drained = tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.SIMULATE);
-        if (drained.isEmpty() || drained.getAmount() < FLUID_DRAIN_PER_TICK) {
-            // Stall â€” not enough fluid, but don't abort (more may arrive)
-            return;
+        // Drain liquid starlight from tank (unless config says not to consume)
+        boolean consumesLiquid = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.infusionConsumesLiquid.get();
+        if (consumesLiquid) {
+            FluidStack drained = tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.SIMULATE);
+            if (drained.isEmpty() || drained.getAmount() < FLUID_DRAIN_PER_TICK) {
+                // Stall — not enough fluid, but don't abort (more may arrive)
+                return;
+            }
+            tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
+        } else if (tank.getFluid().isEmpty()) {
+            return; // Still require fluid to be present, just not consumed
         }
-        tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
 
         craftingProgress++;
 
@@ -247,10 +252,12 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         List<LiquidInfusion> allRecipes = level.getRecipeManager()
                 .getAllRecipesFor(RecipeTypesAS.LIQUID_INFUSION.get());
 
+        double costMult = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.infusionCostMultiplier.get();
         for (LiquidInfusion recipe : allRecipes) {
             if (recipe.getInputItem().test(input)) {
-                if (stored.getAmount() >= recipe.getFluidMbRequired()) {
-                    startInfusion(recipe);
+                int required = (int) Math.ceil(recipe.getFluidMbRequired() * costMult);
+                if (stored.getAmount() >= required) {
+                    startInfusion(recipe, required);
                     return;
                 }
             }
@@ -260,11 +267,14 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     /**
      * Starts an infusion process.
      */
-    private void startInfusion(@Nonnull LiquidInfusion recipe) {
+    private int scaledFluidRequired = 0;
+
+    private void startInfusion(@Nonnull LiquidInfusion recipe, int scaledRequired) {
         this.activeRecipeId = recipe.getId();
         this.cachedRecipe = recipe;
         this.recipeTick = recipe.getCraftDuration();
         this.craftingProgress = 0;
+        this.scaledFluidRequired = scaledRequired;
         markForUpdate();
         AstralSorcery.log.debug("Infuser started recipe {} at {}",
                 recipe.getId(), worldPosition.toShortString());
@@ -284,12 +294,14 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         }
         inventory.setStackInSlot(0, result);
 
-        // Consume the required fluid amount beyond what was drained per-tick
-        int totalFluidRequired = cr.getFluidMbRequired();
-        int alreadyDrained = craftingProgress * FLUID_DRAIN_PER_TICK;
-        int remaining = totalFluidRequired - alreadyDrained;
-        if (remaining > 0) {
-            tank.drain(remaining, IFluidHandler.FluidAction.EXECUTE);
+        // Consume the (cost-scaled) required fluid beyond what was drained per-tick
+        boolean consumesLiquid = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.infusionConsumesLiquid.get();
+        if (consumesLiquid) {
+            int alreadyDrained = craftingProgress * FLUID_DRAIN_PER_TICK;
+            int remaining = scaledFluidRequired - alreadyDrained;
+            if (remaining > 0) {
+                tank.drain(remaining, IFluidHandler.FluidAction.EXECUTE);
+            }
         }
 
         AstralSorcery.log.debug("Infuser completed recipe {} at {}: produced {}",
@@ -300,6 +312,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         this.cachedRecipe = null;
         this.recipeTick = 0;
         this.craftingProgress = 0;
+        this.scaledFluidRequired = 0;
         markForUpdate();
 
         PacketChannel.sendToAllTracking(
@@ -330,6 +343,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         this.cachedRecipe = null;
         this.recipeTick = 0;
         this.craftingProgress = 0;
+        this.scaledFluidRequired = 0;
         markForUpdate();
     }
 
@@ -461,6 +475,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
             this.activeRecipeId = null;
         }
         this.craftingProgress = compound.getInt("craftingProgress");
+        this.scaledFluidRequired = compound.getInt("scaledFluidRequired");
     }
 
     @Override
@@ -473,6 +488,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
             compound.putString("activeRecipe", ari.toString());
         }
         compound.putInt("craftingProgress", craftingProgress);
+        compound.putInt("scaledFluidRequired", scaledFluidRequired);
     }
 
     @Override

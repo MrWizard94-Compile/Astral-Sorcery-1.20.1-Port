@@ -11,6 +11,8 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeItem;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalGenerator;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.item.ItemStardust;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
@@ -75,10 +77,20 @@ public class FormCelestialCrystalClusterRecipe extends LiquidStarlightRecipe {
         }
         List<Entity> others = getEntitiesInBlock(level, at);
         others.remove(trigger);
+        if (others.size() != 1) return false;
+        int purityThreshold = CommonConfig.CONFIG.celestialPurityThreshold.get();
         boolean hasCrystal = others.stream()
                 .filter(e -> e instanceof ItemEntity)
-                .anyMatch(e -> ((ItemEntity) e).getItem().getItem() instanceof ItemCrystalBase);
-        return hasCrystal && others.size() == 1;
+                .anyMatch(e -> {
+                    ItemStack stack = ((ItemEntity) e).getItem();
+                    if (!(stack.getItem() instanceof CrystalAttributeItem crystalItem)) return false;
+                    if (!(stack.getItem() instanceof ItemCrystalBase)) return false;
+                    CrystalAttributes attrs = crystalItem.getAttributes(stack);
+                    if (attrs == null) return purityThreshold == 0;
+                    CrystalProperties props = CrystalProperties.deriveFrom(attrs);
+                    return props.getPurity() >= purityThreshold;
+                });
+        return hasCrystal;
     }
 
     @Override

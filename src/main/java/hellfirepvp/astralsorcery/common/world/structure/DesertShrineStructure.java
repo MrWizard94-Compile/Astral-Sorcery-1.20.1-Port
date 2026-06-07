@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common.world.structure;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
@@ -81,6 +82,9 @@ public class DesertShrineStructure extends Structure {
     @Override
     @Nonnull
     public Optional<GenerationStub> findGenerationPoint(@Nonnull GenerationContext context) {
+        if (!CommonConfig.CONFIG.generateShrines.get()) {
+            return Optional.empty();
+        }
         BlockPos blockPos = new BlockPos(
                 context.chunkPos().getMinBlockX(),
                 startHeight.sample(context.random(),

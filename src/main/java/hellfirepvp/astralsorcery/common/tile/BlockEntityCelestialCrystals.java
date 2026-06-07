@@ -73,7 +73,10 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
     private void grow(int chance) {
         int stage = getGrowth();
         net.minecraft.world.level.Level level = getLevel();
-        if (level != null && stage < 4 && level.getRandom().nextInt(Math.max(chance, 1)) == 0) {
+        if (level == null || stage >= 4) return;
+        double configChance = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.crystalGrowthChance.get();
+        int effectiveChance = (int) Math.max(1, chance / configChance);
+        if (level.getRandom().nextInt(effectiveChance) == 0) {
             setGrowth(stage + 1);
         }
     }

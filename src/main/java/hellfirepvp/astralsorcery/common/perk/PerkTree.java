@@ -366,6 +366,10 @@ public final class PerkTree {
      * Called by {@code PerkEffectHelper} each server tick.
      */
     public static void tickPerks(@Nonnull Player player, @Nonnull Set<ResourceLocation> allocated) {
+        if (!hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.perksWorkInAllDimensions.get()
+                && !player.level().dimension().equals(net.minecraft.world.level.Level.OVERWORLD)) {
+            return;
+        }
         for (ResourceLocation key : allocated) {
             AbstractPerk perk = PERKS.get(key);
             if (perk != null && perk.isEnabled() && perk.hasTickEffect()) {

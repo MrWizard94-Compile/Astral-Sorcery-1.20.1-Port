@@ -2,6 +2,8 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.data.world.GatewayHandler;
+import hellfirepvp.astralsorcery.common.starlight.IStarlightReceiver;
+import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -34,10 +36,13 @@ import java.util.UUID;
  * TileEntity -> BlockEntity, tick via BlockEntityTicker,
  * GatewayHelper -> GatewayHandler (SavedData)</p>
  */
-public class BlockEntityGateway extends BlockEntityTick {
+public class BlockEntityGateway extends BlockEntityTick implements IStarlightReceiver {
 
     /** How often to re-validate the multiblock structure (ticks). */
     private static final int STRUCTURE_CHECK_INTERVAL = 60;
+
+    private static final double MAX_STARLIGHT_BUFFER = 1000.0;
+    private static final double MAX_STARLIGHT_INPUT = 10.0;
 
     @Nonnull
     private UUID gatewayId = UUID.randomUUID();
@@ -50,6 +55,7 @@ public class BlockEntityGateway extends BlockEntityTick {
 
     private boolean structureValid = false;
     private boolean registeredInNetwork = false;
+    private double starlightBuffer = 0.0;
 
     public BlockEntityGateway(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.GATEWAY.get(), pos, state);
@@ -60,6 +66,7 @@ public class BlockEntityGateway extends BlockEntityTick {
         super.onFirstTick();
         if (!isClientSide()) {
             registerInNetwork();
+            StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
         }
     }
 
@@ -116,6 +123,7 @@ public class BlockEntityGateway extends BlockEntityTick {
     @Override
     public void setRemoved() {
         unregisterFromNetwork();
+        StarlightNetworkHelper.removeNode(getLevel(), getBlockPos());
         super.setRemoved();
     }
 
@@ -150,6 +158,44 @@ public class BlockEntityGateway extends BlockEntityTick {
         }
         return true;
     }
+
+    // ---- IStarlightReceiver ----
+
+    @Override
+    public void receiveStarlight(double amount, @Nullable ResourceLocation constellation) {
+        this.starlightBuffer = Math.min(MAX_STARLIGHT_BUFFER, this.starlightBuffer + amount);
+    }
+
+    @Override
+    public double getMaxStarlightInput() {
+        return MAX_STARLIGHT_INPUT;
+    }
+
+    @Override
+    @Nullable
+    public Level getReceiverLevel() {
+        return getLevel();
+    }
+
+    /**
+     * Attempts to consume the given amount of starlight from the buffer.
+     *
+     * @return true if the buffer had enough starlight and it was deducted; false otherwise
+     */
+    public boolean consumeStarlight(double amount) {
+        if (this.starlightBuffer >= amount) {
+            this.starlightBuffer -= amount;
+            markForUpdate();
+            return true;
+        }
+        return false;
+    }
+
+    public double getStarlightBuffer() {
+        return starlightBuffer;
+    }
+
+    // ---- Public API ----
 
     @Nonnull
     public UUID getGatewayId() {
@@ -219,6 +265,7 @@ public class BlockEntityGateway extends BlockEntityTick {
             this.color = DyeColor.byId(compound.getInt("gatewayColor"));
         }
         this.structureValid = compound.getBoolean("structureValid");
+        this.starlightBuffer = compound.getDouble("starlightBuffer");
     }
 
     @Override
@@ -231,6 +278,7 @@ public class BlockEntityGateway extends BlockEntityTick {
         }
         compound.putInt("gatewayColor", color.getId());
         compound.putBoolean("structureValid", structureValid);
+        compound.putDouble("starlightBuffer", starlightBuffer);
     }
 
 }

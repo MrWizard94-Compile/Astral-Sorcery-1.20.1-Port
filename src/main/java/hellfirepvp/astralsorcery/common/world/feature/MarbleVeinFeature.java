@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.common.world.feature;
 
 import com.mojang.serialization.Codec;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -32,11 +33,6 @@ import javax.annotation.Nonnull;
  */
 public class MarbleVeinFeature extends Feature<NoneFeatureConfiguration> {
 
-    /** Minimum radius of the marble ellipsoid. */
-    private static final int MIN_RADIUS = 10;
-    /** Maximum radius of the marble ellipsoid. */
-    private static final int MAX_RADIUS = 22;
-
     public MarbleVeinFeature(@Nonnull Codec<NoneFeatureConfiguration> codec) {
         super(codec);
     }
@@ -53,10 +49,15 @@ public class MarbleVeinFeature extends Feature<NoneFeatureConfiguration> {
 
         BlockState marbleState = BlocksAS.MARBLE_RAW.get().defaultBlockState();
 
+        // Derive radii from config: at default marbleVeinSize=32, minR=10, maxR=22
+        int veinSize = CommonConfig.CONFIG.marbleVeinSize.get();
+        int minRadius = Math.max(2, veinSize * 5 / 16);
+        int maxRadius = Math.max(minRadius + 2, veinSize * 11 / 16);
+
         // Random ellipsoid radii
-        int radiusX = MIN_RADIUS + random.nextInt(MAX_RADIUS - MIN_RADIUS + 1);
+        int radiusX = minRadius + random.nextInt(maxRadius - minRadius + 1);
         int radiusY = Mth.clamp(radiusX / 3 + random.nextInt(4), 3, 12);
-        int radiusZ = MIN_RADIUS + random.nextInt(MAX_RADIUS - MIN_RADIUS + 1);
+        int radiusZ = minRadius + random.nextInt(maxRadius - minRadius + 1);
 
         int placed = 0;
 

@@ -114,6 +114,7 @@ public class CommonProxy {
 
         // World generation
         WorldGenerationAS.FEATURES.register(modBus);
+        WorldGenerationAS.PLACEMENT_MODIFIERS.register(modBus);
         StructureTypesAS.STRUCTURE_TYPES.register(modBus);
 
         // Global loot modifiers

@@ -74,6 +74,7 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
     @Override
     protected void onFirstTick() {
         super.onFirstTick();
+        tank.setCapacity(hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.wellMaxStorage.get());
         if (!isClientSide()) {
             StarlightNetworkHelper.registerReceiver(getLevel(), getBlockPos(), this);
             hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler handler =
@@ -145,7 +146,7 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
         // Production rate modified by time of day, weather, and received starlight
         float distributionFactor = CelestialHandler.getStarlightDistributionFactor(level);
         double starlightBoost = Math.sqrt(starlightBuffer + 1.0);
-        double ratePerTick = BASE_PRODUCTION_PER_TICK
+        double ratePerTick = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.wellBaseProduction.get()
                 * cr.getProductionMultiplier()
                 * distributionFactor
                 * starlightBoost;
@@ -172,9 +173,12 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
             }
         }
 
-        // Degrade catalyst over time
+        // Degrade catalyst over time — gated by configurable probability per cycle
         if (getTicksExisted() % CATALYST_DEGRADE_INTERVAL == 0) {
-            degradeCatalyst();
+            double chance = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.wellCatalystConsumptionChance.get();
+            if (level.getRandom().nextFloat() < (float) chance) {
+                degradeCatalyst();
+            }
         }
     }
 

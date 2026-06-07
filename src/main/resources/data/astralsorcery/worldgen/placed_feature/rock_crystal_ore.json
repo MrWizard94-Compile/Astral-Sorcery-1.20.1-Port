@@ -2,19 +2,14 @@
   "feature": "astralsorcery:rock_crystal_ore",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 7
+      "type": "astralsorcery:config_count",
+      "target": "rock_crystal"
     },
     {
       "type": "minecraft:in_square"
     },
     {
-      "type": "minecraft:height_range",
-      "height": {
-        "type": "minecraft:uniform",
-        "min_inclusive": { "absolute": -64 },
-        "max_inclusive": { "absolute": 0 }
-      }
+      "type": "astralsorcery:rock_crystal_height"
     },
     {
       "type": "minecraft:biome"

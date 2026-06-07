@@ -120,6 +120,22 @@ public class PktGatewayTeleport {
             }
         }
 
+        // Step 4.5: Starlight cost check
+        double costPerBlock = CommonConfig.CONFIG.gatewayCostPerBlock.get();
+        if (costPerBlock > 0.0) {
+            double distance = sameLevel
+                    ? Math.sqrt(sourceGateway.getBlockPos().distSqr(targetPos))
+                    : 100.0; // flat cross-dimension cost equivalent
+            double cost = distance * costPerBlock;
+            if (!sourceGateway.consumeStarlight(cost)) {
+                AstralSorcery.log.debug("Gateway teleport denied for {}: insufficient starlight (need {}, have {})",
+                        player.getName().getString(),
+                        String.format("%.1f", cost),
+                        String.format("%.1f", sourceGateway.getStarlightBuffer()));
+                return;
+            }
+        }
+
         // Step 5: Get or load the target dimension
         ServerLevel targetLevel = server.getLevel(targetDimKey);
         if (targetLevel == null) {

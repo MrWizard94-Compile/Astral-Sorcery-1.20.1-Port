@@ -49,6 +49,10 @@ public class PrecisionSingleFluidTank implements IFluidTank {
         };
     }
 
+    public void setCapacity(int capacity) {
+        this.maxCapacity = Math.max(1, capacity);
+    }
+
     public void setAllowInput(boolean allowInput) {
         this.allowInput = allowInput;
     }

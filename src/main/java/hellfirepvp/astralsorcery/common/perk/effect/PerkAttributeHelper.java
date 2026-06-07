@@ -64,6 +64,10 @@ public final class PerkAttributeHelper {
     public static List<PerkAttributeModifier> collectModifiers(@Nonnull Player player,
                                                                 @Nonnull Set<ResourceLocation> allocated,
                                                                 @Nonnull ResourceLocation typeKey) {
+        if (!hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.perksWorkInAllDimensions.get()
+                && !player.level().dimension().equals(net.minecraft.world.level.Level.OVERWORLD)) {
+            return java.util.Collections.emptyList();
+        }
         PlayerProgress progress = PlayerProgressHelper.getProgress(player);
         List<PerkAttributeModifier> result = new ArrayList<>();
         for (ResourceLocation perkKey : allocated) {

@@ -2,8 +2,8 @@
   "feature": "astralsorcery:aquamarine_ore",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 5
+      "type": "astralsorcery:config_count",
+      "target": "aquamarine"
     },
     {
       "type": "minecraft:in_square"

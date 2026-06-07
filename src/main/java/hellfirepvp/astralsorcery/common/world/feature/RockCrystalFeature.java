@@ -8,6 +8,7 @@
 package hellfirepvp.astralsorcery.common.world.feature;
 
 import com.mojang.serialization.Codec;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -36,9 +37,6 @@ import javax.annotation.Nonnull;
  */
 public class RockCrystalFeature extends Feature<NoneFeatureConfiguration> {
 
-    /** Maximum cluster size (number of ore blocks per placement). */
-    private static final int MAX_CLUSTER_SIZE = 3;
-
     public RockCrystalFeature(@Nonnull Codec<NoneFeatureConfiguration> codec) {
         super(codec);
     }
@@ -52,7 +50,7 @@ public class RockCrystalFeature extends Feature<NoneFeatureConfiguration> {
         BlockState oreState = BlocksAS.ROCK_CRYSTAL_ORE.get().defaultBlockState();
 
         int placed = 0;
-        int clusterSize = 1 + random.nextInt(MAX_CLUSTER_SIZE);
+        int clusterSize = 1 + random.nextInt(Math.max(1, CommonConfig.CONFIG.rockCrystalVeinSize.get()));
 
         for (int i = 0; i < clusterSize; i++) {
             BlockPos target;

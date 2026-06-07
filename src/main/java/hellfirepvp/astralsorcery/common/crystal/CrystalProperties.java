@@ -108,7 +108,8 @@ public class CrystalProperties {
      * Grow the crystal (increase size up to max).
      */
     public void grow(int amount) {
-        this.size = Math.min(MAX_SIZE, this.size + amount);
+        int cap = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.maxCrystalSize.get();
+        this.size = Math.min(cap, this.size + amount);
     }
 
     // ---- Serialization ----

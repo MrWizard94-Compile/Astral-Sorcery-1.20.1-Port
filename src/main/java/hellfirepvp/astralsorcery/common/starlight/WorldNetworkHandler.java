@@ -353,6 +353,16 @@ public class WorldNetworkHandler extends SavedData {
                     from.toShortString(), to.toShortString(), maxDist);
             return false;
         }
+        // Enforce max connections per source node
+        int maxConn = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.maxNodeConnections.get();
+        final BlockPos fromFinal = from;
+        long outgoing = activeLinks.stream().filter(l -> l.getFrom().equals(fromFinal)).count();
+        if (outgoing >= maxConn) {
+            AstralSorcery.log.debug("Rejected link {} -> {}: source already has {} connections (max {})",
+                    from.toShortString(), to.toShortString(), outgoing, maxConn);
+            return false;
+        }
+
         // Receivers cannot be link sources
         if (receivers.containsKey(from) && !sources.containsKey(from) && !transmissions.containsKey(from)) {
             return false;
@@ -531,12 +541,19 @@ public class WorldNetworkHandler extends SavedData {
                 // Split starlight evenly among targets
                 double perTarget = wave.starlight / targets.size();
 
+                double lossPerBlock = hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.transmissionLossPerBlock.get();
+
                 for (BlockPos target : targets) {
                     if (visited.contains(target)) {
                         continue; // prevent cycles
                     }
 
                     double arriving = perTarget;
+                    // Apply per-block transmission loss over the link distance
+                    if (lossPerBlock > 0.0) {
+                        double distance = Math.sqrt(wave.pos.distSqr(target));
+                        arriving *= Math.pow(1.0 - lossPerBlock, distance);
+                    }
 
                     // Apply transmission efficiency if target is a transmission node
                     TransmissionEntry transmission = transmissions.get(target);
