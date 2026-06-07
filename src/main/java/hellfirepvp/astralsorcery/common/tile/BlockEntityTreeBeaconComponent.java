@@ -29,16 +29,24 @@ public class BlockEntityTreeBeaconComponent extends BlockEntityFakedState {
     @Override
     public void tick() {
         super.tick();
-        if (getLevel() == null || getLevel().isClientSide()) return;
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null || level.isClientSide()) return;
 
         if (getTicksExisted() % 200 == 0) {
             if (treeBeaconPos.equals(BlockPos.ZERO)) {
                 removeSelf();
             } else {
-                BlockEntityTreeBeacon beacon = MiscUtils.getTileAt(
-                        getLevel(), treeBeaconPos, BlockEntityTreeBeacon.class, false);
-                if (beacon == null) {
-                    removeSelf();
+                // Only self-destruct when the beacon's chunk IS loaded and the beacon
+                // genuinely doesn't exist. If the chunk is unloaded, getTileAt returns
+                // null regardless — don't tear down the structure in that case.
+                boolean beaconChunkLoaded = level.getChunkSource()
+                        .hasChunk(treeBeaconPos.getX() >> 4, treeBeaconPos.getZ() >> 4);
+                if (beaconChunkLoaded) {
+                    BlockEntityTreeBeacon beacon = MiscUtils.getTileAt(
+                            level, treeBeaconPos, BlockEntityTreeBeacon.class, false);
+                    if (beacon == null) {
+                        removeSelf();
+                    }
                 }
             }
         }
@@ -57,8 +65,9 @@ public class BlockEntityTreeBeaconComponent extends BlockEntityFakedState {
     @Override
     public void readCustomNBT(@Nonnull CompoundTag compound) {
         super.readCustomNBT(compound);
-        this.treeBeaconPos = NBTHelper.readFromSubTag(compound, "treeBeaconPos",
+        BlockPos loaded = NBTHelper.readFromSubTag(compound, "treeBeaconPos",
                 NBTHelper::readBlockPosFromNBT);
+        this.treeBeaconPos = loaded != null ? loaded : BlockPos.ZERO;
     }
 
     @Override

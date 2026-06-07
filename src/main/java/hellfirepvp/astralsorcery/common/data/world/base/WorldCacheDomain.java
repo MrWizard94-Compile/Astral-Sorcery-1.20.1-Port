@@ -55,7 +55,10 @@ public class WorldCacheDomain {
     @SuppressWarnings("unchecked")
     @Nonnull
     public <T extends BaseWorldData> T getData(@Nonnull ServerLevel level, @Nonnull SaveKey<T> key) {
-        String dataId = this.domainName + "." + key.getIdentifier();
+        // ResourceLocation.toString() produces "namespace:path" — colon is illegal in
+        // Windows file names. Use underscores throughout to stay cross-platform safe.
+        String dataId = this.domainName.getNamespace() + "_"
+                + this.domainName.getPath() + "_" + key.getIdentifier();
         return level.getDataStorage().computeIfAbsent(
                 tag -> {
                     T data = ((Function<SaveKey<?>, T>) this.factories.get(key)).apply(key);
