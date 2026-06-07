@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.tile.base;
 
+import hellfirepvp.astralsorcery.common.lib.GameRulesAS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -63,7 +64,12 @@ public abstract class BlockEntityTick extends BlockEntitySynchronized {
 
     protected boolean doesSeeSky() {
         Level level = getLevel();
-        return level != null && level.canSeeSky(getBlockPos());
+        if (level == null) return false;
+        if (GameRulesAS.IGNORE_SKYLIGHT_CHECK_RULE != null
+                && level.getGameRules().getBoolean(GameRulesAS.IGNORE_SKYLIGHT_CHECK_RULE)) {
+            return true;
+        }
+        return level.canSeeSky(getBlockPos());
     }
 
     /**
@@ -73,25 +79,10 @@ public abstract class BlockEntityTick extends BlockEntitySynchronized {
     protected void onFirstTick() {}
 
     /**
-     * Whether this block entity ticks on the client side.
-     * Override and return false for server-only BEs.
-     */
-    public boolean ticksOnClient() {
-        return true;
-    }
-
-    /**
-     * Whether this block entity ticks on the server side.
-     * Override and return false for client-only BEs (rare).
-     */
-    public boolean ticksOnServer() {
-        return true;
-    }
-
-    /**
      * Convenience: check if currently on client side.
      */
     protected boolean isClientSide() {
-        return getLevel() != null && getLevel().isClientSide();
+        net.minecraft.world.level.Level level = getLevel();
+        return level != null && level.isClientSide();
     }
 }

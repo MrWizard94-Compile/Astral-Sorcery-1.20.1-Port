@@ -61,7 +61,6 @@ public class BlockEntityPrism extends BlockEntityTick implements IStarlightTrans
     @Nonnull
     private ItemStack heldCrystal = ItemStack.EMPTY;
 
-    private int ticksExisted = 0;
     private double transmissionEfficiency = DEFAULT_EFFICIENCY;
     private boolean registeredInNetwork = false;
 
@@ -81,7 +80,6 @@ public class BlockEntityPrism extends BlockEntityTick implements IStarlightTrans
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             // Client-side: beam split rendering handled by TESR
             return;
@@ -126,9 +124,6 @@ public class BlockEntityPrism extends BlockEntityTick implements IStarlightTrans
     // Public API
     // ========================================================================
 
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     public boolean isTransmitting() {
         return !linkedTargets.isEmpty();
@@ -233,7 +228,8 @@ public class BlockEntityPrism extends BlockEntityTick implements IStarlightTrans
      * Whether this prism has a colored lens inserted.
      */
     public boolean hasInsertedLens() {
-        return insertedLens != null && !insertedLens.isEmpty();
+        ItemStack lens = insertedLens;
+        return lens != null && !lens.isEmpty();
     }
 
     // ========================================================================
@@ -293,16 +289,8 @@ public class BlockEntityPrism extends BlockEntityTick implements IStarlightTrans
     @Override
     public void readSaveNBT(@Nonnull CompoundTag compound) {
         super.readSaveNBT(compound);
-        this.heldCrystal = compound.contains("heldCrystal")
-                ? ItemStack.of(compound.getCompound("heldCrystal")) : ItemStack.EMPTY;
+        // heldCrystal is already read in readCustomNBT (sent in the update tag).
+        // Trigger recalculation here so disk-load also derives efficiency.
         recalculateEfficiency();
-    }
-
-    @Override
-    public void writeSaveNBT(@Nonnull CompoundTag compound) {
-        super.writeSaveNBT(compound);
-        if (!heldCrystal.isEmpty()) {
-            compound.put("heldCrystal", heldCrystal.save(new CompoundTag()));
-        }
     }
 }

@@ -60,7 +60,6 @@ import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.lib.MenuTypesAS;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.PlayerModel;
@@ -162,7 +161,6 @@ public class ClientProxy extends CommonProxy {
      * Register block entity renderers.
      * Fired on the mod event bus during client setup.
      */
-    @SuppressWarnings("null")
     private void onRegisterRenderers(@Nonnull EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityTypesAS.ALTAR.get(), RenderAltar::new);
         event.registerBlockEntityRenderer(BlockEntityTypesAS.ATTUNEMENT_ALTAR.get(), RenderAttunementAltar::new);
@@ -204,16 +202,17 @@ public class ClientProxy extends CommonProxy {
     /**
      * Register model layer definitions for BER Java models (attunement altar, observatory).
      */
-    @SuppressWarnings("null")
     private void onRegisterLayerDefinitions(@Nonnull EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModelAttunementAltar.LAYER, ModelAttunementAltar::createLayerDefinition);
         event.registerLayerDefinition(ModelObservatory.LAYER, ModelObservatory::createLayerDefinition);
+        event.registerLayerDefinition(hellfirepvp.astralsorcery.client.model.armor.ModelArmorMantle.LAYER,
+                hellfirepvp.astralsorcery.client.model.armor.ModelArmorMantle::createBodyLayer);
     }
 
     /**
      * Register player render layers (starry glow effect for attuned players).
      */
-    @SuppressWarnings({"unchecked", "null"})
+    @SuppressWarnings("unchecked")
     private void onAddLayers(@Nonnull EntityRenderersEvent.AddLayers event) {
         for (String skin : event.getSkins()) {
             LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer =
@@ -225,7 +224,6 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SuppressWarnings("null")
     private void onRegisterOverlays(@Nonnull RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("starlight_gauge", OverlayStarlightGauge.INSTANCE);
         event.registerAboveAll("alignment_charge", OverlayAlignmentCharge.INSTANCE);
@@ -237,10 +235,11 @@ public class ClientProxy extends CommonProxy {
      * Client setup: register menu screens, keybinds, etc.
      * Fired on the mod event bus after registry events.
      */
-    @SuppressWarnings("null")
     private void onClientSetup(@Nonnull FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             TexturesAS.init();
+            hellfirepvp.astralsorcery.client.registry.RegistrySprites.loadSprites();
+            hellfirepvp.astralsorcery.client.util.word.RandomWordGenerator.init();
             hellfirepvp.astralsorcery.client.ClientPerkReaderRegistry.init();
 
             // Journal bookmarks: progression (10), constellations (20), perks (30)
@@ -265,7 +264,7 @@ public class ClientProxy extends CommonProxy {
 
             // Resonator model override: selects starlight/liquid/structure model based on active upgrade
             ItemProperties.register(ItemsAS.RESONATOR.get(),
-                    new ResourceLocation("upgrade"),
+                    hellfirepvp.astralsorcery.AstralSorcery.key("upgrade"),
                     (stack, level, entity, seed) -> {
                         if (!(entity instanceof Player)) return 0f;
                         return ItemResonator.getSelectedUpgrade(stack).ordinal()
@@ -274,7 +273,6 @@ public class ClientProxy extends CommonProxy {
         });
     }
 
-    @SuppressWarnings("null")
     private void onRegisterReloadListeners(@Nonnull RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(AssetLibrary.INSTANCE);
     }
