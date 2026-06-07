@@ -34,8 +34,15 @@ public final class AstralDataGenerator {
 
         // Server-side data providers
         if (event.includeServer()) {
-            generator.addProvider(true, new AstralRecipeProvider(output));
-            generator.addProvider(true, new AstralLootTableProvider(output));
+            // AstralRecipeProvider DISABLED — only covers 8 of the full recipe set.
+            // Running datagen would shadow those 8 handwritten JSON files.
+            // Re-enable after completing buildRecipes() for all vanilla crafting recipes.
+            // generator.addProvider(true, new AstralRecipeProvider(output));
+
+            // AstralLootTableProvider DISABLED — incomplete; would overwrite hand-crafted
+            // loot tables containing critical custom functions (copy_crystal_properties,
+            // copy_constellation, copy_gateway_color, random_crystal_property).
+            // generator.addProvider(true, new AstralLootTableProvider(output));
 
             AstralBlockTagProvider blockTags = new AstralBlockTagProvider(
                     output, event.getLookupProvider(), existingFileHelper);
@@ -46,8 +53,16 @@ public final class AstralDataGenerator {
 
         // Client-side data providers
         if (event.includeClient()) {
-            generator.addProvider(true, new AstralBlockStateProvider(output, existingFileHelper));
-            generator.addProvider(true, new AstralItemModelProvider(output, existingFileHelper));
+            // AstralBlockStateProvider DISABLED — covers only 16 of 60+ blocks.
+            // Running datagen would shadow those 16 handwritten blockstate JSONs.
+            // Re-enable after completing registerStatesAndModels() for all blocks.
+            // generator.addProvider(true, new AstralBlockStateProvider(output, existingFileHelper));
+
+            // AstralItemModelProvider DISABLED — covers only 27 of 142+ items.
+            // Running datagen would replace those 27 handwritten item models (some 3D)
+            // with flat simpleItem templates.
+            // Re-enable after completing registerModels() for all items.
+            // generator.addProvider(true, new AstralItemModelProvider(output, existingFileHelper));
         }
     }
 }

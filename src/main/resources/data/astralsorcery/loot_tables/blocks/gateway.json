@@ -7,7 +7,12 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "astralsorcery:gateway"
+          "name": "astralsorcery:gateway",
+          "functions": [
+            {
+              "function": "astralsorcery:copy_gateway_color"
+            }
+          ]
         }
       ],
       "conditions": [
