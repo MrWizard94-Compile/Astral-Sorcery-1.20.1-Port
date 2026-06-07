@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * {@link ItemBlockStorage} (architect wand, exchange wand) when the
  * player left-clicks a block (server-side) or left-clicks empty space (client).
  *
- * <p>1.16 → 1.20: isRemote → isClientSide; PacketChannel.CHANNEL stable.</p>
+ * <p>1.16 â†’ 1.20: isRemote â†’ isClientSide; PacketChannel.CHANNEL stable.</p>
  */
 public final class EventHandlerBlockStorage {
 
@@ -38,7 +38,7 @@ public final class EventHandlerBlockStorage {
     public static void onLeftClickEmpty(@Nonnull PlayerInteractEvent.LeftClickEmpty event) {
         ItemStack held = event.getItemStack();
         if (held.isEmpty() || !(held.getItem() instanceof ItemBlockStorage)) return;
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
                 PacketChannel.sendToServer(new PktClearBlockStorageStack()));
     }
 }

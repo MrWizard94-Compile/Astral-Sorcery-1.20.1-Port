@@ -19,14 +19,14 @@ import java.awt.Color;
 import java.util.function.Supplier;
 
 /**
- * Server → Client: triggers a specific visual/sound effect at a location.
+ * Server â†’ Client: triggers a specific visual/sound effect at a location.
  * Used for one-shot effects like ritual activation, altar crafting completion,
  * attunement bursts, and transmutation completion.
  *
  * <p>Each effect type is identified by an enum ordinal. The client handler
  * interprets the type and spawns the appropriate particles/sounds.</p>
  *
- * <p>1.16 → 1.20: Packet format unchanged. Client effect dispatch stable.</p>
+ * <p>1.16 â†’ 1.20: Packet format unchanged. Client effect dispatch stable.</p>
  */
 public class PktPlayEffect {
 
@@ -79,7 +79,7 @@ public class PktPlayEffect {
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() ->
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt)));
+                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt)));
         context.setPacketHandled(true);
     }
 
@@ -146,43 +146,43 @@ public class PktPlayEffect {
      * Types of one-shot visual effects that can be triggered from the server.
      */
     public enum EffectType {
-        /** Altar crafting complete — burst of starlight particles upward. */
+        /** Altar crafting complete â€” burst of starlight particles upward. */
         ALTAR_CRAFT_COMPLETE,
 
-        /** Attunement complete — expanding ring of constellation particles. */
+        /** Attunement complete â€” expanding ring of constellation particles. */
         ATTUNEMENT_COMPLETE,
 
-        /** Ritual activation — swirl of constellation-colored particles. */
+        /** Ritual activation â€” swirl of constellation-colored particles. */
         RITUAL_ACTIVATE,
 
-        /** Ritual deactivation — particles fade outward. */
+        /** Ritual deactivation â€” particles fade outward. */
         RITUAL_DEACTIVATE,
 
-        /** Block transmutation — sparkle at block position. */
+        /** Block transmutation â€” sparkle at block position. */
         TRANSMUTATION_COMPLETE,
 
-        /** Shooting star impact — explosion of starlight particles. */
+        /** Shooting star impact â€” explosion of starlight particles. */
         SHOOTING_STAR_IMPACT,
 
-        /** Gateway teleport — swirl at departure location. */
+        /** Gateway teleport â€” swirl at departure location. */
         GATEWAY_TELEPORT,
 
-        /** Celestial crystal descent — trail of constellation sparks. */
+        /** Celestial crystal descent â€” trail of constellation sparks. */
         CELESTIAL_CRYSTAL_DESCEND,
 
-        /** Well filled — fluid surface shimmer. */
+        /** Well filled â€” fluid surface shimmer. */
         WELL_FILL_BURST,
 
-        /** Infusion complete — liquid drain with item glow. */
+        /** Infusion complete â€” liquid drain with item glow. */
         INFUSION_COMPLETE,
 
-        /** Liquid interaction — sparkle between fluid boundaries. */
+        /** Liquid interaction â€” sparkle between fluid boundaries. */
         LIQUID_INTERACTION,
 
-        /** Perk activation — aura flash around player position. */
+        /** Perk activation â€” aura flash around player position. */
         PERK_ACTIVATE,
 
-        /** Crystal formation — slow crystallization particles. */
+        /** Crystal formation â€” slow crystallization particles. */
         CRYSTAL_FORM
     }
 }

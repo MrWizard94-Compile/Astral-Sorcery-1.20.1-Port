@@ -68,7 +68,7 @@ public class PktSyncPlayerProgress {
                               @Nonnull Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() ->
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
+                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
         );
         ctx.setPacketHandled(true);
     }
@@ -83,8 +83,9 @@ public class PktSyncPlayerProgress {
             AstralSorcery.log.warn("Received empty progress sync packet");
             return;
         }
+        final CompoundTag progressData = msg.progressData;
         player.getCapability(PlayerCapabilityProvider.CAPABILITY).ifPresent(progress -> {
-            progress.readFromNBT(msg.progressData);
+            progress.readFromNBT(progressData);
             // Mirror to the static client cache so journal + perk screens can read it without capability
             hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager.setClientProgress(progress);
             AstralSorcery.log.debug("Synced player progress from server");

@@ -21,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -326,14 +325,14 @@ public class RegistryResearch {
     }
 
     private static void registerAttunement() {
-        ResearchNode resTelescope = new ResearchNode(BlocksAS.TELESCOPE.get(), "TELESCOPE", 0.5F, 0)
+        new ResearchNode(BlocksAS.TELESCOPE.get(), "TELESCOPE", 0.5F, 0)
                 .addPage(text("TELESCOPE.1"))
                 .addPage(recipe(BlocksAS.TELESCOPE.get()))
                 .addTomeLookup(BlocksAS.TELESCOPE.get(), 1, ResearchProgression.ATTUNEMENT)
                 .addPage(text("TELESCOPE.3"))
                 .register(ResearchProgression.ATTUNEMENT);
 
-        ResearchNode resKnowledgeShare = new ResearchNode(ItemsAS.KNOWLEDGE_SHARE.get(), "KNOWLEDGE_SHARE", 2.5F, 0.25F)
+        new ResearchNode(ItemsAS.KNOWLEDGE_SHARE.get(), "KNOWLEDGE_SHARE", 2.5F, 0.25F)
                 .addPage(text("KNOWLEDGE_SHARE.1"))
                 .addPage(recipe(ItemsAS.KNOWLEDGE_SHARE.get()))
                 .addTomeLookup(ItemsAS.KNOWLEDGE_SHARE.get(), 1, ResearchProgression.ATTUNEMENT)
@@ -485,7 +484,7 @@ public class RegistryResearch {
                 .addPage(text("PED_ACCEL.4"))
                 .register(ResearchProgression.ATTUNEMENT);
 
-        ResearchNode resAlignmentCharge = DistExecutor.unsafeRunForDist(
+        ResearchNode resAlignmentCharge = DistExecutor.safeRunForDist(
                 () -> () -> new ResearchNode(new SpriteQuery(AssetLoader.TextureLocation.EFFECT, 6, 8, "relay_flare"),
                         "QUICK_CHARGE", 0.75F, 4.5F),
                 () -> () -> new ResearchNode(BlocksAS.SPECTRAL_RELAY.get(), "QUICK_CHARGE", 0.75F, 4.5F))
@@ -549,7 +548,7 @@ public class RegistryResearch {
     }
 
     private static void registerCrafting() {
-        ResearchNode resHandTelescope = new ResearchNode(ItemsAS.HAND_TELESCOPE.get(), "HAND_TELESCOPE", 0, 1)
+        new ResearchNode(ItemsAS.HAND_TELESCOPE.get(), "HAND_TELESCOPE", 0, 1)
                 .addPage(text("HAND_TELESCOPE.1"))
                 .addPage(recipe(ItemsAS.GLASS_LENS.get()))
                 .addTomeLookup(ItemsAS.GLASS_LENS.get(), 1, ResearchProgression.BASIC_CRAFT)
@@ -826,18 +825,6 @@ public class RegistryResearch {
 
     private static JournalPage recipe(Predicate<ItemStack> itemStackFilter) {
         return JournalPageRecipe.fromOutputPreferAltarRecipes(itemStackFilter);
-    }
-
-    private static JournalPage recipeVanilla(Predicate<ItemStack> itemStackFilter) {
-        return JournalPageRecipe.fromOutputPreferVanillaRecipes(itemStackFilter);
-    }
-
-    private static JournalPageBlockTransmutation recipeTransmutation(Predicate<ItemStack> itemStackFilter) {
-        return JournalPageBlockTransmutation.fromOutput(itemStackFilter);
-    }
-
-    private static JournalPageLiquidInfusion recipeInfusion(Predicate<ItemStack> itemStackFilter) {
-        return JournalPageLiquidInfusion.fromOutput(itemStackFilter);
     }
 
     private static JournalPage structure(@javax.annotation.Nullable net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate structureTemplate) {

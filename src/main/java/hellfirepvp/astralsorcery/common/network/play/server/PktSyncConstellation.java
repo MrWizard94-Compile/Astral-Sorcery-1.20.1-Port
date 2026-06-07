@@ -72,7 +72,7 @@ public class PktSyncConstellation {
                               @Nonnull Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() ->
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
+                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
         );
         ctx.setPacketHandled(true);
     }

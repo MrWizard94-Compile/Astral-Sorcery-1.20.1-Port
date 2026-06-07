@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 /**
- * Server → Client: Delivers the world seed for a specific dimension in response
+ * Server â†’ Client: Delivers the world seed for a specific dimension in response
  * to a {@link hellfirepvp.astralsorcery.common.network.play.client.PktRequestSeed}.
  * Client stores the seed in {@link WorldSeedCache} for constellation calculations.
  */
@@ -62,7 +62,7 @@ public class PktSyncSeed {
     public static void handle(@Nonnull PktSyncSeed pkt,
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() ->
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt))
+                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt))
         );
         ctx.get().setPacketHandled(true);
     }

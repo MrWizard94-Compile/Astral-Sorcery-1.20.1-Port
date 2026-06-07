@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 /**
- * Server → Client: notifies the client that the local player's attunement
+ * Server â†’ Client: notifies the client that the local player's attunement
  * ceremony has started or stopped. The client uses this to run the camera
  * orbit effect during the 800-tick attunement.
  */
@@ -39,7 +39,7 @@ public class PktAttunementActive {
     public static void handle(@Nonnull PktAttunementActive pkt,
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() ->
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
                 if (pkt.active) {
                     hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect
                             .INSTANCE.startAttunement(pkt.altarPos);
