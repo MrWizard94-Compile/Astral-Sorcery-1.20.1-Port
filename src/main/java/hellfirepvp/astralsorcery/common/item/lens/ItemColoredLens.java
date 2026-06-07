@@ -197,10 +197,9 @@ public class ItemColoredLens extends ItemAS {
             }
 
             private Optional<net.minecraft.world.item.crafting.SmeltingRecipe> findSmelt(Level level, ItemStack stack) {
-                var mgr = level.getRecipeManager();
-                return mgr.getRecipes().stream()
-                        .filter(r -> r instanceof net.minecraft.world.item.crafting.SmeltingRecipe)
-                        .map(r -> (net.minecraft.world.item.crafting.SmeltingRecipe) r)
+                return level.getRecipeManager()
+                        .getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING)
+                        .stream()
                         .filter(r -> r.getIngredients().stream().anyMatch(ing -> ing.test(stack)))
                         .findFirst();
             }
@@ -282,7 +281,9 @@ public class ItemColoredLens extends ItemAS {
             public void entityInBeam(@Nonnull Level level, @Nonnull Vec3 origin, @Nonnull Vec3 target,
                                      @Nonnull Entity entity, @Nonnull PartialEffectExecutor exec) {
                 if (!exec.canExecute()) return;
-                if (entity instanceof Player && !level.getServer().isPvpAllowed()) return;
+                if (level.isClientSide()) return;
+                var server = level.getServer();
+                if (entity instanceof Player && (server == null || !server.isPvpAllowed())) return;
                 Vec3 dir = target.subtract(origin).normalize().scale(0.4);
                 Vec3 cur = entity.getDeltaMovement();
                 entity.setDeltaMovement(

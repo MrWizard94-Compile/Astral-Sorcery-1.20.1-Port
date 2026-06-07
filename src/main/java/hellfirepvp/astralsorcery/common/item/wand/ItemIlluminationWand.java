@@ -73,7 +73,8 @@ public class ItemIlluminationWand extends ItemAS implements AlignmentChargeConsu
         if (player.isCrouching()) {
             if (state.getBlock() instanceof BlockTranslucentBlock) {
                 BlockEntityTranslucentBlock tb = MiscUtils.getTileAt(level, pos, BlockEntityTranslucentBlock.class, true);
-                if (tb != null && (tb.getPlayerUUID() == null || tb.getPlayerUUID().equals(player.getUUID()))) {
+                java.util.UUID tbUuid = tb != null ? tb.getPlayerUUID() : null;
+                if (tb != null && (tbUuid == null || tbUuid.equals(player.getUUID()))) {
                     if (tb.revert()) {
                         SoundHelper.playSoundAround(SoundsAS.ILLUMINATION_WAND_UNHIGHLIGHT.get(),
                                 SoundSource.BLOCKS, level, pos, 0.6F, 0.9F + level.getRandom().nextFloat() * 0.2F);
@@ -83,7 +84,7 @@ public class ItemIlluminationWand extends ItemAS implements AlignmentChargeConsu
                 if (level.getBlockEntity(pos) == null &&
                         !state.hasBlockEntity() &&
                         player.mayUseItemAt(pos, dir, stack) &&
-                        state.getShape(level, pos).equals(net.minecraft.world.phys.shapes.Shapes.block())) {
+                        net.minecraft.world.level.block.Block.isShapeFullBlock(state.getShape(level, pos))) {
                     if (AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, COST_PER_ILLUMINATION, false)) {
                         if (level.setBlock(pos, BlocksAS.TRANSLUCENT_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL)) {
                             SoundHelper.playSoundAround(SoundsAS.ILLUMINATION_WAND_HIGHLIGHT.get(),

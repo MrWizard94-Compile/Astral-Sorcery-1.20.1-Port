@@ -29,11 +29,11 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Resonator — reveals starlight sources and area of influence.
- * Upgradeable via altar: STARLIGHT (base) → FLUID_FIELDS (domic) → AREA_SIZE (ichosic).
+ * Resonator â€” reveals starlight sources and area of influence.
+ * Upgradeable via altar: STARLIGHT (base) â†’ FLUID_FIELDS (domic) â†’ AREA_SIZE (ichosic).
  * Upgrades are stored as an int[] in NBT; shift-right-click cycles modes.
  *
- * <p>1.16 → 1.20 changes: ActionResult → InteractionResultHolder, World → Level.</p>
+ * <p>1.16 â†’ 1.20 changes: ActionResult â†’ InteractionResultHolder, World â†’ Level.</p>
  */
 public class ItemResonator extends ItemAS {
 
@@ -120,7 +120,7 @@ public class ItemResonator extends ItemAS {
     }
 
     // -------------------------------------------------------------------------
-    // Inventory tick — visualization per held upgrade
+    // Inventory tick â€” visualization per held upgrade
     // -------------------------------------------------------------------------
 
     @Override
@@ -128,7 +128,7 @@ public class ItemResonator extends ItemAS {
                               @Nonnull Entity entity, int slot, boolean selected) {
         if (!(entity instanceof Player player)) return;
         switch (getSelectedUpgrade(stack)) {
-            case STARLIGHT    -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+            case STARLIGHT    -> DistExecutor.safeRunWhenOn(Dist.CLIENT,
                                     () -> () -> tickStarlightClient(level, player));
             case FLUID_FIELDS -> tickFluidFieldsServer(level, player);
             case AREA_SIZE    -> {} // no AOI interface in this port
@@ -158,7 +158,7 @@ public class ItemResonator extends ItemAS {
                         int dy = RAND.nextInt(64) - 32;
                         Vec3 pos = Vec3.atCenterOf(samplePos.offset(0, dy, 0));
 
-                        // Large blue dust particle — the "fog" visual
+                        // Large blue dust particle â€” the "fog" visual
                         float size = 1.5f + fPerc * 3.0f;
                         level.addParticle(new DustParticleOptions(RESONATOR_BLUE, size),
                                 pos.x + RAND.nextFloat(),
