@@ -25,6 +25,10 @@ public class LinearLuckBonus extends LootItemConditionalFunction {
         super(conditions);
     }
 
+    public static LootItemConditionalFunction.Builder<?> create() {
+        return simpleBuilder(LinearLuckBonus::new);
+    }
+
     @Override
     public LootItemFunctionType getType() {
         return LootAS.LINEAR_LUCK_BONUS.get();

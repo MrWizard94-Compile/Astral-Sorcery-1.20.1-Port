@@ -42,13 +42,13 @@ public final class CommonConfig {
     /** Maximum range (blocks) for starlight transmission links. */
     public final ForgeConfigSpec.IntValue maxNetworkRange;
 
-    /** Maximum number of connections a single node can have. */
+    /** Maximum number of connections a single node can have. NOT YET WIRED — pending starlight network link-count enforcement. */
     public final ForgeConfigSpec.IntValue maxNodeConnections;
 
     /** Base starlight output per tick for a collector crystal under open sky. */
     public final ForgeConfigSpec.DoubleValue baseCollectorOutput;
 
-    /** Transmission loss per block of distance (fraction, 0 = no loss). */
+    /** Transmission loss per block of distance (fraction, 0 = no loss). NOT YET WIRED — pending starlight link transmission port. */
     public final ForgeConfigSpec.DoubleValue transmissionLossPerBlock;
 
     /** Whether collector crystals can collect starlight during the day (reduced). */
@@ -77,13 +77,13 @@ public final class CommonConfig {
     // Crystal Properties
     // ========================================================================
 
-    /** Maximum crystal size when grown via starlight. */
+    /** Maximum crystal size when grown via starlight. NOT YET WIRED — pending crystal growth system port. */
     public final ForgeConfigSpec.IntValue maxCrystalSize;
 
-    /** Chance per tick for crystal growth (0.0-1.0). */
+    /** Chance per tick for crystal growth (0.0-1.0). NOT YET WIRED — pending crystal growth system port. */
     public final ForgeConfigSpec.DoubleValue crystalGrowthChance;
 
-    /** Purity threshold above which crystals produce celestial variants. */
+    /** Purity threshold above which crystals produce celestial variants. NOT YET WIRED — pending crystal growth system port. */
     public final ForgeConfigSpec.IntValue celestialPurityThreshold;
 
     // ========================================================================
@@ -99,7 +99,7 @@ public final class CommonConfig {
     /** Global perk effect multiplier (scales all perk bonuses). */
     public final ForgeConfigSpec.DoubleValue perkEffectMultiplier;
 
-    /** Whether perks work in all dimensions or only the overworld. */
+    /** Whether perks work in all dimensions or only the overworld. NOT YET WIRED — pending perk dimension-check implementation. */
     public final ForgeConfigSpec.BooleanValue perksWorkInAllDimensions;
 
     // ========================================================================
@@ -109,48 +109,48 @@ public final class CommonConfig {
     /** Maximum range for ritual effects (blocks). */
     public final ForgeConfigSpec.IntValue ritualMaxRange;
 
-    /** Starlight cost multiplier for liquid infusion. */
+    /** Starlight cost multiplier for liquid infusion. NOT YET WIRED — pending infusion recipe cost system port. */
     public final ForgeConfigSpec.DoubleValue infusionCostMultiplier;
 
-    /** Whether liquid infusion consumes the liquid. */
+    /** Whether liquid infusion consumes the liquid. NOT YET WIRED — pending infusion recipe port. */
     public final ForgeConfigSpec.BooleanValue infusionConsumesLiquid;
 
     // ========================================================================
     // Lightwell
     // ========================================================================
 
-    /** Base production rate for the lightwell (mB per tick). */
+    /** Base production rate for the lightwell (mB per tick). NOT YET WIRED — pending lightwell fluid system port. */
     public final ForgeConfigSpec.DoubleValue wellBaseProduction;
 
-    /** Maximum fluid storage for the lightwell (mB). */
+    /** Maximum fluid storage for the lightwell (mB). NOT YET WIRED — pending lightwell fluid system port. */
     public final ForgeConfigSpec.IntValue wellMaxStorage;
 
-    /** Catalyst consumption chance per cycle (0.0-1.0). */
+    /** Catalyst consumption chance per cycle (0.0-1.0). NOT YET WIRED — pending lightwell fluid system port. */
     public final ForgeConfigSpec.DoubleValue wellCatalystConsumptionChance;
 
     // ========================================================================
     // World Generation
     // ========================================================================
 
-    /** Rock crystal ore vein size. */
+    /** Rock crystal ore vein size. NOT YET WIRED — pending world-gen placement port. */
     public final ForgeConfigSpec.IntValue rockCrystalVeinSize;
 
-    /** Rock crystal ore minimum Y level. */
+    /** Rock crystal ore minimum Y level. NOT YET WIRED — pending world-gen placement port. */
     public final ForgeConfigSpec.IntValue rockCrystalMinY;
 
-    /** Rock crystal ore maximum Y level. */
+    /** Rock crystal ore maximum Y level. NOT YET WIRED — pending world-gen placement port. */
     public final ForgeConfigSpec.IntValue rockCrystalMaxY;
 
-    /** Number of rock crystal ore attempts per chunk. */
+    /** Number of rock crystal ore attempts per chunk. NOT YET WIRED — pending world-gen placement port. */
     public final ForgeConfigSpec.IntValue rockCrystalAttemptsPerChunk;
 
-    /** Marble vein size. */
+    /** Marble vein size. NOT YET WIRED — pending world-gen placement port. */
     public final ForgeConfigSpec.IntValue marbleVeinSize;
 
-    /** Aquamarine ore frequency (attempts per chunk). */
+    /** Aquamarine ore frequency (attempts per chunk). NOT YET WIRED — pending world-gen placement port. */
     public final ForgeConfigSpec.IntValue aquamarineFrequency;
 
-    /** Whether to generate ancient shrines in new worlds. */
+    /** Whether to generate ancient shrines in new worlds. NOT YET WIRED — pending world-gen structure port. */
     public final ForgeConfigSpec.BooleanValue generateShrines;
 
     // ========================================================================
@@ -185,7 +185,7 @@ public final class CommonConfig {
     /** Whether gateways can teleport across dimensions. */
     public final ForgeConfigSpec.BooleanValue gatewayCrossDimensional;
 
-    /** Starlight cost per block of teleportation distance. */
+    /** Starlight cost per block of teleportation distance. NOT YET WIRED — pending gateway starlight-drain system. */
     public final ForgeConfigSpec.DoubleValue gatewayCostPerBlock;
 
     // ========================================================================

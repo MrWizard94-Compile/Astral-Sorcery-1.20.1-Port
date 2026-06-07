@@ -23,6 +23,10 @@ public class CopyConstellation extends LootItemConditionalFunction {
         super(conditions);
     }
 
+    public static LootItemConditionalFunction.Builder<?> create() {
+        return simpleBuilder(CopyConstellation::new);
+    }
+
     @Override
     public LootItemFunctionType getType() {
         return LootAS.COPY_CONSTELLATION.get();

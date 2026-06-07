@@ -9,6 +9,7 @@ package hellfirepvp.astralsorcery.common.constellation.world;
 
 import hellfirepvp.astralsorcery.common.base.MoonPhase;
 import hellfirepvp.astralsorcery.common.constellation.*;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
@@ -82,9 +83,14 @@ public class CelestialHandler {
 
     /**
      * Base multiplier from time of day.
-     * Night=1.0, Day=0.2, Twilight=interpolated.
+     * Night=1.0, Day=daytimeStarlightFraction (0.0 if allowDaytimeCollection=false), Twilight=interpolated.
      */
     public static float getTimeOfDayFactor(@Nonnull Level level) {
+        CommonConfig cfg = CommonConfig.CONFIG;
+        float dayFactor = cfg.allowDaytimeCollection.get()
+                ? cfg.daytimeStarlightFraction.get().floatValue()
+                : 0.0f;
+
         long dayTime = level.getDayTime() % TICKS_PER_DAY;
 
         if (dayTime >= NIGHT_START && dayTime < DAWN_START) {
@@ -93,39 +99,39 @@ public class CelestialHandler {
         } else if (dayTime >= DUSK_START && dayTime < NIGHT_START) {
             // Dusk transition: 12000-13000
             float progress = (dayTime - DUSK_START) / (float) (NIGHT_START - DUSK_START);
-            return 0.2f + progress * 0.8f;
+            return dayFactor + progress * (1.0f - dayFactor);
         } else if (dayTime >= DAWN_START) {
             // Dawn transition: 23000-24000
             float progress = (dayTime - DAWN_START) / (float) (DAWN_END - DAWN_START);
-            return 1.0f - progress * 0.8f;
+            return 1.0f - progress * (1.0f - dayFactor);
         } else {
             // Full day
-            return 0.2f;
+            return dayFactor;
         }
     }
 
     /**
-     * Weather penalty factor.
-     * Clear=1.0, Rain=-30%, Thunder=-50%.
+     * Weather penalty factor. Clear=1.0; rain/thunder read from config.
      */
     public static float getWeatherFactor(@Nonnull Level level) {
+        CommonConfig cfg = CommonConfig.CONFIG;
         if (level.isThundering()) {
-            return 0.5f;
+            return cfg.thunderStarlightPenalty.get().floatValue();
         } else if (level.isRaining()) {
-            return 0.7f;
+            return cfg.rainStarlightPenalty.get().floatValue();
         }
         return 1.0f;
     }
 
     /**
-     * Moon phase bonus/penalty.
-     * Full moon=1.2, New moon=0.8, others=1.0.
+     * Moon phase bonus/penalty. Full moon uses config value; other phases are fixed.
      */
     public static float getMoonPhaseFactor(@Nonnull Level level) {
         MoonPhase phase = MoonPhase.fromWorld(level);
+        float fullMoonBonus = CommonConfig.CONFIG.fullMoonBonus.get().floatValue();
         return switch (phase) {
-            case FULL -> 1.2f;
-            case WANING_3_4, WAXING_3_4 -> 1.1f;
+            case FULL -> fullMoonBonus;
+            case WANING_3_4, WAXING_3_4 -> 1.0f + (fullMoonBonus - 1.0f) * 0.5f;
             case NEW -> 0.8f;
             case WANING_1_4, WAXING_1_4 -> 0.9f;
             default -> 1.0f;

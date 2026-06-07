@@ -22,6 +22,10 @@ public class CopyCrystalProperties extends LootItemConditionalFunction {
         super(conditions);
     }
 
+    public static LootItemConditionalFunction.Builder<?> create() {
+        return simpleBuilder(CopyCrystalProperties::new);
+    }
+
     @Override
     public LootItemFunctionType getType() {
         return LootAS.COPY_CRYSTAL_PROPERTIES.get();

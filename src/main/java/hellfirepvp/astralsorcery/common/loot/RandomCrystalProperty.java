@@ -20,6 +20,10 @@ public class RandomCrystalProperty extends LootItemConditionalFunction {
         super(conditions);
     }
 
+    public static LootItemConditionalFunction.Builder<?> create() {
+        return simpleBuilder(RandomCrystalProperty::new);
+    }
+
     @Override
     public LootItemFunctionType getType() {
         return LootAS.RANDOM_CRYSTAL_PROPERTIES.get();

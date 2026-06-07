@@ -24,6 +24,10 @@ public class CopyGatewayColor extends LootItemConditionalFunction {
         super(conditions);
     }
 
+    public static LootItemConditionalFunction.Builder<?> create() {
+        return simpleBuilder(CopyGatewayColor::new);
+    }
+
     @Override
     public LootItemFunctionType getType() {
         return LootAS.COPY_GATEWAY_COLOR.get();

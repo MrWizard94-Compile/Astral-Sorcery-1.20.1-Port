@@ -81,11 +81,11 @@ minecraft {
     }
 }
 
-// WARNING: src/generated/ is currently empty. Do NOT run datagen until all providers
-// (AstralBlockStateProvider, AstralRecipeProvider, AstralItemModelProvider) are complete;
-// generated files are merged onto the classpath and will shadow handwritten JSON resources
-// at the same path, silently replacing hand-crafted loot tables, models, and blockstates.
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+// src/generated/resources is intentionally excluded from the main resource set.
+// Once all datagen providers are complete, run "./gradlew runData", review the output
+// against the handwritten JSONs in src/main/resources/, then re-enable this line and
+// remove the handwritten files that datagen now replaces.
+// sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 processResources {
     exclude 'astralsorcery.refmap.json'

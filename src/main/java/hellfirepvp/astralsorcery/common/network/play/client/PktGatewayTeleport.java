@@ -4,6 +4,7 @@
 package hellfirepvp.astralsorcery.common.network.play.client;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.data.world.GatewayHandler;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktParticleEvent;
@@ -100,7 +101,26 @@ public class PktGatewayTeleport {
             return;
         }
 
-        // Step 3: Get or load the target dimension
+        // Step 3: Cross-dimension gate check
+        boolean sameLevel = sourceLevel.dimension().equals(targetDimKey);
+        if (!sameLevel && !CommonConfig.CONFIG.gatewayCrossDimensional.get()) {
+            AstralSorcery.log.debug("Gateway teleport denied for {}: cross-dimensional disabled by config",
+                    player.getName().getString());
+            return;
+        }
+
+        // Step 4: Range check (0 = unlimited)
+        int maxRange = CommonConfig.CONFIG.gatewayMaxRange.get();
+        if (maxRange > 0 && sameLevel) {
+            double distSq = sourceGateway.getBlockPos().distSqr(targetPos);
+            if (distSq > (long) maxRange * maxRange) {
+                AstralSorcery.log.debug("Gateway teleport denied for {}: target too far ({} > {})",
+                        player.getName().getString(), Math.sqrt(distSq), maxRange);
+                return;
+            }
+        }
+
+        // Step 5: Get or load the target dimension
         ServerLevel targetLevel = server.getLevel(targetDimKey);
         if (targetLevel == null) {
             AstralSorcery.log.warn("Gateway teleport denied: dimension {} not loaded",
@@ -108,12 +128,12 @@ public class PktGatewayTeleport {
             return;
         }
 
-        // Step 4: Teleport the player
+        // Step 6: Teleport the player
         double destX = targetPos.getX() + 0.5;
         double destY = targetPos.getY() + 1.0; // Stand on top of gateway block
         double destZ = targetPos.getZ() + 0.5;
 
-        if (targetLevel == sourceLevel) {
+        if (sameLevel) {
             // Same dimension: simple teleport
             player.teleportTo(destX, destY, destZ);
         } else {
