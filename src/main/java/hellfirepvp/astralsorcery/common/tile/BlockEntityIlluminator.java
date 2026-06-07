@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -88,29 +89,26 @@ public class BlockEntityIlluminator extends BlockEntityTick {
         layerPositions = new ArrayList<>(parts);
         for (int i = 0; i < parts; i++) {
             int yPart = 3 + i * 7;
-            List<BlockPos> positions = new ArrayList<>();
-            generatePositions(positions, new BlockPos(getBlockPos().getX(), yPart, getBlockPos().getZ()));
-            layerPositions.add(positions);
+            // LinkedHashSet gives O(1) contains() while preserving insertion order.
+            LinkedHashSet<BlockPos> posSet = new LinkedHashSet<>();
+            generatePositions(posSet, new BlockPos(getBlockPos().getX(), yPart, getBlockPos().getZ()));
+            layerPositions.add(new ArrayList<>(posSet));
         }
     }
 
-    private void generatePositions(List<BlockPos> positions, BlockPos center) {
+    private void generatePositions(LinkedHashSet<BlockPos> positions, BlockPos center) {
         int xPos = center.getX();
         int yPos = center.getY();
         int zPos = center.getZ();
         BlockPos current = center;
-        if (!positions.contains(current)) {
-            positions.add(current);
-        }
+        positions.add(current);
 
         Direction dir = Direction.NORTH;
         while (Math.abs(current.getX() - xPos) <= SEARCH_RADIUS &&
                 Math.abs(current.getY() - yPos) <= SEARCH_RADIUS &&
                 Math.abs(current.getZ() - zPos) <= SEARCH_RADIUS) {
             current = current.relative(dir, STEP_WIDTH);
-            if (!positions.contains(current)) {
-                positions.add(current);
-            }
+            positions.add(current);
             Direction tryDirNext = dir.getClockWise();
             if (!positions.contains(current.relative(tryDirNext, STEP_WIDTH))) {
                 dir = tryDirNext;

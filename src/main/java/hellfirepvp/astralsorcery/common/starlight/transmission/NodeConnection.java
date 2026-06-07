@@ -5,9 +5,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ public class NodeConnection {
     @Nonnull
     private final ResourceKey<Level> dimension;
     @Nonnull
-    private final List<BlockPos> connectedTo;
+    private final LinkedHashSet<BlockPos> connectedTo;
 
     private boolean isSource;
     private boolean isReceiver;
@@ -33,7 +33,7 @@ public class NodeConnection {
     public NodeConnection(@Nonnull BlockPos pos, @Nonnull ResourceKey<Level> dimension) {
         this.pos = pos.immutable();
         this.dimension = dimension;
-        this.connectedTo = new ArrayList<>();
+        this.connectedTo = new LinkedHashSet<>();
     }
 
     @Nonnull
@@ -48,13 +48,11 @@ public class NodeConnection {
 
     @Nonnull
     public List<BlockPos> getConnectedTo() {
-        return Collections.unmodifiableList(connectedTo);
+        return Collections.unmodifiableList(new ArrayList<>(connectedTo));
     }
 
     public void addConnection(@Nonnull BlockPos target) {
-        if (!connectedTo.contains(target)) {
-            connectedTo.add(target.immutable());
-        }
+        connectedTo.add(target.immutable()); // LinkedHashSet deduplicates automatically
     }
 
     public boolean removeConnection(@Nonnull BlockPos target) {

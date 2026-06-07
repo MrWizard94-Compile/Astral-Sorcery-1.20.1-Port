@@ -17,6 +17,10 @@ public class AmuletRandomizeHelper {
 
     private static final Random rand = new Random();
 
+    // Cached once on first roll; registry is frozen after mod setup so this is safe.
+    @Nullable
+    private static List<Enchantment> enchantPool = null;
+
     // Config values — tunable via server config when ConfigManager is wired up.
     public static double chance2nd         = 0.80;
     public static double chance3rd         = 0.25;
@@ -49,9 +53,13 @@ public class AmuletRandomizeHelper {
 
     @Nullable
     private static Enchantment getRandomEnchant() {
-        List<Enchantment> pool = ForgeRegistries.ENCHANTMENTS.getValues().stream()
-                .filter(e -> !e.isCurse())
-                .collect(Collectors.toList());
+        List<Enchantment> pool = enchantPool;
+        if (pool == null) {
+            pool = ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                    .filter(e -> !e.isCurse())
+                    .collect(Collectors.toList());
+            enchantPool = pool;
+        }
         if (pool.isEmpty()) return null;
         return pool.get(rand.nextInt(pool.size()));
     }

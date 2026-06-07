@@ -163,7 +163,7 @@ public class BlockDiscoverer {
     public static List<BlockPos> discoverBlocksWithSameStateAround(
             @Nonnull Level level, @Nonnull BlockPos origin, boolean onlyExposed,
             int cubeSize, int limit, boolean searchCorners) {
-        return MiscUtils.executeWithChunk(level, origin,
+        List<BlockPos> result = MiscUtils.executeWithChunk(level, origin,
                 () -> {
                     BlockState state = level.getBlockState(origin);
                     return discoverBlocksWithSameStateAround(
@@ -171,6 +171,7 @@ public class BlockDiscoverer {
                             level, origin, onlyExposed, cubeSize, limit, searchCorners);
                 },
                 Lists.newArrayList());
+        return result != null ? result : Lists.newArrayList();
     }
 
     @Nonnull
@@ -179,7 +180,7 @@ public class BlockDiscoverer {
             boolean onlyExposed, int cubeSize, int limit, boolean searchCorners) {
         List<BlockPos> foundResult = new ArrayList<>();
         foundResult.add(origin);
-        List<BlockPos> visited = new LinkedList<>();
+        Set<BlockPos> visited = new HashSet<>();
 
         Deque<BlockPos> searchNext = new LinkedList<>();
         searchNext.addFirst(origin);
@@ -247,8 +248,9 @@ public class BlockDiscoverer {
     private static boolean isExposedToAir(@Nonnull Level level, @Nonnull BlockPos pos) {
         for (Direction face : Direction.values()) {
             BlockPos offset = pos.relative(face);
-            if (MiscUtils.executeWithChunk(level, offset,
-                    () -> BlockUtils.isReplaceable(level, offset), false)) {
+            Boolean canReplace = MiscUtils.executeWithChunk(level, offset,
+                    () -> BlockUtils.isReplaceable(level, offset), false);
+            if (Boolean.TRUE.equals(canReplace)) {
                 return true;
             }
         }
