@@ -64,11 +64,9 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     private int recipeTick = 0;
     private int craftingProgress = 0;
     private boolean structureValid = false;
-    private int ticksExisted = 0;
 
     @Nullable
     private ResourceLocation activeRecipeId = null;
-    private double storedStarlight = 0;
     private boolean registeredInNetwork = false;
 
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
@@ -98,7 +96,6 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
 
     @Override
     public void receiveStarlight(double amount, @Nullable ResourceLocation constellation) {
-        storedStarlight += amount;
         setChanged();
     }
 
@@ -134,7 +131,6 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             doInfuserSound();
             return;
@@ -144,7 +140,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         if (level == null) return;
 
         // Periodically validate multiblock structure
-        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+        if (getTicksExisted() % STRUCTURE_CHECK_INTERVAL == 0) {
             structureValid = validateStructure();
         }
 
@@ -156,14 +152,14 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         }
 
         // Pull liquid starlight from adjacent chalice when tank is below 50%
-        if (tank.getFluidAmount() < tank.getCapacity() / 2 && ticksExisted % 20 == 0) {
+        if (tank.getFluidAmount() < tank.getCapacity() / 2 && getTicksExisted() % 20 == 0) {
             pullFromAdjacentChalice(level);
         }
 
         // Active infusion in progress
         if (activeRecipeId != null && cachedRecipe != null) {
             tickInfusion(level);
-        } else if (ticksExisted % RECIPE_SCAN_INTERVAL == 0) {
+        } else if (getTicksExisted() % RECIPE_SCAN_INTERVAL == 0) {
             // Scan for matching recipe
             tryFindInfusionRecipe(level);
         }
@@ -210,14 +206,15 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
      * Progresses the active infusion.
      */
     private void tickInfusion(@Nonnull Level level) {
-        if (cachedRecipe == null) {
+        LiquidInfusion cr = cachedRecipe;
+        if (cr == null) {
             abortInfusion();
             return;
         }
 
         // Verify input is still present
         ItemStack input = inventory.getStackInSlot(0);
-        if (input.isEmpty() || !cachedRecipe.getInputItem().test(input)) {
+        if (input.isEmpty() || !cr.getInputItem().test(input)) {
             abortInfusion();
             return;
         }
@@ -225,7 +222,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         // Drain liquid starlight from tank
         FluidStack drained = tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.SIMULATE);
         if (drained.isEmpty() || drained.getAmount() < FLUID_DRAIN_PER_TICK) {
-            // Stall — not enough fluid, but don't abort (more may arrive)
+            // Stall â€” not enough fluid, but don't abort (more may arrive)
             return;
         }
         tank.drain(FLUID_DRAIN_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
@@ -276,19 +273,19 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
     /**
      * Completes the infusion: replaces input with output.
      */
-    @SuppressWarnings("null")
     private void completeInfusion(@Nonnull Level level) {
-        if (cachedRecipe == null) return;
+        LiquidInfusion cr = cachedRecipe;
+        if (cr == null) return;
 
         ItemStack input = inventory.getStackInSlot(0);
-        ItemStack result = cachedRecipe.getOutput().copy();
-        if (cachedRecipe.doesCopyNBTToOutputs() && !input.isEmpty() && input.hasTag()) {
+        ItemStack result = cr.getOutput().copy();
+        if (cr.doesCopyNBTToOutputs() && !input.isEmpty() && input.hasTag()) {
             result.setTag(input.getOrCreateTag().copy());
         }
         inventory.setStackInSlot(0, result);
 
         // Consume the required fluid amount beyond what was drained per-tick
-        int totalFluidRequired = cachedRecipe.getFluidMbRequired();
+        int totalFluidRequired = cr.getFluidMbRequired();
         int alreadyDrained = craftingProgress * FLUID_DRAIN_PER_TICK;
         int remaining = totalFluidRequired - alreadyDrained;
         if (remaining > 0) {
@@ -296,7 +293,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         }
 
         AstralSorcery.log.debug("Infuser completed recipe {} at {}: produced {}",
-                cachedRecipe.getId(), worldPosition.toShortString(),
+                cr.getId(), worldPosition.toShortString(),
                 result.getDisplayName().getString());
 
         this.activeRecipeId = null;
@@ -405,9 +402,6 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
      * Get the number of ticks this block entity has existed.
      * Used for renderer animations.
      */
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     /**
      * Whether an infusion recipe is currently in progress.
@@ -428,7 +422,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCap.cast();
         }
@@ -462,10 +456,11 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         this.inventory.deserialize(compound.getCompound("inventory"));
         this.tank.readNBT(compound.getCompound("tank"));
         if (compound.contains("activeRecipe")) {
-            this.activeRecipeId = new ResourceLocation(compound.getString("activeRecipe"));
+            this.activeRecipeId = ResourceLocation.tryParse(compound.getString("activeRecipe"));
         } else {
             this.activeRecipeId = null;
         }
+        this.craftingProgress = compound.getInt("craftingProgress");
     }
 
     @Override
@@ -473,9 +468,11 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         super.writeCustomNBT(compound);
         compound.put("inventory", this.inventory.serializeNBT());
         compound.put("tank", tank.writeNBT());
-        if (activeRecipeId != null) {
-            compound.putString("activeRecipe", activeRecipeId.toString());
+        ResourceLocation ari = activeRecipeId;
+        if (ari != null) {
+            compound.putString("activeRecipe", ari.toString());
         }
+        compound.putInt("craftingProgress", craftingProgress);
     }
 
     @Override
@@ -523,18 +520,18 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
         }
 
         @Override
-        public boolean isFluidValid(int tankIndex, @Nonnull FluidStack stack) {
+        public boolean isFluidValid(int tankIndex, FluidStack stack) {
             return tank.isFluidValid(stack);
         }
 
         @Override
-        public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public int fill(FluidStack resource, FluidAction action) {
             return tank.fill(resource, action);
         }
 
         @Nonnull
         @Override
-        public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public FluidStack drain(FluidStack resource, FluidAction action) {
             FluidStack stored = tank.getFluid();
             if (stored.isEmpty() || !stored.isFluidEqual(resource)) {
                 return FluidStack.EMPTY;
@@ -544,7 +541,7 @@ public class BlockEntityInfuser extends BlockEntityTick implements IStarlightRec
 
         @Nonnull
         @Override
-        public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
+        public FluidStack drain(int maxDrain, FluidAction action) {
             return tank.drain(maxDrain, action);
         }
     }

@@ -2,6 +2,7 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectProperties;
@@ -39,7 +40,9 @@ import javax.annotation.Nullable;
  */
 public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarlightReceiver {
 
-    private static final int DEFAULT_EFFECT_RANGE = 16;
+    private static int defaultEffectRange() {
+        return CommonConfig.CONFIG.ritualMaxRange.get();
+    }
 
     /** Maximum starlight the pedestal can store for ritual operation. */
     private static final double STARLIGHT_CAPACITY = 5000.0;
@@ -59,9 +62,8 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
     @Nullable
     private ResourceLocation attunedConstellation = null;
 
-    private int ticksExisted = 0;
     private boolean ritualActive = false;
-    private int effectRange = DEFAULT_EFFECT_RANGE;
+    private int effectRange = defaultEffectRange();
     private boolean hasMultiblock = false;
     private double storedStarlight = 0;
     private boolean registeredInNetwork = false;
@@ -97,7 +99,6 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             // Client-side: ritual effect particles handled by renderer
             return;
@@ -107,7 +108,7 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         if (level == null) return;
 
         // Periodically check multiblock structure
-        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+        if (getTicksExisted() % STRUCTURE_CHECK_INTERVAL == 0) {
             hasMultiblock = validateStructure();
         }
 
@@ -136,7 +137,7 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         storedStarlight -= STARLIGHT_DRAIN_PER_TICK;
 
         // Apply ritual effects at interval
-        if (ticksExisted % EFFECT_INTERVAL == 0) {
+        if (getTicksExisted() % EFFECT_INTERVAL == 0) {
             applyConstellationEffect((ServerLevel) level);
         }
     }
@@ -249,14 +250,6 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         markForUpdate();
     }
 
-    /**
-     * Get the number of ticks this block entity has existed.
-     * Used for renderer animations.
-     */
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
-
     public boolean isRitualActive() {
         return ritualActive;
     }
@@ -280,10 +273,12 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
                 ? ItemStack.of(compound.getCompound("heldCrystal"))
                 : ItemStack.EMPTY;
         if (compound.contains("attunedConstellation")) {
-            this.attunedConstellation = new ResourceLocation(compound.getString("attunedConstellation"));
+            this.attunedConstellation = ResourceLocation.tryParse(
+                    compound.getString("attunedConstellation"));
         } else {
             this.attunedConstellation = null;
         }
+        this.ritualActive = compound.getBoolean("ritualActive");
     }
 
     @Override
@@ -294,9 +289,11 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
             heldCrystal.save(crystalTag);
             compound.put("heldCrystal", crystalTag);
         }
-        if (attunedConstellation != null) {
-            compound.putString("attunedConstellation", attunedConstellation.toString());
+        ResourceLocation ac = attunedConstellation;
+        if (ac != null) {
+            compound.putString("attunedConstellation", ac.toString());
         }
+        compound.putBoolean("ritualActive", ritualActive);
     }
 
     @Override
@@ -304,8 +301,9 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         super.readSaveNBT(compound);
         this.ritualActive = compound.getBoolean("ritualActive");
         this.effectRange = compound.contains("effectRange")
-                ? compound.getInt("effectRange") : DEFAULT_EFFECT_RANGE;
+                ? compound.getInt("effectRange") : defaultEffectRange();
         this.hasMultiblock = compound.getBoolean("hasMultiblock");
+        this.storedStarlight = compound.getDouble("storedStarlight");
     }
 
     @Override
@@ -314,5 +312,6 @@ public class BlockEntityRitualPedestal extends BlockEntityTick implements IStarl
         compound.putBoolean("ritualActive", ritualActive);
         compound.putInt("effectRange", effectRange);
         compound.putBoolean("hasMultiblock", hasMultiblock);
+        compound.putDouble("storedStarlight", storedStarlight);
     }
 }

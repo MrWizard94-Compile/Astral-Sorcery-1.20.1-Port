@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * Block entity for the Fountain.
  * Consumes liquid starlight for area effects determined by the BlockFountainPrime
  * block placed directly below the fountain. The effect progresses through
- * STARTUP → PREPARATION → RUNNING phases.
+ * STARTUP â†’ PREPARATION â†’ RUNNING phases.
  */
 public class BlockEntityFountain extends BlockEntityTick {
 
@@ -36,7 +36,6 @@ public class BlockEntityFountain extends BlockEntityTick {
     private final LazyOptional<IFluidHandler> fluidCap;
 
     private boolean structureValid = false;
-    private int ticksExisted = 0;
 
     @Nullable
     private FountainEffect<?> currentEffect = null;
@@ -53,16 +52,14 @@ public class BlockEntityFountain extends BlockEntityTick {
     }
 
     @Override
-    @SuppressWarnings("null")
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) return;
 
         Level level = getLevel();
         if (level == null) return;
 
-        if (ticksExisted % 40 == 0) {
+        if (getTicksExisted() % 40 == 0) {
             boolean wasValid = structureValid;
             structureValid = StructuresAS.getFountain().matches(level, worldPosition);
             if (wasValid != structureValid) {
@@ -158,9 +155,6 @@ public class BlockEntityFountain extends BlockEntityTick {
         };
     }
 
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     @Nonnull
     public PrecisionSingleFluidTank getTank() {
@@ -183,7 +177,7 @@ public class BlockEntityFountain extends BlockEntityTick {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             return fluidCap.cast();
         }
@@ -200,12 +194,14 @@ public class BlockEntityFountain extends BlockEntityTick {
     public void readCustomNBT(@Nonnull CompoundTag compound) {
         super.readCustomNBT(compound);
         this.tank.readNBT(compound.getCompound("tank"));
+        this.structureValid = compound.getBoolean("structureValid");
     }
 
     @Override
     public void writeCustomNBT(@Nonnull CompoundTag compound) {
         super.writeCustomNBT(compound);
         compound.put("tank", tank.writeNBT());
+        compound.putBoolean("structureValid", structureValid);
     }
 
     @Override
@@ -248,18 +244,18 @@ public class BlockEntityFountain extends BlockEntityTick {
         public int getTankCapacity(int tankIndex) { return tank.getCapacity(); }
 
         @Override
-        public boolean isFluidValid(int tankIndex, @Nonnull FluidStack stack) {
+        public boolean isFluidValid(int tankIndex, FluidStack stack) {
             return tank.isFluidValid(stack);
         }
 
         @Override
-        public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public int fill(FluidStack resource, FluidAction action) {
             return tank.fill(resource, action);
         }
 
         @Nonnull
         @Override
-        public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public FluidStack drain(FluidStack resource, FluidAction action) {
             FluidStack stored = tank.getFluid();
             if (stored.isEmpty() || !stored.isFluidEqual(resource)) return FluidStack.EMPTY;
             return drain(resource.getAmount(), action);
@@ -267,7 +263,7 @@ public class BlockEntityFountain extends BlockEntityTick {
 
         @Nonnull
         @Override
-        public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
+        public FluidStack drain(int maxDrain, FluidAction action) {
             return tank.drain(maxDrain, action);
         }
     }

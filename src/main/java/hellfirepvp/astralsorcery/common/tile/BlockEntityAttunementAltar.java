@@ -62,7 +62,6 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     private ItemStack heldCrystal = ItemStack.EMPTY;
 
     private int attunementTick = 0;
-    private int ticksExisted = 0;
     private boolean structureValid = false;
     private boolean isAttuning = false;
 
@@ -85,7 +84,6 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             tickIdleSound();
             tickActiveSound();
@@ -96,17 +94,16 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         if (level == null) return;
 
         // Periodically re-validate multiblock structure
-        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+        if (getTicksExisted() % STRUCTURE_CHECK_INTERVAL == 0) {
             structureValid = validateStructure();
         }
 
         // Attunement requires: valid structure and target constellation set
-        if (!structureValid || attunedConstellation == null) {
+        ResourceLocation cstKey = attunedConstellation;
+        if (!structureValid || cstKey == null) {
             if (isAttuning) abortAttunement();
             return;
         }
-
-        ResourceLocation cstKey = java.util.Objects.requireNonNull(attunedConstellation);
         // Must be nighttime and the target constellation must be visible
         if (!DayTimeHelper.isNight(level) || !isConstellationVisible(level, cstKey)
                 || !level.canSeeSky(worldPosition.above())) {
@@ -198,13 +195,13 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     /**
      * Complete the attunement process — mark the crystal with the constellation.
      */
-    @SuppressWarnings("null")
     private void completeAttunement() {
-        if (heldCrystal.isEmpty() || attunedConstellation == null) return;
+        ResourceLocation ac = attunedConstellation;
+        if (heldCrystal.isEmpty() || ac == null) return;
 
         // Write the constellation attunement to the crystal's NBT
         CompoundTag itemTag = heldCrystal.getOrCreateTag();
-        itemTag.putString("attunedConstellation", attunedConstellation.toString());
+        itemTag.putString("attunedConstellation", ac.toString());
         heldCrystal.setTag(itemTag);
 
         // Reset state
@@ -248,8 +245,9 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
 
     @Nullable
     private ServerPlayer findEligiblePlayer(@Nonnull Level level) {
-        if (attunedConstellation == null) return null;
-        IConstellation cst = ConstellationRegistry.getConstellation(attunedConstellation);
+        ResourceLocation acLoc = attunedConstellation;
+        if (acLoc == null) return null;
+        IConstellation cst = ConstellationRegistry.getConstellation(acLoc);
         if (!(cst instanceof IMajorConstellation)) return null;
         AABB box = new AABB(worldPosition).inflate(3.0);
         List<ServerPlayer> nearby = level.getEntitiesOfClass(ServerPlayer.class, box);
@@ -351,14 +349,6 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         return attunementTick;
     }
 
-    /**
-     * Get the number of ticks this block entity has existed.
-     * Used for renderer animations.
-     */
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
-
     public boolean isStructureValid() {
         return structureValid;
     }
@@ -384,10 +374,12 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
                 ? ItemStack.of(compound.getCompound("heldCrystal"))
                 : ItemStack.EMPTY;
         if (compound.contains("attunedConstellation")) {
-            this.attunedConstellation = new ResourceLocation(compound.getString("attunedConstellation"));
+            this.attunedConstellation = ResourceLocation.tryParse(
+                    compound.getString("attunedConstellation"));
         } else {
             this.attunedConstellation = null;
         }
+        this.isAttuning = compound.getBoolean("isAttuning");
     }
 
     @Override
@@ -398,9 +390,11 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
             heldCrystal.save(crystalTag);
             compound.put("heldCrystal", crystalTag);
         }
-        if (attunedConstellation != null) {
-            compound.putString("attunedConstellation", attunedConstellation.toString());
+        ResourceLocation ac2 = attunedConstellation;
+        if (ac2 != null) {
+            compound.putString("attunedConstellation", ac2.toString());
         }
+        compound.putBoolean("isAttuning", isAttuning);
     }
 
     @Override

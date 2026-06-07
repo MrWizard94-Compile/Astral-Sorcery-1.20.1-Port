@@ -10,6 +10,7 @@ import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeTile;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalCalculations;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.starlight.IIndependentStarlightSource;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
@@ -46,8 +47,10 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         implements IIndependentStarlightSource, LinkableTileEntity,
                    CrystalAttributeTile, ConstellationTile {
 
-    /** Base starlight multiplier per tick (scaled by attribute modifiers). */
-    private static final double BASE_COLLECTION_RATE = 200.0;
+    /** Base starlight multiplier per tick (scaled by attribute modifiers). Read from CommonConfig. */
+    private static double baseCollectionRate() {
+        return CommonConfig.CONFIG.baseCollectorOutput.get();
+    }
 
     /** Celestial collector crystals collect 50% more starlight. */
     private static final double CELESTIAL_MULTIPLIER = 1.5;
@@ -72,7 +75,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
 
     private double starlightCollected = 0;
     private double cachedProduction = 0;
-    private int ticksExisted = 0;
+
     private boolean celestial = false;
     private boolean registeredInNetwork = false;
 
@@ -101,7 +104,6 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
 
         if (isClientSide()) {
             return;
@@ -128,7 +130,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         float attunementBonus = CelestialHandler.getAttunementBonus(level, getAttunedConstellationKey());
         double celestialMult = celestial ? CELESTIAL_MULTIPLIER : 1.0;
 
-        return BASE_COLLECTION_RATE * crystalMultiplier * distributionFactor * attunementBonus * celestialMult;
+        return baseCollectionRate() * crystalMultiplier * distributionFactor * attunementBonus * celestialMult;
     }
 
     // ========================================================================
@@ -227,8 +229,9 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         CompoundTag tag = new CompoundTag();
         tag.putDouble("cachedProduction", cachedProduction);
         tag.putBoolean("celestial", celestial);
-        if (constellationType != null) {
-            tag.putString("constellation", constellationType.getRegistryName().toString());
+        IWeakConstellation ct = constellationType;
+        if (ct != null) {
+            tag.putString("constellation", ct.getRegistryName().toString());
         }
         if (crystalAttributes != null) {
             crystalAttributes.store(tag);
@@ -241,8 +244,8 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         this.cachedProduction = tag.getDouble("cachedProduction");
         this.celestial = tag.getBoolean("celestial");
         if (tag.contains("constellation")) {
-            IConstellation cst = ConstellationRegistry.getConstellation(
-                    new ResourceLocation(tag.getString("constellation")));
+            ResourceLocation cstKey = ResourceLocation.tryParse(tag.getString("constellation"));
+            IConstellation cst = cstKey != null ? ConstellationRegistry.getConstellation(cstKey) : null;
             this.constellationType = cst instanceof IWeakConstellation wc ? wc : null;
         }
         this.crystalAttributes = CrystalAttributes.getCrystalAttributes(tag);
@@ -262,14 +265,11 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
     }
 
     public int getConstellationColor() {
-        if (constellationType != null) {
-            return constellationType.getConstellationColor().getRGB();
+        IWeakConstellation ct = constellationType;
+        if (ct != null) {
+            return ct.getConstellationColor().getRGB();
         }
         return celestial ? 0x4488DD : 0xAAAAFF;
-    }
-
-    public int getTicksExisted() {
-        return ticksExisted;
     }
 
     public boolean isCelestial() {
@@ -391,13 +391,13 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         this.constellationType = null;
         this.constellationTrait = null;
         if (compound.contains("constellation")) {
-            IConstellation cst = ConstellationRegistry.getConstellation(
-                    new ResourceLocation(compound.getString("constellation")));
+            ResourceLocation cstKey = ResourceLocation.tryParse(compound.getString("constellation"));
+            IConstellation cst = cstKey != null ? ConstellationRegistry.getConstellation(cstKey) : null;
             this.constellationType = cst instanceof IWeakConstellation wc ? wc : null;
         }
         if (compound.contains("trait")) {
-            IConstellation cst = ConstellationRegistry.getConstellation(
-                    new ResourceLocation(compound.getString("trait")));
+            ResourceLocation traitKey = ResourceLocation.tryParse(compound.getString("trait"));
+            IConstellation cst = traitKey != null ? ConstellationRegistry.getConstellation(traitKey) : null;
             this.constellationTrait = cst instanceof IMinorConstellation mc ? mc : null;
         }
 
@@ -410,6 +410,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
                 linkedTargets.add(NbtUtils.readBlockPos(list.getCompound(i)));
             }
         }
+        this.starlightCollected = compound.getDouble("starlightCollected");
     }
 
     @Override
@@ -419,11 +420,13 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         if (crystalAttributes != null) {
             crystalAttributes.store(compound);
         }
-        if (constellationType != null) {
-            compound.putString("constellation", constellationType.getRegistryName().toString());
+        IWeakConstellation ct2 = constellationType;
+        if (ct2 != null) {
+            compound.putString("constellation", ct2.getRegistryName().toString());
         }
-        if (constellationTrait != null) {
-            compound.putString("trait", constellationTrait.getRegistryName().toString());
+        IMinorConstellation ctr = constellationTrait;
+        if (ctr != null) {
+            compound.putString("trait", ctr.getRegistryName().toString());
         }
         compound.putBoolean("celestial", celestial);
 
@@ -432,6 +435,7 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
             list.add(NbtUtils.writeBlockPos(pos));
         }
         compound.put("linkedTargets", list);
+        compound.putDouble("starlightCollected", starlightCollected);
     }
 
     @Override
