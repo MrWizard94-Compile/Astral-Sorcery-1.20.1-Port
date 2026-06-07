@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Key perk that places FlareLight blocks in dark areas near the player.
@@ -32,7 +32,7 @@ public class KeySpawnLights extends KeyPerk {
     private static final int MAX_LIGHTS = 32;
 
     // Server-side only: tracks recently placed light positions per player.
-    private static final Map<UUID, Deque<BlockPos>> placedLights = new HashMap<>();
+    private static final Map<UUID, Deque<BlockPos>> placedLights = new ConcurrentHashMap<>();
 
     public KeySpawnLights(int x, int y) {
         super(AstralSorcery.key("key_spawn_lights"), x, y);

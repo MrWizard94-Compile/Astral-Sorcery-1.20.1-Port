@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.*;
 
@@ -48,11 +49,9 @@ public class CrystalGenerator {
             PROPERTY_COLLECTOR_COLLECTION_RATE
     );
 
-    private static final Random RAND = new Random();
-
     @Nonnull
     public static CrystalAttributes upgradeProperties(ItemStack stack) {
-        return upgradeProperties(stack, RAND);
+        return upgradeProperties(stack, ThreadLocalRandom.current());
     }
 
     @Nonnull
@@ -88,7 +87,7 @@ public class CrystalGenerator {
 
     @Nullable
     public static CrystalProperty getRandomProperty() {
-        return getRandomProperty(RAND);
+        return getRandomProperty(ThreadLocalRandom.current());
     }
 
     @Nullable
@@ -109,7 +108,7 @@ public class CrystalGenerator {
 
     @Nonnull
     public static CrystalAttributes generateNewAttributes(ItemStack item) {
-        return generateNewAttributes(item, RAND);
+        return generateNewAttributes(item, ThreadLocalRandom.current());
     }
 
     @Nonnull

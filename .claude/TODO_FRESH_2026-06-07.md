@@ -110,19 +110,19 @@
 
 ### LOW — Polish / regression prevention
 
-**L1 — `KeySpawnLights.placedLights` — static unsynchronized HashMap**
-- File: `src/main/java/hellfirepvp/astralsorcery/common/perk/node/key/KeySpawnLights.java:35`
-- Problem: `HashMap` is not thread-safe. Player ticks are server-thread sequential in vanilla, but future changes (or tick parallelism mods) could cause ConcurrentModificationException.
-- Fix: `Collections.synchronizedMap(new HashMap<>())` or `ConcurrentHashMap`.
+**L1 — `KeySpawnLights.placedLights` — static unsynchronized HashMap — FIXED ✅ (2026-06-07)**
+- Changed `new HashMap<>()` to `new ConcurrentHashMap<>()`.
+- Build: clean compile, 514 tests pass.
 
-**L2 — `CrystalGenerator.RAND` — shared static Random**
-- File: `src/main/java/hellfirepvp/astralsorcery/common/crystal/CrystalGenerator.java:51`
-- Problem: Same issue as M1. Single `static final Random RAND` is not thread-safe and produces correlated sequences.
-- Fix: Accept the level's `RandomSource` as a parameter at call sites rather than using a static field.
+**L2 — `CrystalGenerator.RAND` — shared static Random — FIXED ✅ (2026-06-07)**
+- Removed `private static final Random RAND` field.
+- No-arg wrappers (`upgradeProperties`, `generateNewAttributes`, `getRandomProperty`) now delegate
+  to `ThreadLocalRandom.current()` — thread-safe, no shared state.
+- Build: clean compile, 514 tests pass.
 
-**L3 — CommonConfig dead fields lack user-visible documentation**
-- Server admins who set `rainStarlightPenalty = 0.5` get no effect and no feedback.
-- Fix: Add `// NOT YET WIRED - pending <system> port` comments on each dead field in `CommonConfig`.
+**L3 — CommonConfig dead fields lack user-visible documentation — FIXED ✅ (2026-06-07)**
+- 19 `// NOT YET WIRED — pending <system> port` comments added (done as part of H2 fix).
+- Verified: 19 occurrences of "NOT YET WIRED" in CommonConfig.java.
 
 ---
 
