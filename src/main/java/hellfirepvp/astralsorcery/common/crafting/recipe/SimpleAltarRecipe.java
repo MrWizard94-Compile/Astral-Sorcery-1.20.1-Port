@@ -94,7 +94,6 @@ public class SimpleAltarRecipe implements Recipe<Container> {
      * Override to implement crystal-attribute manipulation, constellation copying, etc.
      */
     @Nonnull
-    @SuppressWarnings("null")
     public List<ItemStack> getOutputs(@Nonnull hellfirepvp.astralsorcery.common.tile.BlockEntityAltar altar) {
         return Collections.singletonList(output.copy());
     }
@@ -178,7 +177,14 @@ public class SimpleAltarRecipe implements Recipe<Container> {
         @Override
         public SimpleAltarRecipe fromJson(@Nonnull ResourceLocation id, @Nonnull JsonObject json) {
             String typeStr = GsonHelper.getAsString(json, "altar_type");
-            BlockAltar.AltarType altarType = BlockAltar.AltarType.valueOf(typeStr.toUpperCase(Locale.ROOT));
+            BlockAltar.AltarType altarType;
+            try {
+                altarType = BlockAltar.AltarType.valueOf(typeStr.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                throw new com.google.gson.JsonSyntaxException(
+                        "Unknown altar_type '" + typeStr + "'. Valid values: "
+                        + java.util.Arrays.toString(BlockAltar.AltarType.values()), e);
+            }
 
             int duration = GsonHelper.getAsInt(json, "craft_duration", 100);
             double starlight = GsonHelper.getAsFloat(json, "starlight_required", 200.0F);
@@ -225,8 +231,14 @@ public class SimpleAltarRecipe implements Recipe<Container> {
             }
 
             ResourceLocation constellation = buf.readBoolean() ? buf.readResourceLocation() : null;
-            return new SimpleAltarRecipe(id, altarType, duration, starlight,
+            boolean copyProperties = buf.readBoolean();
+            SimpleAltarRecipe recipe = new SimpleAltarRecipe(id, altarType, duration, starlight,
                     output, inputs, constellation);
+            if (copyProperties) {
+                return hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.NBTCopyRecipe
+                        .convertToThis(recipe);
+            }
+            return recipe;
         }
 
         @Override
@@ -241,12 +253,16 @@ public class SimpleAltarRecipe implements Recipe<Container> {
                 ingredient.toNetwork(buf);
             }
 
-            if (recipe.focusConstellation != null) {
+            ResourceLocation fc = recipe.focusConstellation;
+            if (fc != null) {
                 buf.writeBoolean(true);
-                buf.writeResourceLocation(recipe.focusConstellation);
+                buf.writeResourceLocation(fc);
             } else {
                 buf.writeBoolean(false);
             }
+            // Preserve NBTCopyRecipe subtype across the network
+            buf.writeBoolean(recipe instanceof
+                    hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.NBTCopyRecipe);
         }
 
         private static int slotCountForType(@Nonnull BlockAltar.AltarType type) {

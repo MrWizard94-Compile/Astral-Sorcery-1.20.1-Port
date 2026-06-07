@@ -45,7 +45,6 @@ public class ConstellationCopyStatsRecipe extends ConstellationBaseItemRecipe {
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
         List<ItemStack> out = new ArrayList<>(super.getOutputs(altar));
         TileInventory inv = altar.getInventory();
@@ -53,7 +52,6 @@ public class ConstellationCopyStatsRecipe extends ConstellationBaseItemRecipe {
         return out;
     }
 
-    @SuppressWarnings("null")
     private void copyConstellation(@Nonnull ItemStack out, @Nonnull TileInventory inv) {
         CompoundTag outTag = out.getTag();
         if (outTag != null && outTag.contains("attunedConstellation")) return;

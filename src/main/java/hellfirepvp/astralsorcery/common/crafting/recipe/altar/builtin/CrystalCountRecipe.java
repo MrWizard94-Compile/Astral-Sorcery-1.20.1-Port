@@ -45,7 +45,6 @@ public class CrystalCountRecipe extends ConstellationBaseAverageStatsRecipe {
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
         List<ItemStack> out = super.getOutputs(altar); // calls ConstellationBaseAverageStatsRecipe first
         out.forEach(this::setAmount);

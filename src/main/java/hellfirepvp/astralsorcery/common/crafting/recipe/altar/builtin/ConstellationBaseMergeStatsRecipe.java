@@ -46,7 +46,6 @@ public class ConstellationBaseMergeStatsRecipe extends ConstellationBaseItemReci
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
         List<ItemStack> out = new ArrayList<>(super.getOutputs(altar));
         TileInventory inv = altar.getInventory();
@@ -54,7 +53,6 @@ public class ConstellationBaseMergeStatsRecipe extends ConstellationBaseItemReci
         return out;
     }
 
-    @SuppressWarnings("null")
     private void applyMergedProps(@Nonnull ItemStack out, @Nonnull TileInventory inv) {
         int bestSize = 0, bestPurity = 0, bestCutting = 0;
         boolean found = false;

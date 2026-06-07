@@ -56,7 +56,6 @@ public class ConstellationUpgradeRecipe extends SimpleAltarRecipe implements Alt
     }
 
     @Override
-    @SuppressWarnings("null")
     public void onRecipeCompletion(@Nonnull BlockEntityAltar altar) {
         Level level = altar.getLevel();
         if (level == null) return;

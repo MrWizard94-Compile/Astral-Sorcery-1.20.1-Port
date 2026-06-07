@@ -46,7 +46,6 @@ public class ConstellationBaseAverageStatsRecipe extends ConstellationBaseItemRe
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public List<ItemStack> getOutputs(@Nonnull BlockEntityAltar altar) {
         List<ItemStack> out = new ArrayList<>(super.getOutputs(altar));
         TileInventory inv = altar.getInventory();
@@ -54,7 +53,6 @@ public class ConstellationBaseAverageStatsRecipe extends ConstellationBaseItemRe
         return out;
     }
 
-    @SuppressWarnings("null")
     private void applyAverageProps(@Nonnull ItemStack out, @Nonnull TileInventory inv) {
         int count = 0;
         int totalSize = 0, totalPurity = 0, totalCutting = 0;

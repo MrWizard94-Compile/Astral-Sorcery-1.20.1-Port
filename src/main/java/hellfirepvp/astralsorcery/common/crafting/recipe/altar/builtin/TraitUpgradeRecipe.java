@@ -56,7 +56,6 @@ public class TraitUpgradeRecipe extends SimpleAltarRecipe implements AltarUpgrad
     }
 
     @Override
-    @SuppressWarnings("null")
     public void onRecipeCompletion(@Nonnull BlockEntityAltar altar) {
         Level level = altar.getLevel();
         if (level == null) return;
