@@ -1430,6 +1430,191 @@ class StarlightDistributionTest {
     }
 
     // ========================================================================
+    // Transmission loss per block
+    //
+    // WorldNetworkHandler.distributeFromSource() applies:
+    //   arriving *= Math.pow(1.0 - lossPerBlock, distance)
+    // per link.  The unit-test simulator omits this so as not to couple every
+    // test to the config; these tests exercise the formula in isolation and
+    // via an extended simulator that mirrors the production code exactly.
+    // ========================================================================
+
+    /** BFS simulator that also applies per-block transmission loss. */
+    private Map<BlockPos, Double> simulateWithLoss(
+            BlockPos sourcePos,
+            double production,
+            Map<BlockPos, Double> transmissions,
+            Set<BlockPos> receivers,
+            Map<BlockPos, List<BlockPos>> adjacency,
+            double lossPerBlock) {
+
+        Map<BlockPos, Double> receiverAccumulation = new HashMap<>();
+        Deque<Object[]> bfsQueue = new ArrayDeque<>();
+        Set<BlockPos> visited = new HashSet<>();
+
+        bfsQueue.add(new Object[]{sourcePos, production});
+        visited.add(sourcePos);
+
+        int depth = 0;
+        while (!bfsQueue.isEmpty() && depth < MAX_TRAVERSAL_DEPTH) {
+            int levelSize = bfsQueue.size();
+            for (int i = 0; i < levelSize; i++) {
+                Object[] wave = bfsQueue.poll();
+                if (wave == null) break;
+                BlockPos pos = (BlockPos) wave[0];
+                double starlight = (double) wave[1];
+
+                List<BlockPos> targets = adjacency.getOrDefault(pos, Collections.emptyList());
+                if (targets.isEmpty()) continue;
+
+                double perTarget = starlight / targets.size();
+
+                for (BlockPos target : targets) {
+                    if (visited.contains(target)) continue;
+
+                    double arriving = perTarget;
+                    if (lossPerBlock > 0.0) {
+                        double distance = Math.sqrt(pos.distSqr(target));
+                        arriving *= Math.pow(1.0 - lossPerBlock, distance);
+                    }
+
+                    Double efficiency = transmissions.get(target);
+                    if (efficiency != null) {
+                        arriving *= efficiency;
+                        visited.add(target);
+                        bfsQueue.add(new Object[]{target, arriving});
+                    }
+
+                    if (receivers.contains(target)) {
+                        receiverAccumulation.merge(target, arriving, Double::sum);
+                        visited.add(target);
+                    }
+                }
+            }
+            depth++;
+        }
+        return receiverAccumulation;
+    }
+
+    @Nested
+    class TransmissionLossPerBlock {
+
+        @Test
+        void testZeroLossIsLossless() {
+            // Verify the simulator with lossPerBlock=0 matches the no-loss simulator exactly.
+            BlockPos source = new BlockPos(0, 64, 0);
+            BlockPos receiver = new BlockPos(10, 64, 0);
+
+            Map<BlockPos, List<BlockPos>> adjacency = Map.of(source, List.of(receiver));
+            Map<BlockPos, Double> withLoss = simulateWithLoss(
+                    source, 1000.0, Map.of(), Set.of(receiver), adjacency, 0.0);
+            Map<BlockPos, Double> withoutLoss = simulateDistribution(
+                    source, 1000.0, Map.of(), Set.of(receiver), adjacency);
+
+            assertEquals(withoutLoss.get(receiver), withLoss.get(receiver), 0.001,
+                    "Zero lossPerBlock must behave identically to the no-loss path");
+        }
+
+        @Test
+        void testDefaultLossAtTenBlocks() {
+            // Default config transmissionLossPerBlock = 0.005.
+            // Over 10 blocks: 1000 * (1 - 0.005)^10 = 1000 * 0.995^10 ≈ 951.11
+            double lossPerBlock = 0.005;
+            double distance = 10.0;
+            double expected = 1000.0 * Math.pow(1.0 - lossPerBlock, distance);
+
+            BlockPos source = new BlockPos(0, 64, 0);
+            BlockPos receiver = new BlockPos(10, 64, 0); // exactly 10 blocks on X axis
+
+            Map<BlockPos, Double> result = simulateWithLoss(
+                    source, 1000.0, Map.of(), Set.of(receiver),
+                    Map.of(source, List.of(receiver)), lossPerBlock);
+
+            assertEquals(expected, result.get(receiver), 0.01,
+                    "Default 0.005 loss over 10 blocks should deliver ~951.1 starlight");
+        }
+
+        @Test
+        void testLossScalesWithDistance() {
+            // Receiver at 5 blocks should receive more than receiver at 10 blocks.
+            double lossPerBlock = 0.01;
+            BlockPos source = new BlockPos(0, 64, 0);
+            BlockPos near = new BlockPos(5, 64, 0);
+            BlockPos far = new BlockPos(10, 64, 0);
+
+            double deliveredNear = 1000.0 * Math.pow(1.0 - lossPerBlock, 5.0);
+            double deliveredFar = 1000.0 * Math.pow(1.0 - lossPerBlock, 10.0);
+
+            assertTrue(deliveredNear > deliveredFar,
+                    "Nearer receiver must receive more starlight than farther receiver");
+
+            // Confirm via simulator
+            Map<BlockPos, Double> nearResult = simulateWithLoss(
+                    source, 1000.0, Map.of(), Set.of(near),
+                    Map.of(source, List.of(near)), lossPerBlock);
+            Map<BlockPos, Double> farResult = simulateWithLoss(
+                    source, 1000.0, Map.of(), Set.of(far),
+                    Map.of(source, List.of(far)), lossPerBlock);
+
+            assertEquals(deliveredNear, nearResult.get(near), 0.001);
+            assertEquals(deliveredFar, farResult.get(far), 0.001);
+        }
+
+        @Test
+        void testLossComposesWithTransmissionEfficiency() {
+            // Source(1000) → Trans(0.9, 10 blocks away) → Receiver (10 more blocks)
+            // With lossPerBlock=0.005:
+            //   link 1: 1000 * 0.995^10 ≈ 951.11, then * 0.9 ≈ 856.00
+            //   link 2: 856.00 * 0.995^10 ≈ 813.04
+            double lossPerBlock = 0.005;
+            BlockPos source = new BlockPos(0, 64, 0);
+            BlockPos trans = new BlockPos(10, 64, 0);
+            BlockPos receiver = new BlockPos(20, 64, 0);
+
+            double afterLink1Loss = 1000.0 * Math.pow(0.995, 10.0);
+            double afterEfficiency = afterLink1Loss * 0.9;
+            double afterLink2Loss = afterEfficiency * Math.pow(0.995, 10.0);
+
+            Map<BlockPos, Double> result = simulateWithLoss(
+                    source, 1000.0,
+                    Map.of(trans, 0.9),
+                    Set.of(receiver),
+                    Map.of(source, List.of(trans), trans, List.of(receiver)),
+                    lossPerBlock);
+
+            assertEquals(afterLink2Loss, result.get(receiver), 0.1,
+                    "Loss must compose multiplicatively with transmission efficiency");
+        }
+
+        @Test
+        void testMaxLossBlocksAllDelivery() {
+            // lossPerBlock=1.0 means (1-1.0)^distance = 0 for any distance > 0
+            BlockPos source = new BlockPos(0, 64, 0);
+            BlockPos receiver = new BlockPos(5, 64, 0);
+
+            Map<BlockPos, Double> result = simulateWithLoss(
+                    source, 1000.0, Map.of(), Set.of(receiver),
+                    Map.of(source, List.of(receiver)), 1.0);
+
+            double delivered = result.getOrDefault(receiver, 0.0);
+            assertEquals(0.0, delivered, 0.001,
+                    "lossPerBlock=1.0 must block all starlight delivery");
+        }
+
+        @Test
+        void testLossDoesNotAffectZeroDistanceLinks() {
+            // If source and receiver happen to be at the same position (distance=0),
+            // Math.pow(1-loss, 0) = 1.0 — no loss even with non-zero lossPerBlock.
+            // (Self-links are rejected by addLink but the math must be correct.)
+            double lossPerBlock = 0.5;
+            double distance = 0.0;
+            double lossMultiplier = Math.pow(1.0 - lossPerBlock, distance);
+            assertEquals(1.0, lossMultiplier, 0.001,
+                    "Zero-distance link must not be attenuated regardless of lossPerBlock");
+        }
+    }
+
+    // ========================================================================
     // Entry data class edge cases
     // ========================================================================
 

@@ -64,9 +64,6 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
     /** Ticks until the catalyst degrades by 1 durability point. */
     private static final int CATALYST_DEGRADE_INTERVAL = 600; // 30 seconds
 
-    /** Base mB produced per tick at perfect conditions (no multiplier). */
-    private static final double BASE_PRODUCTION_PER_TICK = 0.05;
-
     @Nullable
     private WellLiquefaction cachedRecipe = null;
     private boolean recipeDirty = true;

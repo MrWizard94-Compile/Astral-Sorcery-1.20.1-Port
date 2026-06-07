@@ -4,6 +4,7 @@
 package hellfirepvp.astralsorcery.common.datagen;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.test.GameTestStructureProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -43,6 +44,8 @@ public final class AstralDataGenerator {
             // loot tables containing critical custom functions (copy_crystal_properties,
             // copy_constellation, copy_gateway_color, random_crystal_property).
             // generator.addProvider(true, new AstralLootTableProvider(output));
+
+            generator.addProvider(true, new GameTestStructureProvider(output));
 
             AstralBlockTagProvider blockTags = new AstralBlockTagProvider(
                     output, event.getLookupProvider(), existingFileHelper);
