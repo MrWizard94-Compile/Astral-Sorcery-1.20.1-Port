@@ -108,14 +108,15 @@ public abstract class BlockEntitySynchronized extends BlockEntity implements ILo
     }
 
     @Override
-    public void handleUpdateTag(@Nonnull CompoundTag tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        // Do NOT call super — vanilla calls load() which also runs readSaveNBT()
+        // with an incomplete update tag, zeroing disk-only fields on the client.
         readCustomNBT(tag);
     }
 
     @Override
-    public void onDataPacket(@Nonnull net.minecraft.network.Connection net,
-                             @Nonnull ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(net.minecraft.network.Connection net,
+                             ClientboundBlockEntityDataPacket pkt) {
         CompoundTag tag = pkt.getTag();
         if (tag != null) {
             readCustomNBT(tag);
@@ -128,16 +129,19 @@ public abstract class BlockEntitySynchronized extends BlockEntity implements ILo
     protected void onDataReceived() {}
 
     public void markForUpdate() {
-        if (getLevel() != null) {
+        net.minecraft.world.level.Level level = getLevel();
+        if (level != null) {
             BlockState thisState = this.getBlockState();
-            getLevel().sendBlockUpdated(getBlockPos(), thisState, thisState, 3);
+            level.sendBlockUpdated(getBlockPos(), thisState, thisState, 3);
         }
         setChanged();
     }
 
     @Nullable
     public ItemEntity dropItemOnTop(@Nonnull ItemStack stack) {
-        return ItemUtils.dropItem(getLevel(),
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null) return null;
+        return ItemUtils.dropItem(level,
                 getBlockPos().getX() + 0.5,
                 getBlockPos().getY() + 1.5,
                 getBlockPos().getZ() + 0.5,
@@ -145,9 +149,10 @@ public abstract class BlockEntitySynchronized extends BlockEntity implements ILo
     }
 
     public boolean removeSelf() {
-        if (this.getLevel() == null || this.getLevel().isClientSide()) {
+        net.minecraft.world.level.Level level = this.getLevel();
+        if (level == null || level.isClientSide()) {
             return false;
         }
-        return this.getLevel().setBlock(this.getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+        return level.setBlock(this.getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
     }
 }
