@@ -4,6 +4,7 @@
 package hellfirepvp.astralsorcery.common.event;
 
 import hellfirepvp.astralsorcery.common.auxiliary.TransmutationHelper;
+import hellfirepvp.astralsorcery.common.auxiliary.link.LinkHandler;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperDamageCancelling;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperInvulnerability;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperSpawnDeny;
@@ -12,6 +13,7 @@ import hellfirepvp.astralsorcery.common.util.tick.TickManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -64,8 +66,14 @@ public class EventHandlerServerTick {
     }
 
     @SubscribeEvent
+    public void onPlayerLogout(@Nonnull PlayerEvent.PlayerLoggedOutEvent event) {
+        LinkHandler.clearSession(event.getEntity().getUUID());
+    }
+
+    @SubscribeEvent
     public void onServerStopping(@Nonnull ServerStoppingEvent event) {
         TransmutationHelper.clearAll();
+        LinkHandler.clearAll();
         EventHelperDamageCancelling.clearServer();
         EventHelperInvulnerability.clearServer();
         EventHelperTemporaryFlight.clearServer();

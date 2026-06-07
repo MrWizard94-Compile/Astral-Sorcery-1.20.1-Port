@@ -23,9 +23,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,6 +54,10 @@ public class AlignmentChargeHandler {
 
     private static final Map<LogicalSide, Map<UUID, Float>> maximumCharge = new HashMap<>();
     private static final Map<LogicalSide, Map<UUID, Float>> currentCharge = new HashMap<>();
+
+    // Cached once after registry freeze; avoids a PerkTree map lookup every tick per player.
+    @Nullable
+    private static AbstractPerk cachedChargeBalancingPerk = null;
 
     private AlignmentChargeHandler() {}
 
@@ -96,6 +102,19 @@ public class AlignmentChargeHandler {
             currentCharge.computeIfAbsent(side, s -> new HashMap<>()).put(player.getUUID(), result);
         }
         return true;
+    }
+
+    // ---- Lifecycle ----
+
+    @SubscribeEvent
+    public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        UUID uuid = event.getEntity().getUUID();
+        for (Map<UUID, Float> map : maximumCharge.values()) {
+            map.remove(uuid);
+        }
+        for (Map<UUID, Float> map : currentCharge.values()) {
+            map.remove(uuid);
+        }
     }
 
     // ---- Tick ----
@@ -146,9 +165,11 @@ public class AlignmentChargeHandler {
                         regenPerTick);
                 regenPerTick = Math.max(regenPerTick, 0F);
 
-                // KeyChargeBalancing: +25% regen (equalises sources in the single-pool model)
-                AbstractPerk balancePerk = PerkTree.getPerk(AstralSorcery.key("key_charge_balancing"));
-                if (balancePerk != null && progress.hasPerkAllocated(balancePerk)) {
+                // KeyChargeBalancing: +25% regen — resolved once and cached.
+                if (cachedChargeBalancingPerk == null) {
+                    cachedChargeBalancingPerk = PerkTree.getPerk(AstralSorcery.key("key_charge_balancing"));
+                }
+                if (cachedChargeBalancingPerk != null && progress.hasPerkAllocated(cachedChargeBalancingPerk)) {
                     regenPerTick *= 1.25F;
                 }
             }

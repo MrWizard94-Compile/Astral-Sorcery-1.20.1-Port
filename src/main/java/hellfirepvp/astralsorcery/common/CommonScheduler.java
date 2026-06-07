@@ -54,8 +54,8 @@ public class CommonScheduler {
             for (Tuple<Runnable, Integer> w : waiting) {
                 queue.addLast(new Tuple<>(w.getA(), new Counter(w.getB())));
             }
+            waiting.clear();
         }
-        waiting.clear();
     }
 
     /**
