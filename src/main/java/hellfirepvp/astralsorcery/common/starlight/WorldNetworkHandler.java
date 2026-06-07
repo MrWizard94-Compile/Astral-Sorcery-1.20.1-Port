@@ -56,8 +56,10 @@ public class WorldNetworkHandler extends SavedData {
 
     private static final String DATA_NAME = AstralSorcery.MODID + "_starlight_network";
 
-    /** Maximum distance (blocks) for a valid starlight link. */
-    private static final double MAX_LINK_DISTANCE = 64.0;
+    /** Maximum distance (blocks) for a valid starlight link. Read from CommonConfig at runtime. */
+    private static double getMaxLinkDistance() {
+        return hellfirepvp.astralsorcery.common.data.config.CommonConfig.CONFIG.maxNetworkRange.get();
+    }
 
     /** Maximum depth for BFS graph traversal (prevents infinite loops). */
     private static final int MAX_TRAVERSAL_DEPTH = 32;
@@ -148,6 +150,11 @@ public class WorldNetworkHandler extends SavedData {
                                @Nullable ResourceLocation constellation,
                                boolean autoLink) {
         pos = pos.immutable();
+        if (sources.containsKey(pos)) {
+            // Re-registering an existing source (e.g. constellation change) — remove
+            // stale outgoing links so the network rebuilds them with the new flavor.
+            removeAllLinksFrom(pos);
+        }
         SourceEntry entry = new SourceEntry(pos, constellation, autoLink);
         sources.put(pos, entry);
         setDirty();
@@ -340,9 +347,10 @@ public class WorldNetworkHandler extends SavedData {
                     from.toShortString(), to.toShortString());
             return false;
         }
-        if (from.distSqr(to) > MAX_LINK_DISTANCE * MAX_LINK_DISTANCE) {
+        double maxDist = getMaxLinkDistance();
+        if (from.distSqr(to) > maxDist * maxDist) {
             AstralSorcery.log.debug("Rejected link {} -> {}: exceeds max distance {}",
-                    from.toShortString(), to.toShortString(), MAX_LINK_DISTANCE);
+                    from.toShortString(), to.toShortString(), maxDist);
             return false;
         }
         // Receivers cannot be link sources
@@ -769,7 +777,7 @@ public class WorldNetworkHandler extends SavedData {
         for (BlockPos receiverPos : receivers.keySet()) {
             if (sourcePos.getY() <= receiverPos.getY()) continue;
             double distSq = sourcePos.distSqr(receiverPos);
-            if (distSq > MAX_LINK_DISTANCE * MAX_LINK_DISTANCE) continue;
+            if (distSq > getMaxLinkDistance() * getMaxLinkDistance()) continue;
             addLink(sourcePos, receiverPos);
         }
     }
@@ -777,7 +785,7 @@ public class WorldNetworkHandler extends SavedData {
     /**
      * Scans for auto-linking sources (collector crystals) within range of the given
      * receiver position and creates links for any source that is above the receiver
-     * and within {@link #MAX_LINK_DISTANCE} blocks.
+     * and within {@code maxNetworkRange} blocks (from CommonConfig).
      *
      * <p>Call this after registering a new receiver (e.g., altar placed) so collector
      * crystals in the area automatically link without requiring manual wand use.</p>
@@ -791,7 +799,7 @@ public class WorldNetworkHandler extends SavedData {
             if (!source.autoLink) continue;
             if (sourcePos.getY() <= receiverPos.getY()) continue;
             double distSq = sourcePos.distSqr(receiverPos);
-            if (distSq > MAX_LINK_DISTANCE * MAX_LINK_DISTANCE) continue;
+            if (distSq > getMaxLinkDistance() * getMaxLinkDistance()) continue;
             // Try to add the link; addLink() validates both are registered nodes
             addLink(sourcePos, receiverPos);
         }
@@ -969,7 +977,7 @@ public class WorldNetworkHandler extends SavedData {
         static SourceEntry readFromNBT(@Nonnull CompoundTag tag) {
             BlockPos pos = NBTHelper.readBlockPosFromNBT(tag.getCompound("pos"));
             ResourceLocation constellation = tag.contains("constellation")
-                    ? new ResourceLocation(tag.getString("constellation")) : null;
+                    ? ResourceLocation.tryParse(tag.getString("constellation")) : null;
             boolean autoLink = tag.getBoolean("autoLink");
             return new SourceEntry(pos, constellation, autoLink);
         }

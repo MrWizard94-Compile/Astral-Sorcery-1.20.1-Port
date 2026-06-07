@@ -375,7 +375,6 @@ public final class CommonConfig {
         builder.pop();
     }
 
-    @SuppressWarnings("null")
     private static String toTitleCase(@Nonnull String upper) {
         if (upper.isEmpty()) return upper;
         String lower = upper.toLowerCase(java.util.Locale.ROOT).replace('_', ' ');
