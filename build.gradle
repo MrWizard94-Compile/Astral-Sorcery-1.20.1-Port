@@ -81,6 +81,10 @@ minecraft {
     }
 }
 
+// WARNING: src/generated/ is currently empty. Do NOT run datagen until all providers
+// (AstralBlockStateProvider, AstralRecipeProvider, AstralItemModelProvider) are complete;
+// generated files are merged onto the classpath and will shadow handwritten JSON resources
+// at the same path, silently replacing hand-crafted loot tables, models, and blockstates.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 processResources {

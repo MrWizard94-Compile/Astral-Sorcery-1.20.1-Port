@@ -4,9 +4,14 @@
 package hellfirepvp.astralsorcery.common.datagen;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -28,8 +33,29 @@ public class AstralItemTagProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(@Nonnull HolderLookup.Provider provider) {
-        // Item tags can be added here as needed.
-        // Block tags that should also apply to item forms are
-        // copied via copy(BlockTags.X, ItemTags.X) calls.
+        // forge:crystals — interop tag for other mods detecting crystal items
+        tag(forgeTag("crystals"))
+                .add(ItemsAS.ROCK_CRYSTAL.get(),
+                     ItemsAS.CELESTIAL_CRYSTAL.get(),
+                     ItemsAS.ATTUNED_ROCK_CRYSTAL.get(),
+                     ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get());
+
+        // forge:gems/aquamarine — enables gem crafting substitution by other mods
+        tag(forgeTag("gems/aquamarine"))
+                .add(ItemsAS.AQUAMARINE.get());
+
+        // minecraft:beacon_payment_items — starmetal ingot accepted by beacons
+        tag(ItemTags.BEACON_PAYMENT_ITEMS)
+                .add(ItemsAS.STARMETAL_INGOT.get());
+
+        // astralsorcery:perk_gems — used by perk recipes and JEI
+        tag(ItemTags.create(AstralSorcery.key("perk_gems")))
+                .add(ItemsAS.PERK_GEM_DAY.get(),
+                     ItemsAS.PERK_GEM_NIGHT.get(),
+                     ItemsAS.PERK_GEM_SKY.get());
+    }
+
+    private static TagKey<Item> forgeTag(String path) {
+        return ItemTags.create(new ResourceLocation("forge", path));
     }
 }
