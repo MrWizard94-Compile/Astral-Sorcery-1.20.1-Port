@@ -8,6 +8,7 @@ import hellfirepvp.astralsorcery.common.lib.PerkAttributeTypesAS;
 import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -17,12 +18,12 @@ import java.util.Objects;
 
 /**
  * Key perk for the Mineralis constellation branch.
- * Effect: Haste II underground (y < 60) and Night Vision in caves.
+ * Effect: Haste II underground and Night Vision in caves.
+ * "Underground" is defined as being below the WORLD_SURFACE heightmap — correct
+ * for 1.20.1 where terrain can exceed Y=60 in mountain biomes.
  * Reach and mining speed bonuses via attributes.
  */
 public class KeyMineralis extends KeyPerk {
-
-    private static final int CAVE_THRESHOLD_Y = 60;
 
     public KeyMineralis(int x, int y) {
         super(AstralSorcery.key("key_mineralis"), x, y);
@@ -43,7 +44,9 @@ public class KeyMineralis extends KeyPerk {
     @Override
     public void onPlayerTick(@Nonnull Player player) {
         if (player.level().isClientSide()) return;
-        if (player.getBlockY() < CAVE_THRESHOLD_Y) {
+        int surfaceY = player.level().getHeight(
+                Heightmap.Types.WORLD_SURFACE, player.getBlockX(), player.getBlockZ());
+        if (player.getBlockY() < surfaceY) {
             // Haste II underground — stronger than KeyEvorsio's Haste I
             player.addEffect(new MobEffectInstance(Objects.requireNonNull(MobEffects.DIG_SPEED),
                     40, 1, true, false));

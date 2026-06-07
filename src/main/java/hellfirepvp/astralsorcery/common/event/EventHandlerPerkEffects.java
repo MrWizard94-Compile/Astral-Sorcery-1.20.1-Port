@@ -5,7 +5,9 @@ package hellfirepvp.astralsorcery.common.event;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
+import hellfirepvp.astralsorcery.common.auxiliary.BlockBreakHelper;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
+import hellfirepvp.astralsorcery.common.util.block.TreeDiscoverer;
 import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
@@ -380,7 +382,7 @@ public class EventHandlerPerkEffects {
 
     @SubscribeEvent
     public void onProjectileDistance(@Nonnull LivingHurtEvent event) {
-        if (!(event.getSource().getDirectEntity() instanceof Projectile proj)) return;
+        if (!(event.getSource().getDirectEntity() instanceof Projectile)) return;
         if (!(event.getSource().getEntity() instanceof Player player)) return;
         if (!hasPerk(player, AstralSorcery.key("key_projectile_distance"))) return;
 
@@ -451,52 +453,25 @@ public class EventHandlerPerkEffects {
 
         ItemStack tool = player.getMainHandItem();
         if (!tool.canPerformAction(net.minecraftforge.common.ToolActions.AXE_DIG)) return;
+        if (!TreeDiscoverer.isLog(event.getState())) return;
 
-        BlockState state = event.getState();
-        if (!isLogBlock(state)) return;
-
-        // Flood-fill connected logs
-        Set<BlockPos> logs = new LinkedHashSet<>();
-        floodFillLogs(level, event.getPos(), logs, state.getBlock());
+        // Tag-based flood-fill; respects all log variants including modded wood
+        java.util.List<BlockPos> logs = TreeDiscoverer.findConnectedLogs(level, event.getPos());
         if (logs.size() <= 1) return;
 
         IS_CHAIN_BREAKING.set(true);
         try {
+            int broken = 0;
             for (BlockPos logPos : logs) {
                 if (logPos.equals(event.getPos())) continue;
-                BlockState logState = level.getBlockState(logPos);
-                level.destroyBlock(logPos, true, player);
-                logState.getBlock().playerDestroy(level, player, logPos, logState,
-                        level.getBlockEntity(logPos), tool);
+                if (broken >= KeyTreeConnector.MAX_LOGS) break;
+                // BlockBreakHelper fires break event and applies Fortune/Silk Touch
+                BlockBreakHelper.breakBlock(level, logPos, true);
+                broken++;
             }
         } finally {
             IS_CHAIN_BREAKING.set(false);
         }
-    }
-
-    private static void floodFillLogs(@Nonnull ServerLevel level, @Nonnull BlockPos start,
-                                      @Nonnull Set<BlockPos> found,
-                                      @Nonnull net.minecraft.world.level.block.Block logType) {
-        if (found.size() >= KeyTreeConnector.MAX_LOGS) return;
-        if (!found.add(start)) return;
-
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = 0; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
-                    BlockPos neighbor = start.offset(dx, dy, dz);
-                    if (found.size() >= KeyTreeConnector.MAX_LOGS) return;
-                    if (level.getBlockState(neighbor).getBlock() == logType) {
-                        floodFillLogs(level, neighbor, found, logType);
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean isLogBlock(@Nonnull BlockState state) {
-        String id = state.getBlock().getDescriptionId();
-        return id.contains("log") || id.contains("wood") || id.contains("stem");
     }
 
     // -----------------------------------------------------------------------
