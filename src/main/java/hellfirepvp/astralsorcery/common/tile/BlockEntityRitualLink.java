@@ -75,7 +75,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
     }
 
     @Override
-    public void onBlockLinkCreate(Player player, BlockPos other) {
+    public void onBlockLinkCreate(@Nonnull Player player, @Nonnull BlockPos other) {
         Level playerLevel = (Level) player.level();
         if (linkedTo != null) {
             BlockEntityRitualLink otherLink = MiscUtils.getTileAt(playerLevel, linkedTo,
@@ -100,7 +100,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
     }
 
     @Override
-    public boolean tryLinkBlock(Player player, BlockPos other) {
+    public boolean tryLinkBlock(@Nonnull Player player, @Nonnull BlockPos other) {
         BlockEntityRitualLink otherLink = MiscUtils.getTileAt((Level) player.level(), other,
                 BlockEntityRitualLink.class, true);
         return otherLink != null && otherLink.linkedTo == null && !other.equals(getBlockPos());
@@ -112,7 +112,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
     }
 
     @Override
-    public boolean tryUnlink(Player player, BlockPos other) {
+    public boolean tryUnlink(@Nonnull Player player, @Nonnull BlockPos other) {
         BlockEntityRitualLink otherLink = MiscUtils.getTileAt((Level) player.level(), other,
                 BlockEntityRitualLink.class, true);
         if (otherLink == null || otherLink.linkedTo == null) return false;
@@ -155,6 +155,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
     }
 
     @Override
+    @Nonnull
     public List<BlockPos> getLinkedPositions() {
         return linkedTo != null ? Lists.newArrayList(linkedTo) : Lists.newArrayList();
     }

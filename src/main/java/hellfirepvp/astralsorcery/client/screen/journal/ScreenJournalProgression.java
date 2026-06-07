@@ -82,6 +82,9 @@ public class ScreenJournalProgression extends ScreenJournal {
     public void onClose() {
         super.onClose();
         rescaleAndRefresh = false;
+        // Clear static references so the closed screen and renderer can be GC'd.
+        currentInstance = null;
+        progressionRenderer = null;
     }
 
     @Override

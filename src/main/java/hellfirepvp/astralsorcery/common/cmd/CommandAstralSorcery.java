@@ -9,10 +9,12 @@ package hellfirepvp.astralsorcery.common.cmd;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
 import hellfirepvp.astralsorcery.common.cmd.sub.CommandConstellation;
 import hellfirepvp.astralsorcery.common.cmd.sub.CommandMaximizeAll;
+import hellfirepvp.astralsorcery.common.cmd.sub.CommandProgress;
+import hellfirepvp.astralsorcery.common.cmd.sub.CommandSerialize;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncPlayerProgress;
@@ -54,10 +56,12 @@ public class CommandAstralSorcery {
                 .then(buildPerkExp())
                 .then(buildNetwork())
                 .then(CommandConstellation.register())
-                .then(CommandMaximizeAll.register());
+                .then(CommandMaximizeAll.register())
+                .then(CommandProgress.register())
+                .then(CommandSerialize.register());
 
-        dispatcher.register(root);
-        dispatcher.register(Commands.literal("as").redirect(dispatcher.register(root)));
+        LiteralCommandNode<CommandSourceStack> node = dispatcher.register(root);
+        dispatcher.register(Commands.literal("as").redirect(node));
     }
 
     // ---- /astralsorcery progress ----
@@ -76,15 +80,14 @@ public class CommandAstralSorcery {
                     int level = PerkLevelManager.getLevelFromExp(progress.getPerkExp());
                     int totalPoints = PerkLevelManager.getPerkPointsForLevel(level);
                     int spent = progress.getAllocatedPerks().size();
+                    ResourceLocation attunement = progress.getAttunedConstellation();
 
                     ctx.getSource().sendSuccess(() -> Component.literal(
                             "--- Astral Sorcery Progress ---"), false);
                     ctx.getSource().sendSuccess(() -> Component.literal(
                             "Tier: " + progress.getTierReached().name()), false);
                     ctx.getSource().sendSuccess(() -> Component.literal(
-                            "Constellation: " + (progress.getAttunedConstellation() != null
-                                    ? progress.getAttunedConstellation().toString()
-                                    : "none")), false);
+                            "Constellation: " + (attunement != null ? attunement.toString() : "none")), false);
                     ctx.getSource().sendSuccess(() -> Component.literal(
                             "Perk Level: " + level + " (exp: " + progress.getPerkExp() + ")"), false);
                     ctx.getSource().sendSuccess(() -> Component.literal(

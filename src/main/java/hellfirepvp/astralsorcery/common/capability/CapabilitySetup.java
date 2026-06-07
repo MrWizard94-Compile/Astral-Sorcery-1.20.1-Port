@@ -4,7 +4,6 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.world.ChunkFluidEntry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -53,8 +52,8 @@ public class CapabilitySetup {
 
     /**
      * Attach player progress capability to all players.
+     * Note: registered via addGenericListener in CommonProxy — @SubscribeEvent not needed.
      */
-    @SubscribeEvent
     public static void attachPlayerCaps(@Nonnull AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
             event.addCapability(PLAYER_PROGRESS_KEY, new PlayerCapabilityProvider());
@@ -63,8 +62,8 @@ public class CapabilitySetup {
 
     /**
      * Attach chunk fluid capability to all level chunks.
+     * Note: registered via addGenericListener in CommonProxy — @SubscribeEvent not needed.
      */
-    @SubscribeEvent
     public static void attachChunkCaps(@Nonnull AttachCapabilitiesEvent<LevelChunk> event) {
         event.addCapability(CHUNK_FLUID_KEY, new ChunkFluidCapabilityProvider());
     }

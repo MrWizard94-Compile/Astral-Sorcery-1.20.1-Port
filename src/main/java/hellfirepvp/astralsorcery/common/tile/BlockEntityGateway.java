@@ -2,6 +2,10 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.data.world.GatewayHandler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import net.minecraft.core.BlockPos;
@@ -41,9 +45,11 @@ public class BlockEntityGateway extends BlockEntityTick {
     @Nullable
     private String displayName = null;
 
+    @Nonnull
+    private DyeColor color = DyeColor.WHITE;
+
     private boolean structureValid = false;
     private boolean registeredInNetwork = false;
-    private int ticksExisted = 0;
 
     public BlockEntityGateway(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.GATEWAY.get(), pos, state);
@@ -60,14 +66,13 @@ public class BlockEntityGateway extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             // Client-side: portal vortex particles handled by renderer
             return;
         }
 
         // Periodically validate structure
-        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+        if (getTicksExisted() % STRUCTURE_CHECK_INTERVAL == 0) {
             boolean wasValid = structureValid;
             structureValid = validateStructure();
             if (wasValid != structureValid) {
@@ -114,9 +119,12 @@ public class BlockEntityGateway extends BlockEntityTick {
         super.setRemoved();
     }
 
+    private static final TagKey<Block> MARBLE_BLOCKS =
+            BlockTags.create(new ResourceLocation(AstralSorcery.MODID, "marble_blocks"));
+
     /**
      * Validates the gateway multiblock structure.
-     * The gateway requires a specific pillar arrangement around it.
+     * Requires open sky and 4 AS marble blocks at cardinal positions.
      */
     private boolean validateStructure() {
         Level level = getLevel();
@@ -127,7 +135,7 @@ public class BlockEntityGateway extends BlockEntityTick {
             return false;
         }
 
-        // Check for the 4 marble pillars at cardinal positions
+        // Check for the 4 AS marble pillars at cardinal positions
         BlockPos[] pillarPositions = {
                 worldPosition.offset(2, 0, 0),
                 worldPosition.offset(-2, 0, 0),
@@ -136,7 +144,7 @@ public class BlockEntityGateway extends BlockEntityTick {
         };
 
         for (BlockPos pillar : pillarPositions) {
-            if (level.getBlockState(pillar).isAir()) {
+            if (!level.getBlockState(pillar).is(MARBLE_BLOCKS)) {
                 return false;
             }
         }
@@ -167,12 +175,18 @@ public class BlockEntityGateway extends BlockEntityTick {
         markForUpdate();
     }
 
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
-
     public boolean isStructureValid() {
         return structureValid;
+    }
+
+    @Nonnull
+    public DyeColor getColor() {
+        return color;
+    }
+
+    public void setColor(@Nonnull DyeColor color) {
+        this.color = color;
+        markForUpdate();
     }
 
     /**
@@ -201,6 +215,9 @@ public class BlockEntityGateway extends BlockEntityTick {
         } else {
             this.displayName = null;
         }
+        if (compound.contains("gatewayColor")) {
+            this.color = DyeColor.byId(compound.getInt("gatewayColor"));
+        }
         this.structureValid = compound.getBoolean("structureValid");
     }
 
@@ -208,19 +225,12 @@ public class BlockEntityGateway extends BlockEntityTick {
     public void writeCustomNBT(@Nonnull CompoundTag compound) {
         super.writeCustomNBT(compound);
         compound.putUUID("gatewayId", gatewayId);
-        if (displayName != null) {
-            compound.putString("displayName", displayName);
+        String dn = displayName;
+        if (dn != null) {
+            compound.putString("displayName", dn);
         }
+        compound.putInt("gatewayColor", color.getId());
         compound.putBoolean("structureValid", structureValid);
     }
 
-    @Override
-    public void readSaveNBT(@Nonnull CompoundTag compound) {
-        super.readSaveNBT(compound);
-    }
-
-    @Override
-    public void writeSaveNBT(@Nonnull CompoundTag compound) {
-        super.writeSaveNBT(compound);
-    }
 }

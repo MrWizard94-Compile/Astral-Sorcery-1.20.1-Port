@@ -6,6 +6,7 @@ import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import hellfirepvp.astralsorcery.common.data.research.ResearchManager;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -40,7 +41,6 @@ public class ItemKnowledgeShare extends ItemAS {
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player,
                                                   @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -53,7 +53,7 @@ public class ItemKnowledgeShare extends ItemAS {
 
         UUID ownerId = getOwnerUUID(stack);
         boolean isBlank = ownerId == null;
-        boolean isSelf = !isBlank && ownerId.equals(player.getUUID());
+        boolean isSelf = ownerId != null && ownerId.equals(player.getUUID());
 
         if (isBlank || player.isCrouching() || isSelf) {
             inscribe(stack, serverPlayer);
@@ -63,24 +63,33 @@ public class ItemKnowledgeShare extends ItemAS {
         return InteractionResultHolder.sidedSuccess(stack, false);
     }
 
-    @SuppressWarnings("null")
     private void inscribe(@Nonnull ItemStack stack, @Nonnull ServerPlayer player) {
         PlayerProgress progress = PlayerProgressManager.getProgress(player);
         if (progress == null) return;
         CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(TAG_TIER, progress.getTierReached().ordinal());
+        tag.putString(TAG_TIER, progress.getTierReached().name());
         tag.putUUID(TAG_OWNER, player.getUUID());
         tag.putString(TAG_OWNER_NAME, player.getName().getString());
     }
 
-    @SuppressWarnings("null")
     private void applyKnowledge(@Nonnull ItemStack stack, @Nonnull ServerPlayer player) {
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains(TAG_TIER)) return;
-        int tierOrd = tag.getInt(TAG_TIER);
-        ProgressionTier[] tiers = ProgressionTier.values();
-        if (tierOrd < 0 || tierOrd >= tiers.length) return;
-        ProgressionTier stored = tiers[tierOrd];
+        ProgressionTier stored;
+        if (tag.contains(TAG_TIER, Tag.TAG_STRING)) {
+            // Current format: name-based (resilient to enum reorder)
+            try {
+                stored = ProgressionTier.valueOf(tag.getString(TAG_TIER));
+            } catch (IllegalArgumentException e) {
+                return; // unknown tier name — corrupted or future format
+            }
+        } else {
+            // Legacy format: ordinal int — keep reading for backward compat
+            int tierOrd = tag.getInt(TAG_TIER);
+            ProgressionTier[] tiers = ProgressionTier.values();
+            if (tierOrd < 0 || tierOrd >= tiers.length) return;
+            stored = tiers[tierOrd];
+        }
         ResearchManager.grantTier(player, stored);
         stack.shrink(1);
     }

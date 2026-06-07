@@ -4,10 +4,12 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
 import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
+import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -70,22 +72,22 @@ public class CreativeTabsAS {
         output.accept(maxToolStack(ItemsAS.INFUSED_CRYSTAL_SWORD.get()));
 
         // === Crystals & Materials ===
-        output.accept(ItemsAS.ROCK_CRYSTAL.get());
+        output.accept(maxCrystalStack(ItemsAS.ROCK_CRYSTAL.get()));
         // Attuned rock crystals — one per major constellation
-        output.accept(ItemsAS.ATTUNED_ROCK_CRYSTAL.get()); // blank
+        output.accept(maxCrystalStack(ItemsAS.ATTUNED_ROCK_CRYSTAL.get())); // blank
         for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
             if (cst instanceof IMajorConstellation major) {
-                ItemStack stack = new ItemStack(ItemsAS.ATTUNED_ROCK_CRYSTAL.get());
+                ItemStack stack = maxCrystalStack(ItemsAS.ATTUNED_ROCK_CRYSTAL.get());
                 ((ItemAttunedRockCrystal) stack.getItem()).setAttunedConstellation(stack, major);
                 output.accept(stack);
             }
         }
-        output.accept(ItemsAS.CELESTIAL_CRYSTAL.get());
+        output.accept(maxCrystalStack(ItemsAS.CELESTIAL_CRYSTAL.get()));
         // Attuned celestial crystals — one per major constellation
-        output.accept(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get()); // blank
+        output.accept(maxCrystalStack(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get())); // blank
         for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
             if (cst instanceof IMajorConstellation major) {
-                ItemStack stack = new ItemStack(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get());
+                ItemStack stack = maxCrystalStack(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get());
                 ((ItemAttunedCelestialCrystal) stack.getItem()).setAttunedConstellation(stack, major);
                 output.accept(stack);
             }
@@ -226,7 +228,27 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.ILLUMINATOR_ITEM.get());
     }
 
-    /** Create an ItemStack with maximum crystal properties pre-applied (for creative tab display). */
+    /** Create a crystal ItemStack with all physical properties at max tier. */
+    @Nonnull
+    private static ItemStack maxCrystalStack(@Nonnull net.minecraft.world.item.Item item) {
+        ItemStack stack = new ItemStack(item);
+        if (item instanceof ItemCrystalBase crystal) {
+            CrystalAttributes maxAttrs = CrystalAttributes.Builder.newBuilder(true)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_SIZE, 3)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_PURITY, 2)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_SHAPE, 3)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_COLLECTOR_COLLECTION_RATE, 3)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_TOOL_DURABILITY, 3)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_TOOL_EFFICIENCY, 3)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_RITUAL_RANGE, 2)
+                    .addProperty(CrystalPropertiesAS.Properties.PROPERTY_RITUAL_EFFECT, 3)
+                    .build();
+            crystal.setAttributes(stack, maxAttrs); // also derives and stores CrystalProperties
+        }
+        return stack;
+    }
+
+    /** Create a tool ItemStack with maximum crystal properties pre-applied (for creative tab display). */
     @Nonnull
     private static ItemStack maxToolStack(@Nonnull net.minecraft.world.item.Item item) {
         ItemStack stack = new ItemStack(item);

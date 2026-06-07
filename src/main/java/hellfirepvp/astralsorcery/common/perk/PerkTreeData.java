@@ -13,7 +13,6 @@ import hellfirepvp.astralsorcery.common.perk.node.MajorPerk;
 import hellfirepvp.astralsorcery.common.perk.node.RootPerk;
 import hellfirepvp.astralsorcery.common.perk.node.SmallPerk;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAddEnchantment;
-import net.minecraft.resources.ResourceLocation;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAevitas;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAlcara;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyAreaOfEffect;
