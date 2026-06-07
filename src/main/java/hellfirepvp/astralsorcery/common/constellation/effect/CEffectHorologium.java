@@ -59,7 +59,10 @@ public class CEffectHorologium extends ConstellationEffectProvider {
     }
 
     /**
-     * Find random block entities within range and tick them extra times.
+     * Find random block entities within range and invoke their ticker extra times.
+     * Uses the block's {@link net.minecraft.world.level.block.EntityBlock#getTicker} to
+     * call the actual BE tick logic — NOT {@code state.randomTick()} which only handles
+     * random-tick blocks (crops, grass, etc.) and has nothing to do with BE ticking.
      */
     private void accelerateBlockEntities(@Nonnull ServerLevel level,
                                          @Nonnull BlockPos pos, int range,
@@ -72,21 +75,26 @@ public class CEffectHorologium extends ConstellationEffectProvider {
                     level.getRandom().nextIntBetweenInclusive(-3, 3),
                     level.getRandom().nextIntBetweenInclusive(-range, range));
 
+            // Avoid accelerating our own pedestal (recursion risk)
+            if (target.equals(pos)) continue;
+
             BlockEntity blockEntity = level.getBlockEntity(target);
-            if (blockEntity == null || blockEntity.isRemoved()) {
-                continue;
-            }
+            if (blockEntity == null || blockEntity.isRemoved()) continue;
 
-            // Avoid accelerating our own pedestal to prevent recursion
-            if (target.equals(pos)) {
-                continue;
-            }
-
-            // Use random tick-like acceleration on the block state
             BlockState state = level.getBlockState(target);
-            for (int t = 0; t < extraTicks; t++) {
-                if (state.isRandomlyTicking()) {
-                    state.randomTick(level, target, level.getRandom());
+            if (!(state.getBlock() instanceof net.minecraft.world.level.block.EntityBlock entityBlock)) {
+                continue;
+            }
+
+            @SuppressWarnings("unchecked")
+            BlockEntityTicker<BlockEntity> ticker =
+                    (BlockEntityTicker<BlockEntity>) entityBlock.getTicker(level, state, blockEntity.getType());
+
+            if (ticker != null) {
+                for (int t = 0; t < extraTicks; t++) {
+                    if (!blockEntity.isRemoved()) {
+                        ticker.tick(level, target, state, blockEntity);
+                    }
                 }
             }
         }

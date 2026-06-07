@@ -27,7 +27,8 @@ public class MixinCooldownTracker {
                     ((ServerItemCooldownsAccessor) serverCooldowns).astralsorcery$getPlayer(),
                     cooldownTicks);
             MinecraftForge.EVENT_BUS.post(event);
-            cooldownTicks = Math.max(event.getResultCooldown(), 1);
+            // 0 is valid — Horologium must be able to fully clear a cooldown.
+            cooldownTicks = Math.max(event.getResultCooldown(), 0);
         }
         return cooldownTicks;
     }

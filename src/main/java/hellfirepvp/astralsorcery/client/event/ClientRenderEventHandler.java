@@ -12,8 +12,8 @@ import hellfirepvp.astralsorcery.client.effect.EffectManager;
 import hellfirepvp.astralsorcery.client.input.KeyBindingsAS;
 import hellfirepvp.astralsorcery.client.render.overlay.OverlayAlignmentCharge;
 import hellfirepvp.astralsorcery.client.render.overlay.OverlayPerkExperience;
-import hellfirepvp.astralsorcery.common.enchantment.dynamic.DynamicEnchantmentHelper;
 import hellfirepvp.astralsorcery.common.perk.DynamicModifierHelper;
+import hellfirepvp.astralsorcery.common.util.tick.TickManager;
 import hellfirepvp.astralsorcery.common.starlight.ClientStarlightNetworkCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -46,11 +46,15 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class ClientRenderEventHandler {
 
+    /** Central tick manager for all client-side ITickHandler instances. */
+    public static final TickManager CLIENT_TICK_MANAGER = new TickManager();
+
     @SubscribeEvent
     public void onClientTick(@Nonnull TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (Minecraft.getInstance().isPaused()) return;
 
+        CLIENT_TICK_MANAGER.tick(event);
         EffectManager.getInstance().tick();
         KeyBindingsAS.handleInput();
         OverlayAlignmentCharge.INSTANCE.tick();
@@ -99,8 +103,10 @@ public class ClientRenderEventHandler {
         // Dynamic perk-engraved attribute modifiers (stored in item NBT)
         DynamicModifierHelper.addModifierTooltip(stack, tooltip);
 
-        // Dynamic enchantments (Prism/Amulet) — only show when not already in NBT
-        if (!stack.isEnchanted()) {
+        // Dynamic enchantments (Prism/Amulet) — guard against REAL NBT enchantments only.
+        // isEnchanted() is patched by MixinItemStack to return true for dynamic-only items,
+        // which would skip this block entirely. getEnchantmentTags() reads raw NBT.
+        if (stack.getEnchantmentTags().isEmpty()) {
             Map<Enchantment, Integer> dynamic = EnchantmentHelper.getEnchantments(stack);
             if (!dynamic.isEmpty()) {
                 List<Component> enchLines = new ArrayList<>();
