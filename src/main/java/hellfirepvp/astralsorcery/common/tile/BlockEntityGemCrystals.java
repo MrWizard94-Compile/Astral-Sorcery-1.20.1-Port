@@ -38,7 +38,7 @@ public class BlockEntityGemCrystals extends BlockEntityTick {
             int growthLevel = getGrowthLevel();
             if (growthLevel < 2 && doesSeeSky()) {
                 tryGrowWithChance(TICK_GROWTH_CHANCE);
-            } else if (growthLevel == 2 && rand.nextInt(4000) == 0) {
+            } else if (growthLevel == 2 && worldLevel.getRandom().nextInt(4000) == 0) {
                 setGrowthLevel(growthLevel - 1);
             }
         }
@@ -49,7 +49,7 @@ public class BlockEntityGemCrystals extends BlockEntityTick {
         if (worldLevel == null) return;
         float dayProgress = DayTimeHelper.getDayProgress(worldLevel);
         growthChance = (int) (growthChance * (1F - (0.2F * dayProgress)));
-        if (rand.nextInt(Math.max(growthChance, 1)) == 0) {
+        if (worldLevel.getRandom().nextInt(Math.max(growthChance, 1)) == 0) {
             setGrowthLevel(getGrowthLevel() + 1);
         }
     }

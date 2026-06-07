@@ -81,38 +81,30 @@
 
 ### MEDIUM — Should fix for a quality release
 
-**M1 — `BlockEntitySynchronized.rand` — static shared Random**
-- File: `src/main/java/hellfirepvp/astralsorcery/common/tile/base/BlockEntitySynchronized.java:46`
-  ```java
-  protected static final Random rand = new Random();
-  ```
-- Problem: Shared mutable state across all BE instances. Not thread-safe. Produces correlated RNG sequences when multiple BEs tick in the same tick.
-- Fix: Use `level.getRandom()` in subclasses (preferred for server-side), or `ThreadLocalRandom.current()`. Remove the static field.
+**M1 — `BlockEntitySynchronized.rand` — static shared Random — FIXED ✅ (2026-06-07)**
+- Removed `protected static final Random rand` from `BlockEntitySynchronized`.
+- `BlockEntityCelestialCrystals`: 2 call sites replaced with `level.getRandom()`.
+- `BlockEntityGemCrystals`: 2 call sites replaced with `worldLevel.getRandom()`.
+- Build: clean compile, 514 tests pass.
 
-**M2 — `BlockEntityAltar.structureValid` — dead serialized state**
-- File: `src/main/java/hellfirepvp/astralsorcery/common/tile/BlockEntityAltar.java`
-- Problem: The field is always `false` (port removed multiblock requirement per comment at line 294). Still serialized in `readSaveNBT/writeSaveNBT`, and `isStructureValid()`/`setStructureValid()` accessors still exist. Future devs will waste time wondering why it's always false.
-- Fix: Remove the dead field, its serialization (lines 700,723), and its accessors (lines 521,525).
+**M2 — `BlockEntityAltar.structureValid` — dead serialized state — FIXED ✅ (2026-06-07)**
+- Removed field declaration, `isStructureValid()`/`setStructureValid()` accessors, and both
+  serialization lines (`readSaveNBT` + `writeSaveNBT`).
+- Comment at `tryFindRecipe()` line 293 explains the removal.
+- Build: clean compile, 514 tests pass.
 
-**M3 — `receivedConstellation` and `activeRecipeId` not synced to client**
-- File: `src/main/java/hellfirepvp/astralsorcery/common/tile/BlockEntityAltar.java:673-732`
-- Problem: Both fields are serialized only in `readSaveNBT/writeSaveNBT` (disk-only). After a server restart with a craft in progress, these restore from disk but are never sent to the client. The altar GUI cannot display the active recipe or required constellation after chunk reload.
-- Fix: Move both fields into `readCustomNBT/writeCustomNBT` (they can still remain in the save section too for persistence).
+**M3 — `receivedConstellation` and `activeRecipeId` not synced to client — FIXED ✅ (2026-06-07)**
+- `activeRecipeId` added to `readCustomNBT/writeCustomNBT` (was disk-only).
+- `readSaveNBT/writeSaveNBT` cleared entirely — all fields were already in `readCustomNBT/writeCustomNBT`.
+- Both fields now sync to client on `markForUpdate()` and survive chunk reload.
+- Build: clean compile, 514 tests pass.
 
-**M4 — `CrystalGenerator.addRandomProperty()` busy-wait on near-maxed crystals**
-- File: `src/main/java/hellfirepvp/astralsorcery/common/crystal/CrystalGenerator.java:159-175`
-- Problem: The outer `canAddAnyProperty()` guard prevents the true infinite loop, but the inner `while (!addRandomProperty())` loop still busy-waits. If 9 of 10 properties are at max tier, `addRandomProperty()` has a ~90% chance of returning false per call (it picks randomly from all properties, then checks if the picked one is below max).
-- Fix: Pre-filter the `properties` argument to only include entries below max tier before entering the while loop. This makes the selection deterministic and eliminates the busy-wait.
-  ```java
-  // Before the while loop:
-  List<CrystalProperty> eligible = properties.stream()
-      .filter(p -> builder.getPropertyLvl(p, 0) < p.getMaxTier())
-      .collect(Collectors.toList());
-  if (!eligible.isEmpty()) {
-      CrystalProperty chosen = MiscUtils.getRandomEntry(eligible, random);
-      builder.addProperty(chosen, 1);
-  }
-  ```
+**M4 — `CrystalGenerator.addRandomProperty()` busy-wait on near-maxed crystals — FIXED ✅ (2026-06-07)**
+- Replaced `addRandomProperty()` (returns bool, causes busy-wait) with `addEligibleRandomProperty()`
+  that pre-filters the candidate list to properties below maxTier before picking.
+- All 4 `while (!addRandomProperty(...)) {}` call sites replaced with direct calls.
+- Selection now deterministic: 85% pick from existing properties (pre-filtered), 15% any eligible.
+- Build: clean compile, 514 tests pass.
 
 ---
 

@@ -19,7 +19,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * Base block entity with automatic client sync via custom/net/save NBT split.
@@ -43,7 +42,6 @@ import java.util.Random;
  */
 public abstract class BlockEntitySynchronized extends BlockEntity implements ILocatable {
 
-    protected static final Random rand = new Random();
     protected static final AABB BOX = new AABB(0, 0, 0, 1, 1, 1);
 
     protected BlockEntitySynchronized(@Nonnull BlockEntityType<?> type, @Nonnull BlockPos pos,

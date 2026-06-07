@@ -79,7 +79,7 @@ public class CrystalGenerator {
             Collection<CrystalProperty> remaining = new ArrayList<>(
                     CrystalPropertyRegistry.INSTANCE.getAllProperties());
             if (canAddAnyProperty(builder, remaining)) {
-                while (!addRandomProperty(builder, remaining, random)) {}
+                addEligibleRandomProperty(builder, remaining, random);
             }
         }
 
@@ -125,7 +125,7 @@ public class CrystalGenerator {
             if (totalAdded >= toGenerate) break;
             if (random.nextFloat() <= CHANCE_PHYSICAL_PROPERTIES
                     && canAddAnyProperty(attrBuilder, PHYSICAL_PROPERTIES)) {
-                while (!addRandomProperty(attrBuilder, PHYSICAL_PROPERTIES, random)) {}
+                addEligibleRandomProperty(attrBuilder, PHYSICAL_PROPERTIES, random);
                 totalAdded++;
             }
         }
@@ -133,7 +133,7 @@ public class CrystalGenerator {
             if (totalAdded >= toGenerate) break;
             if (random.nextFloat() <= CHANCE_USAGE_PROPERTIES
                     && canAddAnyProperty(attrBuilder, USAGE_PROPERTIES)) {
-                while (!addRandomProperty(attrBuilder, USAGE_PROPERTIES, random)) {}
+                addEligibleRandomProperty(attrBuilder, USAGE_PROPERTIES, random);
                 totalAdded++;
             }
         }
@@ -143,7 +143,7 @@ public class CrystalGenerator {
         remaining.removeAll(USAGE_PROPERTIES);
         remaining.removeAll(PHYSICAL_PROPERTIES);
         while (totalAdded < toGenerate && canAddAnyProperty(attrBuilder, remaining)) {
-            while (!addRandomProperty(attrBuilder, remaining, random)) {}
+            addEligibleRandomProperty(attrBuilder, remaining, random);
             totalAdded++;
         }
 
@@ -156,21 +156,21 @@ public class CrystalGenerator {
                 .anyMatch(p -> builder.getPropertyLvl(p, 0) < p.getMaxTier());
     }
 
-    private static boolean addRandomProperty(CrystalAttributes.Builder builder,
-                                              Collection<CrystalProperty> properties,
-                                              Random random) {
+    private static void addEligibleRandomProperty(CrystalAttributes.Builder builder,
+                                                   Collection<CrystalProperty> properties,
+                                                   Random random) {
+        // Pre-filter to properties still below their max tier — eliminates busy-wait retry loops
+        List<CrystalProperty> eligible = new ArrayList<>(properties);
+        eligible.removeIf(p -> builder.getPropertyLvl(p, 0) >= p.getMaxTier());
+        if (eligible.isEmpty()) return;
         List<CrystalProperty> existing = builder.getProperties();
-        existing.removeIf(o -> !properties.contains(o));
-        existing.removeIf(property -> builder.getPropertyLvl(property, 0) >= property.getMaxTier());
+        existing.retainAll(eligible);
         CrystalProperty propExisting = MiscUtils.getRandomEntry(existing, random);
-        CrystalProperty prop = (random.nextFloat() <= 0.85F && propExisting != null) ? propExisting :
-                MiscUtils.getRandomEntry(properties, random);
-        if (prop == null) return false;
-        int existingLvl = builder.getPropertyLvl(prop, 0);
-        if (existingLvl < prop.getMaxTier()) {
+        CrystalProperty prop = (random.nextFloat() <= 0.85F && propExisting != null)
+                ? propExisting
+                : MiscUtils.getRandomEntry(eligible, random);
+        if (prop != null) {
             builder.addProperty(prop, 1);
-            return true;
         }
-        return false;
     }
 }

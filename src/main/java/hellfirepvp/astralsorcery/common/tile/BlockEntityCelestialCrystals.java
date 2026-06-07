@@ -60,7 +60,7 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
         BlockState downState = level.getBlockState(getBlockPos().below());
         if (downState.getBlock() instanceof BlockStarmetalOre) {
             growthChance = (int) (growthChance * 0.6);
-            if (rand.nextInt(400) == 0) {
+            if (level.getRandom().nextInt(400) == 0) {
                 level.setBlock(getBlockPos().below(), Blocks.IRON_ORE.defaultBlockState(), 3);
             }
         }
@@ -72,7 +72,8 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
 
     private void grow(int chance) {
         int stage = getGrowth();
-        if (stage < 4 && rand.nextInt(Math.max(chance, 1)) == 0) {
+        net.minecraft.world.level.Level level = getLevel();
+        if (level != null && stage < 4 && level.getRandom().nextInt(Math.max(chance, 1)) == 0) {
             setGrowth(stage + 1);
         }
     }

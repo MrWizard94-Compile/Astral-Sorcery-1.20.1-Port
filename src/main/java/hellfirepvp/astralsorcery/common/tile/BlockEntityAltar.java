@@ -89,7 +89,6 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     private double starlightCapacity = 1000;
     private int recipeTick = 0;
 
-    private boolean structureValid = false;
     private boolean isCrafting = false;
     private boolean registeredInNetwork = false;
 
@@ -517,14 +516,6 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         return recipeTick;
     }
 
-    public boolean isStructureValid() {
-        return structureValid;
-    }
-
-    public void setStructureValid(boolean valid) {
-        this.structureValid = valid;
-    }
-
     public boolean isCrafting() {
         return isCrafting;
     }
@@ -676,6 +667,13 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         } else {
             this.receivedConstellation = null;
         }
+        if (compound.contains("activeRecipeId")) {
+            this.activeRecipeId = ResourceLocation.tryParse(compound.getString("activeRecipeId"));
+            this.activeRecipe = null;
+        } else {
+            this.activeRecipeId = null;
+            this.activeRecipe = null;
+        }
     }
 
     @Override
@@ -689,43 +687,6 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         ResourceLocation rc = receivedConstellation;
         if (rc != null) {
             compound.putString("receivedConstellation", rc.toString());
-        }
-    }
-
-    @Override
-    public void readSaveNBT(@Nonnull CompoundTag compound) {
-        super.readSaveNBT(compound);
-        this.storedStarlight = compound.getDouble("storedStarlight");
-        this.recipeTick = compound.getInt("recipeTick");
-        this.structureValid = compound.getBoolean("structureValid");
-        this.isCrafting = compound.getBoolean("isCrafting");
-        this.starlightCapacity = compound.contains("starlightCapacity")
-                ? compound.getDouble("starlightCapacity") : 1000.0;
-        if (compound.contains("receivedConstellation")) {
-            this.receivedConstellation = ResourceLocation.tryParse(
-                    compound.getString("receivedConstellation"));
-        }
-        if (compound.contains("activeRecipeId")) {
-            this.activeRecipeId = ResourceLocation.tryParse(compound.getString("activeRecipeId"));
-            // Recipe object is resolved lazily on next tick from the RecipeManager
-            this.activeRecipe = null;
-        } else {
-            this.activeRecipeId = null;
-            this.activeRecipe = null;
-        }
-    }
-
-    @Override
-    public void writeSaveNBT(@Nonnull CompoundTag compound) {
-        super.writeSaveNBT(compound);
-        compound.putDouble("storedStarlight", storedStarlight);
-        compound.putInt("recipeTick", recipeTick);
-        compound.putBoolean("structureValid", structureValid);
-        compound.putBoolean("isCrafting", isCrafting);
-        compound.putDouble("starlightCapacity", starlightCapacity);
-        ResourceLocation rc2 = receivedConstellation;
-        if (rc2 != null) {
-            compound.putString("receivedConstellation", rc2.toString());
         }
         ResourceLocation ari = activeRecipeId;
         if (ari != null) {
