@@ -22,7 +22,8 @@ public class DynamicEnchantmentHelper {
     private static final ThreadLocal<Boolean> CHECKING = ThreadLocal.withInitial(() -> false);
 
     private static int getNewEnchantmentLevel(int current, String enchStr, ItemStack item, @Nullable List<DynamicEnchantment> context) {
-        Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(enchStr));
+        ResourceLocation enchKey = ResourceLocation.tryParse(enchStr);
+        Enchantment enchantment = enchKey != null ? ForgeRegistries.ENCHANTMENTS.getValue(enchKey) : null;
         if (enchantment != null) {
             current = getNewEnchantmentLevel(current, enchantment, item, context);
             if (enchantment instanceof QuickChargeEnchantment) {

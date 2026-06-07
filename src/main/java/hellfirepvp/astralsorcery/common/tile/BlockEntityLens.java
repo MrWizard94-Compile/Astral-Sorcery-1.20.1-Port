@@ -38,7 +38,7 @@ import java.util.List;
  * beam from one source to one target. Supports a color overlay
  * from tinted lens items.
  *
- * <p>Maximum 1 linked target. Lenses do not split beams — for that,
+ * <p>Maximum 1 linked target. Lenses do not split beams â€” for that,
  * use a Prism ({@link BlockEntityPrism}).</p>
  *
  * <p>Transmission efficiency is 95% by default. Color overlays
@@ -73,7 +73,6 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     @Nonnull
     private ItemStack heldCrystal = ItemStack.EMPTY;
     private double transmissionEfficiency = DEFAULT_EFFICIENCY;
-    private int ticksExisted = 0;
     private boolean registeredInNetwork = false;
 
     public BlockEntityLens(@Nonnull BlockPos pos, @Nonnull BlockState state) {
@@ -92,7 +91,6 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             return;
         }
@@ -261,7 +259,7 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
             return false;
         }
         if (!linkedTargets.contains(target)) {
-            // Validate with the network first — sources can't be output targets
+            // Validate with the network first â€” sources can't be output targets
             if (!isClientSide()) {
                 boolean accepted = StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), target);
                 if (!accepted) return false;
@@ -295,9 +293,6 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
      * Get the number of ticks this block entity has existed.
      * Used for renderer animations.
      */
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     /**
      * Whether the lens is actively transmitting starlight.
@@ -403,7 +398,7 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     public void readCustomNBT(@Nonnull CompoundTag compound) {
         super.readCustomNBT(compound);
         if (compound.contains("colorOverlay")) {
-            this.colorOverlay = new ResourceLocation(compound.getString("colorOverlay"));
+            this.colorOverlay = ResourceLocation.tryParse(compound.getString("colorOverlay"));
         } else {
             this.colorOverlay = null;
         }
@@ -426,8 +421,9 @@ public class BlockEntityLens extends BlockEntityTick implements IStarlightTransm
     @Override
     public void writeCustomNBT(@Nonnull CompoundTag compound) {
         super.writeCustomNBT(compound);
-        if (colorOverlay != null) {
-            compound.putString("colorOverlay", colorOverlay.toString());
+        ResourceLocation co = colorOverlay;
+        if (co != null) {
+            compound.putString("colorOverlay", co.toString());
         }
 
         ListTag list = new ListTag();

@@ -99,11 +99,17 @@ public class AltarRecipeInstance extends AbstractCriterionTriggerInstance {
     @Nonnull
     public static AltarRecipeInstance deserialize(@Nonnull ResourceLocation id, @Nonnull JsonObject json) {
         AltarRecipeInstance instance = new AltarRecipeInstance(id, ContextAwarePredicate.ANY);
-        for (JsonElement element : GsonHelper.getAsJsonArray(json, "recipeNames", new JsonArray())) {
-            instance.recipeNames.add(new ResourceLocation(element.getAsString()));
+        JsonArray recipeNamesArr = GsonHelper.getAsJsonArray(json, "recipeNames", null);
+        if (recipeNamesArr != null) {
+            for (JsonElement element : recipeNamesArr) {
+                instance.recipeNames.add(new ResourceLocation(element.getAsString()));
+            }
         }
-        for (JsonElement element : GsonHelper.getAsJsonArray(json, "recipeOutputs", new JsonArray())) {
-            instance.recipeOutputs.add(Ingredient.fromJson(element));
+        JsonArray recipeOutputsArr = GsonHelper.getAsJsonArray(json, "recipeOutputs", null);
+        if (recipeOutputsArr != null) {
+            for (JsonElement element : recipeOutputsArr) {
+                instance.recipeOutputs.add(Ingredient.fromJson(element));
+            }
         }
         return instance;
     }

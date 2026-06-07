@@ -239,7 +239,8 @@ public class GatewayHandler extends SavedData {
                 return null;
             }
             UUID id = tag.getUUID("id");
-            ResourceLocation dimRL = new ResourceLocation(tag.getString("dimension"));
+            ResourceLocation dimRL = ResourceLocation.tryParse(tag.getString("dimension"));
+            if (dimRL == null) return null;
             ResourceKey<Level> dimension = ResourceKey.create(
                     net.minecraft.core.registries.Registries.DIMENSION, dimRL);
             BlockPos pos = new BlockPos(
@@ -253,8 +254,9 @@ public class GatewayHandler extends SavedData {
          */
         @Nonnull
         public String getLabel() {
-            if (displayName != null && !displayName.isEmpty()) {
-                return displayName;
+            String dn = displayName;
+            if (dn != null && !dn.isEmpty()) {
+                return dn;
             }
             return String.format("[%d, %d, %d]", pos.getX(), pos.getY(), pos.getZ());
         }

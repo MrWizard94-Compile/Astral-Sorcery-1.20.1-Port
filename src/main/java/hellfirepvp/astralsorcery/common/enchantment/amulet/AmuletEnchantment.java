@@ -30,20 +30,24 @@ public class AmuletEnchantment extends DynamicEnchantment {
         String levelsStr = "astralsorcery.amulet.enchantment.level." + (this.levelAddition > 1 ? "more" : "one");
 
         if (this.getType().isEnchantmentSpecific()) {
-            return Component.translatable(typeStr,
-                    String.valueOf(this.getLevelAddition()),
-                    Component.translatable(levelsStr),
-                    this.getEnchantment().getFullname(this.getLevelAddition()));
-        } else {
-            return Component.translatable(typeStr,
-                    String.valueOf(this.getLevelAddition()),
-                    Component.translatable(levelsStr));
+            Enchantment ench = this.getEnchantment();
+            if (ench != null) {
+                return Component.translatable(typeStr,
+                        String.valueOf(this.getLevelAddition()),
+                        Component.translatable(levelsStr),
+                        ench.getFullname(this.getLevelAddition()));
+            }
         }
+        return Component.translatable(typeStr,
+                String.valueOf(this.getLevelAddition()),
+                Component.translatable(levelsStr));
     }
 
     public boolean canMerge(AmuletEnchantment other) {
+        Enchantment thisEnch = this.enchantment;
+        Enchantment otherEnch = other.enchantment;
         return this.type.equals(other.type) &&
-                (!this.type.isEnchantmentSpecific() || this.enchantment.equals(other.enchantment));
+                (!this.type.isEnchantmentSpecific() || java.util.Objects.equals(thisEnch, otherEnch));
     }
 
     public void merge(AmuletEnchantment src) {
@@ -57,7 +61,8 @@ public class AmuletEnchantment extends DynamicEnchantment {
         cmp.putInt("type", this.type.ordinal());
         cmp.putInt("level", this.levelAddition);
         if (this.type.isEnchantmentSpecific()) {
-            cmp.putString("ench", ForgeRegistries.ENCHANTMENTS.getKey(this.enchantment).toString());
+            ResourceLocation enchKey = ForgeRegistries.ENCHANTMENTS.getKey(this.enchantment);
+            cmp.putString("ench", enchKey != null ? enchKey.toString() : "");
         }
         return cmp;
     }
@@ -71,7 +76,8 @@ public class AmuletEnchantment extends DynamicEnchantment {
         DynamicEnchantmentType type = DynamicEnchantmentType.values()[typeId];
         int level = Math.max(0, cmp.getInt("level"));
         if (type.isEnchantmentSpecific()) {
-            ResourceLocation res = new ResourceLocation(cmp.getString("ench"));
+            ResourceLocation res = ResourceLocation.tryParse(cmp.getString("ench"));
+            if (res == null) return null;
             Enchantment e = ForgeRegistries.ENCHANTMENTS.getValue(res);
             if (e != null) {
                 return new AmuletEnchantment(type, e, level);

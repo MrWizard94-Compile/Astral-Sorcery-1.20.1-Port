@@ -299,7 +299,7 @@ public abstract class AbstractPerk {
         this.enabled = tag.getBoolean("enabled");
 
         if (tag.contains("requiredConstellation")) {
-            this.requiredConstellation = new ResourceLocation(tag.getString("requiredConstellation"));
+            this.requiredConstellation = ResourceLocation.tryParse(tag.getString("requiredConstellation"));
         }
 
         this.modifiers.clear();
@@ -314,7 +314,8 @@ public abstract class AbstractPerk {
         if (tag.contains("adjacent")) {
             ListTag adjList = tag.getList("adjacent", Tag.TAG_COMPOUND);
             for (int i = 0; i < adjList.size(); i++) {
-                adjacentPerks.add(new ResourceLocation(adjList.getCompound(i).getString("key")));
+                ResourceLocation adjKey = ResourceLocation.tryParse(adjList.getCompound(i).getString("key"));
+                if (adjKey != null) adjacentPerks.add(adjKey);
             }
         }
     }

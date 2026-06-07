@@ -271,7 +271,7 @@ public class ActiveSimpleAltarRecipe {
     @Nullable
     public static ResourceLocation getRecipeIdFromNBT(@Nonnull CompoundTag tag) {
         if (!tag.contains(TAG_RECIPE_ID)) return null;
-        return new ResourceLocation(tag.getString(TAG_RECIPE_ID));
+        return ResourceLocation.tryParse(tag.getString(TAG_RECIPE_ID));
     }
 
     // ========================================================================

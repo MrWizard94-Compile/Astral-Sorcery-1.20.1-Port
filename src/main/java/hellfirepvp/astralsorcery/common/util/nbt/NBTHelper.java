@@ -68,7 +68,8 @@ public class NBTHelper {
     }
 
     public static boolean hasPersistentData(@Nonnull ItemStack item) {
-        return item.hasTag() && hasPersistentData(item.getTag());
+        CompoundTag tag = item.getTag();
+        return tag != null && hasPersistentData(tag);
     }
 
     public static boolean hasPersistentData(@Nonnull CompoundTag base) {
@@ -80,8 +81,9 @@ public class NBTHelper {
     }
 
     public static void removePersistentData(@Nonnull ItemStack item) {
-        if (item.hasTag()) {
-            removePersistentData(item.getTag());
+        CompoundTag tag = item.getTag();
+        if (tag != null) {
+            removePersistentData(tag);
         }
     }
 
@@ -141,7 +143,6 @@ public class NBTHelper {
     // ---- Collection serialization ----
 
     @Nonnull
-    @SuppressWarnings("unchecked")
     public static <E, N extends Tag> List<E> readList(@Nonnull CompoundTag nbt, @Nonnull String key,
                                                        int type, @Nonnull Function<N, E> deserializer) {
         if (!nbt.contains(key, Tag.TAG_LIST)) {
@@ -160,7 +161,6 @@ public class NBTHelper {
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
     public static <E, N extends Tag> Set<E> readSet(@Nonnull CompoundTag nbt, @Nonnull String key,
                                                      int type, @Nonnull Function<N, E> deserializer) {
         if (!nbt.contains(key, Tag.TAG_LIST)) {
@@ -248,7 +248,12 @@ public class NBTHelper {
         if (!enumClazz.isEnum()) {
             throw new IllegalArgumentException("Passed class is not an enum!");
         }
-        return enumClazz.getEnumConstants()[nbt.getInt(key)];
+        T[] constants = enumClazz.getEnumConstants();
+        int index = nbt.getInt(key);
+        if (index < 0 || index >= constants.length) {
+            return constants[0]; // degrade to first entry on corrupt/out-of-range save data
+        }
+        return constants[index];
     }
 
     // ---- BlockState serialization ----
@@ -287,7 +292,6 @@ public class NBTHelper {
         return tag;
     }
 
-    @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> String getPropertyName(@Nonnull BlockState state,
                                                                       @Nonnull Property<T> property) {
         return property.getName(state.getValue(property));
@@ -363,7 +367,7 @@ public class NBTHelper {
     @Nullable
     public static ResourceLocation getResourceLocation(@Nonnull CompoundTag nbt, @Nonnull String tag) {
         if (nbt.contains(tag)) {
-            return new ResourceLocation(nbt.getString(tag));
+            return ResourceLocation.tryParse(nbt.getString(tag));
         }
         return null;
     }

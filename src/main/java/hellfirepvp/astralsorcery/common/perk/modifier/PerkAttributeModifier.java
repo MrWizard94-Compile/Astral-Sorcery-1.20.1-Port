@@ -7,7 +7,6 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.perk.modifier;
 
-import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -149,7 +148,8 @@ public class PerkAttributeModifier {
     @Nonnull
     public static PerkAttributeModifier readFromNBT(@Nonnull CompoundTag tag) {
         UUID id = tag.getUUID("id");
-        ResourceLocation attrType = new ResourceLocation(tag.getString("attributeType"));
+        ResourceLocation attrType = ResourceLocation.tryParse(tag.getString("attributeType"));
+        if (attrType == null) attrType = new ResourceLocation("astralsorcery", "unknown_attribute");
         ModifierType modType = ModifierType.fromString(tag.getString("modifierType"));
         double value = tag.getDouble("value");
         return new PerkAttributeModifier(id, attrType, modType, value);

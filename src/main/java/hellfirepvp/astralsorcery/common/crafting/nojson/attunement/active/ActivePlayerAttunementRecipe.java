@@ -86,14 +86,15 @@ public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<Attune
     }
 
     @Override
-    @SuppressWarnings("null")
     public void finishRecipe(@Nonnull BlockEntityAttunementAltar altar) {
-        if (constellation == null || playerUUID == null) return;
+        ResourceLocation cst = constellation;
+        UUID uuid = playerUUID;
+        if (cst == null || uuid == null) return;
         MinecraftServer srv = ServerLifecycleHooks.getCurrentServer();
         if (srv == null) return;
-        Player player = srv.getPlayerList().getPlayer(playerUUID);
+        Player player = srv.getPlayerList().getPlayer(uuid);
         if (player instanceof ServerPlayer sp) {
-            ResearchManager.attuneTo(sp, constellation);
+            ResearchManager.attuneTo(sp, cst);
         }
         Level level = altar.getLevel();
         if (level instanceof ServerLevel sl) {
@@ -142,7 +143,7 @@ public class ActivePlayerAttunementRecipe extends AttunementRecipe.Active<Attune
     protected void readFromNBT(@Nonnull CompoundTag nbt) {
         super.readFromNBT(nbt);
         if (nbt.contains("constellation")) {
-            constellation = new ResourceLocation(nbt.getString("constellation"));
+            constellation = ResourceLocation.tryParse(nbt.getString("constellation"));
         }
         if (nbt.hasUUID("player")) {
             playerUUID = nbt.getUUID("player");

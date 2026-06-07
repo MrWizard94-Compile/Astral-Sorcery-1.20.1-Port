@@ -129,7 +129,7 @@ public class PrecisionSingleFluidTank implements IFluidTank {
     }
 
     @Override
-    public boolean isFluidValid(@Nonnull FluidStack stack) {
+    public boolean isFluidValid(FluidStack stack) {
         return true;
     }
 
@@ -156,7 +156,7 @@ public class PrecisionSingleFluidTank implements IFluidTank {
     }
 
     @Override
-    public int fill(@Nonnull FluidStack resource, @Nonnull IFluidHandler.FluidAction action) {
+    public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
         if (!canFillFluidType(resource)) {
             return 0;
         }
@@ -173,7 +173,7 @@ public class PrecisionSingleFluidTank implements IFluidTank {
 
     @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, @Nonnull IFluidHandler.FluidAction action) {
+    public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
         if (!canDrain()) {
             return FluidStack.EMPTY;
         }
@@ -186,7 +186,7 @@ public class PrecisionSingleFluidTank implements IFluidTank {
 
     @Nonnull
     @Override
-    public FluidStack drain(@Nonnull FluidStack resource, @Nonnull IFluidHandler.FluidAction action) {
+    public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
         if (!canDrainFluidType(resource)) {
             return FluidStack.EMPTY;
         }
@@ -210,8 +210,8 @@ public class PrecisionSingleFluidTank implements IFluidTank {
         this.maxCapacity = tag.getInt("capacity");
         this.allowInput = tag.getBoolean("aIn");
         this.allowOutput = tag.getBoolean("aOut");
-        Fluid readFluid = ForgeRegistries.FLUIDS.getValue(
-                new ResourceLocation(tag.getString("fluid")));
+        ResourceLocation fluidKey = ResourceLocation.tryParse(tag.getString("fluid"));
+        Fluid readFluid = fluidKey != null ? ForgeRegistries.FLUIDS.getValue(fluidKey) : null;
         this.fluid = readFluid != null ? readFluid : Fluids.EMPTY;
     }
 

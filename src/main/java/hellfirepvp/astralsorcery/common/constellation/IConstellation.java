@@ -56,8 +56,9 @@ public interface IConstellation extends Comparable<IConstellation> {
 
     /**
      * Should only be called before registering the Constellation.
+     * Throws {@link IllegalArgumentException} if the position already exists.
      */
-    @Nullable
+    @Nonnull
     StarLocation addStar(int x, int y);
 
     /**
@@ -179,6 +180,7 @@ public interface IConstellation extends Comparable<IConstellation> {
 
     @Nullable
     static IConstellation readFromNBT(@Nonnull CompoundTag compound, @Nonnull String key) {
-        return ConstellationRegistry.getConstellation(new ResourceLocation(compound.getString(key)));
+        ResourceLocation rl = ResourceLocation.tryParse(compound.getString(key));
+        return rl != null ? ConstellationRegistry.getConstellation(rl) : null;
     }
 }

@@ -341,13 +341,14 @@ public class PlayerProgress {
                 ? tiers[tierOrd] : ProgressionTier.DISCOVERY;
         this.onceAttuned = tag.getBoolean(TAG_ATTUNED);
         this.attunedConstellation = tag.contains(TAG_CONSTELLATION)
-                ? new ResourceLocation(tag.getString(TAG_CONSTELLATION))
+                ? ResourceLocation.tryParse(tag.getString(TAG_CONSTELLATION))
                 : null;
         this.discoveredConstellations.clear();
         if (tag.contains(TAG_DISCOVERED)) {
             ListTag list = tag.getList(TAG_DISCOVERED, Tag.TAG_STRING);
             for (int i = 0; i < list.size(); i++) {
-                discoveredConstellations.add(new ResourceLocation(list.getString(i)));
+                ResourceLocation rl = ResourceLocation.tryParse(list.getString(i));
+                if (rl != null) discoveredConstellations.add(rl);
             }
         }
         this.perkPoints = tag.getInt(TAG_PERK_POINTS);
@@ -356,21 +357,24 @@ public class PlayerProgress {
         if (tag.contains(TAG_ALLOCATED_PERKS)) {
             ListTag perkList = tag.getList(TAG_ALLOCATED_PERKS, Tag.TAG_STRING);
             for (int i = 0; i < perkList.size(); i++) {
-                allocatedPerks.add(new ResourceLocation(perkList.getString(i)));
+                ResourceLocation rl = ResourceLocation.tryParse(perkList.getString(i));
+                if (rl != null) allocatedPerks.add(rl);
             }
         }
         this.sealedPerks.clear();
         if (tag.contains(TAG_SEALED_PERKS)) {
             ListTag sealedList = tag.getList(TAG_SEALED_PERKS, Tag.TAG_STRING);
             for (int i = 0; i < sealedList.size(); i++) {
-                sealedPerks.add(new ResourceLocation(sealedList.getString(i)));
+                ResourceLocation rl = ResourceLocation.tryParse(sealedList.getString(i));
+                if (rl != null) sealedPerks.add(rl);
             }
         }
         this.unlockedResearch.clear();
         if (tag.contains(TAG_UNLOCKED_RESEARCH)) {
             ListTag researchList = tag.getList(TAG_UNLOCKED_RESEARCH, Tag.TAG_STRING);
             for (int i = 0; i < researchList.size(); i++) {
-                unlockedResearch.add(new ResourceLocation(researchList.getString(i)));
+                ResourceLocation rl = ResourceLocation.tryParse(researchList.getString(i));
+                if (rl != null) unlockedResearch.add(rl);
             }
         }
         this.activePerkConfig = tag.getInt(TAG_ACTIVE_PERK_CONFIG);
@@ -381,7 +385,8 @@ public class PlayerProgress {
                 ListTag slotTag = (ListTag) configsTag.get(i);
                 Set<ResourceLocation> slot = new HashSet<>();
                 for (int j = 0; j < slotTag.size(); j++) {
-                    slot.add(new ResourceLocation(slotTag.getString(j)));
+                    ResourceLocation rl = ResourceLocation.tryParse(slotTag.getString(j));
+                    if (rl != null) slot.add(rl);
                 }
                 perkConfigs.add(slot);
             }

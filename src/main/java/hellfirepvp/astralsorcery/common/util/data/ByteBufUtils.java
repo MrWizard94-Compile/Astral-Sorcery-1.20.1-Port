@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -228,15 +227,11 @@ public class ByteBufUtils {
         writeResourceLocation(buf, key.location());
     }
 
-    @SuppressWarnings("unchecked")
     @Nonnull
     public static <T> ResourceKey<T> readVanillaRegistryEntry(@Nonnull FriendlyByteBuf buf) {
         ResourceLocation registryName = readResourceLocation(buf);
         ResourceLocation entryName = readResourceLocation(buf);
-        return ResourceKey.create(
-                (ResourceKey) ResourceKey.createRegistryKey(registryName),
-                entryName
-        );
+        return ResourceKey.create(ResourceKey.<T>createRegistryKey(registryName), entryName);
     }
 
     // ---- ResourceLocation ----
@@ -264,7 +259,12 @@ public class ByteBufUtils {
         if (!enumClazz.isEnum()) {
             throw new IllegalArgumentException("Passed class is not an enum!");
         }
-        return enumClazz.getEnumConstants()[buf.readInt()];
+        T[] constants = enumClazz.getEnumConstants();
+        int index = buf.readInt();
+        if (index < 0 || index >= constants.length) {
+            return constants[0]; // degrade gracefully on desync or malformed packet
+        }
+        return constants[index];
     }
 
     // ---- JSON ----
@@ -350,7 +350,6 @@ public class ByteBufUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> String getPropertyValueName(
             @Nonnull BlockState state, @Nonnull Property<T> prop) {
         return prop.getName(state.getValue(prop));
@@ -407,8 +406,8 @@ public class ByteBufUtils {
     public static void writeNBTTag(@Nonnull FriendlyByteBuf byteBuf, @Nonnull CompoundTag tag) {
         try (DataOutputStream dos = new DataOutputStream(new ByteBufOutputStream(byteBuf))) {
             NbtIo.write(tag, dos);
-        } catch (Exception ignored) {
-            // Silent catch matching original behavior
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to write NBT tag to packet buffer", e);
         }
     }
 

@@ -81,7 +81,8 @@ public class PerkTreePoint {
 
     @Nonnull
     public static PerkTreePoint readFromNBT(@Nonnull CompoundTag tag) {
-        ResourceLocation key = new ResourceLocation(tag.getString("perkKey"));
+        ResourceLocation key = ResourceLocation.tryParse(tag.getString("perkKey"));
+        if (key == null) key = new ResourceLocation("astralsorcery", "unknown_perk");
         int x = tag.getInt("x");
         int y = tag.getInt("y");
         return new PerkTreePoint(key, x, y);

@@ -67,16 +67,16 @@ public class ItemBlockCollectorCrystal extends BlockItem implements CrystalAttri
 
     @Nullable
     @Override
-    public IWeakConstellation getAttunedConstellation(@Nonnull ItemStack stack) {
+    public IWeakConstellation getAttunedConstellation(ItemStack stack) {
         CompoundTag data = NBTHelper.getPersistentData(stack);
         if (!data.contains(TAG_CONSTELLATION)) return null;
-        IConstellation cst = ConstellationRegistry.getConstellation(
-                new ResourceLocation(data.getString(TAG_CONSTELLATION)));
+        ResourceLocation cstKey = ResourceLocation.tryParse(data.getString(TAG_CONSTELLATION));
+        IConstellation cst = cstKey != null ? ConstellationRegistry.getConstellation(cstKey) : null;
         return cst instanceof IWeakConstellation wc ? wc : null;
     }
 
     @Override
-    public boolean setAttunedConstellation(@Nonnull ItemStack stack, @Nullable IWeakConstellation cst) {
+    public boolean setAttunedConstellation(ItemStack stack, @Nullable IWeakConstellation cst) {
         CompoundTag data = NBTHelper.getPersistentData(stack);
         if (cst != null) {
             data.putString(TAG_CONSTELLATION, cst.getRegistryName().toString());
@@ -88,16 +88,16 @@ public class ItemBlockCollectorCrystal extends BlockItem implements CrystalAttri
 
     @Nullable
     @Override
-    public IMinorConstellation getTraitConstellation(@Nonnull ItemStack stack) {
+    public IMinorConstellation getTraitConstellation(ItemStack stack) {
         CompoundTag data = NBTHelper.getPersistentData(stack);
         if (!data.contains(TAG_TRAIT)) return null;
-        IConstellation cst = ConstellationRegistry.getConstellation(
-                new ResourceLocation(data.getString(TAG_TRAIT)));
+        ResourceLocation traitKey = ResourceLocation.tryParse(data.getString(TAG_TRAIT));
+        IConstellation cst = traitKey != null ? ConstellationRegistry.getConstellation(traitKey) : null;
         return cst instanceof IMinorConstellation mc ? mc : null;
     }
 
     @Override
-    public boolean setTraitConstellation(@Nonnull ItemStack stack, @Nullable IMinorConstellation cst) {
+    public boolean setTraitConstellation(ItemStack stack, @Nullable IMinorConstellation cst) {
         CompoundTag data = NBTHelper.getPersistentData(stack);
         if (cst != null) {
             data.putString(TAG_TRAIT, cst.getRegistryName().toString());
