@@ -77,7 +77,7 @@ public class MantleEffectPelotrio extends MantleEffect {
         Level level = player.level();
         EntitySpectralTool sword = new EntitySpectralTool(EntityTypesAS.SPECTRAL_TOOL.get(), level);
         sword.setPos(player.getX(), player.getY() + 1.0, player.getZ());
-        sword.setOwnerId(player.getId());
+        sword.setOwnerUUID(player.getUUID());
         sword.setToolItem(new ItemStack(Items.IRON_SWORD));
         if (level.addFreshEntity(sword)) {
             AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, CONFIG.chargeCostPerSword.get(), false);
@@ -98,7 +98,7 @@ public class MantleEffectPelotrio extends MantleEffect {
                     && AlignmentChargeHandler.INSTANCE.hasCharge(player, LogicalSide.SERVER, CONFIG.chargeCostPerAxe.get())) {
                 EntitySpectralTool axe = new EntitySpectralTool(EntityTypesAS.SPECTRAL_TOOL.get(), level);
                 axe.setPos(player.getX(), player.getY() + 1.0, player.getZ());
-                axe.setOwnerId(player.getId());
+                axe.setOwnerUUID(player.getUUID());
                 axe.setToolItem(new ItemStack(Items.IRON_AXE));
                 if (level.addFreshEntity(axe)) {
                     AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, CONFIG.chargeCostPerAxe.get(), false);
@@ -112,7 +112,7 @@ public class MantleEffectPelotrio extends MantleEffect {
                     && AlignmentChargeHandler.INSTANCE.hasCharge(player, LogicalSide.SERVER, CONFIG.chargeCostPerPickaxe.get())) {
                 EntitySpectralTool pick = new EntitySpectralTool(EntityTypesAS.SPECTRAL_TOOL.get(), level);
                 pick.setPos(player.getX(), player.getY() + 1.0, player.getZ());
-                pick.setOwnerId(player.getId());
+                pick.setOwnerUUID(player.getUUID());
                 pick.setToolItem(new ItemStack(Items.IRON_PICKAXE));
                 if (level.addFreshEntity(pick)) {
                     AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, CONFIG.chargeCostPerPickaxe.get(), false);

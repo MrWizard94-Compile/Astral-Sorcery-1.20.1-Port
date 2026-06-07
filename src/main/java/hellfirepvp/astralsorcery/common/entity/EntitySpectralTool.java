@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -32,6 +34,8 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A spectral (ghost) tool entity summoned by the Pelotrio mantle effect.
@@ -44,13 +48,16 @@ import java.util.List;
  * DataSerializers → EntityDataSerializers,
  * ToolTask replaced by inline server-side tick logic,
  * world.addEntity() → level.addFreshEntity().</p>
+ *
+ * <p>Owner tracking uses UUID (persistent across restarts) not entity ID (transient).
+ * Block drops pass the tool item to apply Fortune/Silk Touch correctly.</p>
  */
 public class EntitySpectralTool extends Entity {
 
     private static final EntityDataAccessor<ItemStack> DATA_TOOL =
             SynchedEntityData.defineId(EntitySpectralTool.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<Integer> DATA_OWNER_ID =
-            SynchedEntityData.defineId(EntitySpectralTool.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
+            SynchedEntityData.defineId(EntitySpectralTool.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private int remainingTicks = 200;
     private float rotationDeg = 0.0f;
@@ -68,7 +75,7 @@ public class EntitySpectralTool extends Entity {
     @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_TOOL, ItemStack.EMPTY);
-        this.entityData.define(DATA_OWNER_ID, -1);
+        this.entityData.define(DATA_OWNER_UUID, Optional.empty());
     }
 
     // ---- Data accessors ----
@@ -82,12 +89,13 @@ public class EntitySpectralTool extends Entity {
         return this.entityData.get(DATA_TOOL);
     }
 
-    public void setOwnerId(int entityId) {
-        this.entityData.set(DATA_OWNER_ID, entityId);
+    public void setOwnerUUID(@Nonnull UUID uuid) {
+        this.entityData.set(DATA_OWNER_UUID, Optional.of(uuid));
     }
 
-    public int getOwnerId() {
-        return this.entityData.get(DATA_OWNER_ID);
+    @Nonnull
+    public Optional<UUID> getOwnerUUID() {
+        return this.entityData.get(DATA_OWNER_UUID);
     }
 
     public float getRotation() {
@@ -114,8 +122,7 @@ public class EntitySpectralTool extends Entity {
         if (rotationDeg >= 360.0f) rotationDeg -= 360.0f;
 
         if (!level().isClientSide()) {
-            // Discard if owner is gone
-            Entity owner = level().getEntity(getOwnerId());
+            Entity owner = resolveOwner();
             if (owner == null) {
                 discard();
                 return;
@@ -141,6 +148,15 @@ public class EntitySpectralTool extends Entity {
         double bobY = Math.sin(tickCount * 0.1) * 0.005;
         setDeltaMovement(motion.x * 0.92, bobY, motion.z * 0.92);
         move(MoverType.SELF, getDeltaMovement());
+    }
+
+    @Nullable
+    private Entity resolveOwner() {
+        Optional<UUID> uuid = getOwnerUUID();
+        if (uuid.isEmpty() || !(level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return serverLevel.getPlayerByUUID(uuid.get());
     }
 
     private void performToolAction() {
@@ -181,22 +197,25 @@ public class EntitySpectralTool extends Entity {
         if (nearest != null) {
             nearest.hurt(DamageSourceAS.stellar(level()),
                     MantleEffectPelotrio.CONFIG.swordDamage.get().floatValue());
-            // Dart toward target
             Vec3 toTarget = nearest.position().subtract(position()).normalize().scale(0.3);
             setDeltaMovement(getDeltaMovement().add(toTarget));
         }
     }
 
     private void performMine(boolean axeMode) {
-        Entity owner = level().getEntity(getOwnerId());
+        Entity owner = resolveOwner();
         if (owner == null) return;
         BlockPos origin = owner.blockPosition();
 
         // Try committed target block first
         if (targetBlock != null) {
-            BlockState state = level().getBlockState(targetBlock);
-            if (!state.isAir() && isValidMineTarget(state, axeMode)) {
-                level().destroyBlock(targetBlock, true);
+            BlockPos target = targetBlock; // non-null local for @Nonnull call sites
+            BlockState state = level().getBlockState(target);
+            if (!state.isAir() && isValidMineTarget(state, target, axeMode)) {
+                // Drop resources with the tool's enchantments (Fortune/Silk Touch)
+                Block.dropResources(state, (ServerLevel) level(), target,
+                        level().getBlockEntity(target), null, getToolItem());
+                level().removeBlock(target, false);
                 targetBlock = null;
                 return;
             }
@@ -209,9 +228,8 @@ public class EntitySpectralTool extends Entity {
             for (int dy = -1; dy <= 2; dy++) {
                 for (int dz = -2; dz <= 2; dz++) {
                     BlockPos check = origin.offset(dx, dy, dz);
-                    if (isValidMineTarget(level().getBlockState(check), axeMode)) {
+                    if (isValidMineTarget(level().getBlockState(check), check, axeMode)) {
                         targetBlock = check;
-                        // Start moving toward it
                         Vec3 toBlock = Vec3.atCenterOf(check).subtract(position()).normalize().scale(0.15);
                         setDeltaMovement(getDeltaMovement().add(toBlock));
                         break outer;
@@ -221,13 +239,13 @@ public class EntitySpectralTool extends Entity {
         }
     }
 
-    private boolean isValidMineTarget(@Nonnull BlockState state, boolean axeMode) {
+    private boolean isValidMineTarget(@Nonnull BlockState state, @Nonnull BlockPos pos, boolean axeMode) {
         if (state.isAir()) return false;
         if (axeMode) {
             return state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES);
         }
-        // Pickaxe targets any non-air, non-liquid block that isn't unbreakable
-        return state.getFluidState().isEmpty() && state.getDestroySpeed(level(), blockPosition()) > 0;
+        // Pickaxe targets any non-liquid, breakable block — use pos for context-dependent hardness
+        return state.getFluidState().isEmpty() && state.getDestroySpeed(level(), pos) > 0;
     }
 
     // ---- Serialization ----
@@ -240,7 +258,9 @@ public class EntitySpectralTool extends Entity {
         if (tag.contains("ToolItem")) {
             setToolItem(ItemStack.of(tag.getCompound("ToolItem")));
         }
-        setOwnerId(tag.getInt("OwnerId"));
+        if (tag.hasUUID("OwnerUUID")) {
+            setOwnerUUID(tag.getUUID("OwnerUUID"));
+        }
         if (tag.contains("TargetBlockX")) {
             targetBlock = new BlockPos(tag.getInt("TargetBlockX"),
                     tag.getInt("TargetBlockY"), tag.getInt("TargetBlockZ"));
@@ -256,11 +276,12 @@ public class EntitySpectralTool extends Entity {
         if (!tool.isEmpty()) {
             tag.put("ToolItem", tool.save(new CompoundTag()));
         }
-        tag.putInt("OwnerId", getOwnerId());
-        if (targetBlock != null) {
-            tag.putInt("TargetBlockX", targetBlock.getX());
-            tag.putInt("TargetBlockY", targetBlock.getY());
-            tag.putInt("TargetBlockZ", targetBlock.getZ());
+        getOwnerUUID().ifPresent(uuid -> tag.putUUID("OwnerUUID", uuid));
+        BlockPos tb2 = targetBlock;
+        if (tb2 != null) {
+            tag.putInt("TargetBlockX", tb2.getX());
+            tag.putInt("TargetBlockY", tb2.getY());
+            tag.putInt("TargetBlockZ", tb2.getZ());
         }
     }
 
