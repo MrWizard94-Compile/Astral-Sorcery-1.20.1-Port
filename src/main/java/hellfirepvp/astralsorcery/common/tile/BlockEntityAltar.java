@@ -2,6 +2,7 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.advancement.AstralAdvancementTriggers;
+import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.container.ContainerAltarAttunement;
@@ -87,7 +88,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     private double storedStarlight = 0;
     private double starlightCapacity = 1000;
     private int recipeTick = 0;
-    private int ticksExisted = 0;
+
     private boolean structureValid = false;
     private boolean isCrafting = false;
     private boolean registeredInNetwork = false;
@@ -101,11 +102,14 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     @Nullable
     private ResourceLocation activeRecipeId = null;
 
-    // Client-side sound instances typed as Object to avoid server-side class loading
-    @OnlyIn(Dist.CLIENT)
+    // Client-side sound instances typed as Object to avoid server-side class loading.
+    // NOT @OnlyIn: dist-cleaner strips @OnlyIn instance fields but not their constructor
+    // initializers, causing NoSuchFieldError on the dedicated server.
     private Object clientCraftSound;
-    @OnlyIn(Dist.CLIENT)
     private Object clientWaitSound;
+
+    // Tracks whether we were crafting last tick, to detect the finish transition.
+    private boolean clientWasCrafting = false;
 
     public BlockEntityAltar(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.ALTAR.get(), pos, state);
@@ -132,9 +136,9 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             doCraftSound();
+            doClientCraftEffects();
             return;
         }
 
@@ -150,14 +154,14 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             if (activeRecipe != null) {
                 tickCrafting(level);
             }
-        } else if (ticksExisted % RECIPE_SCAN_INTERVAL == 0) {
+        } else if (getTicksExisted() % RECIPE_SCAN_INTERVAL == 0) {
             // Periodically scan for matching recipes when idle
             tryFindRecipe(level);
         }
 
         // Passive sky collection every second — critical for early-game bootstrap
         // before any collector crystal is set up (mirrors 1.16 TileAltar.gatherStarlight)
-        if (ticksExisted % 20 == 0) {
+        if (getTicksExisted() % 20 == 0) {
             gatherSkyStarlight(level);
         }
 
@@ -228,19 +232,38 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void doClientCraftEffects() {
+        hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect.AltarRecipeEffect effect =
+                hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect.AltarRecipeEffects
+                        .getDefaultEffect(getAltarType());
+        if (effect == null) return;
+
+        if (isCrafting) {
+            effect.onTick(this,
+                    hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe.CraftState.ACTIVE);
+            clientWasCrafting = true;
+        } else if (clientWasCrafting) {
+            // Transition: crafting just finished (or aborted)
+            effect.onCraftingFinish(this, false);
+            clientWasCrafting = false;
+        }
+    }
+
     /**
      * Progresses the active crafting operation each tick.
      * Drains starlight and increments the recipe tick counter.
      * Aborts if starlight runs out or recipe no longer matches.
      */
     private void tickCrafting(@Nonnull Level level) {
-        if (activeRecipe == null) {
+        SimpleAltarRecipe recipe = activeRecipe;
+        if (recipe == null) {
             abortCrafting();
             return;
         }
 
         // Verify recipe still matches (items might have been removed by hopper, etc.)
-        if (!activeRecipe.matches(inventory.toContainer(), level)) {
+        if (!recipe.matches(inventory.toContainer(), level)) {
             AstralSorcery.log.debug("Altar craft aborted: recipe no longer matches at {}",
                     worldPosition.toShortString());
             abortCrafting();
@@ -248,7 +271,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         }
 
         // Drain starlight proportionally to craft progress
-        double drainPerTick = activeRecipe.getStarlightRequired() * STARLIGHT_DRAIN_FACTOR;
+        double drainPerTick = recipe.getStarlightRequired() * STARLIGHT_DRAIN_FACTOR;
         if (storedStarlight < drainPerTick) {
             // Stall — not enough starlight this tick, but don't abort
             // (starlight may arrive next tick from the network)
@@ -258,7 +281,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         recipeTick++;
 
         // Check completion
-        if (recipeTick >= activeRecipe.getCraftDuration()) {
+        if (recipeTick >= recipe.getCraftDuration()) {
             completeCrafting(level);
         }
     }
@@ -281,9 +304,10 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
                 return;
             }
             // Focus constellation check (Constellation and Radiance tiers)
-            if (recipe.getFocusConstellation() != null) {
-                if (receivedConstellation == null
-                        || !receivedConstellation.equals(recipe.getFocusConstellation())) {
+            ResourceLocation focus = recipe.getFocusConstellation();
+            if (focus != null) {
+                ResourceLocation rc = receivedConstellation;
+                if (rc == null || !rc.equals(focus)) {
                     return;
                 }
             }
@@ -318,15 +342,15 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     /**
      * Completes the active recipe: consumes inputs, produces output.
      */
-    @SuppressWarnings("null")
     private void completeCrafting(@Nonnull Level level) {
-        if (activeRecipe == null) return;
+        SimpleAltarRecipe recipe = activeRecipe;
+        if (recipe == null) return;
 
         // Compute outputs BEFORE consuming inputs so subclasses can read ingredient stacks
-        List<ItemStack> results = activeRecipe.getOutputs(this);
+        List<ItemStack> results = recipe.getOutputs(this);
 
         // Consume inputs: one item from each non-empty slot
-        int slotCount = activeRecipe.getExpectedSlotCount();
+        int slotCount = recipe.getExpectedSlotCount();
         for (int i = 0; i < slotCount; i++) {
             ItemStack slot = inventory.getStackInSlot(i);
             if (!slot.isEmpty()) {
@@ -349,9 +373,10 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         ItemStack primaryOutput = results.isEmpty() ? ItemStack.EMPTY : results.get(0);
 
         // Upgrade recipe post-completion hook (block state change + tier grant)
-        boolean wasUpgrade = activeRecipe instanceof AltarUpgradeRecipe;
-        if (wasUpgrade) {
-            ((AltarUpgradeRecipe) activeRecipe).onRecipeCompletion(this);
+        boolean wasUpgrade = false;
+        if (completedRecipe instanceof AltarUpgradeRecipe upgradeRecipe) {
+            wasUpgrade = true;
+            upgradeRecipe.onRecipeCompletion(this);
             // setBlockState() was called synchronously inside onRecipeCompletion → update cached capacity
             updateCapacityFromTier();
         }
@@ -370,7 +395,9 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
                 worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
                 16.0, null);
         if (nearest instanceof net.minecraft.server.level.ServerPlayer sp) {
-            AstralAdvancementTriggers.ALTAR_CRAFT.trigger(sp, completedRecipe, primaryOutput);
+            if (completedRecipe != null) {
+                AstralAdvancementTriggers.ALTAR_CRAFT.trigger(sp, completedRecipe, primaryOutput);
+            }
             if (wasUpgrade) {
                 AstralAdvancementTriggers.ALTAR_UPGRADE.trigger(sp);
             }
@@ -503,6 +530,19 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     }
 
     /**
+     * Called client-side by ContainerData sync to update dynamic display fields
+     * while the GUI is open. Uses the same indices as ContainerAltarBase.DATA_*.
+     */
+    public void syncFromContainerData(int index, int value) {
+        switch (index) {
+            case 0 -> this.storedStarlight = value;
+            case 1 -> this.starlightCapacity = value;
+            case 2 -> this.isCrafting = value != 0;
+            case 3 -> this.recipeTick = value;
+        }
+    }
+
+    /**
      * Start the crafting process externally (e.g., from a GUI interaction).
      * Typically called after the player places ingredients and the altar
      * auto-detects a recipe match, but can be triggered manually.
@@ -549,7 +589,6 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     // MenuProvider implementation
     // ========================================================================
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Component getDisplayName() {
@@ -573,11 +612,12 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
      * Called on first tick and when the block state changes.
      */
     private void updateCapacityFromTier() {
+        CommonConfig cfg = CommonConfig.CONFIG;
         this.starlightCapacity = switch (getAltarType()) {
-            case DISCOVERY -> 1000.0;
-            case ATTUNEMENT -> 2000.0;
-            case CONSTELLATION -> 4000.0;
-            case RADIANCE -> 8000.0;
+            case DISCOVERY     -> cfg.altarStarlightDiscovery.get();
+            case ATTUNEMENT    -> cfg.altarStarlightAttunement.get();
+            case CONSTELLATION -> cfg.altarStarlightConstellation.get();
+            case RADIANCE      -> cfg.altarStarlightRadiance.get();
         };
     }
 
@@ -587,7 +627,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCap.cast();
         }
@@ -625,12 +665,31 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
     public void readCustomNBT(@Nonnull CompoundTag compound) {
         super.readCustomNBT(compound);
         this.inventory.deserialize(compound.getCompound("inventory"));
+        this.storedStarlight = compound.getDouble("storedStarlight");
+        this.starlightCapacity = compound.contains("starlightCapacity")
+                ? compound.getDouble("starlightCapacity") : 1000.0;
+        this.isCrafting = compound.getBoolean("isCrafting");
+        this.recipeTick = compound.getInt("recipeTick");
+        if (compound.contains("receivedConstellation")) {
+            this.receivedConstellation = ResourceLocation.tryParse(
+                    compound.getString("receivedConstellation"));
+        } else {
+            this.receivedConstellation = null;
+        }
     }
 
     @Override
     public void writeCustomNBT(@Nonnull CompoundTag compound) {
         super.writeCustomNBT(compound);
         compound.put("inventory", this.inventory.serializeNBT());
+        compound.putDouble("storedStarlight", storedStarlight);
+        compound.putDouble("starlightCapacity", starlightCapacity);
+        compound.putBoolean("isCrafting", isCrafting);
+        compound.putInt("recipeTick", recipeTick);
+        ResourceLocation rc = receivedConstellation;
+        if (rc != null) {
+            compound.putString("receivedConstellation", rc.toString());
+        }
     }
 
     @Override
@@ -643,11 +702,11 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         this.starlightCapacity = compound.contains("starlightCapacity")
                 ? compound.getDouble("starlightCapacity") : 1000.0;
         if (compound.contains("receivedConstellation")) {
-            this.receivedConstellation = new ResourceLocation(
+            this.receivedConstellation = ResourceLocation.tryParse(
                     compound.getString("receivedConstellation"));
         }
         if (compound.contains("activeRecipeId")) {
-            this.activeRecipeId = new ResourceLocation(compound.getString("activeRecipeId"));
+            this.activeRecipeId = ResourceLocation.tryParse(compound.getString("activeRecipeId"));
             // Recipe object is resolved lazily on next tick from the RecipeManager
             this.activeRecipe = null;
         } else {
@@ -664,11 +723,13 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
         compound.putBoolean("structureValid", structureValid);
         compound.putBoolean("isCrafting", isCrafting);
         compound.putDouble("starlightCapacity", starlightCapacity);
-        if (receivedConstellation != null) {
-            compound.putString("receivedConstellation", receivedConstellation.toString());
+        ResourceLocation rc2 = receivedConstellation;
+        if (rc2 != null) {
+            compound.putString("receivedConstellation", rc2.toString());
         }
-        if (activeRecipeId != null) {
-            compound.putString("activeRecipeId", activeRecipeId.toString());
+        ResourceLocation ari = activeRecipeId;
+        if (ari != null) {
+            compound.putString("activeRecipeId", ari.toString());
         }
     }
 
@@ -677,15 +738,16 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
      * Called lazily on first tick when isCrafting is true but activeRecipe is null.
      */
     private void resolveActiveRecipe(@Nonnull Level level) {
-        if (activeRecipeId == null) return;
+        ResourceLocation recipeId = activeRecipeId;
+        if (recipeId == null) return;
         Optional<SimpleAltarRecipe> resolved = level.getRecipeManager()
                 .getRecipeFor(RecipeTypesAS.ALTAR.get(), inventory.toContainer(), level)
-                .filter(r -> r.getId().equals(activeRecipeId));
+                .filter(r -> r.getId().equals(recipeId));
         if (resolved.isPresent()) {
             this.activeRecipe = resolved.get();
         } else {
             AstralSorcery.log.warn("Altar at {} could not resolve recipe {} after load — aborting",
-                    worldPosition.toShortString(), activeRecipeId);
+                    worldPosition.toShortString(), recipeId);
             abortCrafting();
         }
     }

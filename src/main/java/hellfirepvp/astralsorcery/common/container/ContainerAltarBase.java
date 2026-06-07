@@ -4,6 +4,7 @@ import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -27,17 +28,53 @@ import javax.annotation.Nullable;
  */
 public class ContainerAltarBase extends AbstractContainerMenu {
 
+    // ContainerData slot indices — must match BlockEntityAltar.syncFromContainerData()
+    static final int DATA_STARLIGHT   = 0;
+    static final int DATA_CAPACITY    = 1;
+    static final int DATA_IS_CRAFTING = 2;
+    static final int DATA_RECIPE_TICK = 3;
+    private static final int DATA_COUNT = 4;
+
     @Nonnull
     private final BlockEntityAltar altar;
     @Nonnull
     private final ContainerLevelAccess access;
+
+    // Syncs dynamic display values server→client while the GUI is open.
+    // get() is called server-side each tick; set() is called client-side on receive.
+    private final ContainerData altarData = new ContainerData() {
+        @Override
+        public int get(int i) {
+            return switch (i) {
+                case DATA_STARLIGHT   -> (int) altar.getStarlightStored();
+                case DATA_CAPACITY    -> (int) altar.getStarlightCapacity();
+                case DATA_IS_CRAFTING -> altar.isCrafting() ? 1 : 0;
+                case DATA_RECIPE_TICK -> altar.getRecipeTick();
+                default               -> 0;
+            };
+        }
+
+        @Override
+        public void set(int i, int value) {
+            altar.syncFromContainerData(i, value);
+        }
+
+        @Override
+        public int getCount() { return DATA_COUNT; }
+    };
 
     protected ContainerAltarBase(@Nullable MenuType<?> type, int containerId,
                                  @Nonnull Inventory playerInv,
                                  @Nonnull BlockEntityAltar altar) {
         super(type, containerId);
         this.altar = altar;
-        this.access = ContainerLevelAccess.create(altar.getLevel(), altar.getBlockPos());
+        net.minecraft.world.level.Level altarLevel = altar.getLevel();
+        this.access = altarLevel != null
+                ? ContainerLevelAccess.create(altarLevel, altar.getBlockPos())
+                : ContainerLevelAccess.NULL;
+
+        // Register ContainerData for live server→client sync while menu is open
+        this.addDataSlots(altarData);
 
         // Add altar crafting slots
         addAltarSlots();

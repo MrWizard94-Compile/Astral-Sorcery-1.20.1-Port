@@ -11,6 +11,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingUtils;
+import hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect.AltarRecipeEffect;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect.AltarRecipeEffects;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -42,10 +45,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class RenderAltar implements BlockEntityRenderer<BlockEntityAltar> {
 
-    private final BlockEntityRendererProvider.Context context;
-
     public RenderAltar(@Nonnull BlockEntityRendererProvider.Context context) {
-        this.context = context;
     }
 
     @Override
@@ -64,6 +64,14 @@ public class RenderAltar implements BlockEntityRenderer<BlockEntityAltar> {
         renderHaloGlow(altar, partialTick, poseStack, bufferSource);
 
         poseStack.popPose();
+
+        if (altar.isCrafting()) {
+            AltarRecipeEffect effect = AltarRecipeEffects.getDefaultEffect(altar.getAltarType());
+            if (effect != null) {
+                effect.onRender(altar, ActiveSimpleAltarRecipe.CraftState.ACTIVE,
+                        poseStack, bufferSource, partialTick, packedLight);
+            }
+        }
     }
 
     /**
