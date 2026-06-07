@@ -4,7 +4,6 @@ import hellfirepvp.astralsorcery.client.ClientScheduler;
 import hellfirepvp.astralsorcery.client.lib.TexturesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -43,8 +42,6 @@ public interface NavigationArrowScreen {
         // UV layout: arrows.png has 2 columns × 2 rows
         // left-pointing: row 1 (v=0.5..1), right-pointing: row 0 (v=0..0.5)
         // normal: u=0..0.5, hovered: u=0.5..1
-        int texWidth  = (int) width;
-        int texHeight = (int) height;
         float uFrom   = hovered ? 0.5f : 0f;
         float vFrom   = direction == Type.LEFT ? 0.5f : 0f;
         int uOffset   = (int) (uFrom * 60);  // texture is 60×30 (2×2 layout)

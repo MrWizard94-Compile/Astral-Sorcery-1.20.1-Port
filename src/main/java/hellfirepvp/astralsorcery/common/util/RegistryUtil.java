@@ -44,10 +44,11 @@ public final class RegistryUtil {
     @Nullable
     public <T> T getValue(@Nonnull ResourceKey<? extends Registry<T>> registryKey,
                           @Nonnull ResourceKey<T> valueKey) {
-        if (Minecraft.getInstance().level == null) {
+        net.minecraft.client.multiplayer.ClientLevel clientLevel = Minecraft.getInstance().level;
+        if (clientLevel == null) {
             return null;
         }
-        Registry<T> registry = Minecraft.getInstance().level.registryAccess()
+        Registry<T> registry = clientLevel.registryAccess()
                 .registryOrThrow(registryKey);
         return registry.get(valueKey);
     }
@@ -63,10 +64,11 @@ public final class RegistryUtil {
     @Nullable
     public <T> T getValue(@Nonnull ResourceKey<? extends Registry<T>> registryKey,
                           @Nonnull ResourceLocation location) {
-        if (Minecraft.getInstance().level == null) {
+        net.minecraft.client.multiplayer.ClientLevel clientLevel = Minecraft.getInstance().level;
+        if (clientLevel == null) {
             return null;
         }
-        Registry<T> registry = Minecraft.getInstance().level.registryAccess()
+        Registry<T> registry = clientLevel.registryAccess()
                 .registryOrThrow(registryKey);
         return registry.get(location);
     }

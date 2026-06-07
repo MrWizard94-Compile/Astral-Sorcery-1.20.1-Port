@@ -1,6 +1,7 @@
 package hellfirepvp.astralsorcery.common.entity;
 
 import net.minecraft.world.damagesource.DamageSource;
+import javax.annotation.Nonnull;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +27,7 @@ public class EntityItemExplosionResistant extends EntityItemHighlighted {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurt(@Nonnull DamageSource source, float amount) {
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
             return false;
         }

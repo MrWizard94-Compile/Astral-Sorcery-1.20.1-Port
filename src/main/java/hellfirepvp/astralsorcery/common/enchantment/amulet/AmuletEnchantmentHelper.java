@@ -67,8 +67,10 @@ public class AmuletEnchantmentHelper {
         if (stack.isEmpty() || !stack.hasTag()) {
             return;
         }
-        NBTHelper.removeUUID(stack.getTag(), KEY_AS_OWNER);
-        if (stack.getTag().isEmpty()) {
+        net.minecraft.nbt.CompoundTag tag = stack.getTag();
+        if (tag == null) return;
+        NBTHelper.removeUUID(tag, KEY_AS_OWNER);
+        if (tag.isEmpty()) {
             stack.setTag(null);
         }
     }
@@ -111,7 +113,7 @@ public class AmuletEnchantmentHelper {
         return player;
     }
 
-    @Nullable
+    @Nonnull
     static Optional<ItemStack> getWornAmulet(ItemStack anyTool) {
         Player player = getPlayerHavingTool(anyTool);
         if (player == null) return Optional.empty();

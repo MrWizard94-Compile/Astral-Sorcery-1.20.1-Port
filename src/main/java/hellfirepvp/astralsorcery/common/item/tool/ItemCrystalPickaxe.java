@@ -37,7 +37,6 @@ public class ItemCrystalPickaxe extends PickaxeItem {
     }
 
     @Override
-    @SuppressWarnings("null")
     public int getMaxDamage(ItemStack stack) {
         CrystalProperties props = CrystalProperties.getFromStack(stack);
         return props != null
@@ -58,7 +57,6 @@ public class ItemCrystalPickaxe extends PickaxeItem {
     }
 
     @Override
-    @SuppressWarnings("null")
     public int getEnchantmentValue(ItemStack stack) {
         CrystalProperties props = CrystalProperties.getFromStack(stack);
         if (props == null) return super.getEnchantmentValue(stack);

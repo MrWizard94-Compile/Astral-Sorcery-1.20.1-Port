@@ -36,7 +36,7 @@ public class PlayerCapabilityProvider implements ICapabilitySerializable<Compoun
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         return CAPABILITY.orEmpty(cap, optional);
     }
 
@@ -47,7 +47,7 @@ public class PlayerCapabilityProvider implements ICapabilitySerializable<Compoun
     }
 
     @Override
-    public void deserializeNBT(@Nonnull CompoundTag nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         data.readFromNBT(nbt);
     }
 

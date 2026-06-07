@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  *   <li>Emits a vertical light beam visible from long range</li>
  * </ul></p>
  *
- * <p>1.16 → 1.20: TileEntity → BlockEntity.
+ * <p>1.16 â†’ 1.20: TileEntity â†’ BlockEntity.
  * Tick via BlockEntityTicker.</p>
  */
 public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlightReceiver {
@@ -45,7 +45,6 @@ public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlight
     private static final int GROWTH_INTERVAL = 40;
 
     private float storedStarlight = 0;
-    private int ticksExisted = 0;
     private boolean active = false;
 
     public BlockEntityTreeBeacon(@Nonnull BlockPos pos, @Nonnull BlockState state) {
@@ -69,7 +68,6 @@ public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlight
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) return;
 
         // Passive starlight collection at night
@@ -86,7 +84,7 @@ public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlight
         }
 
         // Growth boosting
-        if (active && ticksExisted % GROWTH_INTERVAL == 0) {
+        if (active && getTicksExisted() % GROWTH_INTERVAL == 0) {
             applyGrowthBoost();
         }
     }
@@ -95,22 +93,23 @@ public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlight
      * Applies random-tick growth to a random crop/sapling within range.
      */
     private void applyGrowthBoost() {
-        if (level == null || storedStarlight < STARLIGHT_PER_TICK) return;
+        Level currentLevel = this.level;
+        if (currentLevel == null || storedStarlight < STARLIGHT_PER_TICK) return;
 
         // Pick a random position in range
-        int dx = level.getRandom().nextInt(EFFECT_RANGE * 2 + 1) - EFFECT_RANGE;
-        int dz = level.getRandom().nextInt(EFFECT_RANGE * 2 + 1) - EFFECT_RANGE;
+        int dx = currentLevel.getRandom().nextInt(EFFECT_RANGE * 2 + 1) - EFFECT_RANGE;
+        int dz = currentLevel.getRandom().nextInt(EFFECT_RANGE * 2 + 1) - EFFECT_RANGE;
 
         // Check a column of blocks for growable plants
         for (int dy = -2; dy <= 4; dy++) {
             BlockPos target = worldPosition.offset(dx, dy, dz);
-            BlockState targetState = level.getBlockState(target);
+            BlockState targetState = currentLevel.getBlockState(target);
 
             if (targetState.isRandomlyTicking()) {
                 targetState.randomTick(
-                        (net.minecraft.server.level.ServerLevel) level,
+                        (net.minecraft.server.level.ServerLevel) currentLevel,
                         target,
-                        level.getRandom());
+                        currentLevel.getRandom());
                 storedStarlight -= STARLIGHT_PER_TICK;
                 setChanged();
                 return;
@@ -152,9 +151,6 @@ public class BlockEntityTreeBeacon extends BlockEntityTick implements IStarlight
         return active;
     }
 
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     @Override
     public void readCustomNBT(@Nonnull CompoundTag compound) {

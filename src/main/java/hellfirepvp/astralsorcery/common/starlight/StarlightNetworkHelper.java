@@ -7,7 +7,6 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.starlight;
 
-import hellfirepvp.astralsorcery.AstralSorcery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;

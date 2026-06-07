@@ -16,7 +16,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 

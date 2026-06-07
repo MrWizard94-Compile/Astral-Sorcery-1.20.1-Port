@@ -30,7 +30,8 @@ public class BlockEntityTelescope extends BlockEntitySynchronized {
      * Since the telescope does not tick, uses the level game time.
      */
     public long getTicksExisted() {
-        return getLevel() != null ? getLevel().getGameTime() : 0L;
+        net.minecraft.world.level.Level level = getLevel();
+        return level != null ? level.getGameTime() : 0L;
     }
 
     public boolean hasBeenUsed() {

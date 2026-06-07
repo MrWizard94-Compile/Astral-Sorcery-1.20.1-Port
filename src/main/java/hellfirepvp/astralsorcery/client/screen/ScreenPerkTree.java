@@ -7,15 +7,8 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import hellfirepvp.astralsorcery.AstralSorcery;
-import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
-import hellfirepvp.astralsorcery.client.util.RenderingConstellationUtils;
 import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
@@ -34,7 +27,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,8 +59,6 @@ public class ScreenPerkTree extends Screen {
     // Constants
     // =========================================================================
 
-    private static final ResourceLocation TEX_BACKGROUND =
-            AstralSorcery.key("textures/gui/book/background_perks.png");
     private static final ResourceLocation TEX_PERK_INACTIVE =
             AstralSorcery.key("textures/gui/perk/inactive.png");
     private static final ResourceLocation TEX_PERK_ACTIVE =
@@ -79,8 +69,6 @@ public class ScreenPerkTree extends Screen {
             AstralSorcery.key("textures/gui/perk/halo_active.png");
     private static final ResourceLocation TEX_PERK_FOCUS =
             AstralSorcery.key("textures/gui/perk/activateable.png");
-    private static final ResourceLocation TEX_CONNECTION =
-            AstralSorcery.key("textures/gui/line_connection.png");
 
     /** Node sizes in screen pixels (before zoom). */
     private static final int NODE_SIZE_SMALL = 10;
@@ -278,10 +266,11 @@ public class ScreenPerkTree extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) { // Left click
-            if (hoveredPerk != null) {
-                PerkState state = getPerkState(hoveredPerk);
+            AbstractPerk hovered = hoveredPerk;
+            if (hovered != null) {
+                PerkState state = getPerkState(hovered);
                 if (state == PerkState.AVAILABLE) {
-                    allocatePerk(hoveredPerk);
+                    allocatePerk(hovered);
                     return true;
                 }
             }

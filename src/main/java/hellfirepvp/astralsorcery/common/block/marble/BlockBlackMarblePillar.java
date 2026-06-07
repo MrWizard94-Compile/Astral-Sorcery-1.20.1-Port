@@ -94,13 +94,13 @@ public class BlockBlackMarblePillar extends Block implements SimpleWaterloggedBl
         if (direction == Direction.UP || direction == Direction.DOWN) {
             return state.setValue(PILLAR_TYPE, getPillarType(level, pos));
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return state;
     }
 
     @Nonnull
     @Override
     public FluidState getFluidState(@Nonnull BlockState state) {
-        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
     private static PillarType getPillarType(BlockGetter level, BlockPos pos) {

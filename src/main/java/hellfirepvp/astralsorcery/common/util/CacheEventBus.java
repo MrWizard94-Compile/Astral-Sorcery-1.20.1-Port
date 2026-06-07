@@ -35,93 +35,93 @@ public class CacheEventBus implements IEventBus {
     }
 
     @Override
-    public void register(@Nonnull Object target) {
+    public void register(Object target) {
         wrapped.register(target);
         registeredListeners.add(target);
     }
 
     @Override
-    public <T extends Event> void addListener(@Nonnull Consumer<T> consumer) {
+    public <T extends Event> void addListener(Consumer<T> consumer) {
         wrapped.addListener(consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
-    public <T extends Event> void addListener(@Nonnull EventPriority priority,
-                                              @Nonnull Consumer<T> consumer) {
+    public <T extends Event> void addListener(EventPriority priority,
+                                              Consumer<T> consumer) {
         wrapped.addListener(priority, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
-    public <T extends Event> void addListener(@Nonnull EventPriority priority,
+    public <T extends Event> void addListener(EventPriority priority,
                                               boolean receiveCancelled,
-                                              @Nonnull Consumer<T> consumer) {
+                                              Consumer<T> consumer) {
         wrapped.addListener(priority, receiveCancelled, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
-    public <T extends Event> void addListener(@Nonnull EventPriority priority,
+    public <T extends Event> void addListener(EventPriority priority,
                                               boolean receiveCancelled,
-                                              @Nonnull Class<T> eventType,
-                                              @Nonnull Consumer<T> consumer) {
+                                              Class<T> eventType,
+                                              Consumer<T> consumer) {
         wrapped.addListener(priority, receiveCancelled, eventType, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
     public <T extends GenericEvent<? extends F>, F> void addGenericListener(
-            @Nonnull Class<F> genericClassFilter,
-            @Nonnull Consumer<T> consumer) {
+            Class<F> genericClassFilter,
+            Consumer<T> consumer) {
         wrapped.addGenericListener(genericClassFilter, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
     public <T extends GenericEvent<? extends F>, F> void addGenericListener(
-            @Nonnull Class<F> genericClassFilter,
-            @Nonnull EventPriority priority,
-            @Nonnull Consumer<T> consumer) {
+            Class<F> genericClassFilter,
+            EventPriority priority,
+            Consumer<T> consumer) {
         wrapped.addGenericListener(genericClassFilter, priority, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
     public <T extends GenericEvent<? extends F>, F> void addGenericListener(
-            @Nonnull Class<F> genericClassFilter,
-            @Nonnull EventPriority priority,
+            Class<F> genericClassFilter,
+            EventPriority priority,
             boolean receiveCancelled,
-            @Nonnull Consumer<T> consumer) {
+            Consumer<T> consumer) {
         wrapped.addGenericListener(genericClassFilter, priority, receiveCancelled, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
     public <T extends GenericEvent<? extends F>, F> void addGenericListener(
-            @Nonnull Class<F> genericClassFilter,
-            @Nonnull EventPriority priority,
+            Class<F> genericClassFilter,
+            EventPriority priority,
             boolean receiveCancelled,
-            @Nonnull Class<T> eventType,
-            @Nonnull Consumer<T> consumer) {
+            Class<T> eventType,
+            Consumer<T> consumer) {
         wrapped.addGenericListener(genericClassFilter, priority,
                 receiveCancelled, eventType, consumer);
         registeredListeners.add(consumer);
     }
 
     @Override
-    public void unregister(@Nonnull Object object) {
+    public void unregister(Object object) {
         wrapped.unregister(object);
         registeredListeners.remove(object);
     }
 
     @Override
-    public boolean post(@Nonnull Event event) {
+    public boolean post(Event event) {
         return wrapped.post(event);
     }
 
     @Override
-    public boolean post(@Nonnull Event event, @Nonnull IEventBusInvokeDispatcher wrapper) {
+    public boolean post(Event event, IEventBusInvokeDispatcher wrapper) {
         return wrapped.post(event, wrapper);
     }
 

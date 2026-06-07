@@ -14,7 +14,6 @@ public abstract class OrderSortable {
     private final List<Object> before = new ArrayList<>();
     private final List<Object> after = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
     public <E extends OrderSortable> E setBefore(Object... other) {
         return this.setBefore(Arrays.asList(other));
     }
@@ -25,7 +24,6 @@ public abstract class OrderSortable {
         return (E) this;
     }
 
-    @SuppressWarnings("unchecked")
     public <E extends OrderSortable> E setAfter(Object... other) {
         return this.setAfter(Arrays.asList(other));
     }

@@ -6,9 +6,9 @@ import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import hellfirepvp.astralsorcery.common.util.log.LogCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -37,12 +37,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -382,10 +380,11 @@ public class MiscUtils {
             return false;
         }
         if (target instanceof Player plTarget) {
-            if (target.level() instanceof ServerLevel
-                    && target.level().getServer() != null
-                    && !target.level().getServer().isPvpAllowed()) {
-                return false;
+            if (target.level() instanceof ServerLevel serverLevel) {
+                MinecraftServer srv = serverLevel.getServer();
+                if (srv != null && !srv.isPvpAllowed()) {
+                    return false;
+                }
             }
             if (plTarget.isSpectator() || plTarget.isCreative()) {
                 return false;
@@ -694,7 +693,7 @@ public class MiscUtils {
                 return run.get();
             }
         } else {
-            if (world.hasChunkAt(pos)) {
+            if (world.getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false) != null) {
                 return run.get();
             }
         }

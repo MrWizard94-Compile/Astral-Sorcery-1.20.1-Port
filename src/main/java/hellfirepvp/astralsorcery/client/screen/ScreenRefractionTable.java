@@ -199,11 +199,12 @@ public class ScreenRefractionTable extends Screen {
     }
 
     private void renderDragging(@Nonnull GuiGraphics graphics, int mouseX, int mouseY) {
-        if (dragging == null) return;
+        IConstellation drag = dragging;
+        if (drag == null) return;
         int halfIcon = ICON_SIZE / 2;
         graphics.fill(mouseX - halfIcon, mouseY - halfIcon,
                 mouseX + halfIcon, mouseY + halfIcon, 0xCC6699CC);
-        String abbrev = dragging.getConstellationName().getString();
+        String abbrev = drag.getConstellationName().getString();
         if (abbrev.length() > 2) abbrev = abbrev.substring(0, 2);
         graphics.drawCenteredString(font, abbrev, mouseX, mouseY - 4, 0xFFFFFF);
     }
@@ -249,14 +250,15 @@ public class ScreenRefractionTable extends Screen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0 && dragging != null
+        IConstellation drag = dragging;
+        if (button == 0 && drag != null
                 && tile.hasParchment() && tile.hasUnengravedGlass()
                 && placed.size() < 3) {
             // Drop onto grid if inside grid bounds
             int relX = (int) mouseX - (guiLeft + GRID_X);
             int relY = (int) mouseY - (guiTop + GRID_Y);
             if (relX >= 0 && relX < GRID_W && relY >= 0 && relY < GRID_H) {
-                placed.add(new DrawnConstellation(new Point(relX, relY), dragging));
+                placed.add(new DrawnConstellation(new Point(relX, relY), drag));
                 if (placed.size() >= 3) {
                     sendEngravePacket();
                 }

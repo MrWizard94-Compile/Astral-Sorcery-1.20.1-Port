@@ -125,9 +125,6 @@ public class AstralSkyRenderer {
                 com.mojang.blaze3d.platform.GlStateManager.DestFactor.ONE);
         RenderSystem.depthMask(false);
 
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder builder = tesselator.getBuilder();
-
         ShaderInstance shader = GameRenderer.getPositionColorTexShader();
         if (shader != null) {
             RenderSystem.setShader(GameRenderer::getPositionColorTexShader);

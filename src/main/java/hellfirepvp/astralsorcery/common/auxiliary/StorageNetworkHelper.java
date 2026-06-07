@@ -61,7 +61,7 @@ public class StorageNetworkHelper {
         if (be == null) {
             return null;
         }
-        return be.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElse(null);
+        return be.getCapability(ForgeCapabilities.ITEM_HANDLER, side).resolve().orElse(null);
     }
 
     /**

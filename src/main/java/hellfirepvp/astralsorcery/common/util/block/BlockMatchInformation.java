@@ -1,9 +1,9 @@
 package hellfirepvp.astralsorcery.common.util.block;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -89,7 +89,8 @@ public class BlockMatchInformation {
     @Nonnull
     public CompoundTag writeToNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putString("block", Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).toString());
+        ResourceLocation blockKey = ForgeRegistries.BLOCKS.getKey(block);
+        tag.putString("block", blockKey != null ? blockKey.toString() : block.toString());
         tag.putBoolean("matchExact", matchExact);
         if (matchExact && exactState != null) {
             tag.putInt("stateId", Block.getId(exactState));

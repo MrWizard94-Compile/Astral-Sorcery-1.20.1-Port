@@ -133,8 +133,9 @@ public class SoundHelper {
     public static void playSoundClientWorld(@Nonnull SoundEvent sound, @Nonnull SoundSource cat,
                                             @Nonnull BlockPos pos,
                                             float volume, float pitch) {
-        if (Minecraft.getInstance().level != null) {
-            Minecraft.getInstance().level.playSound(
+        net.minecraft.client.multiplayer.ClientLevel clientLevel = Minecraft.getInstance().level;
+        if (clientLevel != null) {
+            clientLevel.playSound(
                     Minecraft.getInstance().player,
                     pos.getX(), pos.getY(), pos.getZ(),
                     sound, cat, volume, pitch);

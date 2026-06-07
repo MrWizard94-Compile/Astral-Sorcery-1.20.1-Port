@@ -4,7 +4,6 @@ import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.client.PktGatewayTeleport;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestGatewayList;
 import hellfirepvp.astralsorcery.common.network.play.server.PktSyncGatewayList;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

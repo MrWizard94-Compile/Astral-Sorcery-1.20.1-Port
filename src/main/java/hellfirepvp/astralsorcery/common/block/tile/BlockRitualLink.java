@@ -38,7 +38,7 @@ public class BlockRitualLink extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE;

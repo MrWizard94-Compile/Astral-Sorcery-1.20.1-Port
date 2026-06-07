@@ -132,9 +132,10 @@ public final class ResearchManager {
                                             @Nonnull ItemStack crafted) {
         Player player = recipe.tryGetCraftingPlayerServer();
         if (!(player instanceof ServerPlayer serverPlayer)) {
+            net.minecraft.world.level.Level infuserLevel = infuser.getLevel();
             AstralSorcery.log.warn("Infusion finished but initiating player not found. Tile: {} in {}",
-                    infuser.getBlockPos(), infuser.getLevel() != null
-                            ? infuser.getLevel().dimension().location() : "unknown");
+                    infuser.getBlockPos(), infuserLevel != null
+                            ? infuserLevel.dimension().location() : "unknown");
             return;
         }
         grantTier(serverPlayer, ProgressionTier.BASIC_CRAFT);
@@ -148,7 +149,6 @@ public final class ResearchManager {
      * @param player    the nearest server player (may be null — no-op if so)
      * @param altarType the tier that was just unlocked
      */
-    @SuppressWarnings("fallthrough")
     public static void informCraftedAltar(@Nullable ServerPlayer player,
                                           @Nonnull BlockAltar.AltarType altarType) {
         if (player == null) return;

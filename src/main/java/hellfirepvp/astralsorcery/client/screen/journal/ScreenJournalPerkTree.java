@@ -16,6 +16,12 @@ import hellfirepvp.astralsorcery.common.network.play.client.PktPerkAllocate;
 import hellfirepvp.astralsorcery.common.network.play.client.PktPerkDeallocate;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
+import hellfirepvp.astralsorcery.common.perk.node.GemSocketPerk;
+import hellfirepvp.astralsorcery.common.perk.node.MajorPerk;
+import hellfirepvp.astralsorcery.common.perk.node.RootPerk;
+import hellfirepvp.astralsorcery.common.perk.tree.PerkTreeConstellation;
+import hellfirepvp.astralsorcery.common.perk.tree.PerkTreeGem;
+import hellfirepvp.astralsorcery.common.perk.tree.PerkTreeMajor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -25,6 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,8 +62,6 @@ public class ScreenJournalPerkTree extends ScreenJournal {
     private final ScreenTextEntry searchTextEntry = new ScreenTextEntry();
     private final java.util.Set<AbstractPerk> searchHighlighted = new java.util.HashSet<>();
 
-    private int guiOffsetX, guiOffsetY;
-
     public ScreenJournalPerkTree() {
         super(Component.translatable("screen.astralsorcery.tome.perks"), 30);
         this.closeWithInventoryKey = false;
@@ -71,8 +76,6 @@ public class ScreenJournalPerkTree extends ScreenJournal {
             return;
         }
 
-        this.guiOffsetX = guiLeft + 10;
-        this.guiOffsetY = guiTop + 10;
         this.guiBox = new ScreenRenderBoundingBox(10, 10, guiWidth - 10, guiHeight - 10);
 
         if (sizeHandler == null) {
@@ -87,8 +90,8 @@ public class ScreenJournalPerkTree extends ScreenJournal {
         // Center on attuned root perk or middle of tree
         PlayerProgress progress = ResearchHelper.getClientProgress();
         boolean shifted = false;
-        if (progress.getAttunedConstellation() != null) {
-            ResourceLocation attunedKey = progress.getAttunedConstellation();
+        ResourceLocation attunedKey = progress.getAttunedConstellation();
+        if (attunedKey != null) {
             for (AbstractPerk perk : PerkTree.getAllPerks()) {
                 if (perk instanceof hellfirepvp.astralsorcery.common.perk.node.RootPerk root) {
                     ResourceLocation rootCst = root.getRequiredConstellation();
@@ -108,7 +111,7 @@ public class ScreenJournalPerkTree extends ScreenJournal {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
+    public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
         super.render(graphics, mouseX, mouseY, pTicks);
 
         thisFramePerks.clear();
@@ -148,7 +151,7 @@ public class ScreenJournalPerkTree extends ScreenJournal {
             screenPositions.put(perk, offset);
         }
 
-        float sz = sizeHandler.getZoomedWHNode();
+        float baseSz = sizeHandler.getZoomedWHNode();
 
         // 1. Draw connections (lines) between linked perks
         boolean isSearching = !searchTextEntry.getText().trim().isEmpty();
@@ -170,13 +173,16 @@ public class ScreenJournalPerkTree extends ScreenJournal {
         }
         RenderSystem.disableBlend();
 
-        // 2. Draw halo behind active perks
+        // 2. Draw halo behind active perks; major perks get a larger halo
         for (Map.Entry<AbstractPerk, Point.Float> entry : screenPositions.entrySet()) {
             AbstractPerk perk = entry.getKey();
             Point.Float offset = entry.getValue();
             boolean allocated = progress.hasPerkAllocated(perk.getKey());
             if (!allocated) continue;
 
+            float sz = perk instanceof MajorPerk major
+                    ? PerkTreeMajor.getNodeSize(major, baseSz)
+                    : baseSz;
             float haloSz = sz * 2.0f;
             float hx = offset.x - haloSz / 2f;
             float hy = offset.y - haloSz / 2f;
@@ -189,10 +195,14 @@ public class ScreenJournalPerkTree extends ScreenJournal {
             RenderSystem.disableBlend();
         }
 
-        // 3. Draw perk node icons
+        // 3. Draw perk node icons; major perks render larger
         for (Map.Entry<AbstractPerk, Point.Float> entry : screenPositions.entrySet()) {
             AbstractPerk perk = entry.getKey();
             Point.Float offset = entry.getValue();
+
+            float sz = perk instanceof MajorPerk major
+                    ? PerkTreeMajor.getNodeSize(major, baseSz)
+                    : baseSz;
 
             float x = offset.x - sz / 2f;
             float y = offset.y - sz / 2f;
@@ -214,6 +224,13 @@ public class ScreenJournalPerkTree extends ScreenJournal {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             RenderSystem.disableBlend();
 
+            // Type-specific overlays
+            if (perk instanceof RootPerk root) {
+                PerkTreeConstellation.render(graphics, root, offset.x, offset.y, sz);
+            } else if (perk instanceof GemSocketPerk gem) {
+                PerkTreeGem.render(graphics, gem, offset.x, offset.y, sizeHandler.getScalingFactor());
+            }
+
             thisFramePerks.put(perk, new Rectangle.Float(x, y, sz, sz));
         }
     }
@@ -226,7 +243,6 @@ public class ScreenJournalPerkTree extends ScreenJournal {
         graphics.drawString(Minecraft.getInstance().font, text, guiLeft + 304, guiTop + 20, 0xCCCCCC, false);
     }
 
-    @SuppressWarnings("null")
     private void drawPerkTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
         for (Map.Entry<AbstractPerk, Rectangle.Float> entry : thisFramePerks.entrySet()) {
             if (entry.getValue().contains(mouseX, mouseY)) {

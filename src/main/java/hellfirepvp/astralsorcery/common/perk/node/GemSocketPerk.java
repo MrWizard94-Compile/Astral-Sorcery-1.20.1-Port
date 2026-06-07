@@ -65,33 +65,33 @@ public class GemSocketPerk extends AbstractPerk {
      * Whether this socket currently holds a gem.
      */
     public boolean hasGem() {
-        return socketedGem != null && !socketedGem.isEmpty();
+        ItemStack gem = socketedGem;
+        return gem != null && !gem.isEmpty();
     }
 
     @Override
     @Nonnull
-    @SuppressWarnings("null")
     public List<PerkAttributeModifier> getEffectiveModifiers(@Nonnull Player player) {
         List<PerkAttributeModifier> effective = new ArrayList<>(getModifiers());
-        if (hasGem() && socketedGem.getItem() instanceof IPerkGem gemItem) {
-            effective.addAll(gemItem.getPerkModifiers(socketedGem));
+        ItemStack gem = socketedGem;
+        if (gem != null && !gem.isEmpty() && gem.getItem() instanceof IPerkGem gemItem) {
+            effective.addAll(gemItem.getPerkModifiers(gem));
         }
         return effective;
     }
 
     @Override
     @Nonnull
-    @SuppressWarnings("null")
     public CompoundTag writeToNBT() {
         CompoundTag tag = super.writeToNBT();
-        if (hasGem()) {
-            tag.put(TAG_SOCKETED_GEM, socketedGem.save(new CompoundTag()));
+        ItemStack gem = socketedGem;
+        if (gem != null && !gem.isEmpty()) {
+            tag.put(TAG_SOCKETED_GEM, gem.save(new CompoundTag()));
         }
         return tag;
     }
 
     @Override
-    @SuppressWarnings("null")
     public void readFromNBT(@Nonnull CompoundTag tag) {
         super.readFromNBT(tag);
         if (tag.contains(TAG_SOCKETED_GEM)) {

@@ -7,8 +7,6 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

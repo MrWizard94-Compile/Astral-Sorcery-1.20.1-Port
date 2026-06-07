@@ -12,7 +12,7 @@ import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -75,9 +75,6 @@ class StarlightDistributionTest {
             Map<BlockPos, List<BlockPos>> adjacency) {
 
         Map<BlockPos, Double> receiverAccumulation = new HashMap<>();
-        Deque<double[]> queue = new ArrayDeque<>(); // [posIndex, starlight]
-        // Use a list to map indices to positions for the queue
-        // Actually replicate the exact algorithm with BlockPos
         Deque<Object[]> bfsQueue = new ArrayDeque<>(); // [BlockPos, double starlight]
         Set<BlockPos> visited = new HashSet<>();
 

@@ -67,7 +67,6 @@ public class RecipeHelper {
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
     public static Optional<Tuple<ItemStack, Float>> findSmeltingResult(@Nonnull Level level,
                                                                        @Nonnull ItemStack input) {
         RecipeManager mgr = level.getRecipeManager();

@@ -5,6 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+
+import javax.annotation.Nonnull;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -79,12 +81,12 @@ public class AssetLibrary extends SimplePreparableReloadListener<Void> {
     // ---- SimplePreparableReloadListener ----
 
     @Override
-    protected Void prepare(ResourceManager manager, ProfilerFiller profiler) {
+    protected Void prepare(@Nonnull ResourceManager manager, @Nonnull ProfilerFiller profiler) {
         return null; // No async preparation needed
     }
 
     @Override
-    protected void apply(Void pObject, ResourceManager manager, ProfilerFiller profiler) {
+    protected void apply(@Nonnull Void pObject, @Nonnull ResourceManager manager, @Nonnull ProfilerFiller profiler) {
         if (reloading) return;
         reloading = true;
         AstralSorcery.log.info("[AssetLibrary] Refreshing and Invalidating Resources");

@@ -101,7 +101,7 @@ public class RaytraceAssist {
                 }
             }
 
-            return MiscUtils.executeWithChunk(level, at, () -> {
+            Boolean chunkResult = MiscUtils.executeWithChunk(level, at, () -> {
                 if (!isStartEnd(at) && !level.isEmptyBlock(at)) {
                     if (this.hitFluids && !level.getFluidState(at).isEmpty()) {
                         posHit = at;
@@ -115,6 +115,7 @@ public class RaytraceAssist {
                 }
                 return true;
             }, false);
+            return Boolean.TRUE.equals(chunkResult);
         });
     }
 

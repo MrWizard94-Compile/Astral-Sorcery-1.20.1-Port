@@ -43,9 +43,6 @@ public class EntityObservatoryHelper extends Entity {
     private static final EntityDataAccessor<Float> DATA_YAW =
             SynchedEntityData.defineId(EntityObservatoryHelper.class, EntityDataSerializers.FLOAT);
 
-    /** Maximum distance from observatory block before auto-discard. */
-    private static final double MAX_DISTANCE_SQ = 4.0;
-
     @Nullable
     private UUID ownerPlayerId;
     private int ticksWithoutRider = 0;

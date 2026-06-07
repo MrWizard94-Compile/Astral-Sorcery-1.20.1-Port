@@ -31,21 +31,17 @@ public class AttunementCameraEffect {
     private boolean active = false;
     private float   orbitYawOffset  = 0f;
     private float   pitchOffset     = 0f;
-    @Nullable
-    private BlockPos altarPos = null;
 
     private AttunementCameraEffect() {}
 
     public void startAttunement(@Nullable BlockPos pos) {
         active = true;
-        altarPos = pos;
         orbitYawOffset = 0f;
         pitchOffset    = 0f;
     }
 
     public void stopAttunement() {
         active = false;
-        altarPos = null;
         orbitYawOffset = 0f;
         pitchOffset    = 0f;
     }

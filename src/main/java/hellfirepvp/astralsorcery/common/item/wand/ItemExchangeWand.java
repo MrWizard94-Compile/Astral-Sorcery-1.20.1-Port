@@ -1,6 +1,5 @@
 package hellfirepvp.astralsorcery.common.item.wand;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
@@ -162,9 +161,9 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
         Random rand = ItemBlockStorage.getPreviewRandomFromWorld(level);
 
         for (BlockPos pos : foundPositions) {
+            if (placeableStates.isEmpty()) continue;
             Collections.shuffle(placeableStates, rand);
-            BlockState toPlace = Iterables.getFirst(placeableStates, null);
-            if (toPlace == null) continue;
+            BlockState toPlace = placeableStates.get(0);
 
             if (!placer.isCreative()) {
                 int count = placeAmounts.getOrDefault(toPlace, 0) - 1;

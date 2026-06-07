@@ -37,13 +37,14 @@ public class ItemHeldEffectRenderer {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null) return;
+        net.minecraft.client.player.LocalPlayer player = mc.player;
+        if (player == null || mc.level == null) return;
 
         PoseStack poseStack = event.getPoseStack();
         float partialTick = event.getPartialTick();
 
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            ItemStack stack = mc.player.getItemBySlot(slot);
+            ItemStack stack = player.getItemBySlot(slot);
             if (stack.isEmpty()) continue;
             if (stack.getItem() instanceof ItemHeldRender renderer) {
                 if (renderer.renderInHand(stack, poseStack, partialTick)) {

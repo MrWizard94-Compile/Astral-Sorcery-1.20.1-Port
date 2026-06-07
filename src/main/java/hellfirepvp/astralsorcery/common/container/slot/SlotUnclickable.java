@@ -3,6 +3,7 @@ package hellfirepvp.astralsorcery.common.container.slot;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import javax.annotation.Nonnull;
 
 /**
  * A display-only slot — the player cannot take items from it.
@@ -18,7 +19,7 @@ public class SlotUnclickable extends Slot {
     }
 
     @Override
-    public boolean mayPickup(Player player) {
+    public boolean mayPickup(@Nonnull Player player) {
         return false;
     }
 }

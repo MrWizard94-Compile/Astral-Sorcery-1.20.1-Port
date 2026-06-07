@@ -28,11 +28,18 @@ public class EventHandlerMantleTick {
     @SubscribeEvent
     public void onPlayerTick(@Nonnull TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+        if (event.player.level().isClientSide()) return;
 
         Player player = event.player;
         ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
         if (chest.isEmpty() || !(chest.getItem() instanceof ItemMantle mantle)) return;
 
+        // Drive item-level per-second effects (replaces deprecated IForgeItem.onArmorTick)
+        if (player.tickCount % 20 == 0) {
+            mantle.onMantleTick(chest, player.level(), player);
+        }
+
+        // Drive constellation effect system
         MantleEffect effect = MantleEffectRegistry.getEffectForItem(mantle);
         if (effect == null || !effect.shouldTick()) return;
 

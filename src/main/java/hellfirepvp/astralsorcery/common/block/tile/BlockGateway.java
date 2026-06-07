@@ -6,7 +6,10 @@ import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -47,7 +50,6 @@ public class BlockGateway extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;
@@ -65,6 +67,16 @@ public class BlockGateway extends BlockEntityBlock {
                                                                    @Nonnull BlockState state,
                                                                    @Nonnull BlockEntityType<T> type) {
         return createTicker(type, BlockEntityTypesAS.GATEWAY.get());
+    }
+
+    @Override
+    public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                            @Nullable LivingEntity placer, @Nonnull ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        DyeColor color = BlockEntityGateway.getItemColor(stack);
+        if (color != null && level.getBlockEntity(pos) instanceof BlockEntityGateway gateway) {
+            gateway.setColor(color);
+        }
     }
 
     @Nonnull

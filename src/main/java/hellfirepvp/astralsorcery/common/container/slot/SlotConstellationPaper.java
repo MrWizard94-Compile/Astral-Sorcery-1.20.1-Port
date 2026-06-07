@@ -5,8 +5,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
-
 /**
  * Slot that only accepts constellation paper with an assigned constellation.
  * Used in the Tome container to let players store discovered constellations.
@@ -27,7 +25,7 @@ public class SlotConstellationPaper extends SlotItemHandler {
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack) {
+    public boolean mayPlace(ItemStack stack) {
         if (stack.isEmpty()) {
             return false;
         }

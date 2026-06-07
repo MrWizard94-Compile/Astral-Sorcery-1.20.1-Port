@@ -134,19 +134,23 @@ public class EntityStarling extends Entity {
      */
     @Nullable
     private Vec3 getOrbitCenter() {
-        if (ownerUUID != null && level() instanceof ServerLevel serverLevel) {
-            Entity owner = serverLevel.getEntity(ownerUUID);
-            if (owner instanceof Player player) {
-                if (player.isAlive() && distanceToSqr(player) < 256) {
-                    return new Vec3(player.getX(), player.getY() + 1.2, player.getZ());
+        UUID oid = ownerUUID;
+        if (oid != null) {
+            if (level() instanceof ServerLevel serverLevel) {
+                Entity owner = serverLevel.getEntity(oid);
+                if (owner instanceof Player player) {
+                    if (player.isAlive() && distanceToSqr(player) < 256) {
+                        return new Vec3(player.getX(), player.getY() + 1.2, player.getZ());
+                    }
                 }
             }
-            // Owner not found or too far — despawn
+            // Owner not found or level not server — despawn
             return null;
         }
 
-        if (anchorPos != null) {
-            return new Vec3(anchorPos.getX() + 0.5, anchorPos.getY() + 1.5, anchorPos.getZ() + 0.5);
+        BlockPos ap = anchorPos;
+        if (ap != null) {
+            return new Vec3(ap.getX() + 0.5, ap.getY() + 1.5, ap.getZ() + 0.5);
         }
 
         return null;
@@ -214,10 +218,11 @@ public class EntityStarling extends Entity {
         if (ownerUUID != null) {
             compound.putUUID("ownerUUID", ownerUUID);
         }
-        if (anchorPos != null) {
-            compound.putInt("anchorX", anchorPos.getX());
-            compound.putInt("anchorY", anchorPos.getY());
-            compound.putInt("anchorZ", anchorPos.getZ());
+        BlockPos ap2 = anchorPos;
+        if (ap2 != null) {
+            compound.putInt("anchorX", ap2.getX());
+            compound.putInt("anchorY", ap2.getY());
+            compound.putInt("anchorZ", ap2.getZ());
         }
     }
 

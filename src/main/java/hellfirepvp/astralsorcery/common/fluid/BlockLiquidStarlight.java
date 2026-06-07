@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.core.BlockPos;
+import javax.annotation.Nonnull;
 
 public class BlockLiquidStarlight extends LiquidBlock {
 
@@ -26,9 +27,7 @@ public class BlockLiquidStarlight extends LiquidBlock {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-
+    public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         if (state.getValue(LEVEL) != 0) {
             return;
         }

@@ -6,7 +6,6 @@ import hellfirepvp.astralsorcery.common.perk.modifier.ModifierType;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
-import hellfirepvp.astralsorcery.common.lib.EnchantmentsAS;
 
 /**
  * All constellation engraving effects, registered into {@link EngravingEffectRegistry}.

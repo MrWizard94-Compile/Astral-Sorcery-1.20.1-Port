@@ -15,7 +15,6 @@ import java.util.UUID;
  * <p>Populated in {@link #init()} which must be called after
  * {@link PerkAttributeTypesAS#init()} during common setup.</p>
  */
-@SuppressWarnings("null")
 public final class PerkCustomModifiersAS {
 
     private PerkCustomModifiersAS() {}

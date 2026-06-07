@@ -54,8 +54,8 @@ public class EntityCrystal extends EntityItemExplosionResistant {
                     if (attrs != null && !attrs.isEmpty()) {
                         boolean doDamage = false;
                         if (random.nextFloat() < 0.35f) {
-                            int fortune = EnchantmentHelper.getItemEnchantmentLevel(
-                                    Enchantments.BLOCK_FORTUNE, held);
+                            int fortune = EnchantmentHelper.getEnchantments(held)
+                                    .getOrDefault(Enchantments.BLOCK_FORTUNE, 0);
                             doDamage = splitCrystal(base, thisStack, attrs, fortune, random);
                         }
                         if (doDamage || random.nextFloat() < 0.35f) {

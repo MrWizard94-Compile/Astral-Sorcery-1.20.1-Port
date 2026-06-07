@@ -34,9 +34,9 @@ public class NoOpTeleporter implements ITeleporter {
 
     @Override
     @Nonnull
-    public Entity placeEntity(@Nonnull Entity entity, @Nonnull ServerLevel currentWorld,
-                              @Nonnull ServerLevel destWorld, float yaw,
-                              @Nonnull Function<Boolean, Entity> repositionEntity) {
+    public Entity placeEntity(Entity entity, ServerLevel currentWorld,
+                              ServerLevel destWorld, float yaw,
+                              Function<Boolean, Entity> repositionEntity) {
         Entity created = repositionEntity.apply(false);
         created.teleportTo(targetX, targetY, targetZ);
         return created;

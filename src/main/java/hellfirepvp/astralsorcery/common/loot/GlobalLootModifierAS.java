@@ -82,13 +82,13 @@ public final class GlobalLootModifierAS {
 
         @Override
         @Nonnull
-        protected ObjectArrayList<ItemStack> doApply(@Nonnull ObjectArrayList<ItemStack> generatedLoot,
-                                                     @Nonnull LootContext context) {
+        protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot,
+                                                     LootContext context) {
             ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
             if (tool == null || tool.isEmpty()) {
                 return generatedLoot;
             }
-            int enchLevel = EnchantmentHelper.getItemEnchantmentLevel(EnchantmentsAS.SCORCHING_HEAT.get(), tool);
+            int enchLevel = EnchantmentHelper.getEnchantments(tool).getOrDefault(EnchantmentsAS.SCORCHING_HEAT.get(), 0);
             if (enchLevel <= 0) {
                 return generatedLoot;
             }
@@ -154,8 +154,8 @@ public final class GlobalLootModifierAS {
 
         @Override
         @Nonnull
-        protected ObjectArrayList<ItemStack> doApply(@Nonnull ObjectArrayList<ItemStack> generatedLoot,
-                                                     @Nonnull LootContext context) {
+        protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot,
+                                                     LootContext context) {
             RandomSource random = context.getRandom();
             if (random.nextFloat() >= dropChance) {
                 return generatedLoot;

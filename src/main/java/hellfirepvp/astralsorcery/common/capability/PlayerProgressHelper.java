@@ -22,7 +22,7 @@ public final class PlayerProgressHelper {
     @Nullable
     public static PlayerProgress getProgress(@Nonnull Player player) {
         return player.getCapability(PlayerCapabilityProvider.CAPABILITY)
-                .orElse(null);
+                .resolve().orElse(null);
     }
 
     /**

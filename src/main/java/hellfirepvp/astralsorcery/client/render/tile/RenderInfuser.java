@@ -35,10 +35,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class RenderInfuser implements BlockEntityRenderer<BlockEntityInfuser> {
 
-    private final BlockEntityRendererProvider.Context context;
-
     public RenderInfuser(@Nonnull BlockEntityRendererProvider.Context context) {
-        this.context = context;
     }
 
     @Override

@@ -44,7 +44,6 @@ public class ItemAttunedRockCrystal extends ItemRockCrystalSimple implements Con
     public IWeakConstellation getAttunedConstellation(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains(TAG_CONSTELLATION)) return null;
-        @SuppressWarnings("null")
         ResourceLocation key = ResourceLocation.tryParse(tag.getString(TAG_CONSTELLATION));
         if (key == null) return null;
         IConstellation c = ConstellationRegistry.getConstellation(key);
@@ -68,7 +67,6 @@ public class ItemAttunedRockCrystal extends ItemRockCrystalSimple implements Con
     public IMinorConstellation getTraitConstellation(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains(TAG_TRAIT)) return null;
-        @SuppressWarnings("null")
         ResourceLocation key = ResourceLocation.tryParse(tag.getString(TAG_TRAIT));
         if (key == null) return null;
         IConstellation c = ConstellationRegistry.getConstellation(key);

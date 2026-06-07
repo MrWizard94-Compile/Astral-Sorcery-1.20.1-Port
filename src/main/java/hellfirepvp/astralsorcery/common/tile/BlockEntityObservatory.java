@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -24,14 +25,13 @@ import java.util.UUID;
  * prevent duplicates. When the player dismounts or the helper is
  * discarded, the state resets.</p>
  *
- * <p>1.16 → 1.20: TileEntity → BlockEntity.
+ * <p>1.16 â†’ 1.20: TileEntity â†’ BlockEntity.
  * Tick via BlockEntityTicker in the block class.</p>
  */
 public class BlockEntityObservatory extends BlockEntityTick {
 
     @Nullable
     private UUID activeHelperUUID = null;
-    private int ticksExisted = 0;
 
     public BlockEntityObservatory(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.OBSERVATORY.get(), pos, state);
@@ -40,13 +40,13 @@ public class BlockEntityObservatory extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) return;
 
         // Periodically check if our helper entity is still alive
-        if (activeHelperUUID != null && ticksExisted % 20 == 0) {
+        UUID helperUUID = activeHelperUUID;
+        if (helperUUID != null && getTicksExisted() % 20 == 0) {
             if (level instanceof ServerLevel serverLevel) {
-                Entity helper = serverLevel.getEntity(activeHelperUUID);
+                Entity helper = serverLevel.getEntity(helperUUID);
                 if (helper == null || helper.isRemoved()) {
                     activeHelperUUID = null;
                     markForUpdate();
@@ -63,10 +63,11 @@ public class BlockEntityObservatory extends BlockEntityTick {
      * @return true if the player was mounted, false if already in use
      */
     public boolean tryStartUsing(@Nonnull ServerPlayer player) {
-        if (activeHelperUUID != null) {
+        UUID helperUUID = activeHelperUUID;
+        if (helperUUID != null) {
             // Check if the existing helper is actually alive
             if (level instanceof ServerLevel serverLevel) {
-                Entity existing = serverLevel.getEntity(activeHelperUUID);
+                Entity existing = serverLevel.getEntity(helperUUID);
                 if (existing != null && !existing.isRemoved()) {
                     return false; // Observatory already in use
                 }
@@ -74,12 +75,15 @@ public class BlockEntityObservatory extends BlockEntityTick {
             activeHelperUUID = null;
         }
 
+        Level currentLevel = this.level;
+        if (currentLevel == null) return false;
+
         double cx = worldPosition.getX() + 0.5;
         double cy = worldPosition.getY() + 0.5;
         double cz = worldPosition.getZ() + 0.5;
 
-        EntityObservatoryHelper helper = new EntityObservatoryHelper(level, cx, cy, cz, player);
-        if (level.addFreshEntity(helper)) {
+        EntityObservatoryHelper helper = new EntityObservatoryHelper(currentLevel, cx, cy, cz, player);
+        if (currentLevel.addFreshEntity(helper)) {
             player.startRiding(helper);
             activeHelperUUID = helper.getUUID();
             markForUpdate();
@@ -92,9 +96,6 @@ public class BlockEntityObservatory extends BlockEntityTick {
         return activeHelperUUID != null;
     }
 
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     @Override
     public void readCustomNBT(@Nonnull CompoundTag compound) {

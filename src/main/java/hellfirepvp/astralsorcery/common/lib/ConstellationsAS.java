@@ -6,7 +6,6 @@ package hellfirepvp.astralsorcery.common.lib;
 import hellfirepvp.astralsorcery.common.constellation.Constellation;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.star.StarLocation;
-import javax.annotation.Nonnull;
 
 /**
  * Defines all 16 Astral Sorcery constellations.
@@ -22,7 +21,6 @@ import javax.annotation.Nonnull;
  *
  * <p>Called during FMLCommonSetupEvent to populate the ConstellationRegistry.</p>
  */
-@SuppressWarnings("null")
 public final class ConstellationsAS {
 
     private ConstellationsAS() {}
@@ -31,32 +29,32 @@ public final class ConstellationsAS {
     // Major Constellations (5)
     // =========================================================================
 
-    @Nonnull public static Constellation.Major DISCIDIA;
-    @Nonnull public static Constellation.Major ARMARA;
-    @Nonnull public static Constellation.Major VICIO;
-    @Nonnull public static Constellation.Major AEVITAS;
-    @Nonnull public static Constellation.Major EVORSIO;
+    public static Constellation.Major DISCIDIA;
+    public static Constellation.Major ARMARA;
+    public static Constellation.Major VICIO;
+    public static Constellation.Major AEVITAS;
+    public static Constellation.Major EVORSIO;
 
     // =========================================================================
     // Weak Constellations (7)
     // =========================================================================
 
-    @Nonnull public static Constellation.Weak LUCERNA;
-    @Nonnull public static Constellation.Weak MINERALIS;
-    @Nonnull public static Constellation.Weak HOROLOGIUM;
-    @Nonnull public static Constellation.Weak OCTANS;
-    @Nonnull public static Constellation.Weak BOOTES;
-    @Nonnull public static Constellation.Weak FORNAX;
-    @Nonnull public static Constellation.Weak PELOTRIO;
+    public static Constellation.Weak LUCERNA;
+    public static Constellation.Weak MINERALIS;
+    public static Constellation.Weak HOROLOGIUM;
+    public static Constellation.Weak OCTANS;
+    public static Constellation.Weak BOOTES;
+    public static Constellation.Weak FORNAX;
+    public static Constellation.Weak PELOTRIO;
 
     // =========================================================================
     // Minor Constellations (4)
     // =========================================================================
 
-    @Nonnull public static Constellation.Minor GELU;
-    @Nonnull public static Constellation.Minor ULTERIA;
-    @Nonnull public static Constellation.Minor ALCARA;
-    @Nonnull public static Constellation.Minor VORUX;
+    public static Constellation.Minor GELU;
+    public static Constellation.Minor ULTERIA;
+    public static Constellation.Minor ALCARA;
+    public static Constellation.Minor VORUX;
 
     /**
      * Initialize all constellations and register them.

@@ -29,18 +29,22 @@ public class ConfiguredBlockStateList implements BlockPredicate, Predicate<Block
     }
 
     @Override
-    public boolean test(@Nonnull BlockState state) {
-        if (resolvedConfiguration == null) {
-            resolvedConfiguration = BlockStateList.fromConfig(configList.get());
+    public boolean test(BlockState state) {
+        BlockStateList cfg = resolvedConfiguration;
+        if (cfg == null) {
+            cfg = BlockStateList.fromConfig(configList.get());
+            resolvedConfiguration = cfg;
         }
-        return this.resolvedConfiguration.test(state);
+        return cfg.test(state);
     }
 
     @Override
     public boolean test(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
-        if (resolvedConfiguration == null) {
-            resolvedConfiguration = BlockStateList.fromConfig(configList.get());
+        BlockStateList cfg = resolvedConfiguration;
+        if (cfg == null) {
+            cfg = BlockStateList.fromConfig(configList.get());
+            resolvedConfiguration = cfg;
         }
-        return this.resolvedConfiguration.test(state);
+        return cfg.test(state);
     }
 }

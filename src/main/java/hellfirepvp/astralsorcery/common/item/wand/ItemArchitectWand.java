@@ -1,6 +1,5 @@
 package hellfirepvp.astralsorcery.common.item.wand;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -190,9 +189,9 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
         Random rand = ItemBlockStorage.getPreviewRandomFromWorld(level);
 
         for (BlockPos pos : foundPositions) {
+            if (placeableStates.isEmpty()) continue;
             Collections.shuffle(placeableStates, rand);
-            BlockState toPlace = Iterables.getFirst(placeableStates, null);
-            if (toPlace == null) continue;
+            BlockState toPlace = placeableStates.get(0);
 
             MiscUtils.executeWithChunk(level, pos, () -> {
                 if (BlockUtils.isReplaceable(level, pos)) {
@@ -265,7 +264,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                 int length = (int) Math.min(20, Math.abs(cmpFrom + 0.5 - cmpTo));
                 for (int i = 0; i < length; i++) {
                     BlockPos at = center.relative(placedAgainst, i);
-                    if (MiscUtils.executeWithChunk(level, at, () -> !BlockUtils.isReplaceable(level, at), true)) break;
+                    if (Boolean.TRUE.equals(MiscUtils.executeWithChunk(level, at, () -> !BlockUtils.isReplaceable(level, at), true))) break;
                     blocks.add(at);
                 }
                 return blocks;
@@ -276,7 +275,6 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
             public List<BlockPos> generatePlacementPositions(Level level, Player player,
                                                               @Nullable Direction placedAgainst,
                                                               @Nullable BlockPos center) {
-                BlockPos origin = player.blockPosition().below();
                 HitResult result = player.pick(60F, 1F, false);
                 BlockPos hit = result instanceof BlockHitResult bhr ? bhr.getBlockPos() : BlockPos.containing(result.getLocation());
                 List<BlockPos> line = new ArrayList<>();

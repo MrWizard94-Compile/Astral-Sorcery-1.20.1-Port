@@ -15,6 +15,8 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import javax.annotation.Nonnull;
+
 public class CopyConstellation extends LootItemConditionalFunction {
 
     private CopyConstellation(LootItemCondition[] conditions) {
@@ -27,7 +29,7 @@ public class CopyConstellation extends LootItemConditionalFunction {
     }
 
     @Override
-    protected ItemStack run(ItemStack stack, LootContext context) {
+    protected ItemStack run(@Nonnull ItemStack stack, @Nonnull LootContext context) {
         if (context.hasParam(LootContextParams.BLOCK_ENTITY)) {
             BlockEntity tile = context.getParam(LootContextParams.BLOCK_ENTITY);
             if (tile instanceof ConstellationTile cTile
@@ -43,7 +45,7 @@ public class CopyConstellation extends LootItemConditionalFunction {
 
     public static class Serializer extends LootItemConditionalFunction.Serializer<CopyConstellation> {
         @Override
-        public CopyConstellation deserialize(JsonObject json, JsonDeserializationContext context, LootItemCondition[] conditions) {
+        public CopyConstellation deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, @Nonnull LootItemCondition[] conditions) {
             return new CopyConstellation(conditions);
         }
     }

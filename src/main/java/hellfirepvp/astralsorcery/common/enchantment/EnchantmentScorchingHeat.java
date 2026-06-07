@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
+import javax.annotation.Nonnull;
 
 /**
  * Engraving-only tool enchantment. Incompatible with Silk Touch.
@@ -29,12 +30,12 @@ public class EnchantmentScorchingHeat extends Enchantment {
     }
 
     @Override
-    protected boolean checkCompatibility(Enchantment other) {
+    protected boolean checkCompatibility(@Nonnull Enchantment other) {
         return super.checkCompatibility(other) && other != Enchantments.SILK_TOUCH;
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack) {
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
         return false;
     }
 }

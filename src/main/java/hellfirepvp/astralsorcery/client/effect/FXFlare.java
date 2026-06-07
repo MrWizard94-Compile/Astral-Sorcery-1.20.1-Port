@@ -33,17 +33,9 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class FXFlare extends EntityVisualFX {
 
-    private float maxSize = 0.5f;
-
     public FXFlare(double x, double y, double z) {
         super(x, y, z);
         setMaxAge(8);
-    }
-
-    @Nonnull
-    public FXFlare setMaxSize(float maxSize) {
-        this.maxSize = maxSize;
-        return this;
     }
 
     @Nonnull

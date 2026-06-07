@@ -15,7 +15,6 @@ import hellfirepvp.astralsorcery.common.data.world.base.WorldCacheDomain;
  * <p>1.16 used ObserverLib's WorldCacheDomain. The port provides an equivalent
  * in {@link WorldCacheDomain} that wraps Minecraft's {@code SavedData} system.</p>
  */
-@SuppressWarnings("null")
 public final class DataAS {
 
     private DataAS() {}

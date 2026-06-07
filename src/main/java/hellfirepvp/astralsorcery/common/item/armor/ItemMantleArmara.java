@@ -24,7 +24,7 @@ public class ItemMantleArmara extends ItemMantle {
     }
 
     @Override
-    protected void onMantleTick(@Nonnull ItemStack stack, @Nonnull Level level,
+    public void onMantleTick(@Nonnull ItemStack stack, @Nonnull Level level,
                                  @Nonnull Player player) {
         player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
                 40, 0, true, false));

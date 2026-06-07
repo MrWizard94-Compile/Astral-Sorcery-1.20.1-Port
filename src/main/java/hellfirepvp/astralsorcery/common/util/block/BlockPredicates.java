@@ -1,7 +1,6 @@
 package hellfirepvp.astralsorcery.common.util.block;
 
 import hellfirepvp.astralsorcery.common.util.MiscUtils;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
@@ -52,10 +51,11 @@ public class BlockPredicates {
     @Nonnull
     public static <T extends BlockEntity> BlockPredicate doesTileExist(
             @Nonnull T tile, boolean loadTileWorldAndChunk) {
-        if (tile.getLevel() == null) {
+        net.minecraft.world.level.Level tileLevel = tile.getLevel();
+        if (tileLevel == null) {
             return (world, pos, state) -> false;
         }
-        ResourceKey<Level> dim = tile.getLevel().dimension();
+        ResourceKey<Level> dim = tileLevel.dimension();
         BlockEntityType<?> tileType = tile.getType();
 
         return (world, pos, state) -> {
@@ -63,7 +63,7 @@ public class BlockPredicates {
             if (srv == null) {
                 return true;
             }
-            if (loadTileWorldAndChunk || srv.forgeGetWorldMap().containsKey(dim)) {
+            if (loadTileWorldAndChunk || srv.getLevel(dim) != null) {
                 Level foundWorld = srv.getLevel(dim);
                 if (foundWorld == null) {
                     return !loadTileWorldAndChunk;

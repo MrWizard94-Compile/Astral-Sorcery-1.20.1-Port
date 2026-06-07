@@ -4,7 +4,6 @@
 package hellfirepvp.astralsorcery.common.constellation.effect;
 
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
-import hellfirepvp.astralsorcery.common.constellation.effect.*;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import net.minecraft.resources.ResourceLocation;
 

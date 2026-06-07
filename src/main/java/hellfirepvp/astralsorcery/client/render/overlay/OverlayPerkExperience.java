@@ -19,8 +19,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-import javax.annotation.Nonnull;
-
 /**
  * Renders a vertical perk experience bar on the left edge of the screen.
  * Shown when the player holds a {@link PerkExperienceRevealer} item and is
@@ -90,7 +88,7 @@ public class OverlayPerkExperience implements IGuiOverlay {
     // ---- IGuiOverlay ----
 
     @Override
-    public void render(@Nonnull ForgeGui gui, @Nonnull GuiGraphics graphics,
+    public void render(ForgeGui gui, GuiGraphics graphics,
                         float partialTick, int screenWidth, int screenHeight) {
         if (visibilityReveal <= 0f) return;
 

@@ -96,7 +96,6 @@ public class BlockStateHelper {
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
     public static <T extends Comparable<T>> BlockState deserialize(@Nonnull String serialized) {
         int propIndex = serialized.indexOf('[');
         boolean hasProperties = !isMissingStateInformation(serialized);
@@ -126,7 +125,6 @@ public class BlockStateHelper {
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
     public static <T extends Comparable<T>> BlockState deserializeObject(@Nonnull JsonObject object) {
         String key = GsonHelper.getAsString(object, "block");
         Block b = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(key));

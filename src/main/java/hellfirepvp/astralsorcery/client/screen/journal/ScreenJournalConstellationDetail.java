@@ -31,7 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ import java.util.List;
  * <p>1.16 → 1.20: MatrixStack → GuiGraphics; IReorderingProcessor → FormattedCharSequence;
  * font.trimStringToWidth → font.split; font.getStringPropertyWidth → font.width;
  * IWeakConstellation.hasConstellationDiscovered → PlayerProgress.hasDiscovered;
- * SkyHandler moon-phase activity skipped (SkyHandler not yet ported).</p>
+ * SkyHandler moon-phase activity wired via SkyHandler.getContext() + ConstellationHandler.isActiveInPhase().</p>
  */
 @OnlyIn(Dist.CLIENT)
 public class ScreenJournalConstellationDetail extends ScreenJournal implements NavigationArrowScreen {
@@ -144,7 +144,7 @@ public class ScreenJournalConstellationDetail extends ScreenJournal implements N
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
+    public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
         super.render(graphics, mouseX, mouseY, pTicks);
 
         if (doublePageID == 0) {
@@ -174,9 +174,6 @@ public class ScreenJournalConstellationDetail extends ScreenJournal implements N
         renderTextLines(graphics, locTextRefraction, guiLeft + 220, guiTop + 30);
     }
 
-    @Nullable
-    private RenderPageAltarRecipe lastFramePage;
-
     private void drawCapeInformationPages(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
         renderTextLines(graphics, locTextMantle, guiLeft + 30, guiTop + 30);
 
@@ -185,9 +182,9 @@ public class ScreenJournalConstellationDetail extends ScreenJournal implements N
                     stack.getItem() instanceof ItemMantle mantle &&
                     constellation.getRegistryName().equals(mantle.getConstellation()));
             if (recipe != null) {
-                lastFramePage = new RenderPageAltarRecipe(null, -1, recipe);
-                lastFramePage.render(graphics, guiLeft + 220, guiTop + 20, pTicks, mouseX, mouseY);
-                lastFramePage.postRender(graphics, guiLeft + 220, guiTop + 20, pTicks, mouseX, mouseY);
+                RenderPageAltarRecipe page = new RenderPageAltarRecipe(null, -1, recipe);
+                page.render(graphics, guiLeft + 220, guiTop + 20, pTicks, mouseX, mouseY);
+                page.postRender(graphics, guiLeft + 220, guiTop + 20, pTicks, mouseX, mouseY);
             }
         }
     }
@@ -198,9 +195,9 @@ public class ScreenJournalConstellationDetail extends ScreenJournal implements N
                     stack.getItem() instanceof ItemConstellationPaper &&
                     constellation.getRegistryName().equals(ItemConstellationPaper.getConstellation(stack)));
             if (recipe != null) {
-                lastFramePage = new RenderPageAltarRecipe(null, -1, recipe);
-                lastFramePage.render(graphics, guiLeft + 30, guiTop + 20, pTicks, mouseX, mouseY);
-                lastFramePage.postRender(graphics, guiLeft + 30, guiTop + 20, pTicks, mouseX, mouseY);
+                RenderPageAltarRecipe page = new RenderPageAltarRecipe(null, -1, recipe);
+                page.render(graphics, guiLeft + 30, guiTop + 20, pTicks, mouseX, mouseY);
+                page.postRender(graphics, guiLeft + 30, guiTop + 20, pTicks, mouseX, mouseY);
             }
         }
     }

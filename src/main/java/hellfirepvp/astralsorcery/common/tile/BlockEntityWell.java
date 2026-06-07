@@ -48,7 +48,6 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
     private final LazyOptional<IFluidHandler> fluidCap;
 
     private double productionProgress = 0.0;
-    private int ticksExisted = 0;
 
     public BlockEntityWell(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.WELL.get(), pos, state);
@@ -59,7 +58,7 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
     /** Sub-mB accumulated but not yet added to the integer tank. */
     private double fractionalFluid = 0.0;
 
-    /** Starlight received from the network this tick — consumed during production. */
+    /** Starlight received from the network this tick â€” consumed during production. */
     private double starlightBuffer = 0.0;
 
     /** Ticks until the catalyst degrades by 1 durability point. */
@@ -114,7 +113,6 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) {
             // Client-side: drip particle effects handled by renderer
             return;
@@ -134,7 +132,8 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
             cachedRecipe = findRecipeFor(level, catalystStack);
             recipeDirty = false;
         }
-        if (cachedRecipe == null) {
+        WellLiquefaction cr = cachedRecipe;
+        if (cr == null) {
             return; // No valid recipe for this catalyst
         }
 
@@ -147,7 +146,7 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
         float distributionFactor = CelestialHandler.getStarlightDistributionFactor(level);
         double starlightBoost = Math.sqrt(starlightBuffer + 1.0);
         double ratePerTick = BASE_PRODUCTION_PER_TICK
-                * cachedRecipe.getProductionMultiplier()
+                * cr.getProductionMultiplier()
                 * distributionFactor
                 * starlightBoost;
         starlightBuffer = 0;
@@ -163,18 +162,18 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
             int wholeMB = (int) fractionalFluid;
             fractionalFluid -= wholeMB;
 
-            FluidStack produced = cachedRecipe.getOutputFluid();
+            FluidStack produced = cr.getOutputFluid();
             produced.setAmount(wholeMB);
 
             int filled = tank.fill(produced, IFluidHandler.FluidAction.EXECUTE);
             if (filled < wholeMB) {
-                // Tank is full — excess is lost (overflow)
+                // Tank is full â€” excess is lost (overflow)
                 fractionalFluid = 0;
             }
         }
 
         // Degrade catalyst over time
-        if (ticksExisted % CATALYST_DEGRADE_INTERVAL == 0) {
+        if (getTicksExisted() % CATALYST_DEGRADE_INTERVAL == 0) {
             degradeCatalyst();
         }
     }
@@ -270,13 +269,10 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
      * Get the number of ticks this block entity has existed.
      * Used for renderer animations.
      */
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             return fluidCap.cast();
         }
@@ -349,18 +345,18 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
         }
 
         @Override
-        public boolean isFluidValid(int tankIndex, @Nonnull FluidStack stack) {
+        public boolean isFluidValid(int tankIndex, FluidStack stack) {
             return false; // Well only outputs; input is via catalyst item
         }
 
         @Override
-        public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public int fill(FluidStack resource, FluidAction action) {
             return 0; // No external filling
         }
 
         @Nonnull
         @Override
-        public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public FluidStack drain(FluidStack resource, FluidAction action) {
             FluidStack stored = tank.getFluid();
             if (stored.isEmpty() || !stored.isFluidEqual(resource)) {
                 return FluidStack.EMPTY;
@@ -370,7 +366,7 @@ public class BlockEntityWell extends BlockEntityTick implements IStarlightReceiv
 
         @Nonnull
         @Override
-        public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
+        public FluidStack drain(int maxDrain, FluidAction action) {
             FluidStack stored = tank.getFluid();
             if (stored.isEmpty()) {
                 return FluidStack.EMPTY;

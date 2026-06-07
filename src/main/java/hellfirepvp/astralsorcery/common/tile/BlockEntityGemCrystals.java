@@ -31,21 +31,23 @@ public class BlockEntityGemCrystals extends BlockEntityTick {
     @Override
     public void tick() {
         super.tick();
-        if (getLevel() == null) return;
+        net.minecraft.world.level.Level worldLevel = getLevel();
+        if (worldLevel == null) return;
 
-        if (!getLevel().isClientSide()) {
-            int level = getGrowthLevel();
-            if (level < 2 && doesSeeSky()) {
+        if (!worldLevel.isClientSide()) {
+            int growthLevel = getGrowthLevel();
+            if (growthLevel < 2 && doesSeeSky()) {
                 tryGrowWithChance(TICK_GROWTH_CHANCE);
-            } else if (level == 2 && rand.nextInt(4000) == 0) {
-                setGrowthLevel(level - 1);
+            } else if (growthLevel == 2 && rand.nextInt(4000) == 0) {
+                setGrowthLevel(growthLevel - 1);
             }
         }
     }
 
     private void tryGrowWithChance(int growthChance) {
-        if (getLevel() == null) return;
-        float dayProgress = DayTimeHelper.getDayProgress(getLevel());
+        net.minecraft.world.level.Level worldLevel = getLevel();
+        if (worldLevel == null) return;
+        float dayProgress = DayTimeHelper.getDayProgress(worldLevel);
         growthChance = (int) (growthChance * (1F - (0.2F * dayProgress)));
         if (rand.nextInt(Math.max(growthChance, 1)) == 0) {
             setGrowthLevel(getGrowthLevel() + 1);
@@ -54,25 +56,27 @@ public class BlockEntityGemCrystals extends BlockEntityTick {
 
     /** Returns 0, 1, or 2 — the growth level within the variant type. */
     public int getGrowthLevel() {
-        if (getLevel() == null) return 0;
+        net.minecraft.world.level.Level worldLevel = getLevel();
+        if (worldLevel == null) return 0;
         BlockGemCrystalCluster.GrowthStageType stage =
-                getLevel().getBlockState(getBlockPos()).getValue(BlockGemCrystalCluster.STAGE);
+                worldLevel.getBlockState(getBlockPos()).getValue(BlockGemCrystalCluster.STAGE);
         return stage.ordinal() % 3;
     }
 
     /** Keeps the current variant type and sets the growth level within it. */
-    public void setGrowthLevel(int level) {
-        if (getLevel() == null) return;
+    public void setGrowthLevel(int growthLvl) {
+        net.minecraft.world.level.Level worldLevel = getLevel();
+        if (worldLevel == null) return;
         BlockGemCrystalCluster.GrowthStageType current =
-                getLevel().getBlockState(getBlockPos()).getValue(BlockGemCrystalCluster.STAGE);
+                worldLevel.getBlockState(getBlockPos()).getValue(BlockGemCrystalCluster.STAGE);
         int typeBase = (current.ordinal() / 3) * 3;
-        int clampedLevel = Math.max(0, Math.min(2, level));
+        int clampedLevel = Math.max(0, Math.min(2, growthLvl));
         int targetOrdinal = typeBase + clampedLevel;
         BlockGemCrystalCluster.GrowthStageType[] values = BlockGemCrystalCluster.GrowthStageType.values();
         BlockState next = BlocksAS.GEM_CRYSTAL_CLUSTER.get().defaultBlockState()
                 .setValue(BlockGemCrystalCluster.STAGE, values[targetOrdinal]);
-        getLevel().setBlock(getBlockPos(), next, 3);
-        if (clampedLevel == 2 && getLevel() instanceof ServerLevel serverLevel) {
+        worldLevel.setBlock(getBlockPos(), next, 3);
+        if (clampedLevel == 2 && worldLevel instanceof ServerLevel serverLevel) {
             PacketChannel.sendToAllTracking(
                     new PktPlayEffect(PktPlayEffect.EffectType.CRYSTAL_FORM, getBlockPos()),
                     serverLevel, getBlockPos());

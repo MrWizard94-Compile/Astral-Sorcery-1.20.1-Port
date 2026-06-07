@@ -181,8 +181,9 @@ public class JsonHelper {
         ResourceLocation itemKey = ForgeRegistries.ITEMS.getKey(stack.getItem());
         object.addProperty("item", itemKey != null ? itemKey.toString() : "minecraft:air");
         object.addProperty("count", stack.getCount());
-        if (stack.hasTag()) {
-            object.addProperty("nbt", stack.getTag().toString());
+        net.minecraft.nbt.CompoundTag nbt = stack.getTag();
+        if (nbt != null) {
+            object.addProperty("nbt", nbt.toString());
         }
         return object;
     }

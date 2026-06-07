@@ -1,7 +1,6 @@
 package hellfirepvp.astralsorcery.common.perk.reader;
 
 import hellfirepvp.astralsorcery.common.perk.type.PerkAttributeType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.LogicalSide;
@@ -23,6 +22,6 @@ public class ReaderBreakSpeed extends ReaderFlatAttribute {
 
     @Override
     public double getDefaultValue(@Nonnull Player player, @Nonnull LogicalSide side) {
-        return player.getDestroySpeed(Blocks.COBBLESTONE.defaultBlockState());
+        return player.getDigSpeed(Blocks.COBBLESTONE.defaultBlockState(), null);
     }
 }

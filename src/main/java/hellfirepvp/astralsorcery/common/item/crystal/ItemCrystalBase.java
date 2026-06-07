@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.common.item.crystal;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeGenItem;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalGenerator;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
 import hellfirepvp.astralsorcery.common.entity.EntityCrystal;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
@@ -54,6 +55,7 @@ public abstract class ItemCrystalBase extends ItemAS implements CrystalAttribute
     public void setAttributes(@Nonnull ItemStack stack, @Nullable CrystalAttributes attributes) {
         if (attributes != null) {
             attributes.store(stack);
+            CrystalProperties.setOnStack(stack, CrystalProperties.deriveFrom(attributes));
         } else {
             CrystalAttributes.storeNull(stack);
         }

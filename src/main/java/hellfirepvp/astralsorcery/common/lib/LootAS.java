@@ -3,6 +3,7 @@ package hellfirepvp.astralsorcery.common.lib;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.loot.CopyConstellation;
 import hellfirepvp.astralsorcery.common.loot.CopyCrystalProperties;
+import hellfirepvp.astralsorcery.common.loot.CopyGatewayColor;
 import hellfirepvp.astralsorcery.common.loot.LinearLuckBonus;
 import hellfirepvp.astralsorcery.common.loot.RandomCrystalProperty;
 import net.minecraft.core.registries.Registries;
@@ -46,4 +47,8 @@ public class LootAS {
     public static final RegistryObject<LootItemFunctionType> COPY_CONSTELLATION =
             LOOT_FUNCTION_TYPES.register("copy_constellation",
                     () -> new LootItemFunctionType(new CopyConstellation.Serializer()));
+
+    public static final RegistryObject<LootItemFunctionType> COPY_GATEWAY_COLOR =
+            LOOT_FUNCTION_TYPES.register("copy_gateway_color",
+                    () -> new LootItemFunctionType(new CopyGatewayColor.Serializer()));
 }

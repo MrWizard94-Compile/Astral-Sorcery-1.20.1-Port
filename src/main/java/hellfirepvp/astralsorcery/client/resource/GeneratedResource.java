@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+
+import javax.annotation.Nonnull;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
@@ -78,7 +80,7 @@ public class GeneratedResource extends BindableResource {
         }
 
         @Override
-        public void load(ResourceManager manager) throws IOException {
+        public void load(@Nonnull ResourceManager manager) throws IOException {
             BufferedImage bufferedImage = imageGen.get();
             int width = bufferedImage.getWidth();
             int height = bufferedImage.getHeight();

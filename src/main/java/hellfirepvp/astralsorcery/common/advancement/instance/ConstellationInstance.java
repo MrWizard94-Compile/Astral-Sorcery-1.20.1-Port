@@ -4,7 +4,6 @@
 package hellfirepvp.astralsorcery.common.advancement.instance;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
@@ -84,8 +83,8 @@ public class ConstellationInstance extends AbstractCriterionTriggerInstance {
         instance.constellationMajor = GsonHelper.getAsBoolean(json, "major", false);
         instance.constellationWeak  = GsonHelper.getAsBoolean(json, "weak",  false);
         instance.constellationMinor = GsonHelper.getAsBoolean(json, "minor", false);
-        JsonArray names = GsonHelper.getAsJsonArray(json, "constellations", new JsonArray());
-        for (int idx = 0; idx < names.size(); idx++) {
+        JsonArray names = GsonHelper.getAsJsonArray(json, "constellations", null);
+        for (int idx = 0; names != null && idx < names.size(); idx++) {
             String key = names.get(idx).getAsString();
             IConstellation cst = ConstellationRegistry.getConstellation(new ResourceLocation(key));
             if (cst == null) {

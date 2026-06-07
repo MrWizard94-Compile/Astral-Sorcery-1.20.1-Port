@@ -17,14 +17,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
@@ -43,7 +40,6 @@ import java.util.function.Consumer;
  * {@code RenderSystem.pushMatrix()} / {@code popMatrix()} removed — use PoseStack.</p>
  */
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("null")
 public final class RenderingUtils {
 
     private RenderingUtils() {}

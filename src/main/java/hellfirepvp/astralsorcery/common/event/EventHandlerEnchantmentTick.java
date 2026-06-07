@@ -45,7 +45,7 @@ public class EventHandlerEnchantmentTick {
         for (EnchantmentPlayerTick ench : tickableEnchantments) {
             int totalLevel = 0;
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                int lvl = EnchantmentHelper.getItemEnchantmentLevel(ench, player.getItemBySlot(slot));
+                int lvl = EnchantmentHelper.getEnchantments(player.getItemBySlot(slot)).getOrDefault(ench, 0);
                 if (lvl > totalLevel) totalLevel = lvl;
             }
             if (totalLevel > 0) {

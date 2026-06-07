@@ -28,7 +28,6 @@ public class JournalPageLiquidInfusion implements JournalPage {
         this.recipeProvider = recipeProvider;
     }
 
-    @SuppressWarnings("null")
     public static JournalPageLiquidInfusion fromOutput(Predicate<ItemStack> outputTest) {
         return new JournalPageLiquidInfusion(() -> {
             RecipeManager mgr = RecipeHelper.getRecipeManager();

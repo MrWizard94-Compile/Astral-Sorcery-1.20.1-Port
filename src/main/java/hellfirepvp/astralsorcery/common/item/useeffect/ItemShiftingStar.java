@@ -37,7 +37,6 @@ public class ItemShiftingStar extends ItemAS {
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player,
                                                   @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

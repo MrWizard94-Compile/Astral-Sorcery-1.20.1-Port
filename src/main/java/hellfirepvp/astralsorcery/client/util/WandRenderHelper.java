@@ -38,7 +38,6 @@ public final class WandRenderHelper {
      * Renders a colored wireframe outline for each block position in the preview map.
      * Called during AFTER_PARTICLES stage — poseStack is camera-relative.
      */
-    @SuppressWarnings("null")
     public static void renderGhostBlocks(Map<BlockPos, BlockState> blocks, PoseStack poseStack) {
         if (blocks.isEmpty()) return;
 
@@ -99,7 +98,6 @@ public final class WandRenderHelper {
      * Renders the stored block stacks vertically centred on the left edge of the screen.
      * Returns true if anything was drawn.
      */
-    @SuppressWarnings("null")
     public static boolean renderStoredBlocksOverlay(GuiGraphics graphics,
                                                      List<Tuple<ItemStack, Integer>> stacks) {
         if (stacks.isEmpty()) return false;

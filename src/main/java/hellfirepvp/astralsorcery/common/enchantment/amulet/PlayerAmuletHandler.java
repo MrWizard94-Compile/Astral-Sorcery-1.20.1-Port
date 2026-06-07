@@ -5,11 +5,8 @@ import hellfirepvp.astralsorcery.common.event.DynamicEnchantmentEvent;
 import hellfirepvp.astralsorcery.common.item.ItemEnchantmentAmulet;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.Optional;
 
 /**
  * Drives the amulet enchantment system per player tick.
@@ -33,9 +30,9 @@ public class PlayerAmuletHandler {
         if (!DynamicEnchantmentHelper.canHaveDynamicEnchantment(event.getEnchantedItemStack())) {
             return;
         }
-        Optional<ItemStack> amulet = AmuletEnchantmentHelper.getWornAmulet(event.getEnchantedItemStack());
-        amulet.ifPresent(stack ->
-                event.getEnchantmentsToApply().addAll(ItemEnchantmentAmulet.getAmuletEnchantments(stack)));
+        AmuletEnchantmentHelper.getWornAmulet(event.getEnchantedItemStack())
+                .ifPresent(stack ->
+                        event.getEnchantmentsToApply().addAll(ItemEnchantmentAmulet.getAmuletEnchantments(stack)));
     }
 
     private void applyAmuletTags(Player player) {

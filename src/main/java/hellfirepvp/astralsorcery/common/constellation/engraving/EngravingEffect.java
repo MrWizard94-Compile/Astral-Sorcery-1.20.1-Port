@@ -182,7 +182,6 @@ public class EngravingEffect {
 
         @Override
         @Nonnull
-        @SuppressWarnings("null")
         public ItemStack apply(@Nonnull ItemStack stack, float percent, @Nonnull Random rand) {
             int level = this.min + Math.round(percent * Math.max(0, this.max - this.min));
             if (stack.getItem() instanceof BookItem) {
@@ -229,7 +228,6 @@ public class EngravingEffect {
 
         @Override
         @Nonnull
-        @SuppressWarnings("null")
         public ItemStack apply(@Nonnull ItemStack stack, float percent, @Nonnull Random rand) {
             MobEffect eff = this.effect.get();
             List<MobEffectInstance> existing = new ArrayList<>(PotionUtils.getMobEffects(stack));

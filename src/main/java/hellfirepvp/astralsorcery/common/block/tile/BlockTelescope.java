@@ -1,7 +1,6 @@
 package hellfirepvp.astralsorcery.common.block.tile;
 
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
-import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityTelescope;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,7 +63,7 @@ public class BlockTelescope extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;
@@ -72,7 +71,7 @@ public class BlockTelescope extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {

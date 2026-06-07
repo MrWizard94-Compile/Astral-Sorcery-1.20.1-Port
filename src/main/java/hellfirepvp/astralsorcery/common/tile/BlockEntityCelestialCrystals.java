@@ -43,9 +43,10 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
     @Override
     public void tick() {
         super.tick();
-        if (getLevel() == null) return;
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null) return;
 
-        if (!getLevel().isClientSide()) {
+        if (!level.isClientSide()) {
             if (getGrowth() < 4 && doesSeeSky()) {
                 tryGrowWithChance(TICK_GROWTH_CHANCE);
             }
@@ -53,18 +54,18 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
     }
 
     private void tryGrowWithChance(int growthChance) {
-        if (getLevel() == null) return;
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null) return;
 
-        BlockState downState = getLevel().getBlockState(getBlockPos().below());
+        BlockState downState = level.getBlockState(getBlockPos().below());
         if (downState.getBlock() instanceof BlockStarmetalOre) {
             growthChance = (int) (growthChance * 0.6);
             if (rand.nextInt(400) == 0) {
-                // Starmetal ore reverts to iron ore (configurable in 1.16; hardcoded here)
-                getLevel().setBlock(getBlockPos().below(), Blocks.IRON_ORE.defaultBlockState(), 3);
+                level.setBlock(getBlockPos().below(), Blocks.IRON_ORE.defaultBlockState(), 3);
             }
         }
 
-        float dayProgress = DayTimeHelper.getDayProgress(getLevel());
+        float dayProgress = DayTimeHelper.getDayProgress(level);
         growthChance = (int) (growthChance * (1F - (0.5F * dayProgress)));
         grow(growthChance);
     }
@@ -77,16 +78,18 @@ public class BlockEntityCelestialCrystals extends BlockEntityTick implements Cry
     }
 
     public int getGrowth() {
-        if (getLevel() == null) return 0;
-        return getLevel().getBlockState(getBlockPos()).getValue(BlockCelestialCrystalCluster.STAGE);
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null) return 0;
+        return level.getBlockState(getBlockPos()).getValue(BlockCelestialCrystalCluster.STAGE);
     }
 
     public void setGrowth(int stage) {
-        if (getLevel() == null) return;
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null) return;
         BlockState next = BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get().defaultBlockState()
                 .setValue(BlockCelestialCrystalCluster.STAGE, stage);
-        getLevel().setBlock(getBlockPos(), next, 3);
-        if (stage == 4 && getLevel() instanceof ServerLevel serverLevel) {
+        level.setBlock(getBlockPos(), next, 3);
+        if (stage == 4 && level instanceof ServerLevel serverLevel) {
             PacketChannel.sendToAllTracking(
                     new PktPlayEffect(PktPlayEffect.EffectType.CRYSTAL_FORM, getBlockPos()),
                     serverLevel, getBlockPos());

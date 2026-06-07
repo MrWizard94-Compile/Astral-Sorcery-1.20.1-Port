@@ -315,7 +315,6 @@ public class ScreenJournalProgressionRenderer {
                 br, br, br, 1f);
     }
 
-    @SuppressWarnings("null")
     private void drawStarParallaxLayers(GuiGraphics graphics, float scalePosX, float scalePosY) {
         Matrix4f matrix = graphics.pose().last().pose();
         RenderSystem.setShaderTexture(0, TexturesAS.TEX_GUI_STARFIELD_OVERLAY.getKey());

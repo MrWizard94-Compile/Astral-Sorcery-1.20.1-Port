@@ -20,6 +20,7 @@ import hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffect
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffectRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.AttunementCraftingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.FountainEffectRegistry;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.AltarRecipeTypeHandler;
 import hellfirepvp.astralsorcery.common.crafting.nojson.LiquidStarlightCraftingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
@@ -122,6 +123,7 @@ public class CommonProxy {
         // Mod lifecycle events
         modBus.addListener(this::onCommonSetup);
         modBus.addListener(CapabilitySetup::registerCapabilities);
+        modBus.addListener(hellfirepvp.astralsorcery.common.datagen.AstralDataGenerator::onGatherData);
     }
 
     /**
@@ -190,8 +192,7 @@ public class CommonProxy {
         // Block-storage wand clear on left-click (architect wand, exchange wand)
         forgeBus.register(EventHandlerBlockStorage.class);
 
-        // Misc: lectern+tome journal open, crystal toss tracking, effect cloud cancel,
-        //       BlockChangeNotifier dispatch for starlight network auto-link
+        // Misc: lectern+tome journal open, crystal toss tracking
         forgeBus.register(EventHandlerMisc.class);
 
         // Event helpers: register event listeners and tick handlers
@@ -237,6 +238,7 @@ public class CommonProxy {
             WorldMeltableRegistry.INSTANCE.init();
             WorldFreezingRegistry.INSTANCE.init();
             FountainEffectRegistry.registerAll();
+            AltarRecipeTypeHandler.init();
         });
     }
 }

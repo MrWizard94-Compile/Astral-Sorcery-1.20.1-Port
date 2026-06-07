@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +18,6 @@ import java.util.Map;
 public class ChunkFluidEntry {
 
     private static final String TAG_ENTRIES = "fluidEntries";
-    private static final String TAG_KEY = "key";
-    private static final String TAG_AMOUNT = "amount";
-    private static final String TAG_REMAINING = "remaining";
 
     /**
      * Map from item registry name -> remaining fluid budget for that item type.

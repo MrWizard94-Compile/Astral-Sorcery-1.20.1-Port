@@ -7,7 +7,6 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.crystal;
 
-import hellfirepvp.astralsorcery.common.crystal.calc.PropertyUsage;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

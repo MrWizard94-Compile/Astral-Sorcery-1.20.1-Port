@@ -21,7 +21,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
-import java.awt.Color;
 
 /**
  * Block entity renderer for collector crystals (rock crystal and celestial).

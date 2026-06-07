@@ -34,7 +34,6 @@ public class RenderPageLiquidInfusion extends RenderPageRecipeTemplate {
         this.recipe = recipe;
     }
 
-    @SuppressWarnings("null")
     @Override
     public void render(GuiGraphics graphics, int ox, int oy, float partialTick, int mouseX, int mouseY) {
         clearFrameRectangles();
@@ -67,7 +66,6 @@ public class RenderPageLiquidInfusion extends RenderPageRecipeTemplate {
     }
 
     @Override
-    @SuppressWarnings("null")
     public void postRender(GuiGraphics graphics, int ox, int oy, float partialTick, int mouseX, int mouseY) {
         renderHoverTooltips(graphics, mouseX, mouseY, recipe.getId());
 

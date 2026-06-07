@@ -11,8 +11,6 @@ import hellfirepvp.astralsorcery.common.perk.node.KeyPerk;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Player;
-
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;

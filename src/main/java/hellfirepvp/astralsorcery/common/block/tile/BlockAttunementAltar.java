@@ -57,7 +57,7 @@ public class BlockAttunementAltar extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;
@@ -138,7 +138,7 @@ public class BlockAttunementAltar extends BlockEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+
     public void onRemove(@Nonnull BlockState state, @Nonnull Level level,
                          @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock()) && !level.isClientSide()) {
@@ -150,7 +150,9 @@ public class BlockAttunementAltar extends BlockEntityBlock {
                 }
             }
         }
-        super.onRemove(state, level, pos, newState, isMoving);
+        if (state.hasBlockEntity() && !state.is(newState.getBlock())) {
+            level.removeBlockEntity(pos);
+        }
     }
 
     @Nullable

@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
@@ -36,8 +37,9 @@ public class BlockMeltableRecipe extends WorldMeltableRecipe {
 
     @Nonnull
     public static BlockMeltableRecipe of(@Nonnull BlockState stateIn, @Nonnull BlockState stateOut) {
+        ResourceLocation blockKey = ForgeRegistries.BLOCKS.getKey(stateIn.getBlock());
         return new BlockMeltableRecipe(
-                AstralSorcery.key(stateIn.getBlock().builtInRegistryHolder().key().location().getPath()),
+                AstralSorcery.key(blockKey != null ? blockKey.getPath() : stateIn.getBlock().toString()),
                 BlockPredicates.isState(stateIn), stateOut);
     }
 

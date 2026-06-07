@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
@@ -36,15 +37,17 @@ public class BlockFreezingRecipe extends WorldFreezingRecipe {
 
     @Nonnull
     public static BlockFreezingRecipe of(@Nonnull BlockState stateIn, @Nonnull BlockState stateOut) {
+        ResourceLocation blockKey = ForgeRegistries.BLOCKS.getKey(stateIn.getBlock());
         return new BlockFreezingRecipe(
-                AstralSorcery.key(stateIn.getBlock().builtInRegistryHolder().key().location().getPath()),
+                AstralSorcery.key(blockKey != null ? blockKey.getPath() : stateIn.getBlock().toString()),
                 BlockPredicates.isState(stateIn), stateOut);
     }
 
     @Nonnull
     public static BlockFreezingRecipe of(@Nonnull Block blockIn, @Nonnull BlockState stateOut) {
+        ResourceLocation blockKey = ForgeRegistries.BLOCKS.getKey(blockIn);
         return new BlockFreezingRecipe(
-                AstralSorcery.key(blockIn.builtInRegistryHolder().key().location().getPath()),
+                AstralSorcery.key(blockKey != null ? blockKey.getPath() : blockIn.toString()),
                 BlockPredicates.isBlock(blockIn), stateOut);
     }
 

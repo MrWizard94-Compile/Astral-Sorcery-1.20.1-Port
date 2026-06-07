@@ -135,7 +135,6 @@ public class EngravedStarMap {
      * the effect strength.
      */
     @Nonnull
-    @SuppressWarnings("null")
     public ItemStack applyEffects(@Nonnull ItemStack stack) {
         List<EngravingEffect.ApplicableEffect> incompatible = new ArrayList<>();
         List<Map.Entry<EngravingEffect.ApplicableEffect, Float>> toApply = new ArrayList<>();

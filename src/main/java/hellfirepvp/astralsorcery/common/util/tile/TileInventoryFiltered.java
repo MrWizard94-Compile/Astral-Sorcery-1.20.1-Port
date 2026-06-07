@@ -80,7 +80,7 @@ public class TileInventoryFiltered extends TileInventory {
 
     @Nonnull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (!canInsertItem(slot, stack, getStackInSlot(slot))) {
             return stack;
         }

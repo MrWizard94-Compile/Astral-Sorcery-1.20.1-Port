@@ -43,7 +43,6 @@ import java.util.Set;
  * system to the GuiGraphics-based Screen pattern used by ScreenTelescope.</p>
  */
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("null")
 public class ScreenObservatory extends Screen {
 
     private static final int FRAME_SIZE = 16;
@@ -69,7 +68,8 @@ public class ScreenObservatory extends Screen {
 
     private void buildConstellations() {
         visibleConstellations.clear();
-        @Nullable Level level = minecraft != null ? minecraft.level : null;
+        Minecraft mc = this.minecraft;
+        @Nullable Level level = mc != null ? mc.level : null;
         if (level == null || !DayTimeHelper.isNight(level)) return;
 
         Set<IConstellation> visible = CelestialHandler.getVisibleConstellations(level);
@@ -105,7 +105,8 @@ public class ScreenObservatory extends Screen {
         // Night sky gradient
         graphics.fillGradient(0, 0, width, height, 0xFF060612, 0xFF0C0C22);
 
-        @Nullable Level level = minecraft != null ? minecraft.level : null;
+        Minecraft mc = this.minecraft;
+        @Nullable Level level = mc != null ? mc.level : null;
         boolean isNight = level != null && DayTimeHelper.isNight(level);
 
         if (isNight) {
@@ -194,8 +195,9 @@ public class ScreenObservatory extends Screen {
             ConstellationEntry entry = visibleConstellations.get(selectedIndex);
             PacketChannel.sendToServer(
                     new PktDiscoverConstellation(entry.constellation.getRegistryName()));
-            if (minecraft != null && minecraft.player != null) {
-                minecraft.player.displayClientMessage(
+            Minecraft mc2 = this.minecraft;
+            if (mc2 != null && mc2.player != null) {
+                mc2.player.displayClientMessage(
                         Component.translatable("astralsorcery.observatory.observing",
                                 entry.constellation.getConstellationName()),
                         true);
@@ -212,9 +214,10 @@ public class ScreenObservatory extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        if (minecraft != null && minecraft.player != null
-                && minecraft.player.isPassenger()) {
-            minecraft.player.stopRiding();
+        Minecraft mc = this.minecraft;
+        net.minecraft.client.player.LocalPlayer player = mc != null ? mc.player : null;
+        if (player != null && player.isPassenger()) {
+            player.stopRiding();
         }
     }
 

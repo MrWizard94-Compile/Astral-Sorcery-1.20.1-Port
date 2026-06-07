@@ -11,6 +11,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
+import javax.annotation.Nonnull;
 
 /**
  * Extended recipe interface for recipes that match against an {@link IItemHandler}
@@ -23,7 +24,7 @@ public interface IHandlerRecipe<I extends IItemHandler> extends Recipe<Container
     boolean matches(I handler, Level level);
 
     @Override
-    default boolean matches(Container inv, Level level) {
+    default boolean matches(@Nonnull Container inv, @Nonnull Level level) {
         return false;
     }
 }

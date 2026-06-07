@@ -14,6 +14,8 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import javax.annotation.Nonnull;
+
 public class CopyCrystalProperties extends LootItemConditionalFunction {
 
     private CopyCrystalProperties(LootItemCondition[] conditions) {
@@ -26,7 +28,7 @@ public class CopyCrystalProperties extends LootItemConditionalFunction {
     }
 
     @Override
-    protected ItemStack run(ItemStack stack, LootContext context) {
+    protected ItemStack run(@Nonnull ItemStack stack, @Nonnull LootContext context) {
         if (context.hasParam(LootContextParams.BLOCK_ENTITY)) {
             BlockEntity tile = context.getParam(LootContextParams.BLOCK_ENTITY);
             if (tile instanceof CrystalAttributeTile attrTile
@@ -43,7 +45,7 @@ public class CopyCrystalProperties extends LootItemConditionalFunction {
 
     public static class Serializer extends LootItemConditionalFunction.Serializer<CopyCrystalProperties> {
         @Override
-        public CopyCrystalProperties deserialize(JsonObject json, JsonDeserializationContext context, LootItemCondition[] conditions) {
+        public CopyCrystalProperties deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, @Nonnull LootItemCondition[] conditions) {
             return new CopyCrystalProperties(conditions);
         }
     }

@@ -34,7 +34,7 @@ public class BlockGlowFlower extends BushBlock {
 
     @Override
     @Nonnull
-    @SuppressWarnings("deprecation")
+
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;

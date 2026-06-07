@@ -6,7 +6,6 @@ package hellfirepvp.astralsorcery.client.effect;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
-import hellfirepvp.astralsorcery.client.util.RenderingUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -42,7 +41,8 @@ public class FXSparkle extends EntityVisualFX {
         super(x, y, z);
         this.twinkle = true;
         this.baseScale = 0.15f;
-        setMaxAge(20 + Minecraft.getInstance().level.random.nextInt(15));
+        net.minecraft.world.level.Level level = Minecraft.getInstance().level;
+        setMaxAge(20 + (level != null ? level.random.nextInt(15) : 8));
         setScale(baseScale);
     }
 

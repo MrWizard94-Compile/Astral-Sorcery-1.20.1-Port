@@ -35,9 +35,6 @@ import java.util.function.Supplier;
  */
 public class PktDiscoverConstellation {
 
-    /** Max distance from a telescope for discovery to be valid. */
-    private static final double MAX_TELESCOPE_DISTANCE_SQ = 5.0 * 5.0;
-
     @Nonnull
     private final ResourceLocation constellationKey;
 

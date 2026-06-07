@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
@@ -54,7 +53,7 @@ public class RenderTileFakedState implements BlockEntityRenderer<BlockEntityFake
                 fakedState, poseStack,
                 (renderType) -> tinted,   // MultiBufferSource lambda: always route to our tinted consumer
                 packedLight, packedOverlay,
-                net.minecraftforge.client.model.data.ModelData.EMPTY, null);
+                net.minecraftforge.client.model.data.ModelData.EMPTY, RenderType.translucent());
     }
 
     // -------------------------------------------------------------------------

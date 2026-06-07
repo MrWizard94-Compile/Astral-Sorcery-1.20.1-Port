@@ -12,6 +12,8 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import javax.annotation.Nonnull;
+
 public class RandomCrystalProperty extends LootItemConditionalFunction {
 
     private RandomCrystalProperty(LootItemCondition[] conditions) {
@@ -24,7 +26,7 @@ public class RandomCrystalProperty extends LootItemConditionalFunction {
     }
 
     @Override
-    protected ItemStack run(ItemStack stack, LootContext context) {
+    protected ItemStack run(@Nonnull ItemStack stack, @Nonnull LootContext context) {
         if (stack.getItem() instanceof CrystalAttributeGenItem genItem) {
             CrystalAttributes attr = CrystalGenerator.generateNewAttributes(stack);
             genItem.setAttributes(stack, attr);
@@ -34,7 +36,7 @@ public class RandomCrystalProperty extends LootItemConditionalFunction {
 
     public static class Serializer extends LootItemConditionalFunction.Serializer<RandomCrystalProperty> {
         @Override
-        public RandomCrystalProperty deserialize(JsonObject json, JsonDeserializationContext context, LootItemCondition[] conditions) {
+        public RandomCrystalProperty deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, @Nonnull LootItemCondition[] conditions) {
             return new RandomCrystalProperty(conditions);
         }
     }

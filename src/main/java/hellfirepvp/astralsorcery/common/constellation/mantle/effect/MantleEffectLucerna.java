@@ -23,12 +23,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.ForgeConfigSpec;
+import java.util.Set;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Mantle effect for Lucerna (Weak — Light).

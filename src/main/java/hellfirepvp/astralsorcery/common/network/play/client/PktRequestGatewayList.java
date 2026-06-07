@@ -44,7 +44,9 @@ public class PktRequestGatewayList {
             @Nullable ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            GatewayHandler handler = GatewayHandler.get(player.getServer());
+            net.minecraft.server.MinecraftServer server = player.getServer();
+            if (server == null) return;
+            GatewayHandler handler = GatewayHandler.get(server);
             if (handler != null) {
                 PacketChannel.sendToPlayer(
                         new PktSyncGatewayList(new ArrayList<>(handler.getAllGateways())), player);

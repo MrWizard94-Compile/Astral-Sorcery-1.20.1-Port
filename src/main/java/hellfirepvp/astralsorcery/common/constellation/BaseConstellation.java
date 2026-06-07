@@ -37,16 +37,16 @@ public abstract class BaseConstellation implements IConstellation {
     }
 
     @Override
-    @Nullable
+    @Nonnull
     public StarLocation addStar(int x, int y) {
         x %= STAR_GRID_INDEX;
         y %= STAR_GRID_INDEX;
         StarLocation star = new StarLocation(x, y);
-        if (!starLocations.contains(star)) {
-            starLocations.add(star);
-            return star;
+        if (starLocations.contains(star)) {
+            throw new IllegalArgumentException("Duplicate star position (" + x + ", " + y + ") in constellation " + registryName);
         }
-        return null;
+        starLocations.add(star);
+        return star;
     }
 
     @Override

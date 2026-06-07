@@ -1,6 +1,5 @@
 package hellfirepvp.astralsorcery.common.block.marble;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;

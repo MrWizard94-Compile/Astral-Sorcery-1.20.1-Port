@@ -16,8 +16,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-import javax.annotation.Nonnull;
-
 /**
  * HUD overlay rendering the player's current starlight charge level as a
  * simple color-fill gauge in the top-left corner when the player is attuned.
@@ -39,7 +37,7 @@ public class OverlayStarlightGauge implements IGuiOverlay {
     private OverlayStarlightGauge() {}
 
     @Override
-    public void render(@Nonnull ForgeGui gui, @Nonnull GuiGraphics graphics,
+    public void render(ForgeGui gui, GuiGraphics graphics,
                         float partialTick, int screenWidth, int screenHeight) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;

@@ -30,10 +30,11 @@ public abstract class BlockEntityFakedState extends BlockEntityTick {
     }
 
     public boolean revert() {
-        if (getLevel() == null || getLevel().isClientSide()) {
+        net.minecraft.world.level.Level level = getLevel();
+        if (level == null || level.isClientSide()) {
             return false;
         }
-        return getLevel().setBlock(getBlockPos(), this.fakedState, 3);
+        return level.setBlock(getBlockPos(), this.fakedState, 3);
     }
 
     @Nonnull

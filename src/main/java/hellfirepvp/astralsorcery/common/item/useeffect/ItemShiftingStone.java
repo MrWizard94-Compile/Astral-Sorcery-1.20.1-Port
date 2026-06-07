@@ -30,7 +30,6 @@ public class ItemShiftingStone extends ItemAS {
 
     @Override
     @Nonnull
-    @SuppressWarnings("null")
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level,
                                                   @Nonnull Player player,
                                                   @Nonnull InteractionHand hand) {

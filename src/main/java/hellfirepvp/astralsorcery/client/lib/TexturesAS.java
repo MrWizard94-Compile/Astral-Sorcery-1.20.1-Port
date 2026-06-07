@@ -71,12 +71,42 @@ public final class TexturesAS {
     public static AbstractRenderableTexture TEX_GUI_PERK_HALO_INACTIVE;
     public static AbstractRenderableTexture TEX_GUI_PERK_HALO_ACTIVE;
     public static AbstractRenderableTexture TEX_GUI_PERK_HALO_ACTIVATEABLE;
+    public static AbstractRenderableTexture TEX_GUI_PERK_SEAL;
+    public static AbstractRenderableTexture TEX_GUI_PERK_SEAL_BREAK;
+    public static AbstractRenderableTexture TEX_GUI_PERK_UNLOCK;
 
     // ---- Research frame ----
 
     public static AbstractRenderableTexture TEX_GUI_RESEARCH_FRAME_WOOD;
 
     // ---- Misc ----
+
+    // ---- Effect / VFX sprite sheets ----
+
+    public static AbstractRenderableTexture TEX_CRYSTAL_EFFECT_1;
+    public static AbstractRenderableTexture TEX_CRYSTAL_EFFECT_2;
+    public static AbstractRenderableTexture TEX_CRYSTAL_EFFECT_3;
+    public static AbstractRenderableTexture TEX_GEM_CRYSTAL_BURST;
+    public static AbstractRenderableTexture TEX_GEM_CRYSTAL_BURST_SKY;
+    public static AbstractRenderableTexture TEX_GEM_CRYSTAL_BURST_DAY;
+    public static AbstractRenderableTexture TEX_GEM_CRYSTAL_BURST_NIGHT;
+    public static AbstractRenderableTexture TEX_COLLECTOR_EFFECT;
+    public static AbstractRenderableTexture TEX_CRAFT_BURST;
+    public static AbstractRenderableTexture TEX_CRAFT_FLARE;
+    public static AbstractRenderableTexture TEX_ATTUNEMENT_FLARE;
+    public static AbstractRenderableTexture TEX_RELAY_FLARE;
+    public static AbstractRenderableTexture TEX_LIGHTBEAM;
+    public static AbstractRenderableTexture TEX_LIGHTBEAM_TRANSFER;
+    public static AbstractRenderableTexture TEX_ENTITY_FLARE;
+    public static AbstractRenderableTexture TEX_GRAPPLING_HOOK;
+    public static AbstractRenderableTexture TEX_HALO_INFUSION;
+    public static AbstractRenderableTexture TEX_HALO_RITUAL;
+    public static AbstractRenderableTexture TEX_FOUNTAIN_LIQUID;
+    public static AbstractRenderableTexture TEX_FOUNTAIN_VORTEX;
+    public static AbstractRenderableTexture TEX_DAZZLING_AURA;
+    public static AbstractRenderableTexture TEX_STARLIGHT_STORE;
+    public static AbstractRenderableTexture TEX_OVERLAY_CHARGE;
+    public static AbstractRenderableTexture TEX_OVERLAY_CHARGE_COLORLESS;
 
     public static AbstractRenderableTexture TEX_BLACK;
 
@@ -127,8 +157,36 @@ public final class TexturesAS {
         TEX_GUI_PERK_HALO_INACTIVE          = loadPerk("halo_inactive");
         TEX_GUI_PERK_HALO_ACTIVE            = loadPerk("halo_active");
         TEX_GUI_PERK_HALO_ACTIVATEABLE      = loadPerk("halo_activateable");
+        TEX_GUI_PERK_SEAL                   = loadPerk("seal");
+        TEX_GUI_PERK_SEAL_BREAK             = loadPerk("seal_break");
+        TEX_GUI_PERK_UNLOCK                 = loadPerk("unlock");
 
         TEX_GUI_RESEARCH_FRAME_WOOD         = load("research_frame_wood");
+
+        TEX_CRYSTAL_EFFECT_1        = loadEffect("crystal_burst_effect_1");
+        TEX_CRYSTAL_EFFECT_2        = loadEffect("crystal_burst_effect_2");
+        TEX_CRYSTAL_EFFECT_3        = loadEffect("crystal_burst_effect_3");
+        TEX_GEM_CRYSTAL_BURST       = loadEffect("gem_crystal_burst");
+        TEX_GEM_CRYSTAL_BURST_SKY   = loadEffect("gem_crystal_burst_sky");
+        TEX_GEM_CRYSTAL_BURST_DAY   = loadEffect("gem_crystal_burst_day");
+        TEX_GEM_CRYSTAL_BURST_NIGHT = loadEffect("gem_crystal_burst_night");
+        TEX_COLLECTOR_EFFECT        = loadEffect("collector_crystal_burst");
+        TEX_CRAFT_BURST             = loadEffect("craft_burst");
+        TEX_CRAFT_FLARE             = loadEffect("craft_flare");
+        TEX_ATTUNEMENT_FLARE        = loadEffect("attunement_flare");
+        TEX_RELAY_FLARE             = loadEffect("relay_flare");
+        TEX_LIGHTBEAM               = loadEffect("lightbeam");
+        TEX_LIGHTBEAM_TRANSFER      = loadEffect("lightbeam_transfer");
+        TEX_ENTITY_FLARE            = loadEffect("entity_flare");
+        TEX_GRAPPLING_HOOK          = loadEffect("grappling_hook");
+        TEX_HALO_INFUSION           = loadEffect("halo_infusion");
+        TEX_HALO_RITUAL             = loadEffect("halo_ritual");
+        TEX_FOUNTAIN_LIQUID         = loadEffect("fountain_liquid");
+        TEX_FOUNTAIN_VORTEX         = loadEffect("fountain_vortex");
+        TEX_DAZZLING_AURA           = loadEffect("dazzling_aura");
+        TEX_STARLIGHT_STORE         = loadEffect("starlight_storage");
+        TEX_OVERLAY_CHARGE          = loadEffect("overlay_charge");
+        TEX_OVERLAY_CHARGE_COLORLESS = loadEffect("overlay_charge_colorless");
 
         TEX_BLACK = AssetLoader.loadTexture(AssetLoader.TextureLocation.MISC, "black");
     }
@@ -139,5 +197,9 @@ public final class TexturesAS {
 
     private static AbstractRenderableTexture loadPerk(String name) {
         return AssetLoader.loadTexture(AssetLoader.TextureLocation.GUI, "perk/" + name);
+    }
+
+    private static AbstractRenderableTexture loadEffect(String name) {
+        return AssetLoader.loadTexture(AssetLoader.TextureLocation.EFFECT, name);
     }
 }

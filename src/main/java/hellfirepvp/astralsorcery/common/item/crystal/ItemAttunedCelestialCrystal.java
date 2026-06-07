@@ -49,7 +49,6 @@ public class ItemAttunedCelestialCrystal extends ItemCelestialCrystal implements
     public IWeakConstellation getAttunedConstellation(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains(TAG_CONSTELLATION)) return null;
-        @SuppressWarnings("null")
         ResourceLocation key = ResourceLocation.tryParse(tag.getString(TAG_CONSTELLATION));
         if (key == null) return null;
         IConstellation c = ConstellationRegistry.getConstellation(key);
@@ -73,7 +72,6 @@ public class ItemAttunedCelestialCrystal extends ItemCelestialCrystal implements
     public IMinorConstellation getTraitConstellation(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains(TAG_TRAIT)) return null;
-        @SuppressWarnings("null")
         ResourceLocation key = ResourceLocation.tryParse(tag.getString(TAG_TRAIT));
         if (key == null) return null;
         IConstellation c = ConstellationRegistry.getConstellation(key);

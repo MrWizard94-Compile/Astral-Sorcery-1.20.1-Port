@@ -37,7 +37,7 @@ public final class PlayerProgressManager {
     @Nullable
     public static PlayerProgress getProgress(@Nonnull ServerPlayer player) {
         return player.getCapability(PlayerCapabilityProvider.CAPABILITY)
-                .orElse(null);
+                .resolve().orElse(null);
     }
 
     /**

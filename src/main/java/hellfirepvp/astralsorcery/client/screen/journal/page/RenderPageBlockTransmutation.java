@@ -5,6 +5,7 @@ import hellfirepvp.astralsorcery.common.crafting.recipe.BlockTransmutation;
 import hellfirepvp.astralsorcery.common.data.research.ResearchNode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -28,7 +29,6 @@ public class RenderPageBlockTransmutation extends RenderPageRecipeTemplate {
         this.recipe = recipe;
     }
 
-    @SuppressWarnings("null")
     @Override
     public void render(GuiGraphics graphics, int ox, int oy, float partialTick, int mouseX, int mouseY) {
         clearFrameRectangles();
@@ -42,7 +42,7 @@ public class RenderPageBlockTransmutation extends RenderPageRecipeTemplate {
             renderItemAt(graphics, ox + 80, oy + 128, 1.2f, inputStack);
             thisFrameInputStacks.put(
                     new java.awt.Rectangle(ox + 80, oy + 128, 20, 20),
-                    new net.minecraft.util.Tuple<>(inputStack, null));
+                    new net.minecraft.util.Tuple<>(inputStack, Ingredient.EMPTY));
         }
     }
 

@@ -309,25 +309,17 @@ class PerkSystemTest {
      * Concrete test implementation of AbstractPerk for unit testing.
      */
     private static class TestPerk extends AbstractPerk {
-        private int allocateCount = 0;
-        private int deallocateCount = 0;
 
         TestPerk(@Nonnull ResourceLocation key, int x, int y, @Nonnull PerkCategory category) {
             super(key, x, y, category);
         }
 
         @Override
-        public void onAllocate(@Nonnull Player player) {
-            allocateCount++;
-        }
+        public void onAllocate(@Nonnull Player player) {}
 
         @Override
-        public void onDeallocate(@Nonnull Player player) {
-            deallocateCount++;
-        }
+        public void onDeallocate(@Nonnull Player player) {}
 
-        int getAllocateCount() { return allocateCount; }
-        int getDeallocateCount() { return deallocateCount; }
     }
 
     /**
@@ -733,7 +725,9 @@ class PerkSystemTest {
 
             assertEquals(1, PerkTree.size());
             // First registration wins
-            assertEquals(0, PerkTree.getPerk(key).getX());
+            AbstractPerk registeredPerk = PerkTree.getPerk(key);
+            assertNotNull(registeredPerk);
+            assertEquals(0, registeredPerk.getX());
         }
     }
 }

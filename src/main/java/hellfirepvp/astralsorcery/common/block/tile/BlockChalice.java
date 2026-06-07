@@ -69,7 +69,6 @@ public class BlockChalice extends BlockEntityBlock implements LiquidStarlightOwn
 
     @Nonnull
     @Override
-    @SuppressWarnings("null")
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level,
                                  @Nonnull BlockPos pos, @Nonnull Player player,
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {

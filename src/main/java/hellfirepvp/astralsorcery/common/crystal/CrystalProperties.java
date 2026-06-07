@@ -2,6 +2,7 @@ package hellfirepvp.astralsorcery.common.crystal;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -169,7 +170,35 @@ public class CrystalProperties {
      * Check if a stack has crystal properties.
      */
     public static boolean hasProperties(@Nonnull ItemStack stack) {
-        return stack.hasTag() && stack.getTag() != null && stack.getTag().contains(TAG_KEY);
+        net.minecraft.nbt.CompoundTag tag = stack.getTag();
+        return tag != null && tag.contains(TAG_KEY);
+    }
+
+    /**
+     * Derives size/purity/cutting from a {@link CrystalAttributes} instance.
+     * Mapping: PropertySize (maxTier 3) → 0–900, PropertyPurity (maxTier 2) → 0–100,
+     * PropertyShape (maxTier 3) → 0–100.
+     */
+    @Nonnull
+    public static CrystalProperties deriveFrom(@Nonnull CrystalAttributes attrs) {
+        CrystalProperty sizeProp   = CrystalPropertyRegistry.INSTANCE.getProperty(new ResourceLocation("astralsorcery", "size"));
+        CrystalProperty purityProp = CrystalPropertyRegistry.INSTANCE.getProperty(new ResourceLocation("astralsorcery", "purity"));
+        CrystalProperty shapeProp  = CrystalPropertyRegistry.INSTANCE.getProperty(new ResourceLocation("astralsorcery", "shape"));
+
+        CrystalAttributes.Attribute sizeAttr   = sizeProp   != null ? attrs.getAttribute(sizeProp)   : null;
+        CrystalAttributes.Attribute purityAttr = purityProp != null ? attrs.getAttribute(purityProp) : null;
+        CrystalAttributes.Attribute shapeAttr  = shapeProp  != null ? attrs.getAttribute(shapeProp)  : null;
+
+        int sizeTier   = sizeAttr   != null ? sizeAttr.getTier()   : 0;
+        int purityTier = purityAttr != null ? purityAttr.getTier() : 0;
+        int shapeTier  = shapeAttr  != null ? shapeAttr.getTier()  : 0;
+
+        // PropertySize maxTier=3 → size 0-900; PropertyPurity maxTier=2 → purity 0-100; PropertyShape maxTier=3 → cutting 0-100
+        int size    = Math.round(sizeTier   * (float) MAX_SIZE    / 3);
+        int purity  = Math.round(purityTier * (float) MAX_PURITY  / 2);
+        int cutting = Math.round(shapeTier  * (float) MAX_CUTTING / 3);
+
+        return new CrystalProperties(size, purity, cutting);
     }
 
     @Override

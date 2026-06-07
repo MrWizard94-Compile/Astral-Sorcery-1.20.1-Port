@@ -1,6 +1,6 @@
 package hellfirepvp.astralsorcery.common.item.crystal;
 
-import net.minecraft.nbt.CompoundTag;
+import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -32,58 +32,38 @@ import java.util.List;
  */
 public class ItemRockCrystalSimple extends ItemCrystalBase {
 
-    private static final String TAG_SIZE = "crystalSize";
-    private static final String TAG_PURITY = "crystalPurity";
-    private static final String TAG_CUTTING = "crystalCutting";
-
     public ItemRockCrystalSimple() {
         super(defaultProperties().stacksTo(1));
     }
 
     /**
      * Creates an ItemStack with the specified crystal properties.
+     * Properties are stored via {@link CrystalProperties#setOnStack} so that
+     * tools, lenses, and altar recipes can read them via the same path.
      */
     @Nonnull
     public static ItemStack createCrystal(@Nonnull Item item, int size, int purity, int cutting) {
         ItemStack stack = new ItemStack(item);
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(TAG_SIZE, Math.max(1, Math.min(900, size)));
-        tag.putInt(TAG_PURITY, Math.max(0, Math.min(100, purity)));
-        tag.putInt(TAG_CUTTING, Math.max(0, Math.min(100, cutting)));
+        CrystalProperties.setOnStack(stack, new CrystalProperties(size, purity, cutting));
         return stack;
     }
 
-    /**
-     * Gets the crystal size from the stack's NBT.
-     *
-     * @param stack the crystal item stack
-     * @return size [1-900], default 100
-     */
+    /** Returns the crystal's size [0–900], or 0 if none stored yet. */
     public static int getSize(@Nonnull ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains(TAG_SIZE) ? tag.getInt(TAG_SIZE) : 100;
+        CrystalProperties props = CrystalProperties.getFromStack(stack);
+        return props != null ? props.getSize() : 0;
     }
 
-    /**
-     * Gets the crystal purity from the stack's NBT.
-     *
-     * @param stack the crystal item stack
-     * @return purity [0-100], default 50
-     */
+    /** Returns the crystal's purity [0–100], or 0 if none stored yet. */
     public static int getPurity(@Nonnull ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains(TAG_PURITY) ? tag.getInt(TAG_PURITY) : 50;
+        CrystalProperties props = CrystalProperties.getFromStack(stack);
+        return props != null ? props.getPurity() : 0;
     }
 
-    /**
-     * Gets the crystal cutting quality from the stack's NBT.
-     *
-     * @param stack the crystal item stack
-     * @return cutting [0-100], default 50
-     */
+    /** Returns the crystal's cutting [0–100], or 0 if none stored yet. */
     public static int getCutting(@Nonnull ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains(TAG_CUTTING) ? tag.getInt(TAG_CUTTING) : 50;
+        CrystalProperties props = CrystalProperties.getFromStack(stack);
+        return props != null ? props.getCutting() : 0;
     }
 
     /**

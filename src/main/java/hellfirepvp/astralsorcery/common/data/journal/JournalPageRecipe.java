@@ -81,7 +81,6 @@ public class JournalPageRecipe implements JournalPage {
     }
 
     @Nullable
-    @SuppressWarnings("null")
     private static Recipe<?> findVanillaRecipe(RecipeManager mgr, Predicate<ItemStack> outputTest) {
         return mgr.getAllRecipesFor(RecipeType.CRAFTING)
                 .stream()

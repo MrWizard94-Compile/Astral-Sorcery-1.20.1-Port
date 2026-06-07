@@ -76,7 +76,9 @@ public class AstralSorceryJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
-        RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
+        net.minecraft.client.multiplayer.ClientLevel clientLevel = Minecraft.getInstance().level;
+        if (clientLevel == null) return;
+        RecipeManager recipeManager = clientLevel.getRecipeManager();
 
         List<SimpleAltarRecipe> altarRecipes =
                 recipeManager.getAllRecipesFor(RecipeTypesAS.ALTAR.get());

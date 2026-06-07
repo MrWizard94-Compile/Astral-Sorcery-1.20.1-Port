@@ -100,7 +100,6 @@ public class FXCrystalGrowth extends EntityVisualFX {
 
         float size = targetScale * scaleFactor * getScaleX();
         float rotation = initialRotation + (getAge() + partialTick) * rotationSpeed;
-        float rad = (float) Math.toRadians(rotation);
 
         float x = (float) getInterpolatedX(partialTick);
         float y = (float) getInterpolatedY(partialTick);

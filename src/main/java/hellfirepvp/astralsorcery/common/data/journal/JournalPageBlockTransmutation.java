@@ -27,7 +27,6 @@ public class JournalPageBlockTransmutation implements JournalPage {
         this.recipeProvider = recipeProvider;
     }
 
-    @SuppressWarnings("null")
     public static JournalPageBlockTransmutation fromOutput(Predicate<ItemStack> outputTest) {
         return new JournalPageBlockTransmutation(() -> {
             RecipeManager mgr = RecipeHelper.getRecipeManager();

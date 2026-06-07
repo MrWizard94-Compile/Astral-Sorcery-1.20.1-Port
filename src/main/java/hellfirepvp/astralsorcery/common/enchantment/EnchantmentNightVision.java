@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.fml.LogicalSide;
+import javax.annotation.Nonnull;
 
 /**
  * Engraving-only helmet enchantment that continuously applies Night Vision.
@@ -44,7 +45,7 @@ public class EnchantmentNightVision extends EnchantmentPlayerTick {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack) {
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
         return false;
     }
 }

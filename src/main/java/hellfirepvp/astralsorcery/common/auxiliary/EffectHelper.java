@@ -1,13 +1,10 @@
 package hellfirepvp.astralsorcery.common.auxiliary;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Helper for applying and querying potion/mob effects.

@@ -5,7 +5,6 @@ import hellfirepvp.astralsorcery.common.base.MoonPhase;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import hellfirepvp.astralsorcery.common.lib.ColorsAS;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  * MiscUtils.getCurrentlyActiveMod() → simplified to always use AS modid,
  * IForgeRegistryEntry removed</p>
  */
-public abstract class Constellation extends BaseConstellation implements IConstellation {
+public abstract class Constellation extends BaseConstellation {
 
     private static int counter = 0;
 
@@ -113,7 +112,7 @@ public abstract class Constellation extends BaseConstellation implements IConste
     }
 
     @Override
-    public int compareTo(@Nonnull IConstellation o) {
+    public int compareTo(IConstellation o) {
         return Integer.compare(this.getSortingId(), o.getSortingId());
     }
 

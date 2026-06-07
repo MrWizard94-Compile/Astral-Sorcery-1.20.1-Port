@@ -90,14 +90,14 @@ public class FluidTankAccess {
         }
 
         @Override
-        public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+        public boolean isFluidValid(int tank, FluidStack stack) {
             return this.getTank(tank)
                     .map(t -> t.getTank().isFluidValid(stack))
                     .orElse(false);
         }
 
         @Override
-        public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public int fill(FluidStack resource, FluidAction action) {
             for (AccessibleTank tank : this.tanks) {
                 int filled = tank.getTank().fill(resource, action);
                 if (filled > 0) {
@@ -109,7 +109,7 @@ public class FluidTankAccess {
 
         @Nonnull
         @Override
-        public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public FluidStack drain(FluidStack resource, FluidAction action) {
             for (AccessibleTank tank : this.tanks) {
                 FluidStack drained = tank.getTank().drain(resource, action);
                 if (!drained.isEmpty()) {
@@ -121,7 +121,7 @@ public class FluidTankAccess {
 
         @Nonnull
         @Override
-        public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
+        public FluidStack drain(int maxDrain, FluidAction action) {
             for (AccessibleTank tank : this.tanks) {
                 FluidStack drained = tank.getTank().drain(maxDrain, action);
                 if (!drained.isEmpty()) {

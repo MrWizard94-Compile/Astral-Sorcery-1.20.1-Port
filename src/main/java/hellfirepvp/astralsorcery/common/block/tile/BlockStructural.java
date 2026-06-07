@@ -59,14 +59,11 @@ public class BlockStructural extends BlockAS {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                 @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
         if (state.getValue(BLOCK_TYPE) == BlockType.TELESCOPE && level.isEmptyBlock(pos.below())) {
             level.removeBlock(pos, isMoving);
-            return;
         }
-        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
     }
 
     public enum BlockType implements StringRepresentable {

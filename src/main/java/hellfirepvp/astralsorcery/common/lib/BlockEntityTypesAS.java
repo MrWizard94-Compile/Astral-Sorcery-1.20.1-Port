@@ -33,15 +33,19 @@ import net.minecraftforge.registries.RegistryObject;
 /**
  * All Astral Sorcery block entity type registrations.
  *
- * <p>1.16 -> 1.20 changes:
- * TileEntityType -> BlockEntityType,
- * TileEntityType.Builder.create -> BlockEntityType.Builder.of,
- * build(null) remains the same</p>
+ * <p>1.16 → 1.20: TileEntityType → BlockEntityType,
+ * TileEntityType.Builder.create → BlockEntityType.Builder.of.
+ * noFixer() returns null without a null annotation so call sites produce
+ * nullUncheckedConversion (ignored in prefs) rather than a null-type mismatch.</p>
  */
-@SuppressWarnings("ConstantConditions") // build(null) is valid for non-datafix BEs
 public class BlockEntityTypesAS {
 
     private BlockEntityTypesAS() {}
+
+    /** Returns null — unannotated so call sites see nullUncheckedConversion (ignored in prefs). */
+    private static com.mojang.datafixers.types.Type<?> noFixer() {
+        return null;
+    }
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, AstralSorcery.MODID);
@@ -49,121 +53,121 @@ public class BlockEntityTypesAS {
     public static final RegistryObject<BlockEntityType<BlockEntityAltar>> ALTAR =
             BLOCK_ENTITY_TYPES.register("altar", () ->
                     BlockEntityType.Builder.of(BlockEntityAltar::new,
-                            BlocksAS.ALTAR.get()).build(null));
+                            BlocksAS.ALTAR.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityCollectorCrystal>> COLLECTOR_CRYSTAL =
             BLOCK_ENTITY_TYPES.register("collector_crystal", () ->
                     BlockEntityType.Builder.of(BlockEntityCollectorCrystal::new,
                             BlocksAS.COLLECTOR_CRYSTAL.get(),
-                            BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get()).build(null));
+                            BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntitySpectralRelay>> SPECTRAL_RELAY =
             BLOCK_ENTITY_TYPES.register("spectral_relay", () ->
                     BlockEntityType.Builder.of(BlockEntitySpectralRelay::new,
-                            BlocksAS.SPECTRAL_RELAY.get()).build(null));
+                            BlocksAS.SPECTRAL_RELAY.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityWell>> WELL =
             BLOCK_ENTITY_TYPES.register("well", () ->
                     BlockEntityType.Builder.of(BlockEntityWell::new,
-                            BlocksAS.WELL.get()).build(null));
+                            BlocksAS.WELL.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityTelescope>> TELESCOPE =
             BLOCK_ENTITY_TYPES.register("telescope", () ->
                     BlockEntityType.Builder.of(BlockEntityTelescope::new,
-                            BlocksAS.TELESCOPE.get()).build(null));
+                            BlocksAS.TELESCOPE.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityInfuser>> INFUSER =
             BLOCK_ENTITY_TYPES.register("infuser", () ->
                     BlockEntityType.Builder.of(BlockEntityInfuser::new,
-                            BlocksAS.INFUSER.get()).build(null));
+                            BlocksAS.INFUSER.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityAttunementAltar>> ATTUNEMENT_ALTAR =
             BLOCK_ENTITY_TYPES.register("attunement_altar", () ->
                     BlockEntityType.Builder.of(BlockEntityAttunementAltar::new,
-                            BlocksAS.ATTUNEMENT_ALTAR.get()).build(null));
+                            BlocksAS.ATTUNEMENT_ALTAR.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityRitualPedestal>> RITUAL_PEDESTAL =
             BLOCK_ENTITY_TYPES.register("ritual_pedestal", () ->
                     BlockEntityType.Builder.of(BlockEntityRitualPedestal::new,
-                            BlocksAS.RITUAL_PEDESTAL.get()).build(null));
+                            BlocksAS.RITUAL_PEDESTAL.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityChalice>> CHALICE =
             BLOCK_ENTITY_TYPES.register("chalice", () ->
                     BlockEntityType.Builder.of(BlockEntityChalice::new,
-                            BlocksAS.CHALICE.get()).build(null));
+                            BlocksAS.CHALICE.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityGateway>> GATEWAY =
             BLOCK_ENTITY_TYPES.register("gateway", () ->
                     BlockEntityType.Builder.of(BlockEntityGateway::new,
-                            BlocksAS.GATEWAY.get()).build(null));
+                            BlocksAS.GATEWAY.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityLens>> LENS =
             BLOCK_ENTITY_TYPES.register("lens", () ->
                     BlockEntityType.Builder.of(BlockEntityLens::new,
-                            BlocksAS.LENS.get()).build(null));
+                            BlocksAS.LENS.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityPrism>> PRISM =
             BLOCK_ENTITY_TYPES.register("prism", () ->
                     BlockEntityType.Builder.of(BlockEntityPrism::new,
-                            BlocksAS.PRISM.get()).build(null));
+                            BlocksAS.PRISM.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityRelay>> RELAY =
             BLOCK_ENTITY_TYPES.register("relay", () ->
                     BlockEntityType.Builder.of(BlockEntityRelay::new,
-                            BlocksAS.RELAY.get()).build(null));
+                            BlocksAS.RELAY.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityFountain>> FOUNTAIN =
             BLOCK_ENTITY_TYPES.register("fountain", () ->
                     BlockEntityType.Builder.of(BlockEntityFountain::new,
-                            BlocksAS.FOUNTAIN.get()).build(null));
+                            BlocksAS.FOUNTAIN.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityObservatory>> OBSERVATORY =
             BLOCK_ENTITY_TYPES.register("observatory", () ->
                     BlockEntityType.Builder.of(BlockEntityObservatory::new,
-                            BlocksAS.OBSERVATORY.get()).build(null));
+                            BlocksAS.OBSERVATORY.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityTreeBeacon>> TREE_BEACON =
             BLOCK_ENTITY_TYPES.register("tree_beacon", () ->
                     BlockEntityType.Builder.of(BlockEntityTreeBeacon::new,
-                            BlocksAS.TREE_BEACON.get()).build(null));
+                            BlocksAS.TREE_BEACON.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityTreeBeaconComponent>> TREE_BEACON_COMPONENT =
             BLOCK_ENTITY_TYPES.register("tree_beacon_component", () ->
                     BlockEntityType.Builder.of(BlockEntityTreeBeaconComponent::new,
-                            BlocksAS.TREE_BEACON_COMPONENT.get()).build(null));
+                            BlocksAS.TREE_BEACON_COMPONENT.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityCelestialCrystals>> CELESTIAL_CRYSTAL_CLUSTER =
             BLOCK_ENTITY_TYPES.register("celestial_crystal_cluster", () ->
                     BlockEntityType.Builder.of(BlockEntityCelestialCrystals::new,
-                            BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get()).build(null));
+                            BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityGemCrystals>> GEM_CRYSTAL_CLUSTER =
             BLOCK_ENTITY_TYPES.register("gem_crystal_cluster", () ->
                     BlockEntityType.Builder.of(BlockEntityGemCrystals::new,
-                            BlocksAS.GEM_CRYSTAL_CLUSTER.get()).build(null));
+                            BlocksAS.GEM_CRYSTAL_CLUSTER.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityTranslucentBlock>> TRANSLUCENT_BLOCK =
             BLOCK_ENTITY_TYPES.register("translucent_block", () ->
                     BlockEntityType.Builder.of(BlockEntityTranslucentBlock::new,
-                            BlocksAS.TRANSLUCENT_BLOCK.get()).build(null));
+                            BlocksAS.TRANSLUCENT_BLOCK.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityIlluminator>> ILLUMINATOR =
             BLOCK_ENTITY_TYPES.register("illuminator", () ->
                     BlockEntityType.Builder.of(BlockEntityIlluminator::new,
-                            BlocksAS.ILLUMINATOR.get()).build(null));
+                            BlocksAS.ILLUMINATOR.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityVanishing>> VANISHING =
             BLOCK_ENTITY_TYPES.register("vanishing", () ->
                     BlockEntityType.Builder.of(BlockEntityVanishing::new,
-                            BlocksAS.VANISHING.get()).build(null));
+                            BlocksAS.VANISHING.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityRefractionTable>> REFRACTION_TABLE =
             BLOCK_ENTITY_TYPES.register("refraction_table", () ->
                     BlockEntityType.Builder.of(BlockEntityRefractionTable::new,
-                            BlocksAS.REFRACTION_TABLE.get()).build(null));
+                            BlocksAS.REFRACTION_TABLE.get()).build(noFixer()));
 
     public static final RegistryObject<BlockEntityType<BlockEntityRitualLink>> RITUAL_LINK =
             BLOCK_ENTITY_TYPES.register("ritual_link", () ->
                     BlockEntityType.Builder.of(BlockEntityRitualLink::new,
-                            BlocksAS.RITUAL_LINK.get()).build(null));
+                            BlocksAS.RITUAL_LINK.get()).build(noFixer()));
 }

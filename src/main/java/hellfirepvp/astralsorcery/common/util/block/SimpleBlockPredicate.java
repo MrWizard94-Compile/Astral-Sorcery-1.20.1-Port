@@ -60,7 +60,7 @@ public class SimpleBlockPredicate implements BlockPredicate, Predicate<BlockStat
     }
 
     @Override
-    public boolean test(@Nonnull BlockState state) {
+    public boolean test(BlockState state) {
         Either<Boolean, Boolean> matchResult = this.validMatch.mapBoth(
                 states -> states.contains(state),
                 block -> state.getBlock().equals(block));

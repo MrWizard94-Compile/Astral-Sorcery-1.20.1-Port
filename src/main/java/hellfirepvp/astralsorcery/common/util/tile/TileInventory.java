@@ -105,7 +105,7 @@ public class TileInventory extends ItemStackHandler implements Iterable<ItemStac
 
     @Nonnull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         int insertable = this.stackSizeLimiter.apply(slot, stack);
         int leftOver = stack.getCount() - insertable;
         ItemStack toInsert = ItemUtils.copyStackWithSize(stack, insertable);

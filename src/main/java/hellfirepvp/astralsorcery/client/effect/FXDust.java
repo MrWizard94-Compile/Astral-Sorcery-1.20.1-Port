@@ -37,7 +37,8 @@ public class FXDust extends EntityVisualFX {
     public FXDust(double x, double y, double z) {
         super(x, y, z);
         setGravity(0.04f);
-        setMaxAge(30 + Minecraft.getInstance().level.random.nextInt(20));
+        net.minecraft.world.level.Level level = Minecraft.getInstance().level;
+        setMaxAge(30 + (level != null ? level.random.nextInt(20) : 10));
     }
 
     @Nonnull

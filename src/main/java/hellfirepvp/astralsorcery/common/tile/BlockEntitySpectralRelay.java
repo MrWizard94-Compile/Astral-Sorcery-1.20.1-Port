@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
- * Block entity for the Spectral Relay — a starlight booster for altars.
+ * Block entity for the Spectral Relay â€” a starlight booster for altars.
  * When placed on its required marble platform (see structure pattern below),
  * loaded with a Glass Lens, and with sky access, it provides starlight
  * to the nearest Starlight Crafting Altar within 16 blocks each tick.
@@ -48,10 +48,10 @@ import java.util.Set;
  * <p>Proximity penalty: if another relay is within 8 blocks, the starlight
  * contribution scales down linearly with distance to the neighbour.</p>
  *
- * <p>1.16 → 1.20: TileEntityTick → BlockEntityTick, CompoundNBT → CompoundTag,
- * TileAltar → BlockEntityAltar, AltarCollectionCategory → altar.receiveStarlight(),
- * DayTimeHelper.getCurrentDaytimeDistribution → CelestialHandler.getStarlightDistributionFactor(),
- * observerlib PatternBlockArray multiblock → inline block-position check.</p>
+ * <p>1.16 â†’ 1.20: TileEntityTick â†’ BlockEntityTick, CompoundNBT â†’ CompoundTag,
+ * TileAltar â†’ BlockEntityAltar, AltarCollectionCategory â†’ altar.receiveStarlight(),
+ * DayTimeHelper.getCurrentDaytimeDistribution â†’ CelestialHandler.getStarlightDistributionFactor(),
+ * observerlib PatternBlockArray multiblock â†’ inline block-position check.</p>
  */
 public class BlockEntitySpectralRelay extends BlockEntityTick {
 
@@ -77,7 +77,6 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
 
     private float proximityMultiplier = 1.0F;
     private boolean hasMultiblock = false;
-    private int ticksExisted = 0;
 
     public BlockEntitySpectralRelay(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.SPECTRAL_RELAY.get(), pos, state);
@@ -113,10 +112,9 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
             }
         }
 
-        ticksExisted++;
 
         // Periodic re-validation
-        if (ticksExisted % STRUCTURE_CHECK_INTERVAL == 0) {
+        if (getTicksExisted() % STRUCTURE_CHECK_INTERVAL == 0) {
             hasMultiblock = validateStructure();
             if (hasMultiblock && hasGlassLens()) {
                 updateAltarPos();
@@ -126,9 +124,10 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
             }
         }
 
-        if (hasMultiblock && hasGlassLens() && altarPos != null) {
-            MiscUtils.executeWithChunk(level, altarPos, () -> {
-                BlockEntityAltar altar = MiscUtils.getTileAt(level, altarPos, BlockEntityAltar.class, true);
+        BlockPos ap = altarPos;
+        if (hasMultiblock && hasGlassLens() && ap != null) {
+            MiscUtils.executeWithChunk(level, ap, () -> {
+                BlockEntityAltar altar = MiscUtils.getTileAt(level, ap, BlockEntityAltar.class, true);
                 if (altar == null) {
                     altarPos = null;
                 } else {
@@ -147,7 +146,7 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
                 (float) Math.pow(getBlockPos().getY() / 7.0F, 1.5F) / 60.0F, 0.0F, 1.0F);
         heightAmount = 0.7F + heightAmount * 0.3F;
 
-        // Daytime factor — less starlight during day (matches CelestialHandler distribution)
+        // Daytime factor â€” less starlight during day (matches CelestialHandler distribution)
         heightAmount *= CelestialHandler.getStarlightDistributionFactor(level);
 
         // Proximity penalty
@@ -241,10 +240,10 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
         }
 
         closestRelayPos = closest;
-        if (closestRelayPos == null) {
+        if (closest == null) {
             proximityMultiplier = 1.0F;
         } else {
-            double dist = Math.sqrt(thisPos.distSqr(closestRelayPos));
+            double dist = Math.sqrt(thisPos.distSqr(closest));
             proximityMultiplier = Mth.clamp((float) dist / RELAY_SEARCH_RADIUS, 0.0F, 1.0F);
         }
         markForUpdate();
@@ -282,7 +281,7 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (inventory.hasCapability(cap, side)) {
             return inventory.getCapability().cast();
         }
@@ -313,11 +312,13 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
     public void writeCustomNBT(@Nonnull CompoundTag compound) {
         super.writeCustomNBT(compound);
         compound.put("inventory", inventory.serialize());
-        if (altarPos != null) {
-            compound.put("altarPos", NbtUtils.writeBlockPos(altarPos));
+        BlockPos ap2 = altarPos;
+        if (ap2 != null) {
+            compound.put("altarPos", NbtUtils.writeBlockPos(ap2));
         }
-        if (closestRelayPos != null) {
-            compound.put("closestRelayPos", NbtUtils.writeBlockPos(closestRelayPos));
+        BlockPos crp = closestRelayPos;
+        if (crp != null) {
+            compound.put("closestRelayPos", NbtUtils.writeBlockPos(crp));
         }
         compound.putBoolean("hasMultiblock", hasMultiblock);
         compound.putFloat("proximityMultiplier", proximityMultiplier);

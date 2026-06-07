@@ -42,22 +42,25 @@ public class ItemComparator {
             }
         }
 
-        boolean thisHasTag = thisStack.hasTag() && !thisStack.getTag().isEmpty();
-        boolean sampleHasTag = sampleCompare.hasTag() && !sampleCompare.getTag().isEmpty();
+        CompoundTag thisTag = thisStack.getTag();
+        CompoundTag sampleTag = sampleCompare.getTag();
+        boolean thisHasTag = thisTag != null && !thisTag.isEmpty();
+        boolean sampleHasTag = sampleTag != null && !sampleTag.isEmpty();
 
         if (lClauses.contains(Clause.NBT_STRICT)) {
             if (!thisHasTag && sampleHasTag) {
                 return false;
-            } else if (thisHasTag && (!sampleHasTag
-                    || !thisStack.getTag().equals(sampleCompare.getTag()))) {
+            }
+            if (thisHasTag && thisTag != null
+                    && (!sampleHasTag || sampleTag == null || !thisTag.equals(sampleTag))) {
                 return false;
             }
         } else if (lClauses.contains(Clause.NBT_LEAST)) {
-            if (thisHasTag) {
+            if (thisHasTag && thisTag != null) {
                 if (!sampleHasTag) {
                     return false;
                 }
-                if (!NBTComparator.contains(thisStack.getTag(), sampleCompare.getTag())) {
+                if (sampleTag != null && !NBTComparator.contains(thisTag, sampleTag)) {
                     return false;
                 }
             }

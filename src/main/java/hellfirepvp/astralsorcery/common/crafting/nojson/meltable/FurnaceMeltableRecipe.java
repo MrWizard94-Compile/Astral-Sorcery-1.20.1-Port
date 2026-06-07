@@ -13,8 +13,12 @@ public class FurnaceMeltableRecipe extends ItemMeltableRecipe {
     public FurnaceMeltableRecipe() {
         super(AstralSorcery.key("all_furnace_meltable"),
                 (level, pos, state) -> RecipeHelper.findSmeltingResult(level, state).isPresent(),
-                (worldPos, state) -> RecipeHelper.findSmeltingResult(worldPos.getWorld(), state)
-                        .map(Tuple::getA)
-                        .orElse(ItemStack.EMPTY));
+                (worldPos, state) -> {
+                    net.minecraft.world.level.Level lvl = worldPos.getWorld();
+                    if (lvl == null) return ItemStack.EMPTY;
+                    return RecipeHelper.findSmeltingResult(lvl, state)
+                            .map(Tuple::getA)
+                            .orElse(ItemStack.EMPTY);
+                });
     }
 }

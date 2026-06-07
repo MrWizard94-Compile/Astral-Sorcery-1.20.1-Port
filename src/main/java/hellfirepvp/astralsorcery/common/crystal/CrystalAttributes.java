@@ -392,7 +392,8 @@ public final class CrystalAttributes {
 
         @Nullable
         static Attribute deserialize(@Nonnull CompoundTag tag) {
-            ResourceLocation key = new ResourceLocation(tag.getString("property"));
+            ResourceLocation key = ResourceLocation.tryParse(tag.getString("property"));
+            if (key == null) return null;
             CrystalProperty prop = CrystalPropertyRegistry.INSTANCE.getProperty(key);
             if (prop == null) {
                 return null;

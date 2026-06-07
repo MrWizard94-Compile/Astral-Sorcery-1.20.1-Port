@@ -74,9 +74,6 @@ public class FXCube extends EntityVisualFX {
 
         float half = scale * 0.5f;
         float rotation = initialRotation + (getAge() + partialTick) * rotationSpeedDeg;
-        float rad = (float) Math.toRadians(rotation);
-        float cosR = (float) Math.cos(rad);
-        float sinR = (float) Math.sin(rad);
 
         poseStack.pushPose();
         poseStack.translate(x, y, z);

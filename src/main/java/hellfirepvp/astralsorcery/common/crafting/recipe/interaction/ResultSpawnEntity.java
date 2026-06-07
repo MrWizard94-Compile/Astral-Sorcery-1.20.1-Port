@@ -71,7 +71,8 @@ public class ResultSpawnEntity extends InteractionResult {
 
     @Override
     public void write(JsonObject json) {
-        json.addProperty("entityType", ForgeRegistries.ENTITY_TYPES.getKey(this.entityType).toString());
+        ResourceLocation entityKey = ForgeRegistries.ENTITY_TYPES.getKey(this.entityType);
+        json.addProperty("entityType", entityKey != null ? entityKey.toString() : "");
     }
 
     @Override

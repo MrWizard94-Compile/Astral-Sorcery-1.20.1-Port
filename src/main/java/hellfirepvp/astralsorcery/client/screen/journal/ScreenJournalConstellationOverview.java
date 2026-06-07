@@ -14,10 +14,11 @@ import hellfirepvp.astralsorcery.common.data.research.ResearchHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
+
+import javax.annotation.Nonnull;
 
 import java.awt.*;
 import java.util.*;
@@ -70,7 +71,7 @@ public class ScreenJournalConstellationOverview extends ScreenJournal implements
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
+    public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
         super.render(graphics, mouseX, mouseY, pTicks);
         drawConstellationBackground(graphics);
         drawDefault(graphics, TexturesAS.TEX_GUI_BOOK_FRAME_FULL, mouseX, mouseY);

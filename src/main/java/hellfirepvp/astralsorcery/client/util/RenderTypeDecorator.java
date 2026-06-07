@@ -26,8 +26,6 @@ import java.util.Optional;
 public class RenderTypeDecorator extends RenderType {
 
     private final RenderType wrapped;
-    private final Runnable setupAction;
-    private final Runnable cleanupAction;
 
     private RenderTypeDecorator(@Nonnull RenderType wrapped,
                                 @Nonnull Runnable setupAction,
@@ -50,8 +48,6 @@ public class RenderTypeDecorator extends RenderType {
                 }
         );
         this.wrapped = wrapped;
-        this.setupAction = setupAction;
-        this.cleanupAction = cleanupAction;
     }
 
     /**

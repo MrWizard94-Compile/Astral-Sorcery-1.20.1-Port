@@ -48,7 +48,6 @@ public class TickManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static TickEvent.Type resolveType(@Nonnull TickEvent event) {
         if (event instanceof TickEvent.ServerTickEvent) {
             return TickEvent.Type.SERVER;

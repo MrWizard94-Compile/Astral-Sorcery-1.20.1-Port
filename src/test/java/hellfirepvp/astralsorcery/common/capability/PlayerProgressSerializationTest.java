@@ -51,8 +51,9 @@ class PlayerProgressSerializationTest {
         // Verify all fields match
         assertEquals(ProgressionTier.CONSTELLATION_CRAFT, loaded.getTierReached());
         assertTrue(loaded.wasOnceAttuned());
-        assertNotNull(loaded.getAttunedConstellation());
-        assertEquals("astralsorcery:armara", loaded.getAttunedConstellation().toString());
+        ResourceLocation loadedAttuned = loaded.getAttunedConstellation();
+        assertNotNull(loadedAttuned);
+        assertEquals("astralsorcery:armara", loadedAttuned.toString());
         assertEquals(3, loaded.getDiscoveredConstellations().size());
         assertTrue(loaded.hasDiscovered(new ResourceLocation("astralsorcery", "discidia")));
         assertTrue(loaded.hasDiscovered(new ResourceLocation("astralsorcery", "armara")));
@@ -76,7 +77,9 @@ class PlayerProgressSerializationTest {
 
         assertEquals(ProgressionTier.TRAIT_CRAFT, target.getTierReached());
         assertTrue(target.wasOnceAttuned());
-        assertEquals("astralsorcery:evorsio", target.getAttunedConstellation().toString());
+        ResourceLocation copiedAttuned = target.getAttunedConstellation();
+        assertNotNull(copiedAttuned);
+        assertEquals("astralsorcery:evorsio", copiedAttuned.toString());
         assertEquals(1, target.getDiscoveredConstellations().size());
         assertEquals(3, target.getPerkPoints());
         assertEquals(5000L, target.getPerkExp());

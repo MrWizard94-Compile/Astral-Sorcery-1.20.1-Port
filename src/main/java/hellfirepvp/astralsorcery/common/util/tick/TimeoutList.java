@@ -6,14 +6,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- * A list of elements with per-element tick-based timeouts.
+ * A map of elements with per-element tick-based timeouts.
  * Elements are removed and a delegate is notified when they expire.
  * Implements ITickHandler so it can be registered with TickManager.
+ *
+ * <p>Backed by a {@link LinkedHashMap} to avoid a private inner class
+ * which triggers a ModuleClassLoader bug in securejarhandler when accessed
+ * via invokedynamic lambdas.</p>
  *
  * @param <V> the element type
  */
@@ -23,7 +27,8 @@ public class TimeoutList<V> implements ITickHandler, Iterable<V> {
     private final TimeoutDelegate<V> delegate;
     private final EnumSet<TickEvent.Type> tickTypes;
 
-    private final List<TimeoutEntry<V>> tickEntries = new LinkedList<>();
+    // Key = element, Value = remaining ticks (0 = expired this tick)
+    private final LinkedHashMap<V, Integer> tickEntries = new LinkedHashMap<>();
 
     public TimeoutList(@Nullable TimeoutDelegate<V> delegate, TickEvent.Type... types) {
         this.delegate = delegate;
@@ -40,15 +45,13 @@ public class TimeoutList<V> implements ITickHandler, Iterable<V> {
     }
 
     public void add(int timeout, @Nonnull V value) {
-        this.tickEntries.add(new TimeoutEntry<>(timeout, value));
+        tickEntries.put(value, timeout);
     }
 
     public boolean setTimeout(int timeout, @Nonnull V value) {
-        for (TimeoutEntry<V> entry : tickEntries) {
-            if (entry.value.equals(value)) {
-                entry.timeout = timeout;
-                return true;
-            }
+        if (tickEntries.containsKey(value)) {
+            tickEntries.put(value, timeout);
+            return true;
         }
         return false;
     }
@@ -63,37 +66,24 @@ public class TimeoutList<V> implements ITickHandler, Iterable<V> {
     }
 
     public boolean contains(@Nullable V value) {
-        if (value == null) return false;
-        for (TimeoutEntry<V> entry : tickEntries) {
-            if (entry.value.equals(value)) {
-                return true;
-            }
-        }
-        return false;
+        return value != null && tickEntries.containsKey(value);
     }
 
     public boolean remove(@Nonnull V key) {
-        return this.removeIf(key::equals);
+        return tickEntries.remove(key) != null;
     }
 
     public boolean removeIf(@Nonnull Predicate<V> test) {
-        return this.tickEntries.removeIf(e -> test.test(e.value));
+        return tickEntries.keySet().removeIf(test);
     }
 
     public int getTimeout(@Nonnull V value) {
-        for (TimeoutEntry<V> entry : tickEntries) {
-            if (entry.value.equals(value)) {
-                return entry.timeout;
-            }
-        }
-        return -1;
+        return tickEntries.getOrDefault(value, -1);
     }
 
     public void addAll(@Nullable TimeoutList<V> entries) {
         if (entries == null) return;
-        for (TimeoutEntry<V> entry : entries.tickEntries) {
-            setOrAddTimeout(entry.timeout, entry.value);
-        }
+        entries.tickEntries.forEach((v, timeout) -> setOrAddTimeout(timeout, v));
     }
 
     public boolean isEmpty() {
@@ -102,22 +92,25 @@ public class TimeoutList<V> implements ITickHandler, Iterable<V> {
 
     @Override
     public void tick(@Nonnull TickEvent.Type type, @Nonnull Object... context) {
-        Iterator<TimeoutEntry<V>> iterator = tickEntries.iterator();
+        Iterator<Map.Entry<V, Integer>> iterator = tickEntries.entrySet().iterator();
         while (iterator.hasNext()) {
-            TimeoutEntry<V> entry = iterator.next();
-            entry.timeout--;
-            if (entry.timeout <= 0) {
+            Map.Entry<V, Integer> entry = iterator.next();
+            int remaining = entry.getValue() - 1;
+            if (remaining <= 0) {
                 if (delegate != null) {
-                    delegate.onTimeout(entry.value);
+                    delegate.onTimeout(entry.getKey());
                 }
                 iterator.remove();
+            } else {
+                entry.setValue(remaining);
             }
         }
     }
 
     public void clear() {
-        if (delegate != null) {
-            tickEntries.forEach(entry -> delegate.onTimeout(entry.value));
+        TimeoutDelegate<V> d = delegate;
+        if (d != null) {
+            tickEntries.keySet().forEach(d::onTimeout);
         }
         tickEntries.clear();
     }
@@ -125,23 +118,7 @@ public class TimeoutList<V> implements ITickHandler, Iterable<V> {
     @Override
     @Nonnull
     public Iterator<V> iterator() {
-        Iterator<TimeoutEntry<V>> entryIterator = tickEntries.iterator();
-        return new Iterator<V>() {
-            @Override
-            public boolean hasNext() {
-                return entryIterator.hasNext();
-            }
-
-            @Override
-            public V next() {
-                return entryIterator.next().value;
-            }
-
-            @Override
-            public void remove() {
-                entryIterator.remove();
-            }
-        };
+        return tickEntries.keySet().iterator();
     }
 
     @Override
@@ -168,29 +145,5 @@ public class TimeoutList<V> implements ITickHandler, Iterable<V> {
      */
     public interface TimeoutDelegate<V> {
         void onTimeout(@Nonnull V object);
-    }
-
-    private static class TimeoutEntry<V> {
-        @Nonnull
-        private final V value;
-        private int timeout;
-
-        private TimeoutEntry(int timeout, @Nonnull V value) {
-            this.timeout = timeout;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            TimeoutEntry<?> that = (TimeoutEntry<?>) o;
-            return value.equals(that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value.hashCode();
-        }
     }
 }

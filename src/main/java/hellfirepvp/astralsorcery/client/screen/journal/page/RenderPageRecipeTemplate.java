@@ -1,7 +1,6 @@
 package hellfirepvp.astralsorcery.client.screen.journal.page;
 
 import hellfirepvp.astralsorcery.client.ClientScheduler;
-import hellfirepvp.astralsorcery.client.lib.TexturesAS;
 import hellfirepvp.astralsorcery.client.resource.AbstractRenderableTexture;
 import hellfirepvp.astralsorcery.client.util.RenderingDrawUtils;
 import hellfirepvp.astralsorcery.common.auxiliary.book.BookLookupInfo;
@@ -15,7 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -90,12 +88,13 @@ public abstract class RenderPageRecipeTemplate implements RenderablePage {
     }
 
     protected boolean handleBookLookupClick(double mouseX, double mouseY) {
+        ResearchNode currentNode = this.node;
         for (Map.Entry<Rectangle, Tuple<ItemStack, Ingredient>> entry : thisFrameInputStacks.entrySet()) {
             if (entry.getKey().contains(mouseX, mouseY)) {
                 ItemStack stack = entry.getValue().getA();
                 BookLookupInfo info = BookLookupRegistry.findPage(stack);
                 if (info != null && info.canSee(hellfirepvp.astralsorcery.common.data.research.ResearchHelper.getClientProgress())
-                        && !info.getResearchNode().equals(this.node)) {
+                        && !info.getResearchNode().equals(currentNode)) {
                     info.openGui();
                     return true;
                 }
@@ -105,7 +104,7 @@ public abstract class RenderPageRecipeTemplate implements RenderablePage {
             ItemStack stack = thisFrameOutputStack.getB();
             BookLookupInfo info = BookLookupRegistry.findPage(stack);
             if (info != null && info.canSee(hellfirepvp.astralsorcery.common.data.research.ResearchHelper.getClientProgress())
-                    && !info.getResearchNode().equals(this.node)) {
+                    && !info.getResearchNode().equals(currentNode)) {
                 info.openGui();
                 return true;
             }
@@ -119,8 +118,9 @@ public abstract class RenderPageRecipeTemplate implements RenderablePage {
                 && thisFrameOutputStack.getA().contains(mouseX, mouseY)) {
             String name = recipe.getId().toString();
             Minecraft.getInstance().keyboardHandler.setClipboard(name);
-            if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().player.displayClientMessage(
+            net.minecraft.client.player.LocalPlayer msgPlayer = Minecraft.getInstance().player;
+            if (msgPlayer != null) {
+                msgPlayer.displayClientMessage(
                         Component.translatable("astralsorcery.misc.ctrlcopy.copied", name), false);
             }
             return true;
@@ -128,7 +128,6 @@ public abstract class RenderPageRecipeTemplate implements RenderablePage {
         return false;
     }
 
-    @SuppressWarnings("null")
     protected void renderHoverTooltips(GuiGraphics graphics, int mouseX, int mouseY, ResourceLocation recipeName) {
         List<Component> tooltip = new ArrayList<>();
 
@@ -152,7 +151,6 @@ public abstract class RenderPageRecipeTemplate implements RenderablePage {
         }
     }
 
-    @SuppressWarnings("null")
     private void addItemTooltip(ItemStack stack, List<Component> out) {
         try {
             TooltipFlag flag = Minecraft.getInstance().options.advancedItemTooltips

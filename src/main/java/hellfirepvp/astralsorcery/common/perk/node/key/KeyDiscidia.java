@@ -19,8 +19,6 @@ import javax.annotation.Nonnull;
  */
 public class KeyDiscidia extends KeyPerk {
 
-    private static final float FULL_HEALTH_DAMAGE_MULT = 1.25f;
-
     public KeyDiscidia(int x, int y) {
         super(AstralSorcery.key("key_discidia"), x, y);
         setRequiredConstellation(AstralSorcery.key("discidia"));

@@ -76,29 +76,49 @@ public class ItemMantle extends ArmorItem {
 
     @Nullable
     @Override
-    public String getArmorTexture(@Nonnull ItemStack stack, @Nonnull Entity entity,
-                                   @Nonnull EquipmentSlot slot, @Nullable String type) {
+    public String getArmorTexture(ItemStack stack, Entity entity,
+                                   EquipmentSlot slot, @Nullable String type) {
         return AstralSorcery.MODID + ":textures/models/armor/mantle_" +
                 constellation.getPath() + ".png";
     }
 
-    @Override
-    public void onArmorTick(@Nonnull ItemStack stack, @Nonnull Level level,
-                            @Nonnull Player player) {
-        if (level.isClientSide()) return;
-        if (player.tickCount % 20 != 0) return; // Tick effects once per second
-
-        // Subclasses override for constellation-specific effects
-        onMantleTick(stack, level, player);
+    /**
+     * Called once per second when the mantle is worn by a player on the server.
+     * Override in concrete mantle subclasses to apply per-tick effects.
+     * Driven by {@link EventHandlerMantleTick#onPlayerTickForItem} instead of the
+     * deprecated {@code IForgeItem.onArmorTick}.
+     */
+    public void onMantleTick(@Nonnull ItemStack stack, @Nonnull Level level,
+                             @Nonnull Player player) {
+        // Base mantle has no special effect — subclasses override
     }
 
-    /**
-     * Called once per second when the mantle is worn. Override in subclasses
-     * for constellation-specific passive effects.
-     */
-    protected void onMantleTick(@Nonnull ItemStack stack, @Nonnull Level level,
-                                 @Nonnull Player player) {
-        // Base mantle has no special effect — subclasses override
+    @Override
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    public void initializeClient(@Nonnull java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
+            @javax.annotation.Nullable
+            private hellfirepvp.astralsorcery.client.model.armor.ModelArmorMantle armorModel;
+
+            @Override
+            public net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(
+                    net.minecraft.world.entity.LivingEntity entity,
+                    net.minecraft.world.item.ItemStack stack,
+                    net.minecraft.world.entity.EquipmentSlot slot,
+                    net.minecraft.client.model.HumanoidModel<?> original) {
+                hellfirepvp.astralsorcery.client.model.armor.ModelArmorMantle model = armorModel;
+                if (model == null) {
+                    model = new hellfirepvp.astralsorcery.client.model.armor.ModelArmorMantle(
+                            net.minecraft.client.Minecraft.getInstance().getEntityModels()
+                                    .bakeLayer(hellfirepvp.astralsorcery.client.model.armor.ModelArmorMantle.LAYER));
+                    armorModel = model;
+                }
+                model.attackTime = original.attackTime;
+                model.riding     = original.riding;
+                model.young      = original.young;
+                return model;
+            }
+        });
     }
 
     /**

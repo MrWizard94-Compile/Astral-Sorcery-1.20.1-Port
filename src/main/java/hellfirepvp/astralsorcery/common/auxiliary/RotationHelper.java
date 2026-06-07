@@ -4,8 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.state.BlockState;
-
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,18 +50,6 @@ public class RotationHelper {
             case LEFT_RIGHT -> new BlockPos(pos.getX(), pos.getY(), -pos.getZ());
             case FRONT_BACK -> new BlockPos(-pos.getX(), pos.getY(), pos.getZ());
         };
-    }
-
-    /**
-     * Rotate a block state by the given rotation.
-     *
-     * @param state    the state to rotate
-     * @param rotation the rotation
-     * @return the rotated state
-     */
-    @Nonnull
-    public static BlockState rotateState(@Nonnull BlockState state, @Nonnull Rotation rotation) {
-        return state.rotate(rotation);
     }
 
     /**

@@ -34,10 +34,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class RenderWell implements BlockEntityRenderer<BlockEntityWell> {
 
-    private final BlockEntityRendererProvider.Context context;
-
     public RenderWell(@Nonnull BlockEntityRendererProvider.Context context) {
-        this.context = context;
     }
 
     @Override

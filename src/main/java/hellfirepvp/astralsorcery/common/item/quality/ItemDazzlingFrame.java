@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +24,8 @@ public class ItemDazzlingFrame extends ItemAS {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level level,
-                                List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level,
+                                @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
         getQuality(stack).ifPresent(q -> tooltip.add(q.getDisplayName()));
     }
 

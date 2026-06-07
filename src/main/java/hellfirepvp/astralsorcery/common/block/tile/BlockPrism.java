@@ -66,7 +66,7 @@ public class BlockPrism extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level,
                                @Nonnull BlockPos pos, @Nonnull CollisionContext ctx) {
         return SHAPE;
@@ -88,7 +88,7 @@ public class BlockPrism extends BlockEntityBlock {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+
     public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                                  @Nonnull Player player, @Nonnull InteractionHand hand,
                                  @Nonnull BlockHitResult hit) {
@@ -138,7 +138,7 @@ public class BlockPrism extends BlockEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+
     public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos,
                          @Nonnull BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
@@ -150,6 +150,8 @@ public class BlockPrism extends BlockEntityBlock {
                 if (lens != null && !lens.isEmpty()) Block.popResource(level, pos, lens);
             }
         }
-        super.onRemove(state, level, pos, newState, isMoving);
+        if (state.hasBlockEntity() && !state.is(newState.getBlock())) {
+            level.removeBlockEntity(pos);
+        }
     }
 }

@@ -3,6 +3,7 @@ package hellfirepvp.astralsorcery.common.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import hellfirepvp.astralsorcery.common.lib.LootAS;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class LinearLuckBonus extends LootItemConditionalFunction {
@@ -29,7 +31,7 @@ public class LinearLuckBonus extends LootItemConditionalFunction {
     }
 
     @Override
-    protected ItemStack run(ItemStack stack, LootContext context) {
+    protected ItemStack run(@Nonnull ItemStack stack, @Nonnull LootContext context) {
         @Nullable ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
         if (tool == null || tool.isEmpty()) {
             return stack;
@@ -38,10 +40,13 @@ public class LinearLuckBonus extends LootItemConditionalFunction {
         int luck = 0;
         Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
         if (entity instanceof Player player && player.hasEffect(MobEffects.LUCK)) {
-            luck += player.getEffect(MobEffects.LUCK).getAmplifier() + 1;
+            MobEffectInstance luckEffect = player.getEffect(MobEffects.LUCK);
+            if (luckEffect != null) {
+                luck += luckEffect.getAmplifier() + 1;
+            }
         }
-        luck += EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
-        luck += EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MOB_LOOTING, tool);
+        luck += EnchantmentHelper.getEnchantments(tool).getOrDefault(Enchantments.BLOCK_FORTUNE, 0);
+        luck += EnchantmentHelper.getEnchantments(tool).getOrDefault(Enchantments.MOB_LOOTING, 0);
 
         int bonus = 0;
         for (int i = 0; i < luck; i++) {
@@ -53,7 +58,7 @@ public class LinearLuckBonus extends LootItemConditionalFunction {
 
     public static class Serializer extends LootItemConditionalFunction.Serializer<LinearLuckBonus> {
         @Override
-        public LinearLuckBonus deserialize(JsonObject json, JsonDeserializationContext context, LootItemCondition[] conditions) {
+        public LinearLuckBonus deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, @Nonnull LootItemCondition[] conditions) {
             return new LinearLuckBonus(conditions);
         }
     }

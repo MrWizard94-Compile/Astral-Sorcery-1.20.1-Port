@@ -4,7 +4,6 @@ import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-import javax.annotation.Nonnull;
 
 /**
  * Chisel — used on blocks in-world to transmute them (applies block transmutation recipes).
@@ -21,8 +20,8 @@ public class ItemChisel extends ItemAS {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(@Nonnull net.minecraft.world.item.ItemStack stack,
-                                             @Nonnull Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(net.minecraft.world.item.ItemStack stack,
+                                             Enchantment enchantment) {
         return super.canApplyAtEnchantingTable(stack, enchantment)
                 || enchantment == Enchantments.BLOCK_FORTUNE;
     }

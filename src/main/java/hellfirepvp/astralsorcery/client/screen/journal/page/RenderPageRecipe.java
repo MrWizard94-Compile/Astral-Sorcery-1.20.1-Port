@@ -35,7 +35,6 @@ public class RenderPageRecipe extends RenderPageRecipeTemplate {
         this.recipeId = recipeId;
     }
 
-    @SuppressWarnings("null")
     public static RenderPageRecipe fromRecipe(@Nullable ResearchNode node, int nodePage, Recipe<?> recipe) {
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
         Map<Integer, Ingredient> inputs = new HashMap<>();

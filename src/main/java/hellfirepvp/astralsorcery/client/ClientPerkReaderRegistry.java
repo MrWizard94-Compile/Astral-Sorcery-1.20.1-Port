@@ -20,7 +20,6 @@ public final class ClientPerkReaderRegistry {
 
     private ClientPerkReaderRegistry() {}
 
-    @SuppressWarnings("null")
     public static void init() {
         // Vanilla-backed types — read directly from the player's attribute instance
         AttributeTypeRegistry.registerReader(new ReaderVanillaAttribute(

@@ -7,11 +7,9 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.constellation.world;
 
-import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.base.MoonPhase;
 import hellfirepvp.astralsorcery.common.constellation.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
@@ -51,9 +49,8 @@ public class CelestialHandler {
     /** Ticks in a full Minecraft day. */
     private static final long TICKS_PER_DAY = 24000L;
 
-    /** Tick when night starts (13000) and ends (23000). */
+    /** Tick when night starts (13000). */
     private static final long NIGHT_START = 13000L;
-    private static final long NIGHT_END = 23000L;
 
     /** Twilight zones: dusk 12000-13000, dawn 23000-24000 */
     private static final long DUSK_START = 12000L;

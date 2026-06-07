@@ -29,7 +29,6 @@ public class RenderPageText implements RenderablePage {
         this.lines = buildLines(translationKey);
     }
 
-    @SuppressWarnings("null")
     private static List<FormattedCharSequence> buildLines(String key) {
         String raw = net.minecraft.client.resources.language.I18n.get(key);
         List<FormattedCharSequence> out = new ArrayList<>();
@@ -42,7 +41,6 @@ public class RenderPageText implements RenderablePage {
     }
 
     @Override
-    @SuppressWarnings("null")
     public void render(GuiGraphics graphics, int offsetX, int offsetY,
                        float partialTick, int mouseX, int mouseY) {
         var font = Minecraft.getInstance().font;

@@ -31,7 +31,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -54,7 +53,6 @@ public class BlockEntityChalice extends BlockEntityTick {
     private final PrecisionSingleFluidTank tank;
     private final LazyOptional<IFluidHandler> fluidCap;
 
-    private int ticksExisted = 0;
     private int nextInteractionTick = -1;
 
     @Nonnull
@@ -66,14 +64,12 @@ public class BlockEntityChalice extends BlockEntityTick {
         this.fluidCap = LazyOptional.of(() -> new TankWrapper(tank));
     }
 
-    @SuppressWarnings("null")
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) return;
 
-        if (ticksExisted % 20 != 0) return;
+        if (getTicksExisted() % 20 != 0) return;
 
         Level level = getLevel();
         if (level == null) return;
@@ -86,7 +82,7 @@ public class BlockEntityChalice extends BlockEntityTick {
         FluidStack thisFluid = tank.getFluid();
         if (thisFluid.isEmpty()) return;
 
-        if (ticksExisted % 40 == 0) {
+        if (getTicksExisted() % 40 == 0) {
             PacketChannel.sendToAllTracking(
                     new PktParticleEvent(PktParticleEvent.WELL_COLLECT, getBlockPos()),
                     (ServerLevel) level, getBlockPos());
@@ -162,11 +158,11 @@ public class BlockEntityChalice extends BlockEntityTick {
     private void tickInteractions(@Nonnull Level level) {
         RandomSource rng = level.getRandom();
         if (nextInteractionTick < 0) {
-            nextInteractionTick = ticksExisted + 20 + rng.nextInt(40);
+            nextInteractionTick = getTicksExisted() + 20 + rng.nextInt(40);
             return;
         }
-        if (ticksExisted < nextInteractionTick) return;
-        nextInteractionTick = ticksExisted + 20 + rng.nextInt(40);
+        if (getTicksExisted() < nextInteractionTick) return;
+        nextInteractionTick = getTicksExisted() + 20 + rng.nextInt(40);
 
         FluidStack thisFluid = tank.getFluid();
         if (thisFluid.isEmpty()) return;
@@ -273,14 +269,6 @@ public class BlockEntityChalice extends BlockEntityTick {
     }
 
     /**
-     * Get the number of ticks this block entity has existed.
-     * Used for renderer animations.
-     */
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
-
-    /**
      * Get the amount of fluid stored in the chalice in millibuckets.
      * Used by the renderer to determine fluid level.
      */
@@ -308,7 +296,7 @@ public class BlockEntityChalice extends BlockEntityTick {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             return fluidCap.cast();
         }
@@ -386,18 +374,18 @@ public class BlockEntityChalice extends BlockEntityTick {
         }
 
         @Override
-        public boolean isFluidValid(int tankIndex, @Nonnull FluidStack stack) {
+        public boolean isFluidValid(int tankIndex, FluidStack stack) {
             return tank.isFluidValid(stack);
         }
 
         @Override
-        public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public int fill(FluidStack resource, FluidAction action) {
             return tank.fill(resource, action);
         }
 
         @Nonnull
         @Override
-        public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
+        public FluidStack drain(FluidStack resource, FluidAction action) {
             FluidStack stored = tank.getFluid();
             if (stored.isEmpty() || !stored.isFluidEqual(resource)) {
                 return FluidStack.EMPTY;
@@ -407,7 +395,7 @@ public class BlockEntityChalice extends BlockEntityTick {
 
         @Nonnull
         @Override
-        public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
+        public FluidStack drain(int maxDrain, FluidAction action) {
             return tank.drain(maxDrain, action);
         }
     }

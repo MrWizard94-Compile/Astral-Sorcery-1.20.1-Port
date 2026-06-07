@@ -24,7 +24,7 @@ public class ItemMantleAevitas extends ItemMantle {
     }
 
     @Override
-    protected void onMantleTick(@Nonnull ItemStack stack, @Nonnull Level level,
+    public void onMantleTick(@Nonnull ItemStack stack, @Nonnull Level level,
                                  @Nonnull Player player) {
         int amplifier = 0;
         if (isNighttime(level) && isUnderOpenSky(player)) {

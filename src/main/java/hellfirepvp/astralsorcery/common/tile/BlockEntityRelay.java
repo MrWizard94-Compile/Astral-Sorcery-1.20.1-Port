@@ -50,7 +50,6 @@ public class BlockEntityRelay extends BlockEntityTick {
 
     @Nullable
     private BlockPos linkedAltar = null;
-    private int ticksExisted = 0;
 
     public BlockEntityRelay(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.RELAY.get(), pos, state);
@@ -58,11 +57,9 @@ public class BlockEntityRelay extends BlockEntityTick {
         this.itemCap = LazyOptional.of(() -> inventory);
     }
 
-    @SuppressWarnings("null")
     @Override
     public void tick() {
         super.tick();
-        ticksExisted++;
         if (isClientSide()) return;
 
         Level level = getLevel();
@@ -83,7 +80,7 @@ public class BlockEntityRelay extends BlockEntityTick {
 
         if (held.isEmpty() || !(held.getItem() instanceof ItemGlassLens)) return;
 
-        if (linkedAltar == null && (ticksExisted % 200 == 1)) {
+        if (linkedAltar == null && (getTicksExisted() % 200 == 1)) {
             BlockPos closest = null;
             double bestDist = Double.MAX_VALUE;
             for (BlockPos candidate : BlockPos.betweenClosed(
@@ -104,8 +101,9 @@ public class BlockEntityRelay extends BlockEntityTick {
             }
         }
 
-        if (linkedAltar == null) return;
-        BlockEntity target = level.getBlockEntity(linkedAltar);
+        BlockPos la = linkedAltar;
+        if (la == null) return;
+        BlockEntity target = level.getBlockEntity(la);
         if (!(target instanceof BlockEntityAltar altar)) {
             linkedAltar = null;
             markForUpdate();
@@ -117,16 +115,13 @@ public class BlockEntityRelay extends BlockEntityTick {
         float daytimeFactor = CelestialHandler.getStarlightDistributionFactor(level);
         altar.receiveStarlight((0.7F + heightFactor * 0.3F) * daytimeFactor * 45.0, null);
 
-        if (ticksExisted % 20 == 0) {
+        if (getTicksExisted() % 20 == 0) {
             PacketChannel.sendToAllTracking(
                     new PktParticleEvent(PktParticleEvent.WELL_COLLECT, getBlockPos()),
                     (ServerLevel) level, getBlockPos());
         }
     }
 
-    public int getTicksExisted() {
-        return ticksExisted;
-    }
 
     @Nonnull
     public TileInventory getInventory() {
@@ -154,7 +149,7 @@ public class BlockEntityRelay extends BlockEntityTick {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCap.cast();
         }

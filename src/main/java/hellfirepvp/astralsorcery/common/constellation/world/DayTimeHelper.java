@@ -35,10 +35,8 @@ public final class DayTimeHelper {
 
     private static final long TICKS_PER_DAY = 24000L;
     private static final long SUNRISE = 0L;
-    private static final long NOON = 6000L;
     private static final long SUNSET = 12000L;
     private static final long NIGHT_START = 13000L;
-    private static final long MIDNIGHT = 18000L;
     private static final long DAWN_START = 23000L;
 
     private DayTimeHelper() {}

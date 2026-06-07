@@ -55,8 +55,12 @@ public class DynamicEnchantment {
     @Nonnull
     public DynamicEnchantment copy(int level) {
         if (this.getType().isEnchantmentSpecific()) {
-            return new DynamicEnchantment(this.getType(), this.getEnchantment(), level);
-        } else {
+            Enchantment ench = this.getEnchantment();
+            if (ench != null) {
+                return new DynamicEnchantment(this.getType(), ench, level);
+            }
+        }
+        {
             return new DynamicEnchantment(this.type, level);
         }
     }

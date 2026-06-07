@@ -164,9 +164,10 @@ public class LiquidInfusion implements Recipe<Container> {
             buf.writeItem(recipe.output);
             buf.writeVarInt(recipe.fluidMbRequired);
             buf.writeVarInt(recipe.craftDuration);
-            if (recipe.requiredConstellation != null) {
+            ResourceLocation reqCst = recipe.requiredConstellation;
+            if (reqCst != null) {
                 buf.writeBoolean(true);
-                buf.writeResourceLocation(recipe.requiredConstellation);
+                buf.writeResourceLocation(reqCst);
             } else {
                 buf.writeBoolean(false);
             }

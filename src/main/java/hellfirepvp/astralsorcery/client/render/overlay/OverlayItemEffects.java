@@ -15,8 +15,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-import javax.annotation.Nonnull;
-
 /**
  * Iterates all equipment slots and calls {@link ItemOverlayRender#renderOverlay}
  * on the first item that implements it. Only one overlay renders per frame
@@ -33,7 +31,7 @@ public class OverlayItemEffects implements IGuiOverlay {
     private OverlayItemEffects() {}
 
     @Override
-    public void render(@Nonnull ForgeGui gui, @Nonnull GuiGraphics graphics,
+    public void render(ForgeGui gui, GuiGraphics graphics,
                         float partialTick, int screenWidth, int screenHeight) {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;

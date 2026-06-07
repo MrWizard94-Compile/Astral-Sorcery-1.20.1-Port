@@ -11,8 +11,9 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrime;
 import hellfirepvp.astralsorcery.common.lib.structure.MatchableState;
 import hellfirepvp.astralsorcery.common.lib.structure.PatternBlockArray;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -319,12 +320,13 @@ public final class StructuresAS {
         // Override center (0,-1,0): accept marble_raw OR any BlockFountainPrime placed by the player
         pattern.addBlock(new MatchableState() {
             @Override
+            @Nonnull
             public BlockState getDescriptiveState(long tick) {
                 return BlocksAS.MARBLE_RAW.get().defaultBlockState();
             }
 
             @Override
-            public boolean matches(BlockState state) {
+            public boolean matches(@Nonnull BlockState state) {
                 return state.getBlock() == BlocksAS.MARBLE_RAW.get()
                         || state.getBlock() instanceof BlockFountainPrime;
             }

@@ -9,6 +9,8 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.junit.jupiter.api.BeforeAll;
+
+import javax.annotation.Nonnull;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -107,6 +109,7 @@ class PatternBlockArrayTest {
     void testSimpleMatchableBlockMatching() {
         SimpleMatchableBlock matchable = new SimpleMatchableBlock(Blocks.OAK_LOG) {
             @Override
+            @Nonnull
             public BlockState getDescriptiveState(long tick) {
                 return Blocks.OAK_LOG.defaultBlockState();
             }

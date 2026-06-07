@@ -66,14 +66,14 @@ public class ActiveLiquidInfusionRecipe {
         return getTicksCrafting() >= getTotalCraftingTime();
     }
 
-    @SuppressWarnings("null")
     public void createItemOutputs(@Nonnull BlockEntityInfuser infuser,
                                   @Nonnull Consumer<ItemStack> output) {
         ItemStack result = this.recipeToCraft.getOutput().copy();
         if (this.recipeToCraft.doesCopyNBTToOutputs()) {
             ItemStack inputStack = infuser.getInventory().getStackInSlot(0);
             if (!inputStack.isEmpty() && inputStack.hasTag()) {
-                result.setTag(inputStack.getTag() != null ? inputStack.getTag().copy() : null);
+                net.minecraft.nbt.CompoundTag srcTag = inputStack.getTag();
+                result.setTag(srcTag != null ? srcTag.copy() : null);
             }
         }
         ResearchManager.informCraftedInfuser(infuser, this, result);

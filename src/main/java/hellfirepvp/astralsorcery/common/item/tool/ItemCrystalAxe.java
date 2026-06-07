@@ -43,7 +43,6 @@ public class ItemCrystalAxe extends AxeItem {
     }
 
     @Override
-    @SuppressWarnings("null")
     public int getMaxDamage(ItemStack stack) {
         CrystalProperties props = CrystalProperties.getFromStack(stack);
         return props != null
@@ -53,9 +52,8 @@ public class ItemCrystalAxe extends AxeItem {
 
     @Override
     @Nonnull
-    @SuppressWarnings("null")
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(
-            @Nonnull EquipmentSlot slot, @Nonnull ItemStack stack) {
+            EquipmentSlot slot, ItemStack stack) {
         if (slot != EquipmentSlot.MAINHAND) return super.getAttributeModifiers(slot, stack);
 
         CrystalProperties props = CrystalProperties.getFromStack(stack);

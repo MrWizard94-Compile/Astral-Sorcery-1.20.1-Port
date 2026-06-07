@@ -9,7 +9,6 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.ClientScheduler;
 import hellfirepvp.astralsorcery.client.lib.RenderTypesAS;
 import hellfirepvp.astralsorcery.client.util.RenderingConstellationUtils;
-import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.world.CelestialHandler;
 import hellfirepvp.astralsorcery.common.constellation.world.DayTimeHelper;
@@ -72,10 +71,13 @@ public class ScreenTelescope extends ScreenBaseAS {
 
     private void refreshVisibleConstellations() {
         visibleConstellations.clear();
-        if (minecraft == null || minecraft.level == null) return;
-        if (!DayTimeHelper.isNight(minecraft.level)) return;
+        Minecraft mc = minecraft;
+        if (mc == null) return;
+        net.minecraft.client.multiplayer.ClientLevel level = mc.level;
+        if (level == null) return;
+        if (!DayTimeHelper.isNight(level)) return;
 
-        Set<IConstellation> visible = CelestialHandler.getVisibleConstellations(minecraft.level);
+        Set<IConstellation> visible = CelestialHandler.getVisibleConstellations(level);
         int total = visible.size();
         int idx = 0;
         for (IConstellation constellation : visible) {
@@ -91,9 +93,12 @@ public class ScreenTelescope extends ScreenBaseAS {
     @Override
     protected void renderContent(@Nonnull GuiGraphics graphics, int mouseX, int mouseY,
                                   float partialTick) {
-        if (minecraft == null || minecraft.level == null) return;
+        Minecraft mc = minecraft;
+        if (mc == null) return;
+        net.minecraft.client.multiplayer.ClientLevel level = mc.level;
+        if (level == null) return;
 
-        boolean isNight = DayTimeHelper.isNight(minecraft.level);
+        boolean isNight = DayTimeHelper.isNight(level);
 
         // Sky gradient inside the telescope viewport (5px inset from frame edges)
         graphics.fillGradient(
@@ -190,8 +195,9 @@ public class ScreenTelescope extends ScreenBaseAS {
         ResourceLocation key = constellation.getRegistryName();
         PacketChannel.sendToServer(new PktDiscoverConstellation(key));
 
-        if (minecraft != null && minecraft.player != null) {
-            minecraft.player.displayClientMessage(
+        Minecraft mc = minecraft;
+        if (mc != null && mc.player != null) {
+            mc.player.displayClientMessage(
                     Component.translatable("astralsorcery.telescope.observing",
                             constellation.getConstellationName()),
                     true);

@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
@@ -81,16 +82,17 @@ public class ScreenJournalPages extends ScreenJournal implements NavigationArrow
     @Override
     protected void init() {
         super.init();
-        if (origin != null) {
-            origin.preventRefresh();
-            origin.width  = width;
-            origin.height = height;
-            origin.init();
+        ScreenJournalProgression localOrigin = origin;
+        if (localOrigin != null) {
+            localOrigin.preventRefresh();
+            localOrigin.width  = width;
+            localOrigin.height = height;
+            localOrigin.init();
         }
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
+    public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float pTicks) {
         super.render(graphics, mouseX, mouseY, pTicks);
 
         if (origin != null) {

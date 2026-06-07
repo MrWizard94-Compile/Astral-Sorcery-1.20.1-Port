@@ -21,7 +21,6 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.fml.LogicalSide;
 
-import javax.annotation.Nonnull;
 import java.awt.Color;
 
 /**
@@ -90,7 +89,7 @@ public class OverlayAlignmentCharge implements IGuiOverlay {
     // ---- IGuiOverlay ----
 
     @Override
-    public void render(@Nonnull ForgeGui gui, @Nonnull GuiGraphics graphics,
+    public void render(ForgeGui gui, GuiGraphics graphics,
                         float partialTick, int screenWidth, int screenHeight) {
         if (alphaReveal <= 0f) return;
 

@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
  *
  * <p>1.16 -> 1.20: {@code IDataSerializer} -> {@code EntityDataSerializer}.</p>
  */
-@SuppressWarnings("null")
 public final class DataSerializersAS {
 
     private DataSerializersAS() {}

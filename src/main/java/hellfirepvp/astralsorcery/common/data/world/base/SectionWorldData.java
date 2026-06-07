@@ -23,13 +23,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public abstract class SectionWorldData<S extends WorldSection> extends BaseWorldData {
 
-    private final WorldCacheDomain.SaveKey<?> key;
     private final int precision;
     private final Map<Long, S> sections = new HashMap<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     protected SectionWorldData(@Nonnull WorldCacheDomain.SaveKey<?> key, int precision) {
-        this.key = key;
         this.precision = precision;
     }
 

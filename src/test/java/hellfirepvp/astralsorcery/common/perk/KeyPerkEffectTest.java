@@ -4,8 +4,6 @@
 package hellfirepvp.astralsorcery.common.perk;
 
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
-import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
-import hellfirepvp.astralsorcery.common.perk.modifier.PerkAttributeModifier;
 import hellfirepvp.astralsorcery.common.perk.node.key.KeyVorux;
 import hellfirepvp.astralsorcery.common.perk.type.AttributeTypeRegistry;
 import net.minecraft.nbt.CompoundTag;

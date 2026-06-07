@@ -49,7 +49,8 @@ public class EntityStarmetal extends EntityItemHighlighted {
                 if (!thisStack.isEmpty() && thisStack.getItem() instanceof ItemStarmetalIngot) {
                     boolean doDamage = false;
                     if (random.nextFloat() < 0.4f) {
-                        int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, held);
+                        int fortune = EnchantmentHelper.getEnchantments(held)
+                                .getOrDefault(Enchantments.BLOCK_FORTUNE, 0);
                         doDamage = createStardust(fortune);
                     }
                     if (doDamage || random.nextFloat() < 0.35f) {

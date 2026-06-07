@@ -11,7 +11,7 @@ import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.constellation.mantle.MantleEffect;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
-import net.minecraft.tags.FluidTags;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
  *       enough charge (multiplies break speed by 5, matching Aqua Affinity behaviour).</li>
  * </ul>
  *
- * <p>1.16 → 1.20: areEyesInFluid(FluidTags.WATER) → isEyeInFluid(FluidTags.WATER),
+ * <p>1.16 → 1.20: areEyesInFluid(FluidTags.WATER) → isEyeInFluidType(ForgeMod.WATER_TYPE.get()),
  * player.setAir/getMaxAir unchanged, EnchantmentHelper.hasAquaAffinity → inline check,
  * inventory slot swap approach simplified to direct speed multiply,
  * BlockEvent package → net.minecraftforge.event.level.</p>
@@ -62,7 +62,7 @@ public class MantleEffectOctans extends MantleEffect {
 
     @Override
     protected void tickServer(@Nonnull Player player) {
-        if (player.isEyeInFluid(FluidTags.WATER)) {
+        if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) {
             if (player.getAirSupply() < (player.getMaxAirSupply() - 20)) {
                 player.setAirSupply(player.getMaxAirSupply());
             }
@@ -72,7 +72,7 @@ public class MantleEffectOctans extends MantleEffect {
 
     private void handleUnderwaterBreakSpeed(PlayerEvent.BreakSpeed event) {
         Player player = event.getEntity();
-        if (!player.isEyeInFluid(FluidTags.WATER)) return;
+        if (!player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) return;
         if (EnchantmentHelper.hasAquaAffinity(player)) return;
         if (ItemMantle.getEffect(player, ConstellationsAS.OCTANS) == null) return;
 
@@ -87,7 +87,7 @@ public class MantleEffectOctans extends MantleEffect {
 
     private void handleUnderwaterUnwavering(LivingKnockBackEvent event) {
         LivingEntity entity = event.getEntity();
-        if (!entity.isEyeInFluid(FluidTags.WATER)) return;
+        if (!entity.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) return;
         if (ItemMantle.getEffect(entity, ConstellationsAS.OCTANS) != null) {
             event.setCanceled(true);
         }
