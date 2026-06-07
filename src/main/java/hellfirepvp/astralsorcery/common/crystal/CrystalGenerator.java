@@ -78,7 +78,9 @@ public class CrystalGenerator {
         for (int i = 0; i < generate; i++) {
             Collection<CrystalProperty> remaining = new ArrayList<>(
                     CrystalPropertyRegistry.INSTANCE.getAllProperties());
-            while (!addRandomProperty(builder, remaining, random)) {}
+            if (canAddAnyProperty(builder, remaining)) {
+                while (!addRandomProperty(builder, remaining, random)) {}
+            }
         }
 
         return builder.build();
@@ -121,14 +123,16 @@ public class CrystalGenerator {
         int totalAdded = 0;
         for (int x = 0; x < COUNT_PHYSICAL_PROPERTY_TIERS; x++) {
             if (totalAdded >= toGenerate) break;
-            if (random.nextFloat() <= CHANCE_PHYSICAL_PROPERTIES) {
+            if (random.nextFloat() <= CHANCE_PHYSICAL_PROPERTIES
+                    && canAddAnyProperty(attrBuilder, PHYSICAL_PROPERTIES)) {
                 while (!addRandomProperty(attrBuilder, PHYSICAL_PROPERTIES, random)) {}
                 totalAdded++;
             }
         }
         for (int x = 0; x < COUNT_USAGE_PROPERTY_TIERS; x++) {
             if (totalAdded >= toGenerate) break;
-            if (random.nextFloat() <= CHANCE_USAGE_PROPERTIES) {
+            if (random.nextFloat() <= CHANCE_USAGE_PROPERTIES
+                    && canAddAnyProperty(attrBuilder, USAGE_PROPERTIES)) {
                 while (!addRandomProperty(attrBuilder, USAGE_PROPERTIES, random)) {}
                 totalAdded++;
             }
@@ -138,12 +142,18 @@ public class CrystalGenerator {
                 CrystalPropertyRegistry.INSTANCE.getAllProperties());
         remaining.removeAll(USAGE_PROPERTIES);
         remaining.removeAll(PHYSICAL_PROPERTIES);
-        while (totalAdded < toGenerate) {
+        while (totalAdded < toGenerate && canAddAnyProperty(attrBuilder, remaining)) {
             while (!addRandomProperty(attrBuilder, remaining, random)) {}
             totalAdded++;
         }
 
         return attrBuilder.build();
+    }
+
+    private static boolean canAddAnyProperty(CrystalAttributes.Builder builder,
+                                              Collection<CrystalProperty> properties) {
+        return properties.stream()
+                .anyMatch(p -> builder.getPropertyLvl(p, 0) < p.getMaxTier());
     }
 
     private static boolean addRandomProperty(CrystalAttributes.Builder builder,
@@ -155,6 +165,7 @@ public class CrystalGenerator {
         CrystalProperty propExisting = MiscUtils.getRandomEntry(existing, random);
         CrystalProperty prop = (random.nextFloat() <= 0.85F && propExisting != null) ? propExisting :
                 MiscUtils.getRandomEntry(properties, random);
+        if (prop == null) return false;
         int existingLvl = builder.getPropertyLvl(prop, 0);
         if (existingLvl < prop.getMaxTier()) {
             builder.addProperty(prop, 1);
