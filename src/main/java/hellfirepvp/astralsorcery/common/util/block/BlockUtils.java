@@ -6,8 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.FluidTags;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -21,15 +22,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,34 +63,6 @@ import java.util.List;
  */
 public class BlockUtils {
 
-    // ---- Loot / drops ----
-
-    @Nonnull
-    public static List<ItemStack> getDrops(@Nonnull ServerLevel level, @Nonnull BlockPos pos,
-                                           int harvestFortune) {
-        return getDrops(level, pos, harvestFortune, ItemStack.EMPTY);
-    }
-
-    @Nonnull
-    public static List<ItemStack> getDrops(@Nonnull ServerLevel level, @Nonnull BlockPos pos,
-                                           int harvestFortune, @Nonnull ItemStack tool) {
-        return getDrops(level, pos, level.getBlockState(pos), harvestFortune, tool);
-    }
-
-    @Nonnull
-    public static List<ItemStack> getDrops(@Nonnull ServerLevel level, @Nonnull BlockPos pos,
-                                           @Nonnull BlockState state, int harvestFortune,
-                                           @Nonnull ItemStack tool) {
-        LootParams.Builder builder = new LootParams.Builder(level)
-                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                .withParameter(LootContextParams.BLOCK_STATE, state)
-                .withParameter(LootContextParams.TOOL, tool)
-                .withOptionalParameter(LootContextParams.BLOCK_ENTITY,
-                        MiscUtils.getTileAt(level, pos, BlockEntity.class, true))
-                .withLuck(harvestFortune);
-        return state.getDrops(builder);
-    }
-
     // ---- Position helpers ----
 
     @Nonnull
@@ -108,9 +77,8 @@ public class BlockUtils {
     @Nonnull
     public static BlockPos firstSolidDown(@Nonnull BlockGetter level, @Nonnull BlockPos at) {
         BlockState state = level.getBlockState(at);
-        // In 1.20 Material is removed; blocksMotion() replaces material.blocksMovement()
         while (at.getY() > level.getMinBuildHeight()
-                && !state.blocksMotion() && state.getFluidState().isEmpty()) {
+                && state.getCollisionShape(level, at).isEmpty() && state.getFluidState().isEmpty()) {
             at = at.below();
             state = level.getBlockState(at);
         }
@@ -151,24 +119,27 @@ public class BlockUtils {
         }
 
         if (entity.hasEffect(MobEffects.DIG_SPEED)) {
-            @SuppressWarnings("DataFlowIssue") // hasEffect guarantees non-null
-            int amplifier = entity.getEffect(MobEffects.DIG_SPEED).getAmplifier();
-            breakSpeed *= 1.0F + (amplifier + 1F) * 0.2F;
+            MobEffectInstance digSpeed = entity.getEffect(MobEffects.DIG_SPEED);
+            if (digSpeed != null) {
+                breakSpeed *= 1.0F + (digSpeed.getAmplifier() + 1F) * 0.2F;
+            }
         }
 
         if (entity.hasEffect(MobEffects.DIG_SLOWDOWN)) {
-            @SuppressWarnings("DataFlowIssue") // hasEffect guarantees non-null
-            int amplifier = entity.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier();
-            float fatigueMultiplier = switch (amplifier) {
-                case 0 -> (float) Math.pow(0.3F, 1);
-                case 1 -> (float) Math.pow(0.3F, 2);
-                case 2 -> (float) Math.pow(0.3F, 3);
-                default -> (float) Math.pow(0.3F, 4);
-            };
-            breakSpeed *= fatigueMultiplier;
+            MobEffectInstance digSlow = entity.getEffect(MobEffects.DIG_SLOWDOWN);
+            if (digSlow != null) {
+                int amplifier = digSlow.getAmplifier();
+                float fatigueMultiplier = switch (amplifier) {
+                    case 0 -> (float) Math.pow(0.3F, 1);
+                    case 1 -> (float) Math.pow(0.3F, 2);
+                    case 2 -> (float) Math.pow(0.3F, 3);
+                    default -> (float) Math.pow(0.3F, 4);
+                };
+                breakSpeed *= fatigueMultiplier;
+            }
         }
 
-        if (entity.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(entity)) {
+        if (entity.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) && !EnchantmentHelper.hasAquaAffinity(entity)) {
             breakSpeed /= 5.0F;
         }
 
