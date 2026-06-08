@@ -7,7 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.network.play.server;
 
-import hellfirepvp.astralsorcery.common.util.world.WorldSeedCache;
+import hellfirepvp.astralsorcery.client.util.world.WorldSeedCache;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;

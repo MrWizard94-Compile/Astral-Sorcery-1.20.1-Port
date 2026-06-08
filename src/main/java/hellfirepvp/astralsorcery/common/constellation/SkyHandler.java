@@ -1,7 +1,7 @@
 package hellfirepvp.astralsorcery.common.constellation;
 
 import hellfirepvp.astralsorcery.common.constellation.world.WorldContext;
-import hellfirepvp.astralsorcery.common.util.world.WorldSeedCache;
+import hellfirepvp.astralsorcery.client.util.world.WorldSeedCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;

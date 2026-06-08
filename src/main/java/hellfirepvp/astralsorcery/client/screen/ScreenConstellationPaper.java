@@ -11,7 +11,7 @@ import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.constellation.SkyHandler;
 import hellfirepvp.astralsorcery.common.constellation.world.WorldContext;
 import hellfirepvp.astralsorcery.common.lib.SoundsAS;
-import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
+import hellfirepvp.astralsorcery.client.util.sound.ClientSoundHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public class ScreenConstellationPaper extends WidthHeightScreen {
     @Override
     public void onClose() {
         super.onClose();
-        SoundHelper.playSoundClient(SoundsAS.GUI_JOURNAL_CLOSE.get(), 1F, 1F);
+        ClientSoundHelper.playSoundClient(SoundsAS.GUI_JOURNAL_CLOSE.get(), 1F, 1F);
     }
 
     @Override

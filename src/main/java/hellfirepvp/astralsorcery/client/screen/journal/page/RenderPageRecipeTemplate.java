@@ -8,7 +8,7 @@ import hellfirepvp.astralsorcery.common.auxiliary.book.BookLookupRegistry;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.data.journal.RenderablePage;
 import hellfirepvp.astralsorcery.common.data.research.ResearchNode;
-import hellfirepvp.astralsorcery.common.util.IngredientHelper;
+import hellfirepvp.astralsorcery.client.util.IngredientHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

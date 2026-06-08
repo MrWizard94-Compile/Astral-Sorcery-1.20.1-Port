@@ -18,7 +18,7 @@ import hellfirepvp.astralsorcery.client.util.sound.PositionedLoopSound;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.SoundsAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
-import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
+import hellfirepvp.astralsorcery.client.util.sound.ClientSoundHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -142,16 +142,16 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
     private void tickIdleSound() {
         boolean active = structureValid && !isAttuning;
-        if (SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
+        if (ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
             idleSound = null;
             return;
         }
         if (active) {
             if (idleSound == null || ((PositionedLoopSound) idleSound).hasStoppedPlaying()) {
                 net.minecraft.world.phys.Vec3 center = net.minecraft.world.phys.Vec3.atCenterOf(worldPosition).add(0, 0.5, 0);
-                idleSound = SoundHelper.playSoundLoopFadeInClient(
+                idleSound = ClientSoundHelper.playSoundLoopFadeInClient(
                         SoundsAS.ATTUNEMENT_ALTAR_IDLE.get(), SoundSource.BLOCKS, center, 0.4F, 1F, false,
-                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0
+                        s -> isRemoved() || ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0
                                 || !structureValid || isAttuning)
                         .setFadeInTicks(20).setFadeOutTicks(20);
             }
@@ -162,7 +162,7 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
 
     @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
     private void tickActiveSound() {
-        if (SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
+        if (ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
             activeSound = null;
             prevAttuning = isAttuning;
             return;
@@ -170,21 +170,21 @@ public class BlockEntityAttunementAltar extends BlockEntityTick {
         if (isAttuning) {
             if (!prevAttuning) {
                 // Transition to attuning: fire one-shot start sound
-                SoundHelper.playSoundClientWorld(SoundsAS.ATTUNEMENT_ALTAR_ITEM_START.get(),
+                ClientSoundHelper.playSoundClientWorld(SoundsAS.ATTUNEMENT_ALTAR_ITEM_START.get(),
                         SoundSource.BLOCKS, worldPosition, 1F, 1F);
                 activeSound = null; // force loop to (re)start fresh
             }
             if (activeSound == null || ((FadeLoopSound) activeSound).hasStoppedPlaying()) {
                 net.minecraft.world.phys.Vec3 center = net.minecraft.world.phys.Vec3.atCenterOf(worldPosition).add(0, 0.5, 0);
-                activeSound = SoundHelper.playSoundLoopFadeInClient(
+                activeSound = ClientSoundHelper.playSoundLoopFadeInClient(
                         SoundsAS.ATTUNEMENT_ALTAR_ITEM_LOOP.get(), SoundSource.BLOCKS, center, 0.8F, 1F, false,
-                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isAttuning)
+                        s -> isRemoved() || ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isAttuning)
                         .setFadeInTicks(20).setFadeOutTicks(20);
             }
         } else {
             if (prevAttuning) {
                 // Transition out of attuning: fire one-shot finish sound
-                SoundHelper.playSoundClientWorld(SoundsAS.ATTUNEMENT_ALTAR_ITEM_FINISH.get(),
+                ClientSoundHelper.playSoundClientWorld(SoundsAS.ATTUNEMENT_ALTAR_ITEM_FINISH.get(),
                         SoundSource.BLOCKS, worldPosition, 1F, 1F);
             }
             activeSound = null;

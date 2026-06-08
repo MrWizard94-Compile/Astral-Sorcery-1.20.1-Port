@@ -1,11 +1,9 @@
-package hellfirepvp.astralsorcery.common.util.world;
+package hellfirepvp.astralsorcery.client.util.world;
 
 import hellfirepvp.astralsorcery.common.network.PacketChannel;
 import hellfirepvp.astralsorcery.common.network.play.client.PktRequestSeed;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,20 +25,17 @@ public class WorldSeedCache {
 
     private static final Map<ResourceKey<Level>, Long> cacheSeedLookup = new HashMap<>();
 
-    @OnlyIn(Dist.CLIENT)
     public static void clearClient() {
         activeSession++;
         cacheSeedLookup.clear();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void updateSeedCache(@Nonnull ResourceKey<Level> dim, int session, long seed) {
         if (activeSession == session) {
             cacheSeedLookup.put(dim, seed);
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static Optional<Long> getSeedIfPresent(@Nullable ResourceKey<Level> dim) {
         if (dim == null) {

@@ -9,8 +9,10 @@ package hellfirepvp.astralsorcery.common.crafting.helper;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import hellfirepvp.astralsorcery.common.util.IngredientHelper;
+import hellfirepvp.astralsorcery.client.util.IngredientHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -35,6 +37,7 @@ public class WrappedIngredient {
         return ingredient;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public ItemStack getRandomMatchingStack(long tick) {
         return IngredientHelper.getRandomVisibleStack(this.getIngredient(), tick);
     }

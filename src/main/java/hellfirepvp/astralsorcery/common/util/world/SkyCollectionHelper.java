@@ -1,5 +1,6 @@
 package hellfirepvp.astralsorcery.common.util.world;
 
+import hellfirepvp.astralsorcery.client.util.world.WorldSeedCache;
 import hellfirepvp.astralsorcery.common.util.MiscUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;

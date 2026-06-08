@@ -21,7 +21,7 @@ import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.client.util.sound.PositionedLoopSound;
 import hellfirepvp.astralsorcery.common.lib.SoundsAS;
-import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
+import hellfirepvp.astralsorcery.client.util.sound.ClientSoundHelper;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -199,7 +199,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
 
     @OnlyIn(Dist.CLIENT)
     private void doCraftSound() {
-        if (SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
+        if (ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0) {
             clientCraftSound = null;
             clientWaitSound = null;
             return;
@@ -213,16 +213,16 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
                     case RADIANCE -> SoundsAS.ALTAR_CRAFT_LOOP_T4.get();
                     default -> SoundsAS.ALTAR_CRAFT_LOOP_T1.get();
                 };
-                clientCraftSound = SoundHelper.playSoundLoopFadeInClient(
+                clientCraftSound = ClientSoundHelper.playSoundLoopFadeInClient(
                         loopSound, SoundSource.BLOCKS, center, 0.6F, 1F, false,
-                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isCrafting)
+                        s -> isRemoved() || ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isCrafting)
                         .setFadeInTicks(40).setFadeOutTicks(20);
             }
             if (getAltarType() == BlockAltar.AltarType.RADIANCE
                     && (clientWaitSound == null || ((PositionedLoopSound) clientWaitSound).hasStoppedPlaying())) {
-                clientWaitSound = SoundHelper.playSoundLoopFadeInClient(
+                clientWaitSound = ClientSoundHelper.playSoundLoopFadeInClient(
                         SoundsAS.ALTAR_CRAFT_LOOP_T4_WAITING.get(), SoundSource.BLOCKS, center, 0.7F, 1F, false,
-                        s -> isRemoved() || SoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isCrafting)
+                        s -> isRemoved() || ClientSoundHelper.getSoundVolume(SoundSource.BLOCKS) <= 0 || !isCrafting)
                         .setFadeInTicks(30).setFadeOutTicks(10);
             }
         } else {
