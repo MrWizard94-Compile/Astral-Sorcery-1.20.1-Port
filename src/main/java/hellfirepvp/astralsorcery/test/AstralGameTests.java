@@ -54,8 +54,16 @@ import java.util.List;
 @GameTestHolder("astralsorcery")
 public class AstralGameTests {
 
-    /** Shared template for all tests — 9×5×9 stone-floor platform. */
-    private static final String PLATFORM = "astralsorcery:gametests/platform";
+    /**
+     * Shared template for all tests — 9×5×9 stone-floor platform.
+     *
+     * <p>Forge builds the structure RL as
+     * {@code astralsorcery:astralgametests.platform} (namespace from
+     * {@code @GameTestHolder} + lowercase class name + "." + this value).
+     * The NBT lives at
+     * {@code data/astralsorcery/structures/astralgametests.platform.nbt}.</p>
+     */
+    private static final String PLATFORM = "platform";
 
     /** Relative position at the centre of the working space (y=1, above the floor). */
     private static final BlockPos CENTER = new BlockPos(4, 1, 4);

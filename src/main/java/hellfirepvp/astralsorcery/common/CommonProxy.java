@@ -124,7 +124,7 @@ public class CommonProxy {
         // Mod lifecycle events
         modBus.addListener(this::onCommonSetup);
         modBus.addListener(CapabilitySetup::registerCapabilities);
-        modBus.addListener(hellfirepvp.astralsorcery.common.datagen.AstralDataGenerator::onGatherData);
+        // AstralDataGenerator is registered via @Mod.EventBusSubscriber — no manual addListener needed.
     }
 
     /**

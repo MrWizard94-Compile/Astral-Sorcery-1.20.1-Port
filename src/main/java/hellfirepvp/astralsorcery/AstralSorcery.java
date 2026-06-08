@@ -7,16 +7,16 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery;
 
-import hellfirepvp.astralsorcery.client.ClientProxy;
+import hellfirepvp.astralsorcery.common.ClientProxyFactory;
 import hellfirepvp.astralsorcery.common.CommonProxy;
 import hellfirepvp.astralsorcery.common.data.config.ConfigRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,10 +48,9 @@ public class AstralSorcery {
         // Register config files (must be before lifecycle events)
         ConfigRegistration.register();
 
-        this.proxy = DistExecutor.safeRunForDist(
-            () -> ClientProxy::new,
-            () -> CommonProxy::new
-        );
+        this.proxy = FMLEnvironment.dist.isClient()
+            ? ClientProxyFactory.create()
+            : new CommonProxy();
         this.proxy.initialize();
         this.proxy.attachLifecycle(FMLJavaModLoadingContext.get().getModEventBus());
         this.proxy.attachEventHandlers(MinecraftForge.EVENT_BUS);

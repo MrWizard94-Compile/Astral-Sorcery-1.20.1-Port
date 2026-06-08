@@ -26,13 +26,13 @@ import java.util.concurrent.CompletionException;
  * DataProvider that generates minimal structure NBT files consumed by the
  * Astral Sorcery GameTest suite.
  *
- * <p>Run via {@code gradlew runData} before executing GameTests via
- * {@code gradlew runGameTestServer}.  The generated files live at:
- * {@code data/astralsorcery/structures/gametests/*.nbt}</p>
+ * <p>Run via {@code gradlew runData} to regenerate.  The committed copy lives at:
+ * {@code src/main/resources/data/astralsorcery/structures/astralgametests.platform.nbt}.</p>
  *
  * <p>Only one template is needed: a 9×5×9 stone-floor platform.  All
- * {@code @GameTest} methods in {@link AstralGameTests} reference this
- * template via {@code "astralsorcery:gametests/platform"}.</p>
+ * {@code @GameTest} methods in {@link AstralGameTests} share the template
+ * {@code "platform"}, which Forge resolves to the RL
+ * {@code astralsorcery:astralgametests.platform}.</p>
  */
 public class GameTestStructureProvider implements DataProvider {
 
@@ -52,7 +52,9 @@ public class GameTestStructureProvider implements DataProvider {
         List<CompletableFuture<?>> futures = new ArrayList<>();
         // 9×5×9: stone floor at y=0, four air layers y=1..4 as working space.
         // Center of the floor is (4,0,4); test blocks are placed at y=1.
-        futures.add(save(cache, "gametests/platform", buildPlatform(9, 5, 9)));
+        // Path must match what Forge derives from @GameTestHolder + class name + template:
+        // namespace="astralsorcery", path="astralgametests.platform" → astralgametests.platform.nbt
+        futures.add(save(cache, "astralgametests.platform", buildPlatform(9, 5, 9)));
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]));
     }
 
