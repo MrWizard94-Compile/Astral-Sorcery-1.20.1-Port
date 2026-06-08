@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "astralsorcery:altar"
+      "item": "astralsorcery:altar_discovery"
     },
     "title": "Starlight Crafting",
     "description": "Craft an item at a Luminous Crafting Table",
