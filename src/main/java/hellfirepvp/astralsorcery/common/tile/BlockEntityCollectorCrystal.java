@@ -12,6 +12,7 @@ import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalCalculations;
 import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.StructuresAS;
 import hellfirepvp.astralsorcery.common.starlight.IIndependentStarlightSource;
 import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
@@ -34,6 +35,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Block entity for Collector Crystals.
@@ -47,6 +49,16 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         implements IIndependentStarlightSource, LinkableTileEntity,
                    CrystalAttributeTile, ConstellationTile {
 
+    /**
+     * Liquid starlight positions for the PatternEnhancedCollectorCrystal multiblock,
+     * relative to the collector crystal. Used both for structure matching and client effects.
+     */
+    public static final BlockPos[] OFFSETS_LIQUID_STARLIGHT = new BlockPos[] {
+        new BlockPos(-1, -4, -1), new BlockPos(0, -4, -1), new BlockPos(1, -4, -1),
+        new BlockPos(1, -4,  0), new BlockPos(1, -4,  1), new BlockPos(0, -4,  1),
+        new BlockPos(-1, -4,  1), new BlockPos(-1, -4,  0),
+    };
+
     /** Base starlight multiplier per tick (scaled by attribute modifiers). Read from CommonConfig. */
     private static double baseCollectionRate() {
         return CommonConfig.CONFIG.baseCollectorOutput.get();
@@ -55,11 +67,17 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
     /** Celestial collector crystals collect 50% more starlight. */
     private static final double CELESTIAL_MULTIPLIER = 1.5;
 
+    /** Additional multiplier when the PatternEnhancedCollectorCrystal multiblock is built. */
+    private static final double ENHANCED_MULTIPLIER = 2.0;
+
     /** Maximum outgoing links for a collector crystal. */
     private static final int MAX_OUTGOING_LINKS = 4;
 
     /** Maximum link range (blocks). */
     private static final double MAX_LINK_RANGE = 64.0;
+
+    /** Re-check multiblock validity at most every 20 ticks to avoid per-tick world scans. */
+    private static final int MULTIBLOCK_RECHECK_INTERVAL = 20;
 
     @Nonnull
     private final List<BlockPos> linkedTargets = new ArrayList<>();
@@ -73,11 +91,18 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
     @Nullable
     private IMinorConstellation constellationTrait = null;
 
+    @Nullable
+    private UUID playerUUID = null;
+
     private double starlightCollected = 0;
     private double cachedProduction = 0;
 
     private boolean celestial = false;
     private boolean registeredInNetwork = false;
+
+    /** Cached result of the last multiblock validity check. */
+    private boolean multiblockValid = false;
+    private int multiblockRecheckTimer = 0;
 
     public BlockEntityCollectorCrystal(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(BlockEntityTypesAS.COLLECTOR_CRYSTAL.get(), pos, state);
@@ -109,6 +134,20 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
             return;
         }
 
+        // Periodically re-validate the enhancement multiblock
+        if (celestial) {
+            if (multiblockRecheckTimer <= 0) {
+                boolean wasValid = multiblockValid;
+                multiblockValid = checkMultiblock();
+                multiblockRecheckTimer = MULTIBLOCK_RECHECK_INTERVAL;
+                if (wasValid != multiblockValid) {
+                    markForUpdate();
+                }
+            } else {
+                multiblockRecheckTimer--;
+            }
+        }
+
         if (hasSkyAccess()) {
             double production = calculateProduction();
             starlightCollected = production;
@@ -129,8 +168,35 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         float distributionFactor = CelestialHandler.getStarlightDistributionFactor(level);
         float attunementBonus = CelestialHandler.getAttunementBonus(level, getAttunedConstellationKey());
         double celestialMult = celestial ? CELESTIAL_MULTIPLIER : 1.0;
+        double enhancedMult = isEnhanced() ? ENHANCED_MULTIPLIER : 1.0;
 
-        return baseCollectionRate() * crystalMultiplier * distributionFactor * attunementBonus * celestialMult;
+        return baseCollectionRate() * crystalMultiplier * distributionFactor * attunementBonus * celestialMult * enhancedMult;
+    }
+
+    /**
+     * Queries the world to determine whether the PatternEnhancedCollectorCrystal
+     * multiblock structure is fully formed around this crystal.
+     */
+    private boolean checkMultiblock() {
+        Level level = getLevel();
+        if (level == null || level.isClientSide()) return false;
+        return StructuresAS.getEnhancedCollectorCrystal().matches(level, getBlockPos());
+    }
+
+    /**
+     * Returns true if the multiblock structure is currently valid.
+     * Uses a cached value refreshed every {@link #MULTIBLOCK_RECHECK_INTERVAL} ticks.
+     */
+    public boolean hasMultiblock() {
+        return multiblockValid;
+    }
+
+    /**
+     * Returns true when this is a celestial collector crystal with its enhancement
+     * multiblock fully built. Provides a 2× starlight production bonus.
+     */
+    public boolean isEnhanced() {
+        return celestial && multiblockValid;
     }
 
     // ========================================================================
@@ -257,7 +323,26 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
 
     public void setCelestial(boolean celestial) {
         this.celestial = celestial;
+        if (!celestial) {
+            this.multiblockValid = false;
+            this.multiblockRecheckTimer = 0;
+        }
         setChanged();
+    }
+
+    /**
+     * Sets the owning player UUID and celestial flag, called when the crystal is placed
+     * by a player (e.g., via the wand interaction).
+     */
+    public void updateData(@Nullable UUID playerUUID, boolean celestial) {
+        this.playerUUID = playerUUID;
+        setCelestial(celestial);
+        markForUpdate();
+    }
+
+    @Nullable
+    public UUID getPlayerUUID() {
+        return playerUUID;
     }
 
     public double getStarlightCollected() {
@@ -402,6 +487,8 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
         }
 
         this.celestial = compound.getBoolean("celestial");
+        this.multiblockValid = compound.getBoolean("multiblockValid");
+        this.playerUUID = compound.hasUUID("playerUUID") ? compound.getUUID("playerUUID") : null;
 
         this.linkedTargets.clear();
         if (compound.contains("linkedTargets")) {
@@ -429,6 +516,10 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
             compound.putString("trait", ctr.getRegistryName().toString());
         }
         compound.putBoolean("celestial", celestial);
+        compound.putBoolean("multiblockValid", multiblockValid);
+        if (playerUUID != null) {
+            compound.putUUID("playerUUID", playerUUID);
+        }
 
         ListTag list = new ListTag();
         for (BlockPos pos : linkedTargets) {

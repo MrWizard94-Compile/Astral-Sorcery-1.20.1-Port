@@ -11,6 +11,9 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.block.tile.fountain.BlockFountainPrime;
 import hellfirepvp.astralsorcery.common.lib.structure.MatchableState;
 import hellfirepvp.astralsorcery.common.lib.structure.PatternBlockArray;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
@@ -51,6 +54,7 @@ public final class StructuresAS {
     private static PatternBlockArray patternGateway;
     private static PatternBlockArray patternFountain;
     private static PatternBlockArray patternTreeBeacon;
+    private static PatternBlockArray patternEnhancedCollectorCrystal;
 
     /**
      * Initialize all structure patterns. Must be called after registry freeze
@@ -70,6 +74,7 @@ public final class StructuresAS {
         patternGateway = buildGateway();
         patternFountain = buildFountain();
         patternTreeBeacon = buildTreeBeacon();
+        patternEnhancedCollectorCrystal = buildEnhancedCollectorCrystal();
     }
 
     // ---- Accessors ----
@@ -84,6 +89,7 @@ public final class StructuresAS {
     public static PatternBlockArray getGateway() { ensureInit(); return patternGateway; }
     public static PatternBlockArray getFountain() { ensureInit(); return patternFountain; }
     public static PatternBlockArray getTreeBeacon() { ensureInit(); return patternTreeBeacon; }
+    public static PatternBlockArray getEnhancedCollectorCrystal() { ensureInit(); return patternEnhancedCollectorCrystal; }
 
     /**
      * Returns an unmodifiable list of all registered patterns.
@@ -363,6 +369,99 @@ public final class StructuresAS {
             pattern.addBlock(BlocksAS.INFUSED_WOOD_COLUMN.get().defaultBlockState(), -2, y, 2);
             pattern.addBlock(BlocksAS.INFUSED_WOOD_COLUMN.get().defaultBlockState(), 2, y, 2);
         }
+        return pattern;
+    }
+
+    /**
+     * Enhanced collector crystal multiblock. Centered on the celestial collector crystal
+     * at (0,0,0). Requires a ring of liquid starlight at y=-4, a marble column below the
+     * crystal, decorative corners and edges at y=-4/-3, and a raw marble floor at y=-5.
+     * The 3×3×3 volume immediately around the crystal (y=-1 to y=1) must be clear air.
+     *
+     * <p>When built, celestial collector crystals gain a ×2 starlight production bonus.</p>
+     */
+    private static PatternBlockArray buildEnhancedCollectorCrystal() {
+        PatternBlockArray pattern = register("enhanced_collector_crystal");
+
+        BlockState chiseled = BlocksAS.MARBLE_CHISELED.get().defaultBlockState();
+        BlockState raw      = BlocksAS.MARBLE_RAW.get().defaultBlockState();
+        BlockState runed    = BlocksAS.MARBLE_RUNED.get().defaultBlockState();
+        BlockState engraved = BlocksAS.MARBLE_ENGRAVED.get().defaultBlockState();
+
+        MatchableState requiresAir = new MatchableState() {
+            @Override
+            @Nonnull
+            public BlockState getDescriptiveState(long tick) {
+                return Blocks.AIR.defaultBlockState();
+            }
+            @Override
+            public boolean matches(@Nonnull BlockState state) {
+                return state.isAir();
+            }
+        };
+
+        MatchableState requiresLiquidStarlight = new MatchableState() {
+            @Override
+            @Nonnull
+            public BlockState getDescriptiveState(long tick) {
+                return BlocksAS.FLUID_LIQUID_STARLIGHT.get().defaultBlockState();
+            }
+            @Override
+            public boolean matches(@Nonnull BlockState state) {
+                return state.getBlock() == BlocksAS.FLUID_LIQUID_STARLIGHT.get();
+            }
+        };
+
+        // Raw marble floor at y=-5
+        pattern.addBlockCube(raw, -1, -5, -1, 1, -5, 1);
+
+        // 3×3×3 air zone around the crystal (y=-1 to y=1); center (0,0,0) is
+        // overwritten below with the celestial crystal block check.
+        for (int xx = -1; xx <= 1; xx++) {
+            for (int yy = -1; yy <= 1; yy++) {
+                for (int zz = -1; zz <= 1; zz++) {
+                    pattern.addBlock(requiresAir, xx, yy, zz);
+                }
+            }
+        }
+
+        // The crystal itself must be a celestial collector crystal
+        pattern.addBlock(BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get().defaultBlockState(), 0, 0, 0);
+
+        // Liquid starlight ring at y=-4
+        for (BlockPos offset : BlockEntityCollectorCrystal.OFFSETS_LIQUID_STARLIGHT) {
+            pattern.addBlock(requiresLiquidStarlight, offset.getX(), offset.getY(), offset.getZ());
+        }
+
+        // Central column: chiseled → pillar → engraved
+        pattern.addBlock(chiseled, 0, -2, 0);
+        pattern.addBlock(BlocksAS.MARBLE_PILLAR.get().defaultBlockState(), 0, -3, 0);
+        pattern.addBlock(engraved,  0, -4, 0);
+
+        // Corner decorations at y=-4 (chiseled) and y=-3 (engraved)
+        pattern.addBlock(chiseled, -2, -4, -2);
+        pattern.addBlock(chiseled, -2, -4,  2);
+        pattern.addBlock(chiseled,  2, -4,  2);
+        pattern.addBlock(chiseled,  2, -4, -2);
+        pattern.addBlock(engraved, -2, -3, -2);
+        pattern.addBlock(engraved, -2, -3,  2);
+        pattern.addBlock(engraved,  2, -3,  2);
+        pattern.addBlock(engraved,  2, -3, -2);
+
+        // Runed marble edges at y=-4
+        pattern.addBlock(runed, -2, -4, -1);
+        pattern.addBlock(runed, -2, -4,  0);
+        pattern.addBlock(runed, -2, -4,  1);
+        pattern.addBlock(runed,  2, -4, -1);
+        pattern.addBlock(runed,  2, -4,  0);
+        pattern.addBlock(runed,  2, -4,  1);
+        pattern.addBlock(runed, -1, -4, -2);
+        pattern.addBlock(runed,  0, -4, -2);
+        pattern.addBlock(runed,  1, -4, -2);
+        pattern.addBlock(runed, -1, -4,  2);
+        pattern.addBlock(runed,  0, -4,  2);
+        pattern.addBlock(runed,  1, -4,  2);
+
         return pattern;
     }
 

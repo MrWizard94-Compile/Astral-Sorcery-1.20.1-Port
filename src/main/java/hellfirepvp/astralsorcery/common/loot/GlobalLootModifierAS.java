@@ -10,13 +10,18 @@ package hellfirepvp.astralsorcery.common.loot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.common.capability.PlayerProgressHelper;
+import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.lib.EnchantmentsAS;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.util.RecipeHelper;
+import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -64,6 +69,9 @@ public final class GlobalLootModifierAS {
 
     public static final RegistryObject<Codec<ScorchingHeatLootModifier>> SCORCHING_HEAT_LOOT =
             LOOT_MODIFIERS.register("scorching_heat_loot", () -> ScorchingHeatLootModifier.CODEC);
+
+    public static final RegistryObject<Codec<MagnetDropsLootModifier>> MAGNET_DROPS_LOOT =
+            LOOT_MODIFIERS.register("magnet_drops_loot", () -> MagnetDropsLootModifier.CODEC);
 
     /**
      * Global loot modifier that smelts all block drops when the breaking tool
@@ -127,6 +135,58 @@ public final class GlobalLootModifierAS {
         @Override
         @Nonnull
         public Codec<ScorchingHeatLootModifier> codec() {
+            return CODEC;
+        }
+    }
+
+    /**
+     * Loot modifier that pulls all block drops directly into the inventory of a player
+     * who has the {@code key_magnet_drops} perk allocated. Items that don't fit remain
+     * as normal world drops.
+     *
+     * <p>Only applies to block-break loot contexts (identified by the presence of
+     * {@link LootContextParams#BLOCK_STATE}). Mob-kill drops are already handled by
+     * {@code EventHandlerPerkEffects.onMagnetDrops} via {@code LivingDropsEvent}.</p>
+     */
+    public static class MagnetDropsLootModifier extends LootModifier {
+
+        public static final Codec<MagnetDropsLootModifier> CODEC =
+                RecordCodecBuilder.create(instance ->
+                        codecStart(instance).apply(instance, MagnetDropsLootModifier::new));
+
+        protected MagnetDropsLootModifier(@Nonnull LootItemCondition[] conditions) {
+            super(conditions);
+        }
+
+        @Override
+        @Nonnull
+        protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot,
+                                                     LootContext context) {
+            // Only apply to block-break loot (not mob drops, chest loot, etc.)
+            if (context.getParamOrNull(LootContextParams.BLOCK_STATE) == null) {
+                return generatedLoot;
+            }
+            Entity breaker = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+            if (!(breaker instanceof Player player)) {
+                return generatedLoot;
+            }
+            PlayerProgress progress = PlayerProgressHelper.getProgress(player);
+            if (progress == null || !progress.hasPerkAllocated(AstralSorcery.key("key_magnet_drops"))) {
+                return generatedLoot;
+            }
+            ObjectArrayList<ItemStack> remaining = new ObjectArrayList<>();
+            for (ItemStack stack : generatedLoot) {
+                ItemStack leftover = ItemUtils.dropItemToPlayer(player, stack.copy());
+                if (!leftover.isEmpty()) {
+                    remaining.add(leftover);
+                }
+            }
+            return remaining;
+        }
+
+        @Override
+        @Nonnull
+        public Codec<MagnetDropsLootModifier> codec() {
             return CODEC;
         }
     }
