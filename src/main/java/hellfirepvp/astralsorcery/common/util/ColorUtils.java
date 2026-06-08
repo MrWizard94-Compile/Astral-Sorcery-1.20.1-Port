@@ -138,4 +138,10 @@ public class ColorUtils {
             case BLACK -> ChatFormatting.DARK_GRAY;
         };
     }
+
+    @Nonnull
+    public static java.awt.Color calcRandomConstellationColor(float perc) {
+        return new java.awt.Color(java.awt.Color.HSBtoRGB(
+                (230F + (50F * perc)) / 360F, 0.8F, 0.8F - (0.3F * perc)));
+    }
 }

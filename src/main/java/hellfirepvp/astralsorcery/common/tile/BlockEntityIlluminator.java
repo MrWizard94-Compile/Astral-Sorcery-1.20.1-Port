@@ -4,7 +4,7 @@ import hellfirepvp.astralsorcery.common.block.tile.BlockFlareLight;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.block.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -138,7 +138,7 @@ public class BlockEntityIlluminator extends BlockEntityTick {
                     level.getRandom().nextInt(13) - 6,
                     level.getRandom().nextInt(5) - 2);
 
-            MiscUtils.executeWithChunk(level, candidate, () -> {
+            ChunkUtils.executeWithChunk(level, candidate, () -> {
                 if (doesSeeSky() && ILLUMINATOR_CHECK.test(level, candidate, level.getBlockState(candidate))) {
                     BlockState toPlace = BlocksAS.FLARE_LIGHT.get().defaultBlockState()
                             .setValue(BlockFlareLight.COLOR, color);

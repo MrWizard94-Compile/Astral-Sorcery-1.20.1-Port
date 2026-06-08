@@ -14,7 +14,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import hellfirepvp.astralsorcery.common.util.MapStream;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.PlayerUtils;
+import hellfirepvp.astralsorcery.common.util.RayTraceUtils;
+import hellfirepvp.astralsorcery.common.util.data.CollectionUtils;
+import hellfirepvp.astralsorcery.common.util.data.RandomUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.RaytraceAssist;
 import hellfirepvp.astralsorcery.common.util.block.BlockGeometry;
 import hellfirepvp.astralsorcery.common.util.block.BlockUtils;
@@ -136,7 +140,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
 
             if (AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, COST_PER_PLACEMENT, true) &&
                     (player.isCreative() || ItemUtils.consumeFromPlayerInventory(player, held, extractable, true)) &&
-                    MiscUtils.canPlayerPlaceBlockPos(player, stateToPlace, placePos, Direction.UP) &&
+                    PlayerUtils.canPlayerPlaceBlockPos(player, stateToPlace, placePos, Direction.UP) &&
                     (player.isCreative() || ItemUtils.consumeFromPlayerInventory(player, held, extractable, false)) &&
                     AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, COST_PER_PLACEMENT, false)) {
                 level.setBlock(placePos, stateToPlace, Block.UPDATE_ALL);
@@ -150,7 +154,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
         PlaceMode mode = getPlaceMode(stack);
         Level level = player.level();
 
-        BlockHitResult rtr = MiscUtils.rayTraceLookBlock(player, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, 60F);
+        BlockHitResult rtr = RayTraceUtils.rayTraceLookBlock(player, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, 60F);
         if (rtr == null && mode.needsOffset()) {
             return new HashMap<>();
         }
@@ -199,7 +203,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
             Collections.shuffle(placeableStates, rand);
             BlockState toPlace = placeableStates.get(0);
 
-            MiscUtils.executeWithChunk(level, pos, () -> {
+            ChunkUtils.executeWithChunk(level, pos, () -> {
                 if (BlockUtils.isReplaceable(level, pos)) {
                     if (!placer.isCreative()) {
                         int count = placeAmounts.getOrDefault(toPlace, 0) - 1;
@@ -227,7 +231,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
         if (stack.isEmpty() || !(stack.getItem() instanceof ItemArchitectWand)) {
             return PlaceMode.TOWARDS_PLAYER;
         }
-        return MiscUtils.getEnumEntry(PlaceMode.class,
+        return RandomUtils.getEnumEntry(PlaceMode.class,
                 NBTHelper.getPersistentData(stack).getInt("placeMode"));
     }
 
@@ -270,7 +274,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                 int length = (int) Math.min(20, Math.abs(cmpFrom + 0.5 - cmpTo));
                 for (int i = 0; i < length; i++) {
                     BlockPos at = center.relative(placedAgainst, i);
-                    if (Boolean.TRUE.equals(MiscUtils.executeWithChunk(level, at, () -> !BlockUtils.isReplaceable(level, at), true))) break;
+                    if (Boolean.TRUE.equals(ChunkUtils.executeWithChunk(level, at, () -> !BlockUtils.isReplaceable(level, at), true))) break;
                     blocks.add(at);
                 }
                 return blocks;
@@ -287,7 +291,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                 new RaytraceAssist(
                         hellfirepvp.astralsorcery.common.util.data.Vector3.atEntityCorner(player),
                         new hellfirepvp.astralsorcery.common.util.data.Vector3(hit.getX(), hit.getY(), hit.getZ())
-                ).forEachBlockPos(pos -> MiscUtils.executeWithChunk(level, pos, () -> {
+                ).forEachBlockPos(pos -> ChunkUtils.executeWithChunk(level, pos, () -> {
                     if (BlockUtils.isReplaceable(level, pos)) { line.add(pos); return true; }
                     return false;
                 }, false));
@@ -300,7 +304,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                                                               @Nullable Direction placedAgainst,
                                                               @Nullable BlockPos center) {
                 if (center == null) return Collections.emptyList();
-                return MiscUtils.transformList(BlockGeometry.getPlane(Direction.UP, 5), at -> at.offset(center));
+                return CollectionUtils.transformList(BlockGeometry.getPlane(Direction.UP, 5), at -> at.offset(center));
             }
         },
         V_PLANE("wall", true) {
@@ -309,7 +313,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                                                               @Nullable Direction placedAgainst,
                                                               @Nullable BlockPos center) {
                 if (center == null) return Collections.emptyList();
-                return MiscUtils.transformList(BlockGeometry.getPlane(player.getDirection(), 5), at -> at.offset(center));
+                return CollectionUtils.transformList(BlockGeometry.getPlane(player.getDirection(), 5), at -> at.offset(center));
             }
         },
         SPHERE("sphere", true, 0.2F) {
@@ -318,7 +322,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                                                               @Nullable Direction placedAgainst,
                                                               @Nullable BlockPos center) {
                 if (center == null) return Collections.emptyList();
-                return MiscUtils.transformList(BlockGeometry.getSphere(5), at -> at.offset(center));
+                return CollectionUtils.transformList(BlockGeometry.getSphere(5), at -> at.offset(center));
             }
         },
         SPHERE_HOLLOW("sphere_hollow", true, 0.5F) {
@@ -327,7 +331,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
                                                               @Nullable Direction placedAgainst,
                                                               @Nullable BlockPos center) {
                 if (center == null) return Collections.emptyList();
-                return MiscUtils.transformList(BlockGeometry.getHollowSphere(5, 4), at -> at.offset(center));
+                return CollectionUtils.transformList(BlockGeometry.getHollowSphere(5, 4), at -> at.offset(center));
             }
         };
 
@@ -368,7 +372,7 @@ public class ItemArchitectWand extends ItemAS implements ItemBlockStorage, Align
         @Nonnull
         PlaceMode next() {
             int next = (this.ordinal() + 1) % values().length;
-            return MiscUtils.getEnumEntry(PlaceMode.class, next);
+            return RandomUtils.getEnumEntry(PlaceMode.class, next);
         }
     }
 }

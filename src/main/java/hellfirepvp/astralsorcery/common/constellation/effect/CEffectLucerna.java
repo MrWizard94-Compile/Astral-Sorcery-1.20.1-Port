@@ -5,7 +5,7 @@ package hellfirepvp.astralsorcery.common.constellation.effect;
 
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityIlluminator;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -85,7 +85,7 @@ public class CEffectLucerna extends ConstellationEffectProvider {
                 level.setBlockAndUpdate(target,
                         BlocksAS.ILLUMINATOR.get().defaultBlockState());
                 // Mark as player-placed so the illuminator's tick runs
-                BlockEntityIlluminator ill = MiscUtils.getTileAt(level, target,
+                BlockEntityIlluminator ill = TileUtils.getTileAt(level, target,
                         BlockEntityIlluminator.class, true);
                 if (ill != null) ill.setPlayerPlaced(true);
             }

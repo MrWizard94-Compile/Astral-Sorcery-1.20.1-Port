@@ -8,7 +8,7 @@
 package hellfirepvp.astralsorcery.common.crystal;
 
 import com.google.common.collect.Lists;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.RandomUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -100,17 +100,17 @@ public class CrystalGenerator {
     @Nullable
     public static CrystalProperty getRandomProperty(Random random) {
         if (random.nextFloat() <= CHANCE_PHYSICAL_PROPERTIES) {
-            return MiscUtils.getRandomEntry(PHYSICAL_PROPERTIES, random);
+            return RandomUtils.getRandomEntry(PHYSICAL_PROPERTIES, random);
         }
         if (random.nextFloat() <= CHANCE_USAGE_PROPERTIES) {
-            return MiscUtils.getRandomEntry(USAGE_PROPERTIES, random);
+            return RandomUtils.getRandomEntry(USAGE_PROPERTIES, random);
         }
 
         Collection<CrystalProperty> remaining = new ArrayList<>(
                 CrystalPropertyRegistry.INSTANCE.getAllProperties());
         remaining.removeAll(USAGE_PROPERTIES);
         remaining.removeAll(PHYSICAL_PROPERTIES);
-        return MiscUtils.getRandomEntry(remaining, random);
+        return RandomUtils.getRandomEntry(remaining, random);
     }
 
     @Nonnull
@@ -171,10 +171,10 @@ public class CrystalGenerator {
         if (eligible.isEmpty()) return;
         List<CrystalProperty> existing = builder.getProperties();
         existing.retainAll(eligible);
-        CrystalProperty propExisting = MiscUtils.getRandomEntry(existing, random);
+        CrystalProperty propExisting = RandomUtils.getRandomEntry(existing, random);
         CrystalProperty prop = (random.nextFloat() <= 0.85F && propExisting != null)
                 ? propExisting
-                : MiscUtils.getRandomEntry(eligible, random);
+                : RandomUtils.getRandomEntry(eligible, random);
         if (prop != null) {
             builder.addProperty(prop, 1);
         }

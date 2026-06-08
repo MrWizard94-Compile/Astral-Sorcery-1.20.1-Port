@@ -1,7 +1,7 @@
 package hellfirepvp.astralsorcery.common.util.tile;
 
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntitySynchronized;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.CollectionUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -65,7 +65,7 @@ public class TileInventoryFiltered extends TileInventory {
     protected TileInventoryFiltered makeNewInstance() {
         TileInventoryFiltered inv = new TileInventoryFiltered(
                 this.tile, this.slotCountProvider,
-                this.changeListener, MiscUtils.copySet(this.applicableSides),
+                this.changeListener, CollectionUtils.copySet(this.applicableSides),
                 this.stackSizeLimiter);
         inv.canInsert(this.inputFilter);
         inv.canExtract(this.extractFilter);

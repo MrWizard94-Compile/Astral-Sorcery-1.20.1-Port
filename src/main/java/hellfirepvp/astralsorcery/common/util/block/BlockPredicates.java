@@ -1,6 +1,6 @@
 package hellfirepvp.astralsorcery.common.util.block;
 
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
@@ -73,7 +73,7 @@ public class BlockPredicates {
                                 ChunkPos.getX(pos.asLong()), ChunkPos.getZ(pos.asLong()))) {
                     return true;
                 }
-                BlockEntity be = MiscUtils.getTileAt(foundWorld, pos, BlockEntity.class, true);
+                BlockEntity be = TileUtils.getTileAt(foundWorld, pos, BlockEntity.class, true);
                 return be != null && be.getType().equals(tileType);
             }
             return true;

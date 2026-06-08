@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import hellfirepvp.astralsorcery.common.data.world.base.GlobalWorldData;
 import hellfirepvp.astralsorcery.common.data.world.base.WorldCacheDomain;
 import hellfirepvp.astralsorcery.common.storage.StorageNetwork;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.RandomUtils;
 import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -105,7 +105,7 @@ public class StorageNetworkBuffer extends GlobalWorldData {
             }
             StorageNetwork.CoreArea master = net.getMaster();
             if (master == null) {
-                master = MiscUtils.getRandomEntry(net.getCores(), rand);
+                master = RandomUtils.getRandomEntry(net.getCores(), rand);
             }
             if (master != null) {
                 this.rawNetworks.put(master.getPos(), net);

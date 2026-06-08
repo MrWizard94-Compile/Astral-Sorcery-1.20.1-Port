@@ -10,7 +10,7 @@ import hellfirepvp.astralsorcery.common.lib.SoundsAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityIlluminator;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityTranslucentBlock;
 import hellfirepvp.astralsorcery.common.util.ColorUtils;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import hellfirepvp.astralsorcery.common.util.block.BlockUtils;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
 import hellfirepvp.astralsorcery.common.util.sound.SoundHelper;
@@ -72,7 +72,7 @@ public class ItemIlluminationWand extends ItemAS implements AlignmentChargeConsu
 
         if (player.isCrouching()) {
             if (state.getBlock() instanceof BlockTranslucentBlock) {
-                BlockEntityTranslucentBlock tb = MiscUtils.getTileAt(level, pos, BlockEntityTranslucentBlock.class, true);
+                BlockEntityTranslucentBlock tb = TileUtils.getTileAt(level, pos, BlockEntityTranslucentBlock.class, true);
                 java.util.UUID tbUuid = tb != null ? tb.getPlayerUUID() : null;
                 if (tb != null && (tbUuid == null || tbUuid.equals(player.getUUID()))) {
                     if (tb.revert()) {
@@ -89,7 +89,7 @@ public class ItemIlluminationWand extends ItemAS implements AlignmentChargeConsu
                         if (level.setBlock(pos, BlocksAS.TRANSLUCENT_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL)) {
                             SoundHelper.playSoundAround(SoundsAS.ILLUMINATION_WAND_HIGHLIGHT.get(),
                                     SoundSource.BLOCKS, level, pos, 0.6F, 0.9F + level.getRandom().nextFloat() * 0.2F);
-                            BlockEntityTranslucentBlock tb = MiscUtils.getTileAt(level, pos, BlockEntityTranslucentBlock.class, true);
+                            BlockEntityTranslucentBlock tb = TileUtils.getTileAt(level, pos, BlockEntityTranslucentBlock.class, true);
                             if (tb != null) {
                                 tb.setFakedState(state);
                                 tb.setOverlayColor(ColorUtils.flareColorFromDye(getConfiguredColor(stack)));
@@ -104,7 +104,7 @@ public class ItemIlluminationWand extends ItemAS implements AlignmentChargeConsu
             return InteractionResult.SUCCESS;
         }
 
-        BlockEntityIlluminator illum = MiscUtils.getTileAt(level, pos, BlockEntityIlluminator.class, true);
+        BlockEntityIlluminator illum = TileUtils.getTileAt(level, pos, BlockEntityIlluminator.class, true);
         if (illum != null) {
             illum.onWandUsed(getConfiguredColor(stack));
             SoundHelper.playSoundAround(SoundsAS.ILLUMINATION_WAND_LIGHT.get(),

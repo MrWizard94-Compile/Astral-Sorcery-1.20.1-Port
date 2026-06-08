@@ -18,7 +18,7 @@ import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityCelestialCrystals;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -108,7 +108,7 @@ public class FormCelestialCrystalClusterRecipe extends LiquidStarlightRecipe {
 
         level.setBlock(at, BlocksAS.CELESTIAL_CRYSTAL_CLUSTER.get().defaultBlockState(), 3);
         if (crystal.getItem() instanceof CrystalAttributeItem) {
-            BlockEntityCelestialCrystals cluster = MiscUtils.getTileAt(level, at,
+            BlockEntityCelestialCrystals cluster = TileUtils.getTileAt(level, at,
                     BlockEntityCelestialCrystals.class, true);
             if (cluster != null) {
                 CrystalAttributes attr = CrystalGenerator.upgradeProperties(crystal);

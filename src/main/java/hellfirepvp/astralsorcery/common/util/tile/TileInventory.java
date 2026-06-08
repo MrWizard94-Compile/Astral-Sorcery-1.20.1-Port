@@ -1,7 +1,7 @@
 package hellfirepvp.astralsorcery.common.util.tile;
 
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntitySynchronized;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.CollectionUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -83,7 +83,7 @@ public class TileInventory extends ItemStackHandler implements Iterable<ItemStac
     @Nonnull
     protected TileInventory makeNewInstance() {
         return new TileInventory(this.tile, this.slotCountProvider,
-                this.changeListener, MiscUtils.copySet(this.applicableSides),
+                this.changeListener, CollectionUtils.copySet(this.applicableSides),
                 this.stackSizeLimiter);
     }
 

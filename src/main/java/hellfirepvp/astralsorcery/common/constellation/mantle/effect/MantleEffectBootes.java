@@ -13,7 +13,7 @@ import hellfirepvp.astralsorcery.common.entity.EntityFlare;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.PlayerUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -83,7 +83,7 @@ public class MantleEffectBootes extends MantleEffect {
         if (!(attacker instanceof Player player)) return;
         if (ItemMantle.getEffect(player, ConstellationsAS.BOOTES) == null) return;
         if (!attacked.isAlive()) return;
-        if (attacked instanceof Player playerTarget && !MiscUtils.canPlayerAttackServer(player, playerTarget)) return;
+        if (attacked instanceof Player playerTarget && !PlayerUtils.canPlayerAttackServer(player, playerTarget)) return;
         launchFlareAt(player, attacked);
     }
 

@@ -29,7 +29,7 @@ import java.util.Optional;
  * state.get() → getValue(), state.with() → setValue(),
  * property.parseValue() → getValue(),
  * JSONUtils → GsonHelper,
- * MiscUtils.iterativeSearch() → inline property lookup</p>
+ * CollectionUtils.iterativeSearch() → inline property lookup</p>
  */
 public class BlockStateHelper {
 
@@ -161,7 +161,7 @@ public class BlockStateHelper {
 
     /**
      * Apply a named property value to a block state.
-     * Replaces the MiscUtils.iterativeSearch call from 1.16 with an inline loop.
+     * Replaces the CollectionUtils.iterativeSearch call from 1.16 with an inline loop.
      */
     @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> BlockState applyProperty(

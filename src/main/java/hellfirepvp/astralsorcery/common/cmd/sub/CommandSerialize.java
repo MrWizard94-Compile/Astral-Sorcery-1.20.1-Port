@@ -11,7 +11,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.RayTraceUtils;
 import hellfirepvp.astralsorcery.common.util.block.BlockStateHelper;
 import hellfirepvp.astralsorcery.common.util.data.JsonHelper;
 import net.minecraft.ChatFormatting;
@@ -60,7 +60,7 @@ public final class CommandSerialize {
     private static int serializeLook(@Nonnull CommandContext<CommandSourceStack> ctx)
             throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        BlockHitResult hit = MiscUtils.rayTraceLookBlock(player);
+        BlockHitResult hit = RayTraceUtils.rayTraceLookBlock(player);
         BlockState state = (hit == null || hit.getType() != HitResult.Type.BLOCK)
                 ? Blocks.AIR.defaultBlockState()
                 : player.level().getBlockState(hit.getBlockPos());

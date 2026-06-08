@@ -5,7 +5,7 @@ import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
 import hellfirepvp.astralsorcery.common.constellation.DrawnConstellation;
 import hellfirepvp.astralsorcery.common.constellation.IConstellation;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -91,7 +91,7 @@ public class PktEngraveGlass {
                 return;
             }
 
-            BlockEntityRefractionTable te = MiscUtils.getTileAt(level, pkt.pos,
+            BlockEntityRefractionTable te = TileUtils.getTileAt(level, pkt.pos,
                     BlockEntityRefractionTable.class, true);
             if (te == null) return;
 

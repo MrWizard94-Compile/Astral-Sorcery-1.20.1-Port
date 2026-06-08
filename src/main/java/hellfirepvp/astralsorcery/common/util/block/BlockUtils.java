@@ -1,7 +1,7 @@
 package hellfirepvp.astralsorcery.common.util.block;
 
 import hellfirepvp.astralsorcery.common.util.BlockDropCaptureAssist;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -309,7 +309,7 @@ public class BlockUtils {
 
         if (harvestable) {
             try {
-                BlockEntity blockEntity = MiscUtils.getTileAt(level, pos, BlockEntity.class, true);
+                BlockEntity blockEntity = TileUtils.getTileAt(level, pos, BlockEntity.class, true);
                 ItemStack harvestStack = heldCopy.isEmpty() ? ItemStack.EMPTY : heldCopy.copy();
                 stateBroken.getBlock().playerDestroy(level, fakePlayer, pos,
                         stateBroken, blockEntity, harvestStack);

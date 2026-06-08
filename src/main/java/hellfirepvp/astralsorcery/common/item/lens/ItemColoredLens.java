@@ -7,7 +7,7 @@ import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import hellfirepvp.astralsorcery.common.lib.SoundsAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityLens;
 import hellfirepvp.astralsorcery.common.util.DamageSourceAS;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import hellfirepvp.astralsorcery.common.util.PartialEffectExecutor;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import net.minecraft.core.BlockPos;
@@ -84,7 +84,7 @@ public class ItemColoredLens extends ItemAS {
             return InteractionResult.PASS;
         }
 
-        BlockEntityLens lens = MiscUtils.getTileAt(level, ctx.getClickedPos(), BlockEntityLens.class, false);
+        BlockEntityLens lens = TileUtils.getTileAt(level, ctx.getClickedPos(), BlockEntityLens.class, false);
         if (lens == null) {
             return InteractionResult.PASS;
         }

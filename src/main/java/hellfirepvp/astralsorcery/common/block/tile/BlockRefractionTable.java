@@ -4,7 +4,7 @@ import hellfirepvp.astralsorcery.client.screen.ClientScreenHandler;
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityRefractionTable;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -66,7 +66,7 @@ public class BlockRefractionTable extends BlockEntityBlock {
                                  @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         ItemStack held = player.getItemInHand(hand);
         if (!level.isClientSide()) {
-            BlockEntityRefractionTable te = MiscUtils.getTileAt(level, pos,
+            BlockEntityRefractionTable te = TileUtils.getTileAt(level, pos,
                     BlockEntityRefractionTable.class, true);
             if (te != null) {
                 if (player.isShiftKeyDown()) {
@@ -116,7 +116,7 @@ public class BlockRefractionTable extends BlockEntityBlock {
             }
         } else if (!player.isShiftKeyDown() && held.isEmpty()) {
             // Client-side: open engraving screen when right-clicking with empty hand
-            BlockEntityRefractionTable te = MiscUtils.getTileAt(level, pos,
+            BlockEntityRefractionTable te = TileUtils.getTileAt(level, pos,
                     BlockEntityRefractionTable.class, true);
             if (te != null) {
                 openRefractionScreen(te);
@@ -134,7 +134,7 @@ public class BlockRefractionTable extends BlockEntityBlock {
     public void onRemove(@Nonnull BlockState state, @Nonnull Level level,
                          @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
-            BlockEntityRefractionTable te = MiscUtils.getTileAt(level, pos,
+            BlockEntityRefractionTable te = TileUtils.getTileAt(level, pos,
                     BlockEntityRefractionTable.class, true);
             if (te != null && !level.isClientSide()) {
                 te.dropContents();

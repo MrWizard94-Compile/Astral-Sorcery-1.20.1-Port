@@ -7,7 +7,7 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributeGenItem;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.RandomUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -101,7 +101,7 @@ public class MergeCrystalsRecipe extends LiquidStarlightRecipe {
         CrystalAttributes.Builder resultBuilder = CrystalAttributes.Builder.newBuilder(false).addAll(mergeTo);
         int mergeCount = 0;
         for (int i = 0; i < copyAmount; i++) {
-            CrystalAttributes.Attribute attr = MiscUtils.getWeightedRandomEntry(
+            CrystalAttributes.Attribute attr = RandomUtils.getWeightedRandomEntry(
                     mergeFrom.getCrystalAttributes(), rand, CrystalAttributes.Attribute::getTier);
             if (attr != null) {
                 mergeFrom = mergeFrom.modifyLevel(attr.getProperty(), -1);

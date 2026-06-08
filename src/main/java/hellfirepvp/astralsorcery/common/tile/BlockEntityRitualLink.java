@@ -4,7 +4,8 @@ import com.google.common.collect.Lists;
 import hellfirepvp.astralsorcery.common.auxiliary.link.LinkableTileEntity;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -43,8 +44,8 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
         if (!level.isClientSide()) {
             if (linkedTo != null) {
                 final BlockPos target = linkedTo;
-                MiscUtils.executeWithChunk(level, target, () -> {
-                    BlockEntityRitualLink link = MiscUtils.getTileAt(level, target,
+                ChunkUtils.executeWithChunk(level, target, () -> {
+                    BlockEntityRitualLink link = TileUtils.getTileAt(level, target,
                             BlockEntityRitualLink.class, true);
                     if (link == null) {
                         linkedTo = null;
@@ -78,7 +79,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
     public void onBlockLinkCreate(@Nonnull Player player, @Nonnull BlockPos other) {
         Level playerLevel = (Level) player.level();
         if (linkedTo != null) {
-            BlockEntityRitualLink otherLink = MiscUtils.getTileAt(playerLevel, linkedTo,
+            BlockEntityRitualLink otherLink = TileUtils.getTileAt(playerLevel, linkedTo,
                     BlockEntityRitualLink.class, true);
             if (otherLink != null) {
                 otherLink.linkedTo = null;
@@ -86,7 +87,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
             }
         }
         linkedTo = other;
-        BlockEntityRitualLink otherLink = MiscUtils.getTileAt(playerLevel, other,
+        BlockEntityRitualLink otherLink = TileUtils.getTileAt(playerLevel, other,
                 BlockEntityRitualLink.class, true);
         if (otherLink != null) {
             otherLink.linkedTo = getBlockPos();
@@ -101,7 +102,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
 
     @Override
     public boolean tryLinkBlock(@Nonnull Player player, @Nonnull BlockPos other) {
-        BlockEntityRitualLink otherLink = MiscUtils.getTileAt((Level) player.level(), other,
+        BlockEntityRitualLink otherLink = TileUtils.getTileAt((Level) player.level(), other,
                 BlockEntityRitualLink.class, true);
         return otherLink != null && otherLink.linkedTo == null && !other.equals(getBlockPos());
     }
@@ -113,7 +114,7 @@ public class BlockEntityRitualLink extends BlockEntityTick implements LinkableTi
 
     @Override
     public boolean tryUnlink(@Nonnull Player player, @Nonnull BlockPos other) {
-        BlockEntityRitualLink otherLink = MiscUtils.getTileAt((Level) player.level(), other,
+        BlockEntityRitualLink otherLink = TileUtils.getTileAt((Level) player.level(), other,
                 BlockEntityRitualLink.class, true);
         if (otherLink == null || otherLink.linkedTo == null) return false;
         if (otherLink.linkedTo.equals(getBlockPos())) {

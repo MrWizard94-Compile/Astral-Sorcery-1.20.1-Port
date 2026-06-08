@@ -2,7 +2,7 @@ package hellfirepvp.astralsorcery.common.tile;
 
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityFakedState;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +42,7 @@ public class BlockEntityTreeBeaconComponent extends BlockEntityFakedState {
                 boolean beaconChunkLoaded = level.getChunkSource()
                         .hasChunk(treeBeaconPos.getX() >> 4, treeBeaconPos.getZ() >> 4);
                 if (beaconChunkLoaded) {
-                    BlockEntityTreeBeacon beacon = MiscUtils.getTileAt(
+                    BlockEntityTreeBeacon beacon = TileUtils.getTileAt(
                             level, treeBeaconPos, BlockEntityTreeBeacon.class, false);
                     if (beacon == null) {
                         removeSelf();

@@ -8,7 +8,8 @@ import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
 import hellfirepvp.astralsorcery.common.event.helper.EventHelperDamageCancelling;
 import hellfirepvp.astralsorcery.common.item.base.AlignmentChargeConsumer;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.RandomUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.RaytraceAssist;
 import hellfirepvp.astralsorcery.common.util.block.BlockUtils;
 import hellfirepvp.astralsorcery.common.util.data.Vector3;
@@ -113,7 +114,7 @@ public class ItemBlinkWand extends ItemAS implements AlignmentChargeConsumer {
             Vector3 look = new Vector3(lookVec.x, lookVec.y, lookVec.z).normalize().multiply(40F).add(origin);
             List<BlockPos> blockLine = new ArrayList<>();
             RaytraceAssist rta = new RaytraceAssist(origin, look);
-            rta.forEachBlockPos(pos -> MiscUtils.executeWithChunk(player.level(), pos, () -> {
+            rta.forEachBlockPos(pos -> ChunkUtils.executeWithChunk(player.level(), pos, () -> {
                 if (BlockUtils.isReplaceable(player.level(), pos) && BlockUtils.isReplaceable(player.level(), pos.above())) {
                     blockLine.add(pos);
                     return true;
@@ -214,7 +215,7 @@ public class ItemBlinkWand extends ItemAS implements AlignmentChargeConsumer {
             return BlinkMode.LAUNCH;
         }
         CompoundTag nbt = NBTHelper.getPersistentData(stack);
-        return MiscUtils.getEnumEntry(BlinkMode.class, nbt.getInt("blinkMode"));
+        return RandomUtils.getEnumEntry(BlinkMode.class, nbt.getInt("blinkMode"));
     }
 
     public enum BlinkMode {
@@ -239,7 +240,7 @@ public class ItemBlinkWand extends ItemAS implements AlignmentChargeConsumer {
         @Nonnull
         BlinkMode next() {
             int next = (this.ordinal() + 1) % values().length;
-            return MiscUtils.getEnumEntry(BlinkMode.class, next);
+            return RandomUtils.getEnumEntry(BlinkMode.class, next);
         }
     }
 }

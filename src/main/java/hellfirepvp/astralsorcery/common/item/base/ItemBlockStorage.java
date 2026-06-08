@@ -1,6 +1,6 @@
 package hellfirepvp.astralsorcery.common.item.base;
 
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.PlayerUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import hellfirepvp.astralsorcery.common.util.nbt.NBTHelper;
 import net.minecraft.core.NonNullList;
@@ -50,7 +50,7 @@ public interface ItemBlockStorage {
     }
 
     static void clearContainerFor(Player player) {
-        Tuple<InteractionHand, ItemStack> held = MiscUtils.getMainOrOffHand(player,
+        Tuple<InteractionHand, ItemStack> held = PlayerUtils.getMainOrOffHand(player,
                 s -> s.getItem() instanceof ItemBlockStorage);
         if (held != null) {
             NBTHelper.getPersistentData(held.getB()).remove("storedStates");

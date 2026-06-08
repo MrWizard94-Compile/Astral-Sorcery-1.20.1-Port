@@ -1,6 +1,6 @@
 package hellfirepvp.astralsorcery.common.util.tile;
 
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.data.CollectionUtils;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -40,7 +40,7 @@ public class FluidTankAccess {
     }
 
     private boolean hasTanksForSide(@Nullable Direction dir) {
-        return dir == null || MiscUtils.contains(this.tanks, tank -> tank.isAccessible(dir));
+        return dir == null || CollectionUtils.contains(this.tanks, tank -> tank.isAccessible(dir));
     }
 
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing) {

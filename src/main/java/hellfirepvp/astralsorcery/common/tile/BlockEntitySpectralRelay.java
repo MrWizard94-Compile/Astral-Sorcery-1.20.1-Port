@@ -12,7 +12,8 @@ import hellfirepvp.astralsorcery.common.item.ItemGlassLens;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.block.BlockDiscoverer;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
@@ -126,8 +127,8 @@ public class BlockEntitySpectralRelay extends BlockEntityTick {
 
         BlockPos ap = altarPos;
         if (hasMultiblock && hasGlassLens() && ap != null) {
-            MiscUtils.executeWithChunk(level, ap, () -> {
-                BlockEntityAltar altar = MiscUtils.getTileAt(level, ap, BlockEntityAltar.class, true);
+            ChunkUtils.executeWithChunk(level, ap, () -> {
+                BlockEntityAltar altar = TileUtils.getTileAt(level, ap, BlockEntityAltar.class, true);
                 if (altar == null) {
                     altarPos = null;
                 } else {

@@ -1,7 +1,7 @@
 package hellfirepvp.astralsorcery.common.util.block;
 
 import com.google.common.collect.Lists;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -115,7 +115,7 @@ public class BlockDiscoverer {
             for (int zz = -cubeSize; zz <= cubeSize; zz++) {
                 for (int yy = -cubeSize; yy <= cubeSize; yy++) {
                     offset.set(origin.getX() + xx, origin.getY() + yy, origin.getZ() + zz);
-                    MiscUtils.executeWithChunk(level, offset, () -> {
+                    ChunkUtils.executeWithChunk(level, offset, () -> {
                         BlockState atState = level.getBlockState(offset);
                         if (match.test(level, offset, atState)) {
                             out.add(new BlockPos(offset));
@@ -137,7 +137,7 @@ public class BlockDiscoverer {
                 for (int yy = -r; yy <= r; yy++) {
                     for (int zz = -r; zz <= r; zz++) {
                         BlockPos pos = center.offset(xx, yy, zz);
-                        MiscUtils.executeWithChunk(level, pos, () -> {
+                        ChunkUtils.executeWithChunk(level, pos, () -> {
                             BlockState state = level.getBlockState(pos);
                             if (acceptor.test(level, pos, state)) {
                                 posList.add(pos);
@@ -169,7 +169,7 @@ public class BlockDiscoverer {
     public static List<BlockPos> discoverBlocksWithSameStateAround(
             @Nonnull Level level, @Nonnull BlockPos origin, boolean onlyExposed,
             int cubeSize, int limit, boolean searchCorners) {
-        List<BlockPos> result = MiscUtils.executeWithChunk(level, origin,
+        List<BlockPos> result = ChunkUtils.executeWithChunk(level, origin,
                 () -> {
                     BlockState state = level.getBlockState(origin);
                     return discoverBlocksWithSameStateAround(
@@ -209,7 +209,7 @@ public class BlockDiscoverer {
 
                                 if (!onlyExposed || isExposedToAir(level, search)) {
                                     Deque<BlockPos> finalSearchNext = searchNext;
-                                    MiscUtils.executeWithChunk(level, search, finalSearchNext, searchQueue -> {
+                                    ChunkUtils.executeWithChunk(level, search, finalSearchNext, searchQueue -> {
                                         if (match.test(level, search, level.getBlockState(search))) {
                                             foundResult.add(search);
                                             searchQueue.add(search);
@@ -230,7 +230,7 @@ public class BlockDiscoverer {
 
                         if (!onlyExposed || isExposedToAir(level, search)) {
                             Deque<BlockPos> finalSearchNext = searchNext;
-                            MiscUtils.executeWithChunk(level, search, finalSearchNext, searchQueue -> {
+                            ChunkUtils.executeWithChunk(level, search, finalSearchNext, searchQueue -> {
                                 if (match.test(level, search, level.getBlockState(search))) {
                                     foundResult.add(search);
                                     searchQueue.add(search);
@@ -254,7 +254,7 @@ public class BlockDiscoverer {
     private static boolean isExposedToAir(@Nonnull Level level, @Nonnull BlockPos pos) {
         for (Direction face : Direction.values()) {
             BlockPos offset = pos.relative(face);
-            Boolean canReplace = MiscUtils.executeWithChunk(level, offset,
+            Boolean canReplace = ChunkUtils.executeWithChunk(level, offset,
                     () -> BlockUtils.isReplaceable(level, offset), false);
             if (Boolean.TRUE.equals(canReplace)) {
                 return true;

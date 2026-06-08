@@ -7,7 +7,9 @@ import hellfirepvp.astralsorcery.common.item.base.AlignmentChargeConsumer;
 import hellfirepvp.astralsorcery.common.item.base.ItemAS;
 import hellfirepvp.astralsorcery.common.item.base.ItemBlockStorage;
 import hellfirepvp.astralsorcery.common.util.MapStream;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.PlayerUtils;
+import hellfirepvp.astralsorcery.common.util.RayTraceUtils;
+import hellfirepvp.astralsorcery.common.util.data.RandomUtils;
 import hellfirepvp.astralsorcery.common.util.block.BlockDiscoverer;
 import hellfirepvp.astralsorcery.common.util.block.BlockUtils;
 import hellfirepvp.astralsorcery.common.util.item.ItemUtils;
@@ -66,7 +68,7 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
 
     @Override
     public float getAlignmentChargeCost(Player player, ItemStack stack) {
-        BlockHitResult hitResult = MiscUtils.rayTraceLookBlock(player,
+        BlockHitResult hitResult = RayTraceUtils.rayTraceLookBlock(player,
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE);
         if (hitResult == null) return 0F;
         return getPlaceStates(player, player.level(), hitResult.getBlockPos(), stack).size() * COST_PER_EXCHANGE;
@@ -108,7 +110,7 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
             if ((player.isCreative() || ItemUtils.consumeFromPlayerInventory(player, stack, extractable, true)) &&
                     AlignmentChargeHandler.INSTANCE.drainCharge(player, LogicalSide.SERVER, COST_PER_EXCHANGE, false) &&
                     serverPlayer.gameMode.destroyBlock(placePos) &&
-                    MiscUtils.canPlayerPlaceBlockPos(player, stateToPlace, placePos, Direction.UP) &&
+                    PlayerUtils.canPlayerPlaceBlockPos(player, stateToPlace, placePos, Direction.UP) &&
                     (player.isCreative() || ItemUtils.consumeFromPlayerInventory(player, stack, extractable, false))) {
                 level.setBlock(placePos, stateToPlace, Block.UPDATE_ALL);
             }
@@ -188,7 +190,7 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
     public boolean renderInHand(ItemStack stack, PoseStack poseStack, float partialTick) {
         Player player = Minecraft.getInstance().player;
         if (player == null) return true;
-        BlockHitResult hit = MiscUtils.rayTraceLookBlock(player, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE);
+        BlockHitResult hit = RayTraceUtils.rayTraceLookBlock(player, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE);
         if (hit == null) return true;
         Map<BlockPos, BlockState> preview = getPlaceStates(player, player.level(), hit.getBlockPos(), stack);
         if (preview.isEmpty()) return true;
@@ -215,7 +217,7 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
         if (stack.isEmpty() || !(stack.getItem() instanceof ItemExchangeWand)) {
             return SizeMode.RANGE_2;
         }
-        return MiscUtils.getEnumEntry(SizeMode.class,
+        return RandomUtils.getEnumEntry(SizeMode.class,
                 NBTHelper.getPersistentData(stack).getInt("sizeMode"));
     }
 
@@ -247,7 +249,7 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
         @Nonnull
         SizeMode next() {
             int next = (this.ordinal() + 1) % values().length;
-            return MiscUtils.getEnumEntry(SizeMode.class, next);
+            return RandomUtils.getEnumEntry(SizeMode.class, next);
         }
     }
 }

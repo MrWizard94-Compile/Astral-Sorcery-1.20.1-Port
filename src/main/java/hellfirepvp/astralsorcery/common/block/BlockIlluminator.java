@@ -3,7 +3,7 @@ package hellfirepvp.astralsorcery.common.block;
 import hellfirepvp.astralsorcery.common.block.base.BlockEntityBlock;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityIlluminator;
-import hellfirepvp.astralsorcery.common.util.MiscUtils;
+import hellfirepvp.astralsorcery.common.util.tile.TileUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -80,7 +80,7 @@ public class BlockIlluminator extends BlockEntityBlock {
                             @Nullable LivingEntity placer, @Nonnull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide() && placer instanceof Player) {
-            BlockEntityIlluminator illuminator = MiscUtils.getTileAt(level, pos,
+            BlockEntityIlluminator illuminator = TileUtils.getTileAt(level, pos,
                     BlockEntityIlluminator.class, true);
             if (illuminator != null) {
                 illuminator.setPlayerPlaced(true);

@@ -1,6 +1,8 @@
 package hellfirepvp.astralsorcery.common.util;
 
 import hellfirepvp.astralsorcery.common.util.block.BlockPredicate;
+import hellfirepvp.astralsorcery.common.util.data.CollectionUtils;
+import hellfirepvp.astralsorcery.common.util.world.ChunkUtils;
 import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import hellfirepvp.astralsorcery.common.util.object.ObjectReference;
 import net.minecraft.core.BlockPos;
@@ -105,7 +107,7 @@ public class RaytraceAssist {
                 }
             }
 
-            Boolean chunkResult = MiscUtils.executeWithChunk(level, at, () -> {
+            Boolean chunkResult = ChunkUtils.executeWithChunk(level, at, () -> {
                 if (!isStartEnd(at) && !level.isEmptyBlock(at)) {
                     if (this.hitFluids && !level.getFluidState(at).isEmpty()) {
                         posHit = at;
@@ -171,7 +173,7 @@ public class RaytraceAssist {
 
     private boolean isAllowed(@Nonnull Level level, @Nonnull BlockPos at,
                               @Nonnull BlockState state) {
-        return MiscUtils.contains(passable, predicate -> predicate.test(level, at, state));
+        return CollectionUtils.contains(passable, predicate -> predicate.test(level, at, state));
     }
 
     private boolean isStartEnd(@Nonnull BlockPos hit) {
