@@ -26,6 +26,8 @@ import hellfirepvp.astralsorcery.common.crafting.nojson.WorldFreezingRegistry;
 import hellfirepvp.astralsorcery.common.crafting.nojson.WorldMeltableRegistry;
 import hellfirepvp.astralsorcery.common.cmd.CommandAstralSorcery;
 import hellfirepvp.astralsorcery.common.auxiliary.charge.AlignmentChargeHandler;
+import hellfirepvp.astralsorcery.common.base.Mods;
+import hellfirepvp.astralsorcery.common.compat.curios.CuriosIntegration;
 import hellfirepvp.astralsorcery.common.enchantment.amulet.PlayerAmuletHandler;
 import hellfirepvp.astralsorcery.common.constellation.SkyHandler;
 import hellfirepvp.astralsorcery.common.event.EventHandlerCelestial;
@@ -240,6 +242,7 @@ public class CommonProxy {
             WorldFreezingRegistry.INSTANCE.init();
             FountainEffectRegistry.registerAll();
             AltarRecipeTypeHandler.init();
+            Mods.CURIOS.executeIfPresent(() -> CuriosIntegration::register);
         });
     }
 }

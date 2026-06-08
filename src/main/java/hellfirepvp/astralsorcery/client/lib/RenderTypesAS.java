@@ -10,6 +10,7 @@ package hellfirepvp.astralsorcery.client.lib;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import hellfirepvp.astralsorcery.AstralSorcery;
+import hellfirepvp.astralsorcery.client.resource.AbstractRenderableTexture;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -510,6 +511,36 @@ public final class RenderTypesAS {
                         .setTextureState(new RenderStateShard.TextureStateShard(
                                 texture, false, false))
                         .setTransparencyState(NORMAL_TRANSPARENCY)
+                        .setCullState(NO_CULL)
+                        .setDepthTestState(NO_DEPTH_TEST)
+                        .setLightmapState(LIGHTMAP_DISABLED)
+                        .createCompositeState(false));
+    }
+
+    /**
+     * Creates a per-constellation background render type bound to the given texture.
+     * Uses normal (alpha) transparency so the PNG's alpha channel controls opacity,
+     * with no depth test so the background always renders behind constellation stars.
+     *
+     * @param constellationName the constellation's simple name (used to disambiguate the render type name)
+     * @param tex               the loaded background texture
+     * @return a render type unique to this constellation background
+     */
+    @Nonnull
+    public static RenderType createConstellationBackgroundType(
+            @Nonnull String constellationName,
+            @Nonnull AbstractRenderableTexture tex) {
+        return createType(
+                "constellation_background_" + constellationName,
+                DefaultVertexFormat.POSITION_COLOR_TEX,
+                VertexFormat.Mode.QUADS,
+                256,
+                false, true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(Shaders.POSITION_COLOR_TEX)
+                        .setTextureState(tex.asState())
+                        .setTransparencyState(NORMAL_TRANSPARENCY)
+                        .setWriteMaskState(COLOR_WRITE)
                         .setCullState(NO_CULL)
                         .setDepthTestState(NO_DEPTH_TEST)
                         .setLightmapState(LIGHTMAP_DISABLED)

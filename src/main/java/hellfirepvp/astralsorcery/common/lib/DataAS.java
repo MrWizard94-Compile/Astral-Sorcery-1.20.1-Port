@@ -1,7 +1,6 @@
 package hellfirepvp.astralsorcery.common.lib;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
-import hellfirepvp.astralsorcery.common.data.world.LightNetworkBuffer;
 import hellfirepvp.astralsorcery.common.data.world.RockCrystalBuffer;
 import hellfirepvp.astralsorcery.common.data.world.StorageNetworkBuffer;
 import hellfirepvp.astralsorcery.common.data.world.base.WorldCacheDomain;
@@ -14,6 +13,9 @@ import hellfirepvp.astralsorcery.common.data.world.base.WorldCacheDomain;
  *
  * <p>1.16 used ObserverLib's WorldCacheDomain. The port provides an equivalent
  * in {@link WorldCacheDomain} that wraps Minecraft's {@code SavedData} system.</p>
+ *
+ * <p>Note: the starlight transmission network ({@code WorldNetworkHandler}) is its own
+ * {@code SavedData} subclass and does NOT go through this domain.</p>
  */
 public final class DataAS {
 
@@ -21,9 +23,6 @@ public final class DataAS {
 
     /** The Astral Sorcery world cache domain. All AS data keys belong to this domain. */
     public static WorldCacheDomain DOMAIN_AS;
-
-    /** Per-world starlight transmission network state. Full impl in Phase C. */
-    public static WorldCacheDomain.SaveKey<LightNetworkBuffer> KEY_STARLIGHT_NETWORK;
 
     /** Per-world storage network (chalice fluid links). */
     public static WorldCacheDomain.SaveKey<StorageNetworkBuffer> KEY_STORAGE_NETWORK;
@@ -33,11 +32,6 @@ public final class DataAS {
 
     public static void init() {
         DOMAIN_AS = new WorldCacheDomain(AstralSorcery.key("as_domain"));
-
-        KEY_STARLIGHT_NETWORK = DOMAIN_AS.register(
-                new WorldCacheDomain.SaveKey<>("starlight_network"),
-                k -> new LightNetworkBuffer(k)
-        );
 
         KEY_STORAGE_NETWORK = DOMAIN_AS.register(
                 new WorldCacheDomain.SaveKey<>("storage_network"),

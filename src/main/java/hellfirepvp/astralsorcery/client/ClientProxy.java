@@ -67,6 +67,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import hellfirepvp.astralsorcery.client.constellation.ConstellationRenderInfos;
 import hellfirepvp.astralsorcery.client.lib.TexturesAS;
 import hellfirepvp.astralsorcery.client.resource.AssetLibrary;
 import hellfirepvp.astralsorcery.client.screen.journal.ScreenJournal;
@@ -238,6 +239,7 @@ public class ClientProxy extends CommonProxy {
     private void onClientSetup(@Nonnull FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             TexturesAS.init();
+            ConstellationRenderInfos.init();
             hellfirepvp.astralsorcery.client.registry.RegistrySprites.loadSprites();
             hellfirepvp.astralsorcery.client.util.word.RandomWordGenerator.init();
             hellfirepvp.astralsorcery.client.ClientPerkReaderRegistry.init();
