@@ -1623,36 +1623,36 @@ class StarlightDistributionTest {
 
         @Test
         void testReceiverEntryWithLargeMaxInput() {
-            WorldNetworkHandler.ReceiverEntry entry =
-                    new WorldNetworkHandler.ReceiverEntry(BlockPos.ZERO, Double.MAX_VALUE);
+            StarlightGraph.ReceiverEntry entry =
+                    new StarlightGraph.ReceiverEntry(BlockPos.ZERO, Double.MAX_VALUE);
             CompoundTag tag = entry.writeToNBT();
-            WorldNetworkHandler.ReceiverEntry loaded =
-                    WorldNetworkHandler.ReceiverEntry.readFromNBT(tag);
+            StarlightGraph.ReceiverEntry loaded =
+                    StarlightGraph.ReceiverEntry.readFromNBT(tag);
             assertEquals(Double.MAX_VALUE, loaded.getMaxInput(), 0.001);
         }
 
         @Test
         void testTransmissionEntryBoundaryValues() {
             // Efficiency at exact boundary 0.0 and 1.0
-            WorldNetworkHandler.TransmissionEntry zero =
-                    new WorldNetworkHandler.TransmissionEntry(new BlockPos(1, 2, 3), 0.0);
+            StarlightGraph.TransmissionEntry zero =
+                    new StarlightGraph.TransmissionEntry(new BlockPos(1, 2, 3), 0.0);
             assertEquals(0.0, zero.getEfficiency(), 0.001);
 
-            WorldNetworkHandler.TransmissionEntry one =
-                    new WorldNetworkHandler.TransmissionEntry(new BlockPos(4, 5, 6), 1.0);
+            StarlightGraph.TransmissionEntry one =
+                    new StarlightGraph.TransmissionEntry(new BlockPos(4, 5, 6), 1.0);
             assertEquals(1.0, one.getEfficiency(), 0.001);
         }
 
         @Test
         void testSourceEntryMultipleConstellations() {
             // Different sources with different constellations
-            WorldNetworkHandler.SourceEntry aevitas =
-                    new WorldNetworkHandler.SourceEntry(
+            StarlightGraph.SourceEntry aevitas =
+                    new StarlightGraph.SourceEntry(
                             new BlockPos(0, 64, 0),
                             new ResourceLocation("astralsorcery", "aevitas"),
                             true);
-            WorldNetworkHandler.SourceEntry discidia =
-                    new WorldNetworkHandler.SourceEntry(
+            StarlightGraph.SourceEntry discidia =
+                    new StarlightGraph.SourceEntry(
                             new BlockPos(10, 64, 0),
                             new ResourceLocation("astralsorcery", "discidia"),
                             false);
@@ -1676,16 +1676,16 @@ class StarlightDistributionTest {
         @Test
         void testMultipleEntriesAtSamePosition() {
             // Verify that maps handle position-keyed lookups correctly
-            Map<BlockPos, WorldNetworkHandler.SourceEntry> sources = new HashMap<>();
-            Map<BlockPos, WorldNetworkHandler.ReceiverEntry> receivers = new HashMap<>();
-            Map<BlockPos, WorldNetworkHandler.TransmissionEntry> transmissions = new HashMap<>();
+            Map<BlockPos, StarlightGraph.SourceEntry> sources = new HashMap<>();
+            Map<BlockPos, StarlightGraph.ReceiverEntry> receivers = new HashMap<>();
+            Map<BlockPos, StarlightGraph.TransmissionEntry> transmissions = new HashMap<>();
 
             BlockPos shared = new BlockPos(10, 64, 10);
 
             // A position could theoretically be both source and transmission
-            sources.put(shared, new WorldNetworkHandler.SourceEntry(
+            sources.put(shared, new StarlightGraph.SourceEntry(
                     shared, new ResourceLocation("astralsorcery", "vicio"), true));
-            transmissions.put(shared, new WorldNetworkHandler.TransmissionEntry(shared, 0.9));
+            transmissions.put(shared, new StarlightGraph.TransmissionEntry(shared, 0.9));
 
             assertTrue(sources.containsKey(shared));
             assertTrue(transmissions.containsKey(shared));

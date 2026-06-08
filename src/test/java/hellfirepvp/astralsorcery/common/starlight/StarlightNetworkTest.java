@@ -130,15 +130,15 @@ class StarlightNetworkTest {
 
         @Test
         void testSourceEntryNBTRoundtrip() {
-            WorldNetworkHandler.SourceEntry original = new WorldNetworkHandler.SourceEntry(
+            StarlightGraph.SourceEntry original = new StarlightGraph.SourceEntry(
                     new BlockPos(100, 64, 200),
                     new ResourceLocation("astralsorcery", "discidia"),
                     true
             );
 
             CompoundTag tag = original.writeToNBT();
-            WorldNetworkHandler.SourceEntry restored =
-                    WorldNetworkHandler.SourceEntry.readFromNBT(tag);
+            StarlightGraph.SourceEntry restored =
+                    StarlightGraph.SourceEntry.readFromNBT(tag);
 
             assertEquals(original.getPos(), restored.getPos());
             assertEquals(original.getConstellation(), restored.getConstellation());
@@ -147,15 +147,15 @@ class StarlightNetworkTest {
 
         @Test
         void testSourceEntryNullConstellation() {
-            WorldNetworkHandler.SourceEntry original = new WorldNetworkHandler.SourceEntry(
+            StarlightGraph.SourceEntry original = new StarlightGraph.SourceEntry(
                     new BlockPos(50, 40, 30),
                     null,  // unattuned source
                     false
             );
 
             CompoundTag tag = original.writeToNBT();
-            WorldNetworkHandler.SourceEntry restored =
-                    WorldNetworkHandler.SourceEntry.readFromNBT(tag);
+            StarlightGraph.SourceEntry restored =
+                    StarlightGraph.SourceEntry.readFromNBT(tag);
 
             assertEquals(original.getPos(), restored.getPos());
             assertNull(restored.getConstellation());
@@ -164,14 +164,14 @@ class StarlightNetworkTest {
 
         @Test
         void testReceiverEntryNBTRoundtrip() {
-            WorldNetworkHandler.ReceiverEntry original = new WorldNetworkHandler.ReceiverEntry(
+            StarlightGraph.ReceiverEntry original = new StarlightGraph.ReceiverEntry(
                     new BlockPos(-50, 100, 300),
                     500.0
             );
 
             CompoundTag tag = original.writeToNBT();
-            WorldNetworkHandler.ReceiverEntry restored =
-                    WorldNetworkHandler.ReceiverEntry.readFromNBT(tag);
+            StarlightGraph.ReceiverEntry restored =
+                    StarlightGraph.ReceiverEntry.readFromNBT(tag);
 
             assertEquals(original.getPos(), restored.getPos());
             assertEquals(original.getMaxInput(), restored.getMaxInput(), 0.001);
@@ -179,26 +179,26 @@ class StarlightNetworkTest {
 
         @Test
         void testReceiverEntryZeroMaxInput() {
-            WorldNetworkHandler.ReceiverEntry original = new WorldNetworkHandler.ReceiverEntry(
+            StarlightGraph.ReceiverEntry original = new StarlightGraph.ReceiverEntry(
                     BlockPos.ZERO, 0.0);
 
             CompoundTag tag = original.writeToNBT();
-            WorldNetworkHandler.ReceiverEntry restored =
-                    WorldNetworkHandler.ReceiverEntry.readFromNBT(tag);
+            StarlightGraph.ReceiverEntry restored =
+                    StarlightGraph.ReceiverEntry.readFromNBT(tag);
 
             assertEquals(0.0, restored.getMaxInput(), 0.001);
         }
 
         @Test
         void testTransmissionEntryNBTRoundtrip() {
-            WorldNetworkHandler.TransmissionEntry original = new WorldNetworkHandler.TransmissionEntry(
+            StarlightGraph.TransmissionEntry original = new StarlightGraph.TransmissionEntry(
                     new BlockPos(10, 65, 10),
                     0.85
             );
 
             CompoundTag tag = original.writeToNBT();
-            WorldNetworkHandler.TransmissionEntry restored =
-                    WorldNetworkHandler.TransmissionEntry.readFromNBT(tag);
+            StarlightGraph.TransmissionEntry restored =
+                    StarlightGraph.TransmissionEntry.readFromNBT(tag);
 
             assertEquals(original.getPos(), restored.getPos());
             assertEquals(original.getEfficiency(), restored.getEfficiency(), 0.001);
@@ -207,12 +207,12 @@ class StarlightNetworkTest {
         @Test
         void testTransmissionEntryEfficiencyClamped() {
             // Efficiency > 1.0 should clamp to 1.0
-            WorldNetworkHandler.TransmissionEntry clamped = new WorldNetworkHandler.TransmissionEntry(
+            StarlightGraph.TransmissionEntry clamped = new StarlightGraph.TransmissionEntry(
                     BlockPos.ZERO, 1.5);
             assertEquals(1.0, clamped.getEfficiency(), 0.001);
 
             // Efficiency < 0 should clamp to 0
-            WorldNetworkHandler.TransmissionEntry zero = new WorldNetworkHandler.TransmissionEntry(
+            StarlightGraph.TransmissionEntry zero = new StarlightGraph.TransmissionEntry(
                     BlockPos.ZERO, -0.5);
             assertEquals(0.0, zero.getEfficiency(), 0.001);
         }
@@ -220,11 +220,11 @@ class StarlightNetworkTest {
         @Test
         void testTransmissionEntryEdgeEfficiency() {
             // Exactly 0 and exactly 1 should work
-            WorldNetworkHandler.TransmissionEntry atZero = new WorldNetworkHandler.TransmissionEntry(
+            StarlightGraph.TransmissionEntry atZero = new StarlightGraph.TransmissionEntry(
                     BlockPos.ZERO, 0.0);
             assertEquals(0.0, atZero.getEfficiency(), 0.001);
 
-            WorldNetworkHandler.TransmissionEntry atOne = new WorldNetworkHandler.TransmissionEntry(
+            StarlightGraph.TransmissionEntry atOne = new StarlightGraph.TransmissionEntry(
                     BlockPos.ZERO, 1.0);
             assertEquals(1.0, atOne.getEfficiency(), 0.001);
         }
