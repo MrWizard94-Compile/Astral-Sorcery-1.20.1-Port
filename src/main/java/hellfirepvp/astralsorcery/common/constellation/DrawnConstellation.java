@@ -1,7 +1,7 @@
 package hellfirepvp.astralsorcery.common.constellation;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Point;
 
 /**
  * A constellation drawn at a specific position on the screen/paper.

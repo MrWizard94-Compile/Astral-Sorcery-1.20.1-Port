@@ -44,6 +44,18 @@ public class AmuletEnchantmentEntry implements Comparable<AmuletEnchantmentEntry
         return Integer.compare(this.weight, o.weight);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AmuletEnchantmentEntry other)) return false;
+        return weight == other.weight && enchantment == other.enchantment;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(enchantment, weight);
+    }
+
     @Nonnull
     public String serialize() {
         ResourceLocation key = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);

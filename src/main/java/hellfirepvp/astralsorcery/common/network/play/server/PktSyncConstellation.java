@@ -17,10 +17,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 /**
@@ -71,9 +72,7 @@ public class PktSyncConstellation {
     public static void handle(@Nonnull PktSyncConstellation msg,
                               @Nonnull Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() ->
-                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
-        );
+        ctx.enqueueWork(() -> handleClient(msg));
         ctx.setPacketHandled(true);
     }
 
@@ -99,7 +98,7 @@ public class PktSyncConstellation {
         ClientLevel level = mc.level;
         if (level == null) return;
         Vec3 pos = player.position().add(0, player.getEyeHeight(), 0);
-        java.util.Random rng = new java.util.Random();
+        ThreadLocalRandom rng = ThreadLocalRandom.current();
         for (int i = 0; i < 40; i++) {
             double ox = (rng.nextDouble() - 0.5) * 2.0;
             double oy = (rng.nextDouble() - 0.5) * 2.0;

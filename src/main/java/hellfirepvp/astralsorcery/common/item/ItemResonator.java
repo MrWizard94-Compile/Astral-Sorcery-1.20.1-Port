@@ -22,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -128,10 +127,12 @@ public class ItemResonator extends ItemAS {
                               @Nonnull Entity entity, int slot, boolean selected) {
         if (!(entity instanceof Player player)) return;
         switch (getSelectedUpgrade(stack)) {
-            case STARLIGHT    -> DistExecutor.safeRunWhenOn(Dist.CLIENT,
-                                    () -> () -> tickStarlightClient(level, player));
+            case STARLIGHT    -> {
+                if (level.isClientSide()) tickStarlightClient(level, player);
+            }
             case FLUID_FIELDS -> tickFluidFieldsServer(level, player);
             case AREA_SIZE    -> {} // no AOI interface in this port
+            default -> {}
         }
     }
 

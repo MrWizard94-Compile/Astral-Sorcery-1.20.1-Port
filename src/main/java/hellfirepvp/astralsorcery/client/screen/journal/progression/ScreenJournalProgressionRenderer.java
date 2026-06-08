@@ -14,6 +14,7 @@ import hellfirepvp.astralsorcery.common.data.research.ResearchProgression;
 import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,7 +22,8 @@ import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -286,6 +288,7 @@ public class ScreenJournalProgressionRenderer {
         float br = scale > 8.01f ? 0f : scale >= 6f ? 1f - (scale - 6f) / 2f : 1f;
 
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderTexture(0, cluster.cloudTexture.getKey());
         Blending.ADDITIVEDARK.apply();
         RenderingUtils.drawColorTex(matrix, pCluster.x, pCluster.y, width, height, br, br, br, br);
@@ -298,6 +301,7 @@ public class ScreenJournalProgressionRenderer {
         if (br <= 0f) return;
 
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderTexture(0, tex.getKey());
         Blending.ADDITIVEDARK.apply();
         RenderingUtils.drawColorTex(matrix,
@@ -309,6 +313,7 @@ public class ScreenJournalProgressionRenderer {
     private void drawBackground(GuiGraphics graphics) {
         float br = 0.35f;
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderTexture(0, TexturesAS.TEX_GUI_BACKGROUND_DEFAULT.getKey());
         RenderingUtils.drawColorTex(matrix,
                 realCoordLowerX, realCoordLowerY, realRenderWidth, realRenderHeight,
@@ -317,6 +322,7 @@ public class ScreenJournalProgressionRenderer {
 
     private void drawStarParallaxLayers(GuiGraphics graphics, float scalePosX, float scalePosY) {
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderTexture(0, TexturesAS.TEX_GUI_STARFIELD_OVERLAY.getKey());
         Blending.OVERLAYDARK.apply();
 

@@ -1,6 +1,6 @@
 package hellfirepvp.astralsorcery.common.lib;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Color constants used throughout Astral Sorcery.

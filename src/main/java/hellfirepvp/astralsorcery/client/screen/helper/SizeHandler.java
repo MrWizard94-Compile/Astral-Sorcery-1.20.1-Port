@@ -4,7 +4,7 @@ import hellfirepvp.astralsorcery.client.screen.base.WidthHeightScreen;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Point;
 
 /**
  * Manages zoom level and coordinate mapping for the journal's galaxy/cluster views.

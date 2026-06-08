@@ -20,7 +20,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.*;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_COLLECTOR_COLLECTION_RATE;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_PURITY;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_RITUAL_EFFECT;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_RITUAL_RANGE;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_SHAPE;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_SIZE;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_TOOL_DURABILITY;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Properties.PROPERTY_TOOL_EFFICIENCY;
 
 /**
  * Generates and upgrades {@link CrystalAttributes} on crystal item stacks.

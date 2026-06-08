@@ -31,11 +31,10 @@ public class BookLookupRegistry {
     @OnlyIn(Dist.CLIENT)
     public static BookLookupInfo findPage(ItemStack search) {
         PlayerProgress prog = PlayerProgressManager.getClientProgress();
-        for (ItemStack compare : lookupMap.keySet()) {
-            if (ItemComparator.compare(compare, search, ItemComparator.Clause.Sets.ITEMSTACK_CRAFTING)) {
-                BookLookupInfo info = lookupMap.get(compare);
-                if (info.canSee(prog)) {
-                    return info;
+        for (Map.Entry<ItemStack, BookLookupInfo> entry : lookupMap.entrySet()) {
+            if (ItemComparator.compare(entry.getKey(), search, ItemComparator.Clause.Sets.ITEMSTACK_CRAFTING)) {
+                if (entry.getValue().canSee(prog)) {
+                    return entry.getValue();
                 }
             }
         }

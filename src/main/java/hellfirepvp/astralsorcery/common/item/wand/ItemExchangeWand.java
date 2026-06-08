@@ -38,7 +38,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -89,8 +92,9 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
                 .filter(tpl -> placeStates.containsValue(tpl.getA()))
                 .collect(Collectors.toMap(Tuple::getA, Tuple::getB));
 
-        for (BlockPos placePos : placeStates.keySet()) {
-            BlockState stateToPlace = placeStates.get(placePos);
+        for (Map.Entry<BlockPos, BlockState> placeEntry : placeStates.entrySet()) {
+            BlockPos placePos = placeEntry.getKey();
+            BlockState stateToPlace = placeEntry.getValue();
             Tuple<ItemStack, Integer> available = availableStacks.get(stateToPlace);
             if (available == null) continue;
 
@@ -154,8 +158,8 @@ public class ItemExchangeWand extends ItemAS implements ItemBlockStorage, Alignm
         if (foundPositions.isEmpty()) return placeables;
 
         Map<BlockState, Integer> placeAmounts = Maps.newHashMap();
-        for (BlockState state : tplStates.keySet()) {
-            placeAmounts.put(state, placer.isCreative() ? Integer.MAX_VALUE : tplStates.get(state).getB());
+        for (Map.Entry<BlockState, Tuple<ItemStack, Integer>> tplEntry : tplStates.entrySet()) {
+            placeAmounts.put(tplEntry.getKey(), placer.isCreative() ? Integer.MAX_VALUE : tplEntry.getValue().getB());
         }
         List<BlockState> placeableStates = Lists.newArrayList(placeAmounts.keySet());
         Random rand = ItemBlockStorage.getPreviewRandomFromWorld(level);

@@ -530,6 +530,7 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
             case 1 -> this.starlightCapacity = value;
             case 2 -> this.isCrafting = value != 0;
             case 3 -> this.recipeTick = value;
+            default -> {}
         }
     }
 

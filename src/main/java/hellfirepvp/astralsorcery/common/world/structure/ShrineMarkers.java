@@ -42,6 +42,7 @@ final class ShrineMarkers {
                                 AncientShrineStructure.placeChest(world, pos, random, true);
                         case "random_top", "random_top_block" ->
                                 world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                        default -> {}
                     }
                 }
             }

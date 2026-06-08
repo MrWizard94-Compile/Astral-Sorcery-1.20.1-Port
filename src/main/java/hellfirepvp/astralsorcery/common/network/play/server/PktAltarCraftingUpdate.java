@@ -94,6 +94,7 @@ public class PktAltarCraftingUpdate {
                 EffectHelper.orbitalStarlight(center, 1.2f);
             }
             case FAILED -> EffectHelper.dustCloud(center, new Color(130, 170, 240), 12, 0.8f);
+            default -> {}
         }
     }
 

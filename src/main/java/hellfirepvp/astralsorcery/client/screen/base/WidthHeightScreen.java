@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 /**
  * A fixed-size screen with drag/scroll support.

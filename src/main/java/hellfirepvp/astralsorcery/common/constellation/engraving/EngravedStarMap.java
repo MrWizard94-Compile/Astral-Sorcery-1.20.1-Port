@@ -18,8 +18,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
-import java.util.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.List;
 
 /**
@@ -65,16 +73,18 @@ public class EngravedStarMap {
         }
 
         Map<ResourceLocation, Float> distributionMap = new HashMap<>();
-        for (DrawnConstellation drawn : cstCoordinates.keySet()) {
-            List<Rectangle.Double> positions = cstCoordinates.get(drawn);
+        for (Map.Entry<DrawnConstellation, List<Rectangle.Double>> drawnEntry : cstCoordinates.entrySet()) {
+            DrawnConstellation drawn = drawnEntry.getKey();
+            List<Rectangle.Double> positions = drawnEntry.getValue();
             Set<Rectangle.Double> foundPositions = new HashSet<>();
 
-            for (DrawnConstellation otherCst : cstCoordinates.keySet()) {
+            for (Map.Entry<DrawnConstellation, List<Rectangle.Double>> otherEntry : cstCoordinates.entrySet()) {
+                DrawnConstellation otherCst = otherEntry.getKey();
                 if (drawn.equals(otherCst) ||
                         drawn.getConstellation().equals(otherCst.getConstellation())) {
                     continue;
                 }
-                List<Rectangle.Double> otherPositions = cstCoordinates.get(otherCst);
+                List<Rectangle.Double> otherPositions = otherEntry.getValue();
                 for (Rectangle.Double starPos : positions) {
                     for (Rectangle.Double otherStarPos : otherPositions) {
                         if (starPos.intersects(otherStarPos)) {

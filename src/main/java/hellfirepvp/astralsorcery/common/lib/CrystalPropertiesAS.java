@@ -11,7 +11,15 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crystal.CrystalProperty;
 import hellfirepvp.astralsorcery.common.crystal.CrystalPropertyRegistry;
 import hellfirepvp.astralsorcery.common.crystal.calc.PropertyUsage;
-import hellfirepvp.astralsorcery.common.crystal.property.*;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyCollectionRate;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyConstellation;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyPurity;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyRitualEffect;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyRitualRange;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyShape;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertySize;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyToolDurability;
+import hellfirepvp.astralsorcery.common.crystal.property.PropertyToolEfficiency;
 
 /**
  * Defines all crystal property and usage singletons, and registers them.

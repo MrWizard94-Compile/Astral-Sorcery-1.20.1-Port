@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  * buf.pos() → buf.vertex(), entity.getPositionVec() → position(),
  * entity.getPosX/Y/Z → getX/Y/Z, entity.getHeight → getBbHeight</p>
  */
-public class Vector3 {
+public class Vector3 implements Cloneable {
 
     private static final Random RAND = new Random();
 
@@ -571,9 +571,9 @@ public class Vector3 {
     @Nonnull
     public Vector3 copyInterpolateWith(@Nonnull Vector3 next, float partial) {
         return new Vector3(
-                (x == next.x ? x : x + ((next.x - x) * partial)),
-                (y == next.y ? y : y + ((next.y - y) * partial)),
-                (z == next.z ? z : z + ((next.z - z) * partial)));
+                x + (next.x - x) * partial,
+                y + (next.y - y) * partial,
+                z + (next.z - z) * partial);
     }
 
     // ---- Rendering helpers ----
@@ -701,7 +701,11 @@ public class Vector3 {
     @Override
     @Nonnull
     public Vector3 clone() {
-        return new Vector3(x, y, z);
+        try {
+            return (Vector3) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Vector3 implements Cloneable", e);
+        }
     }
 
     @Override

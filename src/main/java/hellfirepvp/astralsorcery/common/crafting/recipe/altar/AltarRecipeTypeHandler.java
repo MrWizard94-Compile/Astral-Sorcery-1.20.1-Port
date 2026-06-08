@@ -9,7 +9,17 @@ package hellfirepvp.astralsorcery.common.crafting.recipe.altar;
 
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crafting.recipe.SimpleAltarRecipe;
-import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.*;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.AttunementUpgradeRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationBaseAverageStatsRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationBaseItemRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationBaseMergeStatsRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationBaseNBTCopyRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationCopyStatsRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationItemRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.ConstellationUpgradeRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.CrystalCountRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.NBTCopyRecipe;
+import hellfirepvp.astralsorcery.common.crafting.recipe.altar.builtin.TraitUpgradeRecipe;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;

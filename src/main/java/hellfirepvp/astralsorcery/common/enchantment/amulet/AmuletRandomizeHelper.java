@@ -10,12 +10,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class AmuletRandomizeHelper {
-
-    private static final Random rand = new Random();
 
     // Cached once on first roll; registry is frozen after mod setup so this is safe.
     @Nullable
@@ -61,7 +59,7 @@ public class AmuletRandomizeHelper {
             enchantPool = pool;
         }
         if (pool.isEmpty()) return null;
-        return pool.get(rand.nextInt(pool.size()));
+        return pool.get(ThreadLocalRandom.current().nextInt(pool.size()));
     }
 
     @Nullable
@@ -70,10 +68,10 @@ public class AmuletRandomizeHelper {
         switch (existing.size()) {
             case 0:
             case 1:
-                if (rand.nextFloat() < chanceToAll) {
+                if (ThreadLocalRandom.current().nextFloat() < chanceToAll) {
                     return DynamicEnchantmentType.ADD_TO_EXISTING_ALL;
                 }
-                if (rand.nextFloat() < chanceToNonExisting) {
+                if (ThreadLocalRandom.current().nextFloat() < chanceToNonExisting) {
                     return DynamicEnchantmentType.ADD_TO_SPECIFIC;
                 }
                 return DynamicEnchantmentType.ADD_TO_EXISTING_SPECIFIC;
@@ -81,15 +79,15 @@ public class AmuletRandomizeHelper {
                 if (exAll > 1) {
                     return null;
                 } else if (exAll == 1) {
-                    if (rand.nextFloat() < chanceToNonExisting) {
+                    if (ThreadLocalRandom.current().nextFloat() < chanceToNonExisting) {
                         return DynamicEnchantmentType.ADD_TO_SPECIFIC;
                     }
                     return DynamicEnchantmentType.ADD_TO_EXISTING_SPECIFIC;
                 } else {
-                    if (rand.nextFloat() < chanceToAll) {
+                    if (ThreadLocalRandom.current().nextFloat() < chanceToAll) {
                         return DynamicEnchantmentType.ADD_TO_EXISTING_ALL;
                     }
-                    if (rand.nextFloat() < chanceToNonExisting) {
+                    if (ThreadLocalRandom.current().nextFloat() < chanceToNonExisting) {
                         return DynamicEnchantmentType.ADD_TO_SPECIFIC;
                     }
                     return DynamicEnchantmentType.ADD_TO_EXISTING_SPECIFIC;
@@ -100,16 +98,16 @@ public class AmuletRandomizeHelper {
     }
 
     private static int getRollLevel() {
-        return rand.nextFloat() < chance2Level ? 2 : 1;
+        return ThreadLocalRandom.current().nextFloat() < chance2Level ? 2 : 1;
     }
 
     private static boolean mayGetAdditionalRoll(List<AmuletEnchantment> existing) {
         if (existing.isEmpty()) return true;
         switch (existing.size()) {
             case 1:
-                return rand.nextFloat() < chance2nd;
+                return ThreadLocalRandom.current().nextFloat() < chance2nd;
             case 2:
-                return getAdditionAll(existing) < 2 && rand.nextFloat() < chance3rd;
+                return getAdditionAll(existing) < 2 && ThreadLocalRandom.current().nextFloat() < chance3rd;
             default:
                 return false;
         }

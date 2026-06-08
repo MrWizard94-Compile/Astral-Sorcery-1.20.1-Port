@@ -112,6 +112,7 @@ public final class PerkAttributeHelper {
                 case ADDED_MULTIPLY  -> addedMultiplySum += mod.getValue() * globalFactor;
                 // Scale the bonus delta so 1.2× at factor 2 becomes 1.4×, not 2.4×
                 case STACKING_MULTIPLY -> stackingMultipliers.add(1.0 + (mod.getValue() - 1.0) * globalFactor);
+                default -> {}
             }
         }
 

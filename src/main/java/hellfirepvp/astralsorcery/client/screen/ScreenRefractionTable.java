@@ -24,7 +24,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Refraction table screen — lets the player select up to 3 discovered

@@ -16,7 +16,13 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * World-saved data managing the Celestial Gateway network.

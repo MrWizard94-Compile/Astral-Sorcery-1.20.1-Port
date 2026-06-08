@@ -3,6 +3,8 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '6.0.26'
 }
 
 version = "${mc_version}-${mod_version}"
@@ -169,3 +171,36 @@ tasks.named('compileJava', JavaCompile).configure {
         "-AoutRefMapFile=${project.buildDir.canonicalPath}/classes/java/main/astralsorcery.refmap.json"
     ])
 }
+
+// ── Checkstyle ────────────────────────────────────────────────────────────────
+checkstyle {
+    toolVersion = '10.17.0'
+    configFile = file('config/checkstyle/checkstyle.xml')
+    configDirectory = file('config/checkstyle')
+    // Fail the build on any Checkstyle violation
+    ignoreFailures = false
+    showViolations = true
+}
+
+// Only check main sources (not test infrastructure which uses Forge game-test patterns)
+checkstyleTest.enabled = false
+
+// ── SpotBugs ──────────────────────────────────────────────────────────────────
+spotbugs {
+    toolVersion = '4.8.6'
+    excludeFilter = file('config/spotbugs/exclude.xml')
+    ignoreFailures = false
+}
+
+spotbugsMain {
+    reports {
+        html {
+            required = true
+            outputLocation = file("${buildDir}/reports/spotbugs/main.html")
+        }
+        xml { required = true }
+    }
+}
+
+// Don't run SpotBugs on tests
+spotbugsTest.enabled = false

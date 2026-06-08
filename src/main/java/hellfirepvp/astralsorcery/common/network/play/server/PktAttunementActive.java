@@ -2,8 +2,7 @@ package hellfirepvp.astralsorcery.common.network.play.server;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -38,16 +37,15 @@ public class PktAttunementActive {
 
     public static void handle(@Nonnull PktAttunementActive pkt,
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() ->
-            DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
-                if (pkt.active) {
-                    hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect
-                            .INSTANCE.startAttunement(pkt.altarPos);
-                } else {
-                    hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect
-                            .INSTANCE.stopAttunement();
-                }
-            }));
+        ctx.get().enqueueWork(() -> {
+            if (pkt.active) {
+                hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect
+                        .INSTANCE.startAttunement(pkt.altarPos);
+            } else {
+                hellfirepvp.astralsorcery.client.effect.AttunementCameraEffect
+                        .INSTANCE.stopAttunement();
+            }
+        });
         ctx.get().setPacketHandled(true);
     }
 }

@@ -11,8 +11,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Objects;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -152,7 +154,7 @@ public abstract class Constellation extends BaseConstellation {
         }
     }
 
-    public static abstract class WeakSpecial extends Weak implements IConstellationSpecialShowup {
+    public abstract static class WeakSpecial extends Weak implements IConstellationSpecialShowup {
 
         public WeakSpecial(@Nonnull String name) {
             super(name);

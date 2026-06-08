@@ -32,7 +32,7 @@ public abstract class AttunementRecipe<T extends AttunementRecipe.Active<?>> ext
         return activeRecipe;
     }
 
-    public static abstract class Active<T extends AttunementRecipe<? extends Active<T>>> {
+    public abstract static class Active<T extends AttunementRecipe<? extends Active<T>>> {
 
         protected final Random rand = new Random();
 

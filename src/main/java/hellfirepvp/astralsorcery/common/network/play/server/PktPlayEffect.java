@@ -11,7 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
+
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -78,8 +78,7 @@ public class PktPlayEffect {
     public static void handle(@Nonnull PktPlayEffect pkt,
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
-        context.enqueueWork(() ->
-                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt)));
+        context.enqueueWork(() -> handleClient(pkt));
         context.setPacketHandled(true);
     }
 
@@ -139,6 +138,7 @@ public class PktPlayEffect {
             }
             case CRYSTAL_FORM ->
                 EffectHelper.crystalGrowthCluster(center, new Color(200, 230, 255), 10, 0.4f);
+            default -> {}
         }
     }
 

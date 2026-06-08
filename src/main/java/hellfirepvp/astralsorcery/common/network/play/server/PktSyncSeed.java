@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
+
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -61,9 +61,7 @@ public class PktSyncSeed {
 
     public static void handle(@Nonnull PktSyncSeed pkt,
                                @Nonnull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() ->
-                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(pkt))
-        );
+        ctx.get().enqueueWork(() -> handleClient(pkt));
         ctx.get().setPacketHandled(true);
     }
 

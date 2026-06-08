@@ -8,14 +8,24 @@
 package hellfirepvp.astralsorcery.common.constellation.world;
 
 import hellfirepvp.astralsorcery.common.base.MoonPhase;
-import hellfirepvp.astralsorcery.common.constellation.*;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IConstellationSpecialShowup;
+import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IMinorConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Central handler for celestial events — determines which constellations

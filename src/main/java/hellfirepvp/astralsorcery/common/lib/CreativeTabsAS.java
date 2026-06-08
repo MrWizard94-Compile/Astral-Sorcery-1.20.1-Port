@@ -7,6 +7,7 @@ import hellfirepvp.astralsorcery.common.constellation.IMajorConstellation;
 import hellfirepvp.astralsorcery.common.crystal.CrystalAttributes;
 import hellfirepvp.astralsorcery.common.crystal.CrystalProperties;
 import hellfirepvp.astralsorcery.common.item.ItemConstellationPaper;
+import hellfirepvp.astralsorcery.common.item.block.ItemBlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedCelestialCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemAttunedRockCrystal;
 import hellfirepvp.astralsorcery.common.item.crystal.ItemCrystalBase;
@@ -18,10 +19,12 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Creative mode tab registration for Astral Sorcery.
- * Uses the 1.20 builder-based CreativeModeTab API (replaces ItemGroup).
+ * Tab 1 ("Astral Sorcery"): tools, wands, crystals, constellation items, perk gear, mantles, lenses.
+ * Tab 2 ("Astral Sorcery: Blocks"): altars, network blocks, building blocks, ores.
  */
 public class CreativeTabsAS {
 
@@ -33,17 +36,28 @@ public class CreativeTabsAS {
     public static final RegistryObject<CreativeModeTab> ASTRAL_SORCERY_TAB =
             CREATIVE_TABS.register("astralsorcery", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.astralsorcery"))
-                    .icon(CreativeTabsAS::getTabIcon)
-                    .displayItems(CreativeTabsAS::populateTab)
+                    .icon(CreativeTabsAS::getItemsTabIcon)
+                    .displayItems(CreativeTabsAS::populateItemsTab)
                     .build());
 
+    public static final RegistryObject<CreativeModeTab> ASTRAL_SORCERY_BLOCKS_TAB =
+            CREATIVE_TABS.register("astralsorcery_blocks", () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.astralsorcery.blocks"))
+                    .icon(CreativeTabsAS::getBlocksTabIcon)
+                    .displayItems(CreativeTabsAS::populateBlocksTab)
+                    .build());
+
+    // -------------------------------------------------------------------------
+    // Tab 1: Items — tools, crystals, papers, perks, armor, lenses
+    // -------------------------------------------------------------------------
+
     @Nonnull
-    private static ItemStack getTabIcon() {
+    private static ItemStack getItemsTabIcon() {
         return new ItemStack(ItemsAS.WAND.get());
     }
 
-    private static void populateTab(@Nonnull CreativeModeTab.ItemDisplayParameters parameters,
-                                    @Nonnull CreativeModeTab.Output output) {
+    private static void populateItemsTab(@Nonnull CreativeModeTab.ItemDisplayParameters parameters,
+                                         @Nonnull CreativeModeTab.Output output) {
         // === Tools & Wands ===
         output.accept(ItemsAS.WAND.get());
         output.accept(ItemsAS.ARCHITECT_WAND.get());
@@ -73,7 +87,6 @@ public class CreativeTabsAS {
 
         // === Crystals & Materials ===
         output.accept(maxCrystalStack(ItemsAS.ROCK_CRYSTAL.get()));
-        // Attuned rock crystals — one per major constellation
         output.accept(maxCrystalStack(ItemsAS.ATTUNED_ROCK_CRYSTAL.get())); // blank
         for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
             if (cst instanceof IMajorConstellation major) {
@@ -83,7 +96,6 @@ public class CreativeTabsAS {
             }
         }
         output.accept(maxCrystalStack(ItemsAS.CELESTIAL_CRYSTAL.get()));
-        // Attuned celestial crystals — one per major constellation
         output.accept(maxCrystalStack(ItemsAS.ATTUNED_CELESTIAL_CRYSTAL.get())); // blank
         for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
             if (cst instanceof IMajorConstellation major) {
@@ -106,7 +118,6 @@ public class CreativeTabsAS {
 
         // === Constellation Items ===
         output.accept(ItemsAS.CONSTELLATION_PAPER.get()); // blank
-        // One filled constellation paper per constellation
         for (IConstellation cst : ConstellationRegistry.getAllConstellations()) {
             ItemStack paper = new ItemStack(ItemsAS.CONSTELLATION_PAPER.get());
             ItemConstellationPaper.setConstellation(paper, cst.getRegistryName());
@@ -152,7 +163,19 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.COLORED_LENS_REGENERATION.get());
         output.accept(ItemsAS.COLORED_LENS_PUSH.get());
         output.accept(ItemsAS.COLORED_LENS_SPECTRAL.get());
+    }
 
+    // -------------------------------------------------------------------------
+    // Tab 2: Blocks — altars, network, building blocks, ores
+    // -------------------------------------------------------------------------
+
+    @Nonnull
+    private static ItemStack getBlocksTabIcon() {
+        return new ItemStack(ItemsAS.ALTAR_DISCOVERY_ITEM.get());
+    }
+
+    private static void populateBlocksTab(@Nonnull CreativeModeTab.ItemDisplayParameters parameters,
+                                          @Nonnull CreativeModeTab.Output output) {
         // === Functional Blocks ===
         output.accept(ItemsAS.ALTAR_DISCOVERY_ITEM.get());
         output.accept(ItemsAS.ALTAR_ATTUNEMENT_ITEM.get());
@@ -174,9 +197,19 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.REFRACTION_TABLE_ITEM.get());
         output.accept(ItemsAS.RITUAL_LINK_ITEM.get());
 
-        // === Starlight Network ===
-        output.accept(ItemsAS.COLLECTOR_CRYSTAL_ITEM.get());
-        output.accept(ItemsAS.CELESTIAL_COLLECTOR_CRYSTAL_ITEM.get());
+        // === Starlight Network — plain then per-major-constellation variants ===
+        output.accept(collectorStack(ItemsAS.COLLECTOR_CRYSTAL_ITEM.get(), null));
+        for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
+            if (cst instanceof IMajorConstellation major) {
+                output.accept(collectorStack(ItemsAS.COLLECTOR_CRYSTAL_ITEM.get(), major));
+            }
+        }
+        output.accept(collectorStack(ItemsAS.CELESTIAL_COLLECTOR_CRYSTAL_ITEM.get(), null));
+        for (IConstellation cst : ConstellationRegistry.getMajorConstellations()) {
+            if (cst instanceof IMajorConstellation major) {
+                output.accept(collectorStack(ItemsAS.CELESTIAL_COLLECTOR_CRYSTAL_ITEM.get(), major));
+            }
+        }
         output.accept(ItemsAS.LENS_ITEM.get());
         output.accept(ItemsAS.PRISM_ITEM.get());
         output.accept(ItemsAS.RELAY_ITEM.get());
@@ -228,6 +261,21 @@ public class CreativeTabsAS {
         output.accept(ItemsAS.ILLUMINATOR_ITEM.get());
     }
 
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    /** Create an attuned collector crystal stack. Pass null constellation for the plain (untuned) variant. */
+    @Nonnull
+    private static ItemStack collectorStack(@Nonnull ItemBlockCollectorCrystal item,
+                                            @Nullable IMajorConstellation constellation) {
+        ItemStack stack = new ItemStack(item);
+        if (constellation != null) {
+            item.setAttunedConstellation(stack, constellation);
+        }
+        return stack;
+    }
+
     /** Create a crystal ItemStack with all physical properties at max tier. */
     @Nonnull
     private static ItemStack maxCrystalStack(@Nonnull net.minecraft.world.item.Item item) {
@@ -243,7 +291,7 @@ public class CreativeTabsAS {
                     .addProperty(CrystalPropertiesAS.Properties.PROPERTY_RITUAL_RANGE, 2)
                     .addProperty(CrystalPropertiesAS.Properties.PROPERTY_RITUAL_EFFECT, 3)
                     .build();
-            crystal.setAttributes(stack, maxAttrs); // also derives and stores CrystalProperties
+            crystal.setAttributes(stack, maxAttrs);
         }
         return stack;
     }

@@ -88,7 +88,10 @@ public class CrystalIngredient extends Ingredient {
     @Override
     public JsonElement toJson() {
         JsonObject obj = new JsonObject();
-        obj.addProperty("type", CraftingHelper.getID(IngredientSerializersAS.CRYSTAL_SERIALIZER).toString());
+        net.minecraft.resources.ResourceLocation serializerId =
+                java.util.Objects.requireNonNull(CraftingHelper.getID(IngredientSerializersAS.CRYSTAL_SERIALIZER),
+                        "CrystalIngredient serializer is not registered");
+        obj.addProperty("type", serializerId.toString());
         obj.addProperty("hasToBeAttuned", hasToBeAttuned);
         obj.addProperty("hasToBeCelestial", hasToBeCelestial);
         obj.addProperty("canBeAttuned", canBeAttuned);

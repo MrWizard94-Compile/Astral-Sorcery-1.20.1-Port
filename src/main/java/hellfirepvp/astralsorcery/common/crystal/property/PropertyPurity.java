@@ -10,7 +10,10 @@ package hellfirepvp.astralsorcery.common.crystal.property;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crystal.CrystalProperty;
 
-import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.*;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_COLLECTOR_CRYSTAL;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_LENS_TRANSFER;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_RITUAL_EFFECT;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_RITUAL_RANGE;
 
 /**
  * Crystal property: Purity — influences starlight transfer efficiency, collector/ritual output.

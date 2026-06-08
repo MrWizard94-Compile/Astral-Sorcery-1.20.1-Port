@@ -61,7 +61,7 @@ public class EntitySpectralTool extends Entity {
 
     private int remainingTicks = 200;
     private float rotationDeg = 0.0f;
-    private final float rotationSpeed = 5.0f;
+    private static final float ROTATION_SPEED = 5.0f;
 
     // Server-side AI state
     private int ticksUntilNextAction = 0;
@@ -118,7 +118,7 @@ public class EntitySpectralTool extends Entity {
             return;
         }
 
-        rotationDeg += rotationSpeed;
+        rotationDeg += ROTATION_SPEED;
         if (rotationDeg >= 360.0f) rotationDeg -= 360.0f;
 
         if (!level().isClientSide()) {

@@ -18,6 +18,7 @@ import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Crystal growth particle effect — a slowly expanding, rotating crystalline
@@ -49,10 +50,11 @@ public class FXCrystalGrowth extends EntityVisualFX {
      */
     public FXCrystalGrowth(double x, double y, double z) {
         super(x, y, z);
-        this.rotationSpeed = 2.0f + (float) (Math.random() * 3.0);
-        this.initialRotation = (float) (Math.random() * 360.0);
+        ThreadLocalRandom rng = ThreadLocalRandom.current();
+        this.rotationSpeed = 2.0f + rng.nextFloat() * 3.0f;
+        this.initialRotation = rng.nextFloat() * 360.0f;
         this.targetScale = 0.1f;
-        setMaxAge(40 + (int) (Math.random() * 20));
+        setMaxAge(40 + rng.nextInt(20));
     }
 
     /**

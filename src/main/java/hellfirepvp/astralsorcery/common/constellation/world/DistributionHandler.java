@@ -103,7 +103,7 @@ public class DistributionHandler {
         int dist = Math.min(
                 Math.abs(dayStart - dayIn),
                 Math.abs(dayStart - (dayIn + phaseCount)));
-        float part = ((float) dist) / ((float) (phaseCount / 2));
+        float part = ((float) dist) / ((float) phaseCount / 2);
         return Mth.cos((float) ((part / 2) * Math.PI)) * 0.5F + 0.5F;
     }
 }

@@ -1,0 +1,7 @@
+// 1.20.1	2026-06-07T19:25:43.1339878	Tags for minecraft:block mod id astralsorcery
+d6bb8a49d6c0bdea22f0f1f107a8f8ee3c55cb8f data/astralsorcery/tags/blocks/marble_blocks.json
+ab7c3efffb8310be1a1e8b03629fd8fe5a3e519e data/minecraft/tags/blocks/mineable/axe.json
+1b31e343889ca0cca9fbc15ee2a55838e69a0d89 data/minecraft/tags/blocks/mineable/pickaxe.json
+a1c9581638445ce1cadf87f3f18ab0611b4d747a data/minecraft/tags/blocks/needs_iron_tool.json
+98aadb0751c4f0ee9824903cbeafb0fb913f3838 data/minecraft/tags/blocks/slabs.json
+169c964fed5deb9a72c2c7ab5952d0355ee569eb data/minecraft/tags/blocks/stairs.json

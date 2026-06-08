@@ -3,11 +3,20 @@ package hellfirepvp.astralsorcery.common.constellation.world;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import hellfirepvp.astralsorcery.common.base.MoonPhase;
-import hellfirepvp.astralsorcery.common.constellation.*;
+import hellfirepvp.astralsorcery.common.constellation.ConstellationRegistry;
+import hellfirepvp.astralsorcery.common.constellation.IConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IConstellationSpecialShowup;
+import hellfirepvp.astralsorcery.common.constellation.IMinorConstellation;
+import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Tracks which constellations are active in each moon phase for a given world seed.
@@ -143,7 +152,7 @@ public class ConstellationHandler {
 
     private int getFreeSlots(boolean[] array) {
         int count = 0;
-        for (boolean b : array) if (!b) count++;
+        for (boolean b : array) { if (!b) count++; }
         return count;
     }
 }

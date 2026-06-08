@@ -12,7 +12,11 @@ import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**

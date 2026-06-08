@@ -21,7 +21,11 @@ import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Base class for all perks in the Astral Sorcery perk tree.

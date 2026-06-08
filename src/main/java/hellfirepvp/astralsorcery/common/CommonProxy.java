@@ -175,8 +175,9 @@ public class CommonProxy {
         // Horologium time-stop freeze tick handler + clear on world unload
         forgeBus.register(hellfirepvp.astralsorcery.common.auxiliary.TimeStopController.INSTANCE);
         forgeBus.addListener((net.minecraftforge.event.level.LevelEvent.Unload e) -> {
-            if (!e.getLevel().isClientSide())
+            if (!e.getLevel().isClientSide()) {
                 hellfirepvp.astralsorcery.common.auxiliary.TimeStopController.INSTANCE.clear();
+            }
         });
 
         // Amulet enchantment tick + DynamicEnchantmentEvent.Add wiring
@@ -190,7 +191,7 @@ public class CommonProxy {
         forgeBus.register(new CommandAstralSorcery());
 
         // Item interaction dispatch: OverrideInteractItem (wands, linking tools)
-        forgeBus.register(EventHandlerInteract.class);
+        forgeBus.addListener(EventHandlerInteract::onBlockInteract);
 
         // Block-storage wand clear on left-click (architect wand, exchange wand)
         forgeBus.register(EventHandlerBlockStorage.class);

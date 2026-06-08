@@ -10,7 +10,8 @@ package hellfirepvp.astralsorcery.common.crystal.property;
 import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.crystal.CrystalProperty;
 
-import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.*;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_COLLECTOR_CRYSTAL;
+import static hellfirepvp.astralsorcery.common.lib.CrystalPropertiesAS.Usages.USE_TOOL_DURABILITY;
 
 /**
  * Crystal property: Size — influences collector crystal collection rate and tool durability.

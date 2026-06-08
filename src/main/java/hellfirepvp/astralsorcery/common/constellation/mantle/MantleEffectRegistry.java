@@ -4,7 +4,18 @@
 package hellfirepvp.astralsorcery.common.constellation.mantle;
 
 import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
-import hellfirepvp.astralsorcery.common.constellation.mantle.effect.*;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectAevitas;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectArmara;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectBootes;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectDiscidia;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectEvorsio;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectFornax;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectHorologium;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectLucerna;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectMineralis;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectOctans;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectPelotrio;
+import hellfirepvp.astralsorcery.common.constellation.mantle.effect.MantleEffectVicio;
 import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
 import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
 import net.minecraft.resources.ResourceLocation;

@@ -11,8 +11,6 @@ import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.common.starlight.ClientStarlightNetworkCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -89,9 +87,7 @@ public class PktSyncStarlightNetwork {
     public static void handle(@Nonnull PktSyncStarlightNetwork msg,
                               @Nonnull Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() ->
-                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
-        );
+        ctx.enqueueWork(() -> handleClient(msg));
         ctx.setPacketHandled(true);
     }
 

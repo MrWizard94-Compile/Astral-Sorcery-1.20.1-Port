@@ -24,13 +24,20 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static hellfirepvp.astralsorcery.common.util.item.ItemComparator.Clause.*;
+import static hellfirepvp.astralsorcery.common.util.item.ItemComparator.Clause.CAPABILITIES_COMPATIBLE;
+import static hellfirepvp.astralsorcery.common.util.item.ItemComparator.Clause.ITEM;
+import static hellfirepvp.astralsorcery.common.util.item.ItemComparator.Clause.NBT_STRICT;
 
 /**
  * Item/inventory manipulation utilities.
@@ -186,7 +193,9 @@ public class ItemUtils {
 
     @Nonnull
     public static List<ItemStack> getItemsOfTag(@Nonnull TagKey<Item> itemTag) {
-        return ForgeRegistries.ITEMS.tags().getTag(itemTag).stream()
+        net.minecraftforge.registries.tags.ITagManager<Item> tagManager = ForgeRegistries.ITEMS.tags();
+        if (tagManager == null) return List.of();
+        return tagManager.getTag(itemTag).stream()
                 .map(ItemStack::new)
                 .collect(Collectors.toList());
     }
@@ -294,8 +303,9 @@ public class ItemUtils {
         if (contents.isEmpty()) return false;
 
         int cAmt = toConsume.getCount();
-        for (int slot : contents.keySet()) {
-            ItemStack inSlot = contents.get(slot);
+        for (Map.Entry<Integer, ItemStack> slotEntry : contents.entrySet()) {
+            int slot = slotEntry.getKey();
+            ItemStack inSlot = slotEntry.getValue();
             int toRemove = Math.min(cAmt, inSlot.getCount());
             cAmt -= toRemove;
             if (!simulate) {

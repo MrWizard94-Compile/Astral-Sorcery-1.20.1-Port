@@ -16,11 +16,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
+
 import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 /**
@@ -136,9 +136,7 @@ public class PktParticleEvent {
     public static void handle(@Nonnull PktParticleEvent msg,
                               @Nonnull Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() ->
-                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(msg))
-        );
+        ctx.enqueueWork(() -> handleClient(msg));
         ctx.setPacketHandled(true);
     }
 
@@ -148,7 +146,7 @@ public class PktParticleEvent {
         if (level == null) return;
 
         Vec3 center = Vec3.atCenterOf(msg.pos);
-        Random rand = new Random();
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
 
         switch (msg.eventType) {
             case ALTAR_CRAFT -> {
@@ -192,13 +190,14 @@ public class PktParticleEvent {
                             center.x + ox, center.y, center.z + oz, vx, vy, vz);
                 }
             }
+            default -> {}
         }
     }
 
     @OnlyIn(Dist.CLIENT)
     private static void burst(@Nonnull ClientLevel level, @Nonnull Vec3 center,
                                @Nonnull ParticleOptions type, int count,
-                               @Nonnull Random rand, double radius) {
+                               @Nonnull ThreadLocalRandom rand, double radius) {
         for (int i = 0; i < count; i++) {
             double angle = rand.nextDouble() * Math.PI * 2;
             double pitch = (rand.nextDouble() - 0.5) * Math.PI;

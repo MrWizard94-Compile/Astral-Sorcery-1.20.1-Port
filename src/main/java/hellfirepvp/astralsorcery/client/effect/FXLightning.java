@@ -96,7 +96,7 @@ public class FXLightning extends EntityVisualFX {
         // Midpoints get random displacement
         for (int i = 1; i < segmentCount; i++) {
             // Displacement magnitude decreases toward endpoints for cleaner look
-            float distFromEnd = Math.min(i, segmentCount - i) / (float) (segmentCount / 2);
+            float distFromEnd = Math.min(i, segmentCount - i) / ((float) segmentCount / 2);
             float maxDisp = displacement * distFromEnd;
             offsetsX[i] = (RAND.nextFloat() - 0.5f) * 2 * maxDisp;
             offsetsY[i] = (RAND.nextFloat() - 0.5f) * 2 * maxDisp;

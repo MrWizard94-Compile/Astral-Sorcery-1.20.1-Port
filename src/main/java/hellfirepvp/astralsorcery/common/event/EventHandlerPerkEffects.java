@@ -13,7 +13,22 @@ import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.perk.AbstractPerk;
 import hellfirepvp.astralsorcery.common.perk.PerkTree;
-import hellfirepvp.astralsorcery.common.perk.node.key.*;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAddEnchantment;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyAreaOfEffect;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyBleed;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyCheatDeath;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyCullingAttack;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDamageEffects;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyDisarm;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyLastBreath;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyLightningArc;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyNoArmor;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyProjectileDistance;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyProjectileProximity;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyRampage;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyStoneEnrichment;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyTreeConnector;
+import hellfirepvp.astralsorcery.common.perk.node.key.KeyVoidTrash;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +41,12 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -35,7 +55,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -363,7 +390,7 @@ public class EventHandlerPerkEffects {
         if (!hasPerk(player, AstralSorcery.key("key_cleanse_bad_potions"))) return;
 
         List<MobEffectInstance> harmful = player.getActiveEffects().stream()
-                .filter(e -> e.getEffect().isBeneficial()  == false)
+                .filter(e -> !e.getEffect().isBeneficial())
                 .toList();
         if (harmful.isEmpty()) return;
 

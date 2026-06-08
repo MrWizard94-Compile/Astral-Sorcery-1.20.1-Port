@@ -3,7 +3,7 @@
   "size": 1,
   "operation": "SET",
   "order": 50,
-  "icon": "curios:slot/empty_charm_slot",
+  "icon": "astralsorcery:slot/empty_amulet_slot",
   "add_cosmetic": false,
   "use_native_gui": true,
   "render_toggle": true,

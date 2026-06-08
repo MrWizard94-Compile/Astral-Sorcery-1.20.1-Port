@@ -17,31 +17,36 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class JournalProgressionClusterMapping {
 
-    private static Map<ResearchProgression, JournalCluster> clusterMapping;
+    private static volatile Map<ResearchProgression, JournalCluster> clusterMapping;
 
     private static void ensureInit() {
         if (clusterMapping != null) return;
-        clusterMapping = new HashMap<>();
+        synchronized (JournalProgressionClusterMapping.class) {
+            if (clusterMapping != null) return;
+            Map<ResearchProgression, JournalCluster> map = new HashMap<>();
 
-        AbstractRenderableTexture tex;
+            AbstractRenderableTexture tex;
 
-        tex = TexturesAS.TEX_GUI_CLUSTER_DISCOVERY;
-        clusterMapping.put(ResearchProgression.DISCOVERY,  new JournalCluster(tex, tex, -2, -2,  0,  0));
+            tex = TexturesAS.TEX_GUI_CLUSTER_DISCOVERY;
+            map.put(ResearchProgression.DISCOVERY,  new JournalCluster(tex, tex, -2, -2,  0,  0));
 
-        tex = TexturesAS.TEX_GUI_CLUSTER_BASICCRAFT;
-        clusterMapping.put(ResearchProgression.BASIC_CRAFT, new JournalCluster(tex, tex,  0,  1,  3,  3));
+            tex = TexturesAS.TEX_GUI_CLUSTER_BASICCRAFT;
+            map.put(ResearchProgression.BASIC_CRAFT, new JournalCluster(tex, tex,  0,  1,  3,  3));
 
-        tex = TexturesAS.TEX_GUI_CLUSTER_ATTUNEMENT;
-        clusterMapping.put(ResearchProgression.ATTUNEMENT, new JournalCluster(tex, tex,  2, -2,  4,  0));
+            tex = TexturesAS.TEX_GUI_CLUSTER_ATTUNEMENT;
+            map.put(ResearchProgression.ATTUNEMENT, new JournalCluster(tex, tex,  2, -2,  4,  0));
 
-        tex = TexturesAS.TEX_GUI_CLUSTER_CONSTELLATION;
-        clusterMapping.put(ResearchProgression.CONSTELLATION, new JournalCluster(tex, tex, 4,  0,  7,  2));
+            tex = TexturesAS.TEX_GUI_CLUSTER_CONSTELLATION;
+            map.put(ResearchProgression.CONSTELLATION, new JournalCluster(tex, tex, 4,  0,  7,  2));
 
-        tex = TexturesAS.TEX_GUI_CLUSTER_RADIANCE;
-        clusterMapping.put(ResearchProgression.RADIANCE,    new JournalCluster(tex, tex,  5, -3,  8, -1));
+            tex = TexturesAS.TEX_GUI_CLUSTER_RADIANCE;
+            map.put(ResearchProgression.RADIANCE,    new JournalCluster(tex, tex,  5, -3,  8, -1));
 
-        tex = TexturesAS.TEX_GUI_CLUSTER_BRILLIANCE;
-        clusterMapping.put(ResearchProgression.BRILLIANCE,  new JournalCluster(tex, tex,  8, -1, 10,  1));
+            tex = TexturesAS.TEX_GUI_CLUSTER_BRILLIANCE;
+            map.put(ResearchProgression.BRILLIANCE,  new JournalCluster(tex, tex,  8, -1, 10,  1));
+
+            clusterMapping = map;
+        }
     }
 
     public static void register(ResearchProgression prog, JournalCluster cluster) {

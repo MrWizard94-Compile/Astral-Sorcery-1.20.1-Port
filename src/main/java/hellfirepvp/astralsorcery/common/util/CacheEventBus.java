@@ -1,6 +1,10 @@
 package hellfirepvp.astralsorcery.common.util;
 
-import net.minecraftforge.eventbus.api.*;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.GenericEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBusInvokeDispatcher;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

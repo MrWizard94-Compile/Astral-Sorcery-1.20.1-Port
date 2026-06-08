@@ -50,7 +50,7 @@ public abstract class AbstractRenderableTexture {
     }
 
     /** Full-texture variant — UV offset is (0, 0) and UV width is 1. */
-    public static abstract class Full extends AbstractRenderableTexture {
+    public abstract static class Full extends AbstractRenderableTexture {
 
         public Full(ResourceLocation key) {
             super(key);

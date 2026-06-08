@@ -2,7 +2,8 @@ package hellfirepvp.astralsorcery.client.screen.journal.progression;
 
 import hellfirepvp.astralsorcery.client.resource.AbstractRenderableTexture;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.util.Objects;
 
 /**
  * Defines a rectangular cluster region in the journal galaxy view.
@@ -22,5 +23,21 @@ public class JournalCluster extends Rectangle {
         this.clusterBackgroundTexture = clusterBackgroundTexture;
         this.maxX = rightMost;
         this.maxY = lowerMost;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JournalCluster other)) return false;
+        return super.equals(o)
+                && maxX == other.maxX
+                && maxY == other.maxY
+                && Objects.equals(cloudTexture, other.cloudTexture)
+                && Objects.equals(clusterBackgroundTexture, other.clusterBackgroundTexture);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), cloudTexture, clusterBackgroundTexture, maxX, maxY);
     }
 }

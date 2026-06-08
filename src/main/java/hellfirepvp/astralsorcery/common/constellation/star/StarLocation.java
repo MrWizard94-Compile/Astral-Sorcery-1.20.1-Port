@@ -1,6 +1,6 @@
 package hellfirepvp.astralsorcery.common.constellation.star;
 
-import java.awt.*;
+import java.awt.Point;
 
 /**
  * A star position on the 32x32 constellation grid (0-indexed, max index 31).

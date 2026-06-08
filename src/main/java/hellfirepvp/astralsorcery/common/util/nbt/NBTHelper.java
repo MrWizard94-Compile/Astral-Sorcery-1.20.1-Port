@@ -20,7 +20,13 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -273,7 +279,7 @@ public class NBTHelper {
         ResourceLocation regName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         if (regName == null) {
             state = Blocks.AIR.defaultBlockState();
-            regName = ForgeRegistries.BLOCKS.getKey(Blocks.AIR);
+            regName = new ResourceLocation("minecraft", "air");
         }
         CompoundTag tag = new CompoundTag();
         tag.putString("registryName", regName.toString());

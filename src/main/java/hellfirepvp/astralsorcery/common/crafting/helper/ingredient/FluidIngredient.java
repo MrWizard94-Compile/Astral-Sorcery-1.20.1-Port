@@ -98,7 +98,10 @@ public class FluidIngredient extends Ingredient {
     @Override
     public JsonElement toJson() {
         JsonObject obj = new JsonObject();
-        obj.addProperty("type", CraftingHelper.getID(IngredientSerializersAS.FLUID_SERIALIZER).toString());
+        net.minecraft.resources.ResourceLocation serializerId =
+                java.util.Objects.requireNonNull(CraftingHelper.getID(IngredientSerializersAS.FLUID_SERIALIZER),
+                        "FluidIngredient serializer is not registered");
+        obj.addProperty("type", serializerId.toString());
 
         JsonArray array = new JsonArray();
         for (FluidStack stack : fluids) {

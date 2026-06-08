@@ -148,12 +148,16 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
             }
         }
 
+        boolean wasCollecting = starlightCollected > 0;
         if (hasSkyAccess()) {
             double production = calculateProduction();
             starlightCollected = production;
             cachedProduction = production;
         } else {
             starlightCollected = 0;
+        }
+        if ((starlightCollected > 0) != wasCollecting) {
+            markForUpdate();
         }
     }
 

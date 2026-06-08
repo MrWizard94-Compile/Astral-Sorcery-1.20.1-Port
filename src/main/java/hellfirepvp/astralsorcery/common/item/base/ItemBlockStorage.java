@@ -15,7 +15,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Interface for items that can store block states (used by Architect and Exchange wands).
@@ -62,8 +69,9 @@ public interface ItemBlockStorage {
     static Map<BlockState, Tuple<ItemStack, Integer>> getInventoryMatching(Player player, ItemStack referenceContainer) {
         Map<BlockState, ItemStack> mappedStacks = getMappedStoredStates(referenceContainer);
         Map<BlockState, Tuple<ItemStack, Integer>> foundContents = new HashMap<>();
-        for (BlockState state : mappedStacks.keySet()) {
-            ItemStack stored = mappedStacks.get(state);
+        for (Map.Entry<BlockState, ItemStack> e : mappedStacks.entrySet()) {
+            BlockState state = e.getKey();
+            ItemStack stored = e.getValue();
             int countDisplay = 0;
             Collection<ItemStack> stacks = ItemUtils.findItemsInPlayerInventory(player, stored, true);
             for (ItemStack found : stacks) {

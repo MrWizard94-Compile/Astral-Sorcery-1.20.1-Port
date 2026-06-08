@@ -35,6 +35,16 @@ public final class EventHandlerInteract {
         if (!(held.getItem() instanceof OverrideInteractItem item)) return;
         if (event.getEntity().isCrouching() && !item.shouldInteractWhenSneaking()) return;
 
+        // Deny Block.use() on both sides. Without this, Block.use() fires BEFORE Item.useOn()
+        // when the player is NOT sneaking, causing crafting tables / chests / etc. to open
+        // their GUIs before the item ever gets a chance to handle the click.
+        event.setUseBlock(net.minecraftforge.eventbus.api.Event.Result.DENY);
+
+        // Server only: call doInteract() for an early-exit path. If it succeeds, cancel the
+        // event so Item.useOn() is also skipped. If it returns PASS (e.g., non-linkable block),
+        // leave the event uncancelled so Item.useOn() runs normally.
+        if (event.getLevel().isClientSide()) return;
+
         BlockHitResult hit = event.getHitVec();
         InteractionResult result = item.doInteract(
                 event.getLevel(),

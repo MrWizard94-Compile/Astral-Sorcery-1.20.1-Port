@@ -17,6 +17,7 @@ import hellfirepvp.astralsorcery.common.data.research.ResearchProgression;
 import hellfirepvp.astralsorcery.common.util.data.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -24,7 +25,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -216,6 +219,7 @@ public class ScreenJournalClusterRenderer {
                 Tuple<Float, Float> uv = res.getUVOffset(ClientScheduler.getClientTick());
                 float pxWH = zoomedWH / 16f;
 
+                RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
                 RenderSystem.setShaderTexture(0, res.getResource().getKey());
                 Blending.DEFAULT.apply();
                 Matrix4f matrix = graphics.pose().last().pose();

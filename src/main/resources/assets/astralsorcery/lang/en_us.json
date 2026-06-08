@@ -1,5 +1,6 @@
 {
   "itemGroup.astralsorcery": "Astral Sorcery",
+  "itemGroup.astralsorcery.blocks": "Astral Sorcery: Blocks",
   "itemGroup.astralsorcery.papers": "[AS] Constellation Papers",
   "itemGroup.astralsorcery.crystals": "[AS] Attuned Crystals",
   "gamerule.asIgnoreSkylightCheck": "Ignore Skylight Check (Astral Sorcery)",
@@ -1087,6 +1088,8 @@
   "astralsorcery.lens.color.dark_gray": "Dark Gray",
   "astralsorcery.link.selected.collector": "Collector Crystal selected for linking",
   "astralsorcery.link.selected.lens": "Lens selected for linking",
+  "astralsorcery.altar.discovery.created": "The Luminous Crafting Table has been awakened by starlight!",
+  "astralsorcery.wand.no_crystal_nearby": "No Collector Crystal found nearby — place the crafting table beneath a shrine crystal.",
   "astralsorcery.refraction_table.no_parchment": "No parchment — insert parchment to begin engraving",
   "astralsorcery.refraction_table.already_engraved": "Glass already engraved",
   "astralsorcery.refraction_table.needs_night": "Engraving requires nighttime sky visibility",

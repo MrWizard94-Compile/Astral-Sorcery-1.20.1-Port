@@ -54,8 +54,12 @@ import hellfirepvp.astralsorcery.client.screen.ScreenAltarDiscovery;
 import hellfirepvp.astralsorcery.client.screen.ScreenAltarRadiance;
 import hellfirepvp.astralsorcery.client.sky.AstralSkyRenderer;
 import hellfirepvp.astralsorcery.common.CommonProxy;
+import hellfirepvp.astralsorcery.common.block.tile.BlockCollectorCrystal;
+import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.item.ItemResonator;
+import hellfirepvp.astralsorcery.common.item.block.ItemBlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.lib.BlockEntityTypesAS;
+import hellfirepvp.astralsorcery.common.lib.BlocksAS;
 import hellfirepvp.astralsorcery.common.lib.EntityTypesAS;
 import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.lib.MenuTypesAS;
@@ -79,6 +83,7 @@ import hellfirepvp.astralsorcery.common.data.research.PlayerProgressManager;
 import hellfirepvp.astralsorcery.common.data.research.ProgressionTier;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -126,6 +131,10 @@ public class ClientProxy extends CommonProxy {
 
         // Client setup (menu screens, etc.)
         modBus.addListener(this::onClientSetup);
+
+        // Block and item tint colors (constellation-dependent crystal coloring)
+        modBus.addListener(this::onRegisterBlockColors);
+        modBus.addListener(this::onRegisterItemColors);
 
         // Texture reload listener — invalidates AssetLibrary on resource pack reload
         modBus.addListener(this::onRegisterReloadListeners);
@@ -273,6 +282,34 @@ public class ClientProxy extends CommonProxy {
                                 / (float) ItemResonator.ResonatorUpgrade.values().length;
                     });
         });
+    }
+
+    /**
+     * Register block color providers for constellation-tinted blocks.
+     * Both collector crystal variants delegate to their BlockDynamicColor.getBlockColor()
+     * implementation, which reads the attuned constellation from the block entity.
+     */
+    private void onRegisterBlockColors(@Nonnull RegisterColorHandlersEvent.Block event) {
+        BlockCollectorCrystal collector = BlocksAS.COLLECTOR_CRYSTAL.get();
+        event.register(collector::getBlockColor, collector);
+
+        BlockCollectorCrystal celestial = BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get();
+        event.register(celestial::getBlockColor, celestial);
+    }
+
+    /**
+     * Register item color providers for constellation-tinted crystal items.
+     * Reads the attuned constellation from the item's NBT (set when the crystal was placed
+     * or picked from a block entity via getCloneItemStack).
+     */
+    private void onRegisterItemColors(@Nonnull RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> {
+            if (tintIndex != 0) return 0xFFFFFF;
+            if (!(stack.getItem() instanceof ItemBlockCollectorCrystal item)) return 0xFFFFFF;
+            IWeakConstellation cst = item.getAttunedConstellation(stack);
+            return cst != null ? cst.getConstellationColor().getRGB() : 0xFFFFFF;
+        }, BlocksAS.COLLECTOR_CRYSTAL.get().asItem(),
+           BlocksAS.CELESTIAL_COLLECTOR_CRYSTAL.get().asItem());
     }
 
     private void onRegisterReloadListeners(@Nonnull RegisterClientReloadListenersEvent event) {

@@ -1,0 +1,5 @@
+// 1.20.1	2026-06-07T19:25:43.1313815	Tags for minecraft:item mod id astralsorcery
+bba1a0c2e543897e6b03d82169d6e12cf2e7c6c2 data/astralsorcery/tags/items/perk_gems.json
+cc2998c0363b2bce93556eb1c9031ee24b3bff58 data/forge/tags/items/crystals.json
+b91f4cb02a488eca3b505d4ba7406ce6a684b383 data/forge/tags/items/gems/aquamarine.json
+72eb2a844f48bdaa98b1ad8dd2af793a251d78ac data/minecraft/tags/items/beacon_payment_items.json

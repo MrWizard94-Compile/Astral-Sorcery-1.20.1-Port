@@ -153,17 +153,22 @@ public final class ResearchManager {
                                           @Nonnull BlockAltar.AltarType altarType) {
         if (player == null) return;
         switch (altarType) {
-            case RADIANCE:
+            case RADIANCE -> {
                 grantTier(player, ProgressionTier.TRAIT_CRAFT);
-                // fall through
-            case CONSTELLATION:
                 grantTier(player, ProgressionTier.CONSTELLATION_CRAFT);
-                // fall through
-            case ATTUNEMENT:
                 grantTier(player, ProgressionTier.ATTUNEMENT);
-                // fall through
-            default:
                 grantTier(player, ProgressionTier.BASIC_CRAFT);
+            }
+            case CONSTELLATION -> {
+                grantTier(player, ProgressionTier.CONSTELLATION_CRAFT);
+                grantTier(player, ProgressionTier.ATTUNEMENT);
+                grantTier(player, ProgressionTier.BASIC_CRAFT);
+            }
+            case ATTUNEMENT -> {
+                grantTier(player, ProgressionTier.ATTUNEMENT);
+                grantTier(player, ProgressionTier.BASIC_CRAFT);
+            }
+            default -> grantTier(player, ProgressionTier.BASIC_CRAFT);
         }
         sync(player);
     }

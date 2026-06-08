@@ -15,7 +15,7 @@ import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Point;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -116,7 +116,7 @@ public abstract class PerkConverter {
     // Radius sub-type
     // =========================================================================
 
-    public static abstract class Radius extends PerkConverter {
+    public abstract static class Radius extends PerkConverter {
 
         private final float radius;
         private final Point.Float offset;

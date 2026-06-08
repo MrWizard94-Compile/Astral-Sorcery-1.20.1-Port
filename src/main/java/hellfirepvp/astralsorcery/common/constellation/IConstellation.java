@@ -19,7 +19,7 @@ import net.minecraft.tags.TagKey;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 

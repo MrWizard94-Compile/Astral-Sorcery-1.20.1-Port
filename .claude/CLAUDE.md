@@ -186,4 +186,5 @@ These guidelines are non-negotiable for maintaining code quality and project int
 
 ---
 
+Always look for and record useful information in the .claude directory and any subdirectories therein.
 *Last updated: June 7, 2026*

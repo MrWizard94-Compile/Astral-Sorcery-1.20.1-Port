@@ -2,6 +2,8 @@ package hellfirepvp.astralsorcery.client.screen.journal;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import hellfirepvp.astralsorcery.client.ClientScheduler;
+import hellfirepvp.astralsorcery.client.constellation.ConstellationBackgroundInfo;
+import hellfirepvp.astralsorcery.client.constellation.ConstellationRenderInfos;
 import hellfirepvp.astralsorcery.client.lib.TexturesAS;
 import hellfirepvp.astralsorcery.client.screen.base.NavigationArrowScreen;
 import hellfirepvp.astralsorcery.client.screen.journal.page.RenderPageAltarRecipe;
@@ -24,7 +26,9 @@ import hellfirepvp.astralsorcery.common.item.armor.ItemMantle;
 import hellfirepvp.astralsorcery.common.util.RecipeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,7 +36,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -244,6 +249,7 @@ public class ScreenJournalConstellationDetail extends ScreenJournal implements N
             MoonPhase phase = phases[i];
             boolean active = ctx != null && ctx.getConstellationHandler().isActiveInPhase(constellation, phase);
             float brightness = active ? 1.0f : 0.35f;
+            RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
             RenderSystem.setShaderTexture(0, phase.getTexture().getKey());
             Blending.DEFAULT.apply();
             RenderingUtils.drawColorTex(matrix,
@@ -296,16 +302,24 @@ public class ScreenJournalConstellationDetail extends ScreenJournal implements N
 
     private void drawCstBackground(GuiGraphics graphics) {
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+
+        // Black base
         RenderSystem.setShaderTexture(0, TexturesAS.TEX_BLACK.getKey());
         RenderingUtils.drawColorTex(matrix,
                 guiLeft + 15, guiTop + 10, 185, 230, 1f, 1f, 1f, 1f);
 
-        RenderSystem.setShaderTexture(0, TexturesAS.TEX_GUI_BACKGROUND_CONSTELLATIONS.getKey());
+        // Per-constellation nebula background, falling back to the generic one
+        ConstellationBackgroundInfo bgInfo = ConstellationRenderInfos.getBackgroundRenderInfo(constellation);
+        ResourceLocation bgTex = bgInfo != null
+                ? bgInfo.getBackgroundTexture().getKey()
+                : TexturesAS.TEX_GUI_BACKGROUND_CONSTELLATIONS.getKey();
+
+        RenderSystem.setShaderTexture(0, bgTex);
         Blending.DEFAULT.apply();
         RenderingUtils.drawColorTex(matrix,
                 guiLeft + 15, guiTop + 10, 185, 230,
-                0.8f, 0.8f, 1f, 0.5f,
-                0.3f, 0.1f, 0.7f, 0.9f);
+                1f, 1f, 1f, 0.75f);
         RenderSystem.disableBlend();
     }
 

@@ -13,6 +13,7 @@ import hellfirepvp.astralsorcery.common.data.research.PlayerProgress;
 import hellfirepvp.astralsorcery.common.data.research.ResearchHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,8 +21,11 @@ import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,6 +85,7 @@ public class ScreenJournalConstellationOverview extends ScreenJournal implements
 
     private void drawConstellationBackground(GuiGraphics graphics) {
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 
         // Solid black base
         RenderSystem.setShaderTexture(0, TexturesAS.TEX_BLACK.getKey());

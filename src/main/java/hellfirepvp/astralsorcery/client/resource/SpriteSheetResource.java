@@ -88,7 +88,7 @@ public class SpriteSheetResource extends AbstractRenderableTexture {
     /** UV offset for the given absolute frame timer. */
     public Tuple<Float, Float> getUVOffset(long frameTimer) {
         int frame = (int) (frameTimer % frameCount);
-        return new Tuple<>((frame % columns) * uPart, (frame / columns) * vPart);
+        return new Tuple<>((frame % columns) * uPart, ((float) frame / columns) * vPart);
     }
 
     /**

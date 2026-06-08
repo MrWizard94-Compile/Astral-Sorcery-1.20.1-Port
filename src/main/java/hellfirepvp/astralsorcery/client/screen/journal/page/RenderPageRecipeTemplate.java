@@ -22,7 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -166,12 +166,12 @@ public abstract class RenderPageRecipeTemplate implements RenderablePage {
         if (recipe.getStarlightRequired() > 0) {
             String key = "astralsorcery.journal.recipe.altar.starlight.";
             float perc = (float)(recipe.getStarlightRequired() / 1000.0);
-            if      (perc <= 0.1f) key += "lowest";
-            else if (perc <= 0.25f) key += "low";
-            else if (perc <= 0.5f)  key += "avg";
-            else if (perc <= 0.75f) key += "more";
-            else if (perc <= 0.9f)  key += "high";
-            else                    key += "highest";
+            if      (perc <= 0.1f)  { key += "lowest"; }
+            else if (perc <= 0.25f) { key += "low"; }
+            else if (perc <= 0.5f)  { key += "avg"; }
+            else if (perc <= 0.75f) { key += "more"; }
+            else if (perc <= 0.9f)  { key += "high"; }
+            else                    { key += "highest"; }
             tooltip.add(Component.translatable("astralsorcery.journal.recipe.altar.starlight.desc"));
             tooltip.add(Component.translatable(key));
         }

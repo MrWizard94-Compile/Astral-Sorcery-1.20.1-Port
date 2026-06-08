@@ -1,6 +1,13 @@
 package hellfirepvp.astralsorcery.common.util.data;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -15,7 +22,7 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -147,7 +154,11 @@ public class JsonHelper {
         if (itemElement.isJsonPrimitive() && ((JsonPrimitive) itemElement).isString()) {
             String strKey = itemElement.getAsString();
             ResourceLocation itemKey = new ResourceLocation(strKey);
-            itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(itemKey));
+            net.minecraft.world.item.Item resolved = ForgeRegistries.ITEMS.getValue(itemKey);
+            if (resolved == null) {
+                throw new JsonSyntaxException("Unknown item '" + strKey + "'");
+            }
+            itemstack = new ItemStack(resolved);
         } else if (itemElement.isJsonObject()) {
             itemstack = CraftingHelper.getItemStack(itemElement.getAsJsonObject(), true);
         } else {
@@ -170,7 +181,11 @@ public class JsonHelper {
         } else {
             String strKey = GsonHelper.getAsString(root, key);
             ResourceLocation itemKey = new ResourceLocation(strKey);
-            itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(itemKey));
+            net.minecraft.world.item.Item resolved = ForgeRegistries.ITEMS.getValue(itemKey);
+            if (resolved == null) {
+                throw new JsonSyntaxException("Unknown item '" + strKey + "'");
+            }
+            itemstack = new ItemStack(resolved);
         }
         return itemstack;
     }

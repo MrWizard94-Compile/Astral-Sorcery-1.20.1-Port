@@ -23,6 +23,7 @@ import hellfirepvp.astralsorcery.common.perk.tree.PerkTreeConstellation;
 import hellfirepvp.astralsorcery.common.perk.tree.PerkTreeGem;
 import hellfirepvp.astralsorcery.common.perk.tree.PerkTreeMajor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +33,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,6 +136,7 @@ public class ScreenJournalPerkTree extends ScreenJournal {
 
     private void drawBackground(GuiGraphics graphics) {
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderTexture(0, TexturesAS.TEX_GUI_BACKGROUND_PERKS.getKey());
         RenderingUtils.drawColorTex(matrix,
                 guiLeft - 10, guiTop - 10, guiWidth + 20, guiHeight + 20,

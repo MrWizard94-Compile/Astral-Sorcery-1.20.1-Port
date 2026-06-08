@@ -3,9 +3,14 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.test;
 
+import hellfirepvp.astralsorcery.common.constellation.IWeakConstellation;
 import hellfirepvp.astralsorcery.common.data.config.CommonConfig;
+import hellfirepvp.astralsorcery.common.item.block.ItemBlockCollectorCrystal;
 import hellfirepvp.astralsorcery.common.lib.BlocksAS;
+import hellfirepvp.astralsorcery.common.lib.ConstellationsAS;
+import hellfirepvp.astralsorcery.common.lib.ItemsAS;
 import hellfirepvp.astralsorcery.common.starlight.WorldNetworkHandler;
+import hellfirepvp.astralsorcery.common.tile.BlockEntityCollectorCrystal;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityGateway;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityInfuser;
 import hellfirepvp.astralsorcery.common.tile.BlockEntityWell;
@@ -15,6 +20,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -693,6 +699,172 @@ public class AstralGameTests {
         double rate3 = base * 1.0 * 1.0 * boostAt3;
         helper.assertTrue(rate3 > rate0,
                 "Production rate with starlight must exceed rate without starlight");
+
+        helper.succeed();
+    }
+
+    // ========================================================================
+    // Collector crystal — constellation NBT, color query, item stack round-trip
+    // ========================================================================
+
+    /**
+     * Places a collector crystal block entity, assigns a major constellation via
+     * {@code setAttunedConstellation()}, serialises to NBT, deserialises, and
+     * verifies the constellation key survives the round-trip.
+     *
+     * <p>This is the server-side path that backs both the block color handler
+     * (tinted model in the world) and the item color handler (tinted icon in the
+     * creative menu).</p>
+     */
+    @GameTest(template = PLATFORM)
+    public void testCollectorCrystalConstellationNbtRoundtrip(GameTestHelper helper) {
+        helper.setBlock(CENTER, BlocksAS.COLLECTOR_CRYSTAL.get().defaultBlockState());
+
+        helper.runAfterDelay(2, () -> {
+            BlockEntity be = helper.getBlockEntity(CENTER);
+            if (!(be instanceof BlockEntityCollectorCrystal crystal)) {
+                helper.fail("Expected BlockEntityCollectorCrystal at CENTER; got: " + be);
+                return;
+            }
+
+            IWeakConstellation aevitas = ConstellationsAS.AEVITAS;
+            if (aevitas == null) {
+                helper.fail("ConstellationsAS.AEVITAS must not be null — init() must run before game tests");
+                return;
+            }
+
+            crystal.setAttunedConstellation(aevitas);
+            helper.assertTrue(crystal.getAttunedConstellation() == aevitas,
+                    "getAttunedConstellation must return the constellation just set");
+
+            // Serialize → deserialize (mirrors the server→client packet path)
+            CompoundTag nbt = new CompoundTag();
+            crystal.writeCustomNBT(nbt);
+
+            helper.assertTrue(nbt.contains("constellation"),
+                    "writeCustomNBT must write 'constellation' key when attuned");
+
+            crystal.readCustomNBT(nbt);
+
+            IWeakConstellation after = crystal.getAttunedConstellation();
+            if (after == null) {
+                helper.fail("getAttunedConstellation must be non-null after NBT roundtrip");
+                return;
+            }
+            helper.assertTrue(aevitas.getRegistryName().equals(after.getRegistryName()),
+                    "constellation registry name must be preserved across NBT write→read; expected "
+                            + aevitas.getRegistryName() + ", got " + after.getRegistryName());
+
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Verifies that {@code getConstellationColor()} returns the constellation's
+     * specific RGB color (not the default) when the crystal is attuned.
+     *
+     * <p>This is the value returned by the block color handler for tintIndex 0,
+     * which tints the baked model faces that have {@code "tintindex": 0}.</p>
+     */
+    @GameTest(template = PLATFORM)
+    public void testCollectorCrystalColorWhenAttuned(GameTestHelper helper) {
+        helper.setBlock(CENTER, BlocksAS.COLLECTOR_CRYSTAL.get().defaultBlockState());
+
+        helper.runAfterDelay(2, () -> {
+            BlockEntity be = helper.getBlockEntity(CENTER);
+            if (!(be instanceof BlockEntityCollectorCrystal crystal)) {
+                helper.fail("Expected BlockEntityCollectorCrystal at CENTER; got: " + be);
+                return;
+            }
+
+            IWeakConstellation aevitas = ConstellationsAS.AEVITAS;
+            if (aevitas == null) {
+                helper.fail("ConstellationsAS.AEVITAS is null");
+                return;
+            }
+
+            int defaultColor = 0xAAAAFF; // unattuned rock collector default
+            int expectedColor = aevitas.getConstellationColor().getRGB();
+
+            crystal.setAttunedConstellation(aevitas);
+            int actualColor = crystal.getConstellationColor();
+
+            helper.assertTrue(actualColor == expectedColor,
+                    "getConstellationColor must return constellation color " + Integer.toHexString(expectedColor)
+                            + " when attuned, but got " + Integer.toHexString(actualColor));
+            helper.assertTrue(actualColor != defaultColor,
+                    "Attuned crystal color must differ from default unattuned color " + Integer.toHexString(defaultColor));
+
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Verifies that an unattuned collector crystal returns the default color
+     * (0xAAAAFF for rock, 0x4488DD for celestial) from {@code getConstellationColor()}.
+     */
+    @GameTest(template = PLATFORM)
+    public void testCollectorCrystalColorWhenUnattuned(GameTestHelper helper) {
+        helper.setBlock(CENTER, BlocksAS.COLLECTOR_CRYSTAL.get().defaultBlockState());
+
+        helper.runAfterDelay(2, () -> {
+            BlockEntity be = helper.getBlockEntity(CENTER);
+            if (!(be instanceof BlockEntityCollectorCrystal crystal)) {
+                helper.fail("Expected BlockEntityCollectorCrystal at CENTER; got: " + be);
+                return;
+            }
+
+            // Ensure no constellation is set
+            crystal.setAttunedConstellation(null);
+
+            int color = crystal.getConstellationColor();
+            helper.assertTrue(color == 0xAAAAFF,
+                    "Unattuned rock collector crystal must return default color 0xAAAAFF, got "
+                            + Integer.toHexString(color));
+
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Verifies that {@link ItemBlockCollectorCrystal#setAttunedConstellation} and
+     * {@link ItemBlockCollectorCrystal#getAttunedConstellation} round-trip correctly
+     * on an item stack.
+     *
+     * <p>This is the path used by the creative tab to generate attuned variants
+     * and by the item color handler to determine the tint color for inventory icons.</p>
+     */
+    @GameTest(template = PLATFORM)
+    public void testItemBlockCollectorCrystalConstellationNbt(GameTestHelper helper) {
+        ItemStack stack = new ItemStack(ItemsAS.COLLECTOR_CRYSTAL_ITEM.get());
+        if (!(stack.getItem() instanceof ItemBlockCollectorCrystal item)) {
+            helper.fail("COLLECTOR_CRYSTAL_ITEM must be an instance of ItemBlockCollectorCrystal");
+            return;
+        }
+
+        IWeakConstellation discidia = ConstellationsAS.DISCIDIA;
+        if (discidia == null) {
+            helper.fail("ConstellationsAS.DISCIDIA must not be null");
+            return;
+        }
+
+        // Set on item stack
+        item.setAttunedConstellation(stack, discidia);
+
+        // Read back — must match
+        IWeakConstellation read = item.getAttunedConstellation(stack);
+        if (read == null) {
+            helper.fail("getAttunedConstellation must return non-null after setAttunedConstellation");
+            return;
+        }
+        helper.assertTrue(discidia.getRegistryName().equals(read.getRegistryName()),
+                "Item constellation must round-trip: expected " + discidia.getRegistryName()
+                        + ", got " + read.getRegistryName());
+
+        // Clear and verify null
+        item.setAttunedConstellation(stack, null);
+        helper.assertTrue(item.getAttunedConstellation(stack) == null,
+                "getAttunedConstellation must return null after clearing");
 
         helper.succeed();
     }

@@ -15,7 +15,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Color blending, overlay, and dye-color mapping utilities.

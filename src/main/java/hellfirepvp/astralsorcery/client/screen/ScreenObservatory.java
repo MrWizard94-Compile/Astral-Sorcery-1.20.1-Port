@@ -81,8 +81,8 @@ public class ScreenObservatory extends Screen {
             double angle = 2.0 * Math.PI * idx / total;
             float radiusX = width  * 0.30f;
             float radiusY = height * 0.28f;
-            int cx = (int) (width  / 2 + Math.cos(angle) * radiusX);
-            int cy = (int) (height / 2 + Math.sin(angle) * radiusY);
+            int cx = (int) (width  / 2.0 + Math.cos(angle) * radiusX);
+            int cy = (int) (height / 2.0 + Math.sin(angle) * radiusY);
             visibleConstellations.add(new ConstellationEntry(cst, cx, cy));
             idx++;
         }

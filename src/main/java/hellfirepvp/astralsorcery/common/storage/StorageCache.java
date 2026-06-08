@@ -165,12 +165,12 @@ public class StorageCache {
     public void writeToNBT(@Nonnull CompoundTag tag) {
         ListTag contentList = new ListTag();
 
-        for (StorageKey key : this.content.keySet()) {
+        for (Map.Entry<StorageKey, List<StoredItemStack>> entry : this.content.entrySet()) {
             CompoundTag itemStorage = new CompoundTag();
-            itemStorage.put("storageKey", key.serialize());
+            itemStorage.put("storageKey", entry.getKey().serialize());
 
             ListTag items = new ListTag();
-            for (StoredItemStack stack : this.content.get(key)) {
+            for (StoredItemStack stack : entry.getValue()) {
                 items.add(stack.serialize());
             }
             itemStorage.put("items", items);

@@ -5,7 +5,7 @@ import hellfirepvp.astralsorcery.client.resource.query.SpriteQuery;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Locale;
 
 /**

@@ -1,4 +1,10 @@
 {
+  "mcpServers": {
+    "minecraft-dev": {
+      "command": "npx",
+      "args": ["-y", "minecraft-dev-mcp"]
+    }
+  },
   "permissions": {
     "allow": [
       "Bash(cd \"/mnt/c/Projects/AstralSorcery-1.16\" && find . -name \"*.java\" -type f | wc -l)",

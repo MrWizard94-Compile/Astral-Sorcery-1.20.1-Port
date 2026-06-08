@@ -433,6 +433,7 @@ public class ScreenPerkTree extends Screen {
             case ALLOCATED -> hoverTooltip.add(
                     Component.translatable("screen.astralsorcery.perk_tree.allocated")
                             .withStyle(net.minecraft.ChatFormatting.AQUA));
+            default -> {}
         }
     }
 
