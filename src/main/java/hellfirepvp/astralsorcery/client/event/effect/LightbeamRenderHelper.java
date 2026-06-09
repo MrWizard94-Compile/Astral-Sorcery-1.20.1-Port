@@ -76,6 +76,10 @@ public class LightbeamRenderHelper {
                 beamColor = lens.getBeamColor();
             }
 
+            // Debug: log when attempting to spawn beams for a source
+            AstralSorcery.log.debug("Attempting to spawn starlight beams for source {} with {} targets (tinted={})",
+                    at.toShortString(), entry.getValue().targets().size(), beamColor != null);
+
             for (BlockPos dst : entry.getValue().targets()) {
                 Vec3 to = Vec3.atCenterOf(dst);
                 if (beamColor != null) {
