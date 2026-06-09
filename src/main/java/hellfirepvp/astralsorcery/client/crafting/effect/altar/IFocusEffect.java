@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import hellfirepvp.astralsorcery.common.tile.BlockEntityAltar;
 import net.minecraft.world.item.ItemStack;

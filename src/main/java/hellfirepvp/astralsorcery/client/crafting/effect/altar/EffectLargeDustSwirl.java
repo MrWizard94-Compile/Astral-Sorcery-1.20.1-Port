@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -12,26 +12,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 
-/** Denser random sparkles with mild upward drift, filling a wider area. */
+/** Wide vortex of dust particles covering the full altar radius. */
 @OnlyIn(Dist.CLIENT)
-public class EffectAltarRandomSparkle extends AltarRecipeEffect {
+public class EffectLargeDustSwirl extends AltarRecipeEffect {
 
-    private static final Color COLOR = new Color(180, 210, 255);
+    private static final Color COLOR = new Color(140, 180, 240);
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        Vec3 center = altarCenter(altar);
-        double reach = Math.max(1.5, pillarReach(altar.getAltarType()));
-        for (int i = 0; i < 2; i++) {
-            Vec3 at = new Vec3(
-                    center.x + (RAND.nextDouble() - 0.5) * reach * 2,
-                    center.y + 0.1 + RAND.nextDouble() * 0.5,
-                    center.z + (RAND.nextDouble() - 0.5) * reach * 2);
-            EffectHelper.sparkleFloating(at, COLOR, 0.08f + RAND.nextFloat() * 0.12f,
-                    20 + RAND.nextInt(25));
-        }
+        Vec3 center = altarCenter(altar).add(0, 0.3, 0);
+        float radius = (float) Math.max(1.5, pillarReach(altar.getAltarType()));
+        EffectHelper.vortex(center, COLOR, radius, 2, 0.10f, 40);
     }
 
     @Override

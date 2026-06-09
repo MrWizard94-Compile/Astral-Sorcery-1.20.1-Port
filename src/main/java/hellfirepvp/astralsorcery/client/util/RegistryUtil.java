@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.util;
+package hellfirepvp.astralsorcery.client.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
@@ -9,9 +9,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Replacement for ObserverLib's RegistryUtil.
- * Provides convenience methods for looking up values in Minecraft's
- * dynamic registries (biomes, damage types, etc.).
+ * Client-side utility for looking up values in Minecraft's dynamic registries
+ * (biomes, damage types, etc.) via the client level's registry access.
  *
  * <p>In 1.20, dynamic registries are accessed via
  * {@code level.registryAccess().registryOrThrow(registryKey)}.</p>
@@ -24,8 +23,6 @@ public final class RegistryUtil {
 
     /**
      * Get the client-side registry utility instance.
-     *
-     * @return the client instance
      */
     @Nonnull
     public static RegistryUtil client() {

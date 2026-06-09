@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -12,20 +12,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 
-/** Orbiting sparkles tracing the edge of the altar's outer ring. */
+/** Periodic liquid-starlight bursts erupting from the altar center. */
 @OnlyIn(Dist.CLIENT)
-public class EffectFocusEdge extends AltarRecipeEffect {
+public class EffectLiquidBurst extends AltarRecipeEffect {
 
-    private static final Color EDGE_COLOR = new Color(200, 220, 255);
+    private static final Color LIQUID_COLOR = new Color(100, 160, 255);
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        if (RAND.nextInt(3) != 0) return;
-        Vec3 center = altarCenter(altar).add(0, 0.1, 0);
-        float radius = (float) Math.max(1.2, pillarReach(altar.getAltarType()) * 0.9);
-        EffectHelper.orbitalRingFX(center, EDGE_COLOR, radius, 1, 0.07f, 40);
+        if (RAND.nextInt(12) != 0) return;
+        Vec3 center = altarCenter(altar).add(0, 0.3, 0);
+        EffectHelper.burst(center, LIQUID_COLOR, 0.12f, 8, 0.10f);
     }
 
     @Override
@@ -35,5 +34,8 @@ public class EffectFocusEdge extends AltarRecipeEffect {
                           float partialTick, int packedLight) {}
 
     @Override
-    public void onCraftingFinish(@Nonnull BlockEntityAltar altar, boolean isChaining) {}
+    public void onCraftingFinish(@Nonnull BlockEntityAltar altar, boolean isChaining) {
+        Vec3 center = altarCenter(altar).add(0, 0.5, 0);
+        EffectHelper.burst(center, LIQUID_COLOR, 0.18f, 16, 0.18f);
+    }
 }

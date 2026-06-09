@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;

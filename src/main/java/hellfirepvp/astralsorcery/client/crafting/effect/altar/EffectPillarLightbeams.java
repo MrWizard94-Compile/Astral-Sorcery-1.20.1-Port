@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -11,20 +11,21 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-/** Central vertical beam for Discovery-tier crafting. */
+/** Lightbeams rising from the corner pillars toward the altar center. */
 @OnlyIn(Dist.CLIENT)
-public class BuiltInEffectDiscoveryCentralBeam extends AltarRecipeEffect {
+public class EffectPillarLightbeams extends AltarRecipeEffect {
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        if (RAND.nextInt(10) != 0) return;
-        Vec3 center = altarCenter(altar).add(
-                (RAND.nextDouble() - 0.5) * 0.52, 0.3,
-                (RAND.nextDouble() - 0.5) * 0.52);
-        Vec3 to = center.add(0, 4 + RAND.nextFloat() * 4, 0);
-        EffectHelper.lightbeamStarlight(center, to, 64);
+        int count = pillarCount(altar.getAltarType());
+        if (count == 0 || RAND.nextInt(6) != 0) return;
+        Vec3 center = altarCenter(altar);
+        Vec3 offset = randomPillarOffset(altar.getAltarType());
+        Vec3 from = center.add(offset.x, -0.5, offset.z);
+        Vec3 to = from.add(0, pillarHeight(altar.getAltarType()) + 1 + RAND.nextFloat() * 2, 0);
+        EffectHelper.lightbeamStarlight(from, to, 35 + RAND.nextInt(25));
     }
 
     @Override

@@ -21,7 +21,10 @@ import hellfirepvp.astralsorcery.common.starlight.StarlightNetworkHelper;
 import hellfirepvp.astralsorcery.common.tile.base.BlockEntityTick;
 import hellfirepvp.astralsorcery.client.util.sound.PositionedLoopSound;
 import hellfirepvp.astralsorcery.common.lib.SoundsAS;
+import hellfirepvp.astralsorcery.client.crafting.effect.altar.AltarRecipeEffect;
+import hellfirepvp.astralsorcery.client.crafting.effect.altar.AltarRecipeEffects;
 import hellfirepvp.astralsorcery.client.util.sound.ClientSoundHelper;
+import hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe;
 import hellfirepvp.astralsorcery.common.util.tile.TileInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -233,14 +236,11 @@ public class BlockEntityAltar extends BlockEntityTick implements IStarlightRecei
 
     @OnlyIn(Dist.CLIENT)
     private void doClientCraftEffects() {
-        hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect.AltarRecipeEffect effect =
-                hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect.AltarRecipeEffects
-                        .getDefaultEffect(getAltarType());
+        AltarRecipeEffect effect = AltarRecipeEffects.getDefaultEffect(getAltarType());
         if (effect == null) return;
 
         if (isCrafting) {
-            effect.onTick(this,
-                    hellfirepvp.astralsorcery.common.crafting.recipe.ActiveSimpleAltarRecipe.CraftState.ACTIVE);
+            effect.onTick(this, ActiveSimpleAltarRecipe.CraftState.ACTIVE);
             clientWasCrafting = true;
         } else if (clientWasCrafting) {
             // Transition: crafting just finished (or aborted)

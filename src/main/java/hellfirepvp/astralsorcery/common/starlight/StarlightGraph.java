@@ -72,6 +72,12 @@ public class StarlightGraph {
     private final Map<BlockPos, List<BlockPos>> adjacency = new HashMap<>();
     private boolean adjacencyDirty = true;
 
+    // ---- Snapshot caches rebuilt lazily when topology changes ----
+    @Nullable
+    private Map<BlockPos, Double> receiverMaxInputsCache = null;
+    @Nullable
+    private Map<BlockPos, Double> transmissionEfficienciesCache = null;
+
     // ========================================================================
     // Source management
     // ========================================================================
@@ -93,7 +99,7 @@ public class StarlightGraph {
             removeAllLinksFrom(pos);
         }
         sources.put(pos, new SourceEntry(pos, constellation, autoLink));
-        adjacencyDirty = true;
+        invalidateTopology();
         dirtySourcePositions.add(pos);
         AstralSorcery.log.debug("Registered starlight source at {}", pos.toShortString());
     }
@@ -104,7 +110,7 @@ public class StarlightGraph {
         if (sources.remove(pos) != null) {
             removeAllLinksFrom(pos);
             independentSourceData.remove(pos);
-            adjacencyDirty = true;
+            invalidateTopology();
             dirtySourcePositions.add(pos);
             AstralSorcery.log.debug("Removed starlight source at {}", pos.toShortString());
         }
@@ -159,7 +165,7 @@ public class StarlightGraph {
     public void registerReceiver(@Nonnull BlockPos pos, double maxInput) {
         pos = pos.immutable();
         receivers.put(pos, new ReceiverEntry(pos, maxInput));
-        adjacencyDirty = true;
+        invalidateTopology();
         AstralSorcery.log.debug("Registered starlight receiver at {}", pos.toShortString());
     }
 
@@ -168,7 +174,7 @@ public class StarlightGraph {
         pos = pos.immutable();
         if (receivers.remove(pos) != null) {
             removeAllLinksTo(pos);
-            adjacencyDirty = true;
+            invalidateTopology();
             AstralSorcery.log.debug("Removed starlight receiver at {}", pos.toShortString());
         }
     }
@@ -187,11 +193,16 @@ public class StarlightGraph {
      */
     @Nonnull
     public Map<BlockPos, Double> getReceiverMaxInputs() {
-        Map<BlockPos, Double> result = new HashMap<>();
-        for (ReceiverEntry entry : receivers.values()) {
-            result.put(entry.pos, entry.maxInput);
+        Map<BlockPos, Double> cache = receiverMaxInputsCache;
+        if (cache == null) {
+            Map<BlockPos, Double> built = new HashMap<>(receivers.size());
+            for (ReceiverEntry entry : receivers.values()) {
+                built.put(entry.pos, entry.maxInput);
+            }
+            cache = Collections.unmodifiableMap(built);
+            receiverMaxInputsCache = cache;
         }
-        return result;
+        return cache;
     }
 
     // ========================================================================
@@ -207,7 +218,7 @@ public class StarlightGraph {
     public void registerTransmission(@Nonnull BlockPos pos, double efficiency) {
         pos = pos.immutable();
         transmissions.put(pos, new TransmissionEntry(pos, efficiency));
-        adjacencyDirty = true;
+        invalidateTopology();
         AstralSorcery.log.debug("Registered transmission node at {}", pos.toShortString());
     }
 
@@ -217,7 +228,7 @@ public class StarlightGraph {
         if (transmissions.remove(pos) != null) {
             removeAllLinksFrom(pos);
             removeAllLinksTo(pos);
-            adjacencyDirty = true;
+            invalidateTopology();
             AstralSorcery.log.debug("Removed transmission node at {}", pos.toShortString());
         }
     }
@@ -231,11 +242,14 @@ public class StarlightGraph {
      */
     @Nonnull
     public Map<BlockPos, Double> getTransmissionEfficiencies() {
-        Map<BlockPos, Double> result = new HashMap<>();
-        for (TransmissionEntry entry : transmissions.values()) {
-            result.put(entry.pos, entry.efficiency);
+        if (transmissionEfficienciesCache == null) {
+            Map<BlockPos, Double> built = new HashMap<>(transmissions.size());
+            for (TransmissionEntry entry : transmissions.values()) {
+                built.put(entry.pos, entry.efficiency);
+            }
+            transmissionEfficienciesCache = Collections.unmodifiableMap(built);
         }
-        return result;
+        return transmissionEfficienciesCache;
     }
 
     // ========================================================================
@@ -306,7 +320,7 @@ public class StarlightGraph {
 
         TransmissionLink link = new TransmissionLink(from, to);
         if (activeLinks.add(link)) {
-            adjacencyDirty = true;
+            invalidateTopology();
             dirtySourcePositions.addAll(findUpstreamSources(from));
             AstralSorcery.log.debug("Added starlight link: {}", link);
             return true;
@@ -322,7 +336,7 @@ public class StarlightGraph {
     public boolean removeLink(@Nonnull BlockPos from, @Nonnull BlockPos to) {
         TransmissionLink link = new TransmissionLink(from.immutable(), to.immutable());
         if (activeLinks.remove(link)) {
-            adjacencyDirty = true;
+            invalidateTopology();
             dirtySourcePositions.addAll(findUpstreamSources(from));
             AstralSorcery.log.debug("Removed starlight link: {}", link);
             return true;
@@ -380,6 +394,13 @@ public class StarlightGraph {
                     .add(link.getTo());
         }
         adjacencyDirty = false;
+    }
+
+    /** Marks topology as changed and invalidates all derived snapshot caches. */
+    private void invalidateTopology() {
+        adjacencyDirty = true;
+        receiverMaxInputsCache = null;
+        transmissionEfficienciesCache = null;
     }
 
     /**
@@ -587,7 +608,7 @@ public class StarlightGraph {
             graph.independentSourceData.put(pos, data);
         }
 
-        graph.adjacencyDirty = true;
+        graph.invalidateTopology();
         AstralSorcery.log.info(
                 "Loaded starlight graph for {}: {} sources, {} receivers, {} transmissions, {} links",
                 dimension.location(),

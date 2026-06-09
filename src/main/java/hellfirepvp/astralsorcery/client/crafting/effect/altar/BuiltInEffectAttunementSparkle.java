@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -12,27 +12,32 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 
-/** Constellation-tier: pillar-to-center lightbeam lines suggesting a star pattern. */
+/** Attunement-tier crafting: pillar sparkles plus central orbital ring. */
 @OnlyIn(Dist.CLIENT)
-public class BuiltInEffectConstellationLines extends AltarRecipeEffect {
+public class BuiltInEffectAttunementSparkle extends AltarRecipeEffect {
 
-    private static final Color LINE_COLOR = new Color(180, 210, 255);
+    private static final Color ATTUNEMENT_COLOR = new Color(170, 200, 255);
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        int count = pillarCount(altar.getAltarType());
-        if (count == 0 || RAND.nextInt(4) != 0) return;
-        Vec3 center = altarCenter(altar).add(0, 0.1, 0);
-        int from = RAND.nextInt(count);
-        int to   = RAND.nextInt(count);
-        if (from == to) return;
-        Vec3 fromOff = pillarOffset(altar.getAltarType(), from);
-        Vec3 toOff   = pillarOffset(altar.getAltarType(), to);
-        Vec3 start = center.add(fromOff);
-        Vec3 end   = center.add(toOff);
-        EffectHelper.lightbeam(start, end, LINE_COLOR, 0.04f, 30 + RAND.nextInt(20));
+        Vec3 center = altarCenter(altar);
+        // Sparkles at each of the 4 pillars
+        for (int i = 0; i < 4; i++) {
+            if (RAND.nextInt(3) != 0) continue;
+            Vec3 offset = pillarOffset(altar.getAltarType(), i);
+            Vec3 at = center.add(offset).add(
+                    (RAND.nextDouble() - 0.5) * 0.5,
+                    RAND.nextDouble() * pillarHeight(altar.getAltarType()),
+                    (RAND.nextDouble() - 0.5) * 0.5);
+            EffectHelper.sparkleFloating(at, ATTUNEMENT_COLOR,
+                    0.1f + RAND.nextFloat() * 0.1f, 20 + RAND.nextInt(15));
+        }
+        // Occasional orbital ring at altar surface
+        if (RAND.nextInt(4) == 0) {
+            EffectHelper.orbitalStarlight(center.add(0, 0.1, 0), 1.8f);
+        }
     }
 
     @Override
@@ -45,6 +50,5 @@ public class BuiltInEffectConstellationLines extends AltarRecipeEffect {
     public void onCraftingFinish(@Nonnull BlockEntityAltar altar, boolean isChaining) {
         Vec3 center = altarCenter(altar).add(0, 0.3, 0);
         EffectHelper.burstStarlight(center);
-        EffectHelper.flareStarlight(center);
     }
 }

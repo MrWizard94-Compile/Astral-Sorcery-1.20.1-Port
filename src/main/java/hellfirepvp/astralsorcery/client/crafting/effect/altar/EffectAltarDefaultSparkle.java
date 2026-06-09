@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -10,20 +10,25 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
-import java.awt.Color;
 
-/** Dust spiraling inward toward the altar center. */
+/** Sparse white sparkles scattered across the altar surface while crafting. */
 @OnlyIn(Dist.CLIENT)
-public class EffectFocusDustSwirl extends AltarRecipeEffect {
-
-    private static final Color DUST_COLOR = new Color(160, 200, 255);
+public class EffectAltarDefaultSparkle extends AltarRecipeEffect {
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        Vec3 center = altarCenter(altar).add(0, 0.5, 0);
-        EffectHelper.vortex(center, DUST_COLOR, 1.5f, 1, 0.14f, 30);
+        Vec3 center = altarCenter(altar);
+        double reach = pillarReach(altar.getAltarType());
+        if (reach == 0) reach = 1.5;
+        double spread = reach * 2 + 1;
+        Vec3 at = new Vec3(
+                center.x - reach + RAND.nextDouble() * spread,
+                center.y + 0.02,
+                center.z - reach + RAND.nextDouble() * spread);
+        EffectHelper.sparkleFloating(at, EffectHelper.randomStarlightColor(),
+                0.1f + RAND.nextFloat() * 0.15f, 25 + RAND.nextInt(20));
     }
 
     @Override

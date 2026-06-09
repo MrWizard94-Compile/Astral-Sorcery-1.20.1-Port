@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -12,19 +12,18 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 
-/** Wide vortex of dust particles covering the full altar radius. */
+/** Dust spiraling inward toward the altar center. */
 @OnlyIn(Dist.CLIENT)
-public class EffectLargeDustSwirl extends AltarRecipeEffect {
+public class EffectFocusDustSwirl extends AltarRecipeEffect {
 
-    private static final Color COLOR = new Color(140, 180, 240);
+    private static final Color DUST_COLOR = new Color(160, 200, 255);
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        Vec3 center = altarCenter(altar).add(0, 0.3, 0);
-        float radius = (float) Math.max(1.5, pillarReach(altar.getAltarType()));
-        EffectHelper.vortex(center, COLOR, radius, 2, 0.10f, 40);
+        Vec3 center = altarCenter(altar).add(0, 0.5, 0);
+        EffectHelper.vortex(center, DUST_COLOR, 1.5f, 1, 0.14f, 30);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
@@ -10,24 +10,18 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
-import java.awt.Color;
 
-/** Horizontal spinning vortex plane at the altar surface. */
+/** Bright radiant flare pulses from the altar center during crafting. */
 @OnlyIn(Dist.CLIENT)
-public class EffectVortexPlane extends AltarRecipeEffect {
-
-    private static final Color VORTEX_COLOR = new Color(150, 195, 255);
+public class EffectLuminescenceFlare extends AltarRecipeEffect {
 
     @Override
     public void onTick(@Nonnull BlockEntityAltar altar,
                         @Nonnull ActiveSimpleAltarRecipe.CraftState state) {
         if (state != ActiveSimpleAltarRecipe.CraftState.ACTIVE) return;
-        Vec3 center = altarCenter(altar).add(0, 0.2, 0);
-        float radius = (float) Math.max(1.0, pillarReach(altar.getAltarType()) * 0.8);
-        EffectHelper.vortex(center.add(
-                (RAND.nextDouble() - 0.5) * radius * 2, 0,
-                (RAND.nextDouble() - 0.5) * radius * 2),
-                VORTEX_COLOR, radius, 3, 0.11f, 35);
+        if (RAND.nextInt(20) != 0) return;
+        Vec3 center = altarCenter(altar).add(0, 0.5, 0);
+        EffectHelper.flareStarlight(center);
     }
 
     @Override
@@ -37,5 +31,12 @@ public class EffectVortexPlane extends AltarRecipeEffect {
                           float partialTick, int packedLight) {}
 
     @Override
-    public void onCraftingFinish(@Nonnull BlockEntityAltar altar, boolean isChaining) {}
+    public void onCraftingFinish(@Nonnull BlockEntityAltar altar, boolean isChaining) {
+        Vec3 center = altarCenter(altar).add(0, 0.5, 0);
+        for (int i = 0; i < 3; i++) {
+            EffectHelper.flareStarlight(center.add(
+                    (RAND.nextDouble() - 0.5) * 0.4, RAND.nextDouble() * 0.5,
+                    (RAND.nextDouble() - 0.5) * 0.4));
+        }
+    }
 }

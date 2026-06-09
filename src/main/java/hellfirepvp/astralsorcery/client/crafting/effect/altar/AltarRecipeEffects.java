@@ -1,4 +1,4 @@
-package hellfirepvp.astralsorcery.common.crafting.recipe.altar.effect;
+package hellfirepvp.astralsorcery.client.crafting.effect.altar;
 
 import hellfirepvp.astralsorcery.common.block.tile.BlockAltar;
 import net.minecraftforge.api.distmarker.Dist;
