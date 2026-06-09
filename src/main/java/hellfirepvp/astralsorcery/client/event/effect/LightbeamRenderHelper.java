@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.client.event.effect;
 
+import hellfirepvp.astralsorcery.AstralSorcery;
 import hellfirepvp.astralsorcery.client.effect.EffectHelper;
 import hellfirepvp.astralsorcery.common.data.config.ClientConfig;
 import hellfirepvp.astralsorcery.common.starlight.ClientStarlightNetworkCache;
