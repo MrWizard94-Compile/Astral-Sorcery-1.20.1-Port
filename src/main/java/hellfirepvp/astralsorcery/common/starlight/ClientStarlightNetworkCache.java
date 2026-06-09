@@ -7,6 +7,7 @@
  ******************************************************************************/
 package hellfirepvp.astralsorcery.common.starlight;
 
+import hellfirepvp.astralsorcery.AstralSorcery;
 import net.minecraft.core.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -46,6 +47,9 @@ public final class ClientStarlightNetworkCache {
     public static void updateSource(@Nonnull BlockPos source,
                                     @Nonnull List<BlockPos> targets,
                                     double starlight) {
+        // Debug: log cache updates to trace server->client sync
+        AstralSorcery.log.debug("Client cache update for source {}: targets={}, starlight={}",
+                source.toShortString(), targets.size(), starlight);
         if (targets.isEmpty() && starlight <= 0) {
             CACHE.remove(source);
         } else {

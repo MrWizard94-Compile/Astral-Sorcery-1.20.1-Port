@@ -311,10 +311,14 @@ public class StarlightGraph {
         }
         // Receivers cannot be link sources
         if (receivers.containsKey(from) && !sources.containsKey(from) && !transmissions.containsKey(from)) {
+            AstralSorcery.log.debug("Rejected link {} -> {}: source is receiver-only and cannot be a source",
+                    from.toShortString(), to.toShortString());
             return false;
         }
         // Pure sources cannot be link targets
         if (sources.containsKey(to) && !transmissions.containsKey(to) && !receivers.containsKey(to)) {
+            AstralSorcery.log.debug("Rejected link {} -> {}: target is pure source and cannot be a target",
+                    from.toShortString(), to.toShortString());
             return false;
         }
 
@@ -325,6 +329,7 @@ public class StarlightGraph {
             AstralSorcery.log.debug("Added starlight link: {}", link);
             return true;
         }
+        AstralSorcery.log.debug("Rejected link {} -> {}: link already present or invalid", from.toShortString(), to.toShortString());
         return false;
     }
 
