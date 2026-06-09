@@ -418,10 +418,12 @@ public class BlockEntityCollectorCrystal extends BlockEntityTick
             return false;
         }
         if (!linkedTargets.contains(other)) {
-            linkedTargets.add(other.immutable());
+            // Validate with the network first — ensure the link is accepted server-side
             if (!isClientSide()) {
-                StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), other);
+                boolean accepted = StarlightNetworkHelper.addLink(getLevel(), getBlockPos(), other);
+                if (!accepted) return false;
             }
+            linkedTargets.add(other.immutable());
             markForUpdate();
         }
         return true;
